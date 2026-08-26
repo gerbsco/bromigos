@@ -234,25 +234,42 @@
     background:linear-gradient(118deg,transparent 40%,rgba(255,255,255,.16) 48%,transparent 55%)}
   .fut.matte .gloss{display:none}
 
-  .scoreline{display:flex;align-items:baseline;justify-content:center;gap:9px;
-    padding-bottom:10px;border-bottom:1.5px solid currentColor;position:relative;z-index:1}
-  .scoreline .mine{font:800 40px/.9 ui-monospace,Menlo,monospace;
-    font-variant-numeric:tabular-nums;letter-spacing:-.03em}
-  .scoreline .dash{font:700 20px/1 ui-monospace,Menlo,monospace;opacity:.5}
-  .scoreline .theirs{font:700 27px/.9 ui-monospace,Menlo,monospace;
-    font-variant-numeric:tabular-nums;opacity:.72}
-  .vsline{margin-top:7px;text-align:center;font:700 9.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.2em;text-transform:uppercase;opacity:.72;position:relative;z-index:1}
-  .futArt{flex:1;display:flex;align-items:center;justify-content:center;font-size:76px;
-    line-height:1;position:relative;z-index:1}
-  .futName{text-align:center;font:800 20px/1.15 system-ui,sans-serif;letter-spacing:.03em;
-    text-transform:uppercase;padding-bottom:9px;border-bottom:1.5px solid currentColor;
-    position:relative;z-index:1}
-  .marginbox{margin-top:10px;text-align:center;position:relative;z-index:1}
-  .marginbox b{display:block;font:800 25px/1 ui-monospace,Menlo,monospace;
-    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-  .marginbox span{display:block;margin-top:4px;font:700 8.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.18em;opacity:.75;text-transform:uppercase}
+  /* --- match card: FIFA 13 panelling --- */
+  .fut{padding:0}
+  .futTop{position:relative;z-index:1;display:flex;align-items:stretch;
+    background:rgba(0,0,0,.16);border-bottom:1px solid rgba(0,0,0,.22)}
+  .futL{position:relative;padding:15px 10px 12px 16px;min-width:104px;
+    background:rgba(255,255,255,.10);
+    clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
+  .futL b{display:block;font:800 36px/.86 ui-monospace,Menlo,monospace;
+    font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+  .futL span{display:block;margin-top:5px;font:800 11px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.16em;opacity:.8}
+  .futR{flex:1;padding:15px 15px 12px 4px;text-align:right;display:flex;
+    flex-direction:column;justify-content:center}
+  .futR b{display:block;font:800 19px/1.05 system-ui,sans-serif;letter-spacing:.01em;
+    text-transform:uppercase}
+  .futR span{display:block;margin-top:5px;font:700 9.5px/1.3 ui-monospace,Menlo,monospace;
+    letter-spacing:.13em;text-transform:uppercase;opacity:.75}
+
+  .sticker{height:100%;max-height:118px;width:auto;max-width:88%;object-fit:contain;
+    display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+  .consArt .sticker{max-height:100px}
+  .futMid{position:relative;z-index:1;flex:1;display:flex;align-items:center;
+    justify-content:center;font-size:74px;line-height:1;
+    background:rgba(255,255,255,.05)}
+  .futMid .opp{position:absolute;right:12px;bottom:9px;text-align:right;
+    font:700 9px/1.35 ui-monospace,Menlo,monospace;letter-spacing:.1em;
+    text-transform:uppercase;opacity:.62}
+  .futMid .opp b{display:block;font:800 15px/1 ui-monospace,Menlo,monospace;opacity:.95}
+
+  .futStats{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;
+    background:rgba(0,0,0,.42);border-top:1px solid rgba(255,255,255,.12);
+    padding:9px 10px 10px}
+  .futCell{display:flex;align-items:baseline;gap:6px;padding:4px 5px}
+  .futCell b{font:800 15px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
+    min-width:46px;text-align:right}
+  .futCell span{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.11em;opacity:.72}
 
   /* --- consumable card --- */
   .cons{position:relative;width:240px;height:344px;opacity:0;border-radius:6px;
@@ -423,8 +440,8 @@
     <div class="card"><h3>Weekly results</h3>
       <p>Worst to best. TOTW is reserved for the single highest scorer in the league that week.</p>
       <div id="demoBtns"></div></div>
-    <div class="card"><h3>Milestones</h3>
-      <p>Never fire from a normal week.</p><div id="demoSpecial"></div></div>
+    <div class="card"><h3>Milestones</h3><p>Never fire from a normal week.</p>
+      <div id="demoSpecial"></div></div>
     <div class="card"><p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p></div>
   </section>
 
@@ -828,6 +845,20 @@ const TIER = {
   purple: { pairs:11,size:58, col:"#E2C9FF", spread:148, step:38, label:"Milestone" }
 };
 
+const STICKERS = {
+  sob:     "img/IMG_8866.png",  // crying, wiping tears
+  copium:  "img/IMG_8867.png",  // crying but smiling
+  chair:   "img/IMG_8868.png",  // folding chair
+  point:   "img/IMG_8869.png",  // pointing
+  pout:    "img/IMG_8870.png",  // sad puffy face
+  firepit: "img/IMG_8871.png"   // sitting over the fire
+};
+const S_ = k => "img:" + k;
+const artHTML = a => (typeof a === "string" && a.slice(0,4) === "img:")
+  ? `<img class="sticker" src="${STICKERS[a.slice(4)] || ""}" alt="">`
+  : (a || "");
+
+
 const PACK = (function(){
   const wrap = document.createElement("div");
   wrap.className = "packwrap";
@@ -895,20 +926,23 @@ const PACK = (function(){
     void sparks.offsetWidth; sparks.classList.add("go");
   }
 
-  const matchCard = c => `<div class="fut ${c.tier} hexskin ${c.matte?"matte":""} in">
+  const matchCard = c => `<div class="fut ${c.tier} ${c.matte?"matte":""} in">
       <span class="gloss"></span>
-      <div class="scoreline"><span class="mine">${esc(c.mine)}</span>
-        <span class="dash">:</span><span class="theirs">${esc(c.theirs)}</span></div>
-      <div class="vsline">${esc(c.vs)}</div>
-      <div class="futArt">${c.art||""}</div>
-      <div class="futName">${esc(c.title)}</div>
-      <div class="marginbox"><b>${esc(c.margin)}</b><span>${esc(c.marginLabel)}</span></div>
+      <div class="futTop">
+        <div class="futL"><b>${esc(c.mine)}</b><span>${esc(c.pos||"PTS")}</span></div>
+        <div class="futR"><b>${esc(c.title)}</b><span>${esc(c.vs)}</span></div>
+      </div>
+      <div class="futMid hexskin">${artHTML(c.art)}
+        <span class="opp"><b>${esc(c.theirs)}</b>${esc(c.oppName||"OPP")}</span></div>
+      <div class="futStats">
+        ${(c.stats||[]).map(s=>`<div class="futCell"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join("")}
+      </div>
     </div>`;
 
   const consCard = c => `<div class="cons ${c.rarity} hexskin in">
       <div class="consHead"><span class="consTab">${c.icon||"\u2605"}</span>
         <span class="consTitle">${esc(c.kind||"Superlative")}</span></div>
-      <div class="consArt">${c.art||""}</div>
+      <div class="consArt">${artHTML(c.art)}</div>
       <div class="consName">${esc(c.title)}</div>
       <div class="consDesc">${esc(c.desc||"")}</div>
       <div class="consFoot"><div class="v">${esc(c.value||"")}</div></div>
@@ -972,6 +1006,24 @@ const PACK = (function(){
   }};
 })();
 
+/* ---- group-chat stickers ----
+   Change the filenames here if they differ in the repo. Path is relative to index.html. */
+/* meme-current art, rotated weekly */
+const ART = {
+  win: ["\u{1FAE1}","\u{1F90C}","\u{1F5FF}","\u2728"],          // routine win, rotates
+  loss:[S_("sob"),"\u{1F940}","\u{1FAE0}","\u{1F62E}\u200D\u{1F4A8}"], // routine loss, rotates
+  low: ["\u{1F480}","\u{1FAE0}","\u{1F921}","\u{1F9CA}"]        // league low, rotates
+};
+/* fixed art for the outcomes that earn their own picture */
+const FIXED = {
+  totw:      "\u{1F451}",   // league high
+  blowoutW:  S_("firepit"),  // won big
+  tightW:    S_("copium"),   // won close
+  tightL:    S_("pout"),     // lost close
+  blowoutL:  S_("chair")     // lost big
+};
+const BIG = 25, TIGHT = 10;
+
 /* rotating flavour */
 const pick = (a,wk) => a[(Number(wk)||0) % a.length];
 const FLAVOR = {
@@ -992,19 +1044,38 @@ function buildWeekCards(w, wk){
   const margin = Math.abs(w.myScore - w.oppScore);
   const mg = margin.toFixed(1);
   let tier, art, matte=false;
-  if(w.leagueHigh){ tier="totw"; art="\u{1F451}"; }
-  else if(w.leagueLow){ tier="bronzeC"; art="\u{1F480}"; matte=true; }
-  else if(won && margin >= 25){ tier="gold"; art="\u{1F4A5}"; }
-  else if(won){ tier="silver"; art="\u{1F4AA}"; }
-  else { tier="bronze"; art="\u{1F615}"; }
+  if(w.leagueHigh){
+    tier="totw"; art=FIXED.totw;
+  } else if(w.leagueLow){
+    tier="bronzeC"; matte=true;
+    art = margin >= BIG ? FIXED.blowoutL : pick(ART.low, wk);
+  } else if(won){
+    tier = margin >= BIG ? "gold" : "silver";
+    art  = margin >= BIG ? FIXED.blowoutW
+         : margin <  TIGHT ? FIXED.tightW
+         : pick(ART.win, wk);
+  } else {
+    tier="bronze";
+    art  = margin >= BIG ? FIXED.blowoutL
+         : margin <  TIGHT ? FIXED.tightL
+         : pick(ART.loss, wk);
+  }
 
+  const stats = [
+    [(won?"+":"\u2212")+mg, "MRG"],
+    [w.rank ? "#"+w.rank : "\u2014", "RNK"],
+    [w.bench!=null ? w.bench.toFixed(1) : "\u2014", "BEN"],
+    [w.record || "\u2014", "REC"],
+    [w.high!=null ? w.high.toFixed(1) : "\u2014", "TOP"],
+    [w.projected!=null ? w.projected.toFixed(1) : "\u2014", "PRJ"]
+  ];
   out.push({ type:"match", tier, art, matte,
     mine:w.myScore.toFixed(1), theirs:w.oppScore.toFixed(1),
+    pos: won ? "WIN" : "LOSS",
     vs:(won?"def. ":"lost to ")+w.opponent,
+    oppName: w.opponent,
     title:w.manager||ME||"You",
-    margin:(won?"+":"\u2212")+mg,
-    marginLabel: won?"Margin of victory":"Margin of defeat",
-    flare:tier });
+    stats, flare:tier });
 
   (w.awards||[]).forEach(a => out.push({
     type:"cons",
@@ -1012,14 +1083,14 @@ function buildWeekCards(w, wk){
     rarityLabel: a.good===false ? "Dishonour" : (a.rare ? "Rare" : "Common"),
     kind: a.good===false ? "Weekly Dishonour" : "Weekly Superlative",
     icon: a.icon || (a.good===false ? "\u2620\uFE0F" : "\u2605"),
-    art: a.emoji || "\u{1F3C6}",
+    art: a.art || a.emoji || "\u{1F3C6}",
     title: a.title, desc: a.desc || "", value: a.stat,
     flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silver")
   }));
 
   if(!(w.awards||[]).length){
     out.push({ type:"cons", rarity:"common", rarityLabel:"Common",
-      kind:"Weekly Superlative", icon:"\u2796", art:"\u{1F937}",
+      kind:"Weekly Superlative", icon:"\u2796", art:"\u{1F5FF}",
       title:"No Awards", desc:pick(FLAVOR.none,wk), value:"Nothing earned",
       flare:"bronze" });
   }
@@ -1040,18 +1111,30 @@ function maybeAutoPack(){
 
 if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
+  const base = {manager:"Scotty", rank:null, bench:null, record:null, high:null, projected:null};
   const S = {
-    "Bronze common: league low": {manager:"Scotty",myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
-      awards:[{title:"Walking Disaster",desc:"Lowest score in the league this week. Not close, either.",stat:"78.4 points",good:false,emoji:"\u{1F480}"},
+    "Bronze common: league low": {...base,myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
+      rank:10,bench:52.1,record:"0-1",high:14.2,projected:112.6,
+      awards:[{title:"Walking Disaster",desc:"Lowest score in the league. Not close, either.",stat:"78.4 points",good:false,emoji:"\u{1F480}"},
               {title:"Punching Bag",desc:"Nobody had more points hung on them. You were the schedule's gift.",stat:"139.1 allowed",good:false,emoji:"\u{1F94A}"}]},
-    "Bronze: normal loss": {manager:"Scotty",myScore:109.2,oppScore:121.6,opponent:"Ryan",
-      awards:[{title:"Bench Champion",desc:"Points you left sitting. Your bench would have won the game.",stat:"41.3 on the bench",good:false,emoji:"\u{1FA91}"}]},
-    "Silver: normal win": {manager:"Scotty",myScore:124.4,oppScore:117.9,opponent:"Cody",
+    "Bronze: normal loss": {...base,myScore:109.2,oppScore:121.6,opponent:"Ryan",
+      rank:7,bench:41.3,record:"0-1",high:26.8,projected:118.9,
+      awards:[{title:"Bench Champion",desc:"Your bench would have won the game. You did not play them.",stat:"41.3 wasted",good:false,emoji:"\u{1FA91}"}]},
+    "Bronze: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",
+      rank:9,bench:22.4,record:"0-1",high:19.3,projected:115.2,
+      awards:[{title:"Chair Recipient",desc:"Lost by more than anyone else this week. It was not competitive.",stat:"Lost by 42.6",good:false,emoji:"\u{1FA91}"}]},
+    "Silver: tight win": {...base,myScore:118.9,oppScore:114.2,opponent:"Austin",
+      rank:5,bench:15.2,record:"1-0",high:24.8,projected:117.0,
+      awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 4.7",rare:false,emoji:"\u{1F630}"}]},
+    "Silver: normal win": {...base,myScore:124.4,oppScore:117.9,opponent:"Cody",
+      rank:4,bench:18.9,record:"1-0",high:29.4,projected:120.1,
       awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 6.5",rare:false,emoji:"\u{1F630}"}]},
-    "Gold: blowout win": {manager:"Scotty",myScore:142.0,oppScore:104.8,opponent:"Bo",
-      awards:[{title:"Blowout King",desc:"Largest margin of the week. It stopped being a game by Sunday noon.",stat:"Won by 37.2",rare:true,emoji:"\u{1F4A5}"}]},
-    "TOTW: highest scorer": {manager:"Scotty",myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
-      awards:[{title:"Scoring Machine",desc:"Most points in the entire league this week. Everyone else was playing for second.",stat:"151.8 points",rare:true,emoji:"\u{1F525}"}]}
+    "Gold: blowout win": {...base,myScore:142.0,oppScore:104.8,opponent:"Bo",
+      rank:2,bench:12.4,record:"1-0",high:33.1,projected:125.7,
+      awards:[{title:"Blowout King",desc:"Biggest margin of the week. It stopped being a game by noon.",stat:"Won by 37.2",rare:true,art:S_("point")}]},
+    "TOTW: highest scorer": {...base,myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
+      rank:1,bench:9.8,record:"1-0",high:38.6,projected:127.3,
+      awards:[{title:"Scoring Machine",desc:"Most points in the league. Everyone else played for second.",stat:"151.8 points",rare:true,emoji:"\u{1F525}"}]}
   };
   document.getElementById("demoBtns").innerHTML = Object.keys(S)
     .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 13.5px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer">${k}</button>`).join("");
@@ -1062,8 +1145,8 @@ if(new URLSearchParams(location.search).has("pack")){
     .map(([t,l])=>`<button class="spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;padding:14px;border:1px solid #2C4257;border-radius:3px;background:transparent;color:var(--chalk);font:700 13px/1 system-ui,sans-serif;cursor:pointer">${l}</button>`).join("");
   document.querySelectorAll(".spGo").forEach(b=>{
     b.onclick = () => PACK.open("Milestone",[{type:"match",tier:b.dataset.t,flare:b.dataset.t,
-      art:"\u{1F3DF}\uFE0F",mine:"1",theirs:"10",vs:"clinched",title:"Scotty",
-      margin:"1st",marginLabel:"Seed"}]); });
+      art:"\u{1F3DF}\uFE0F",mine:"1",theirs:"10",pos:"SEED",vs:"clinched",oppName:"teams",
+      title:"Scotty",stats:[["1st","SEED"],["\u2014","MRG"],["\u2014","RNK"],["\u2014","BEN"],["\u2014","REC"],["\u2014","TOP"]]}]); });
   const na=document.getElementById("noanim");
   try{ na.checked=localStorage.getItem("bromigos.noanim")==="1"; }catch(e){}
   na.onchange=()=>{ try{ localStorage.setItem("bromigos.noanim",na.checked?"1":"0"); }catch(e){} };

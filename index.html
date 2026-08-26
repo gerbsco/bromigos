@@ -146,85 +146,115 @@
   .stale{background:rgba(178,58,47,.16);color:#E39A92}
   /* ================= PACK OPENING ================= */
   .packwrap{position:fixed;inset:0;z-index:900;display:none;align-items:center;
-    justify-content:center;background:radial-gradient(circle at 50% 45%,#123049 0%,#050D16 70%);
+    justify-content:center;background:radial-gradient(ellipse at 50% 100%,#0A2138 0%,#03080E 75%);
     padding:20px;overflow:hidden}
   .packwrap.on{display:flex}
-  .rays{position:absolute;inset:-50%;opacity:0;pointer-events:none;
-    background:repeating-conic-gradient(from 0deg at 50% 50%,
-      rgba(217,162,39,.16) 0deg 6deg, transparent 6deg 14deg)}
-  .packwrap.lit .rays{opacity:1;animation:spin 22s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  .packstage{position:relative;width:100%;max-width:340px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:center}
 
-  .packstage{position:relative;width:100%;max-width:330px;text-align:center}
-
-  .thepack{width:190px;height:265px;margin:0 auto;border-radius:10px;cursor:pointer;
-    background:linear-gradient(155deg,#1D3F5C 0%,#0C2138 55%,#16344E 100%);
-    border:1px solid rgba(217,162,39,.5);
-    box-shadow:0 18px 45px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.09);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px}
-  .thepack .pl{font:700 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.24em;
-    text-transform:uppercase;color:var(--brass)}
-  .thepack .pw{font:800 25px/1.05 system-ui,sans-serif;color:var(--chalk);
-    letter-spacing:-.02em;padding:0 14px}
-  .thepack .pt{font-size:11.5px;color:var(--faint);margin-top:5px}
-  @media (prefers-reduced-motion:no-preference){
-    .thepack{animation:breathe 2.4s ease-in-out infinite}
-    .thepack.rip{animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
+  /* ---- light beams (walkout) ---- */
+  .beams{position:absolute;left:0;right:0;bottom:-8%;height:145%;pointer-events:none;
+    display:flex;align-items:flex-end;justify-content:center;gap:8px;z-index:0}
+  .beam{width:12px;height:0;border-radius:40% 40% 0 0;transform-origin:bottom center;
+    filter:blur(7px);opacity:0}
+  .beams.fire .beam{animation:rise var(--dur,1s) cubic-bezier(.12,.85,.25,1) forwards}
+  @keyframes rise{
+    0%{height:0;opacity:0}
+    22%{opacity:1}
+    60%{height:var(--h,40%);opacity:.95}
+    100%{height:var(--h,40%);opacity:.55}
   }
-  @keyframes breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.015)}}
-  @keyframes shake{10%,90%{transform:translateX(-3px) rotate(-1deg)}
-    20%,80%{transform:translateX(5px) rotate(1.5deg)}
-    30%,50%,70%{transform:translateX(-8px) rotate(-2deg)}
-    40%,60%{transform:translateX(8px) rotate(2deg)}
-    100%{transform:scale(1.5);opacity:0}}
+  .glowfloor{position:absolute;left:50%;bottom:6%;width:340px;height:130px;
+    transform:translateX(-50%);border-radius:50%;filter:blur(34px);opacity:0;z-index:0}
+  .beams.fire ~ .glowfloor{animation:floor 1s ease-out forwards}
+  @keyframes floor{0%{opacity:0;transform:translateX(-50%) scale(.4)}
+    100%{opacity:.5;transform:translateX(-50%) scale(1)}}
 
-  .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;border-radius:50%}
-  .flash.go{animation:pop .5s ease-out both}
-  @keyframes pop{0%{opacity:0;transform:scale(.2)}18%{opacity:.85}100%{opacity:0;transform:scale(3)}}
+  /* ---- the pack ---- */
+  .thepack{position:relative;z-index:2;width:186px;height:262px;margin:0 auto;border-radius:9px;
+    cursor:pointer;background:linear-gradient(160deg,#1E4162 0%,#0A1E33 55%,#17364F 100%);
+    border:1px solid rgba(217,162,39,.45);
+    box-shadow:0 18px 45px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .thepack .pl{font:700 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.26em;
+    text-transform:uppercase;color:var(--brass)}
+  .thepack .pw{font:800 24px/1.05 system-ui,sans-serif;color:var(--chalk);
+    letter-spacing:-.02em;padding:0 14px}
+  .thepack .pt{font-size:11px;color:var(--faint);margin-top:4px;letter-spacing:.05em}
+  @media (prefers-reduced-motion:no-preference){
+    .thepack{animation:breathe 2.6s ease-in-out infinite}
+    .thepack.rip{animation:rip .62s cubic-bezier(.36,.07,.19,.97) forwards}
+  }
+  @keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes rip{
+    0%,12%{transform:translateX(0) rotate(0)}
+    20%{transform:translateX(-5px) rotate(-1.6deg)}
+    32%{transform:translateX(6px) rotate(2deg)}
+    44%{transform:translateX(-8px) rotate(-2.4deg)}
+    56%{transform:translateX(8px) rotate(2.4deg)}
+    68%{transform:translateX(-4px) rotate(-1deg)}
+    100%{transform:scale(1.85);opacity:0}
+  }
 
-  .pcard{position:relative;width:100%;max-width:310px;margin:0 auto;border-radius:12px;
-    padding:26px 20px 22px;background:linear-gradient(165deg,#1A2C3E,#0B1B2A);
-    border:1px solid rgba(255,255,255,.13);text-align:center;opacity:0}
-  .pcard.in{animation:deal .55s cubic-bezier(.16,1.1,.3,1) both}
-  @keyframes deal{0%{opacity:0;transform:translateY(38px) scale(.86)}
-    100%{opacity:1;transform:translateY(0) scale(1)}}
-  .pcard.gold{border-color:rgba(217,162,39,.75);
-    background:linear-gradient(165deg,#3A2E10,#141F2C);
-    box-shadow:0 0 44px rgba(217,162,39,.4),0 18px 40px rgba(0,0,0,.55)}
-  .pcard.silver{border-color:rgba(200,210,220,.6);
-    background:linear-gradient(165deg,#28353F,#0F1C29);
-    box-shadow:0 0 26px rgba(200,210,220,.2),0 16px 34px rgba(0,0,0,.5)}
-  .pcard.bronze{border-color:rgba(184,115,51,.6);
-    background:linear-gradient(165deg,#33241A,#0F1C29);
-    box-shadow:0 14px 30px rgba(0,0,0,.5)}
-  .pcard.dud{border-color:rgba(120,135,150,.35);
-    background:linear-gradient(165deg,#1A222B,#0C141C);filter:saturate(.45)}
+  /* ---- FUT-style card ---- */
+  .fut{position:relative;z-index:3;width:250px;height:352px;margin:0 auto;opacity:0;
+    border-radius:6px 6px 44px 44px / 6px 6px 26px 26px;
+    padding:20px 18px 16px;display:flex;flex-direction:column;
+    box-shadow:0 22px 50px rgba(0,0,0,.6)}
+  .fut.in{animation:walkout .85s cubic-bezier(.14,.9,.24,1) forwards}
+  @keyframes walkout{
+    0%{opacity:0;transform:translateY(70px) scale(.7)}
+    55%{opacity:1}
+    100%{opacity:1;transform:translateY(0) scale(1)}
+  }
+  .fut::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(118deg,transparent 38%,rgba(255,255,255,.22) 47%,transparent 56%)}
 
-  .pcard .rar{font:700 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.26em;
-    text-transform:uppercase;margin-bottom:14px}
-  .pcard.gold .rar{color:var(--brass)}
-  .pcard.silver .rar{color:#C8D2DC}
-  .pcard.bronze .rar{color:#D08B4E}
-  .pcard.dud .rar{color:#6F808F}
-  .pcard .big{font:800 clamp(40px,13vw,58px)/1 ui-monospace,Menlo,monospace;
-    color:var(--chalk);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-  .pcard.dud .big{color:#8B9AA8}
-  .pcard .ttl{margin-top:12px;font:800 19px/1.24 system-ui,sans-serif;color:var(--chalk)}
-  .pcard .sub{margin-top:9px;font-size:14px;color:#A9BBC9;line-height:1.55}
-  .pcard .emj{font-size:40px;line-height:1;margin-bottom:6px}
+  .futHead{display:flex;gap:11px;align-items:flex-start}
+  .futRate{font:800 40px/.9 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
+    letter-spacing:-.03em}
+  .futPos{margin-top:4px;font:800 14px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em}
+  .futBar{width:26px;height:1.5px;margin:7px 0 0;opacity:.55}
+  .futEmj{margin-top:2px;font-size:19px;line-height:1}
+  .futArt{flex:1;display:flex;align-items:center;justify-content:center;font-size:74px;
+    line-height:1;margin:2px 0 4px}
+  .futName{text-align:center;font:800 19px/1.15 system-ui,sans-serif;letter-spacing:.02em;
+    text-transform:uppercase;padding-bottom:9px;border-bottom:1.5px solid currentColor}
+  .futStats{display:flex;justify-content:space-between;gap:6px;margin-top:11px;padding:0 4px}
+  .futStat{flex:1;text-align:center}
+  .futStat b{display:block;font:800 16px/1 ui-monospace,Menlo,monospace;
+    font-variant-numeric:tabular-nums}
+  .futStat span{display:block;margin-top:3px;font:700 8.5px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.14em;opacity:.75}
 
-  .packbar{margin-top:22px;display:flex;align-items:center;justify-content:center;gap:12px}
+  /* tiers */
+  .fut.dud{background:linear-gradient(160deg,#5A6570 0%,#333C46 42%,#4A555F 100%);
+    color:#C3CBD3}
+  .fut.bronze{background:linear-gradient(160deg,#C98A4B 0%,#7A4A22 42%,#B3743A 100%);
+    color:#FBEBD8}
+  .fut.silver{background:linear-gradient(160deg,#E4EAF0 0%,#9AA7B4 42%,#CFD8E1 100%);
+    color:#232C36}
+  .fut.gold{background:linear-gradient(160deg,#F2D479 0%,#B08423 42%,#E5C263 100%);
+    color:#3A2B05}
+  /* reserved for later in the season */
+  .fut.blue{background:linear-gradient(160deg,#7FD4FF 0%,#1B5C8A 42%,#59B4E8 100%);
+    color:#06222F}
+  .fut.orange{background:linear-gradient(160deg,#FFB05C 0%,#B24A08 42%,#F08A32 100%);
+    color:#2E1403}
+  .fut.purple{background:linear-gradient(160deg,#C79BFF 0%,#4B2A86 42%,#A276E8 100%);
+    color:#1D0F35}
+
+  .packbar{position:relative;z-index:4;margin-top:20px;display:flex;align-items:center;
+    justify-content:center;gap:12px}
   .dots{display:flex;gap:5px}
-  .dot{width:6px;height:6px;border-radius:50%;background:rgba(234,226,207,.25)}
+  .dot{width:6px;height:6px;border-radius:50%;background:rgba(234,226,207,.22)}
   .dot.act{background:var(--brass)}
-  .tapon{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+  .tapon{font:600 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;
     text-transform:uppercase;color:var(--faint)}
   .skipb{position:absolute;top:16px;right:16px;padding:9px 14px;border-radius:3px;
-    border:1px solid #2C4257;background:rgba(10,20,30,.6);color:var(--dim);
-    font:700 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
-    text-transform:uppercase;cursor:pointer;z-index:5}
-  .prefbar{margin-top:16px;font-size:12px;color:var(--faint)}
-  .prefbar label{cursor:pointer}
+    border:1px solid #2C4257;background:rgba(6,14,22,.72);color:var(--dim);
+    font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
+    text-transform:uppercase;cursor:pointer;z-index:6}
 
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
@@ -331,17 +361,20 @@
     <h2>Pack Opening &middot; Test Build</h2>
     <div class="card gold">
       <h3>Hidden from the league</h3>
-      <p>This tab only exists if the URL ends in <b>?pack=1</b>. Nobody else can reach it, including anyone who picks your name from the dropdown.</p>
-      <p>In the live version this fires automatically the first time someone opens the site after new results post, once per week per person. No tab, no button.</p>
+      <p>Only reachable at <b>?pack=1</b>. In the live version it fires automatically the first time someone opens the site after new results post, once per week per person.</p>
     </div>
     <div class="card">
-      <h3>Try each outcome</h3>
-      <p>Four scenarios so you can judge how the good and bad ones feel.</p>
+      <h3>Scenarios</h3>
+      <p>Beam count and height scale with the result. Watch the difference between the last two.</p>
       <div id="demoBtns"></div>
     </div>
     <div class="card">
+      <h3>Reserved tiers</h3>
+      <p>Not in rotation. Saved for clinching a playoff spot, the 1 seed, a first-round bye.</p>
+      <div id="demoSpecial"></div>
+    </div>
+    <div class="card">
       <p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p>
-      <p class="note">This toggle ships in the real header so anyone who hates it can turn it off permanently.</p>
     </div>
   </section>
 
@@ -734,28 +767,58 @@ Promise.all([
 
 
 /* ================= PACK OPENING ================= */
+const TIER = {
+  dud:    { beams:1,  h:"14%", dur:.7,  col:"#6E7B87", label:"Common" },
+  bronze: { beams:3,  h:"26%", dur:.85, col:"#C98A4B", label:"Bronze" },
+  silver: { beams:6,  h:"48%", dur:1.0, col:"#DCE5EE", label:"Silver" },
+  gold:   { beams:11, h:"96%", dur:1.25,col:"#F5D06B", label:"Gold"   },
+  blue:   { beams:13, h:"104%",dur:1.3, col:"#7FD4FF", label:"Special"},
+  orange: { beams:15, h:"112%",dur:1.35,col:"#FFB05C", label:"Special"},
+  purple: { beams:15, h:"112%",dur:1.35,col:"#C79BFF", label:"Special"}
+};
+
 const PACK = (function(){
   const wrap = document.createElement("div");
   wrap.className = "packwrap";
   wrap.innerHTML = `
-    <div class="rays"></div>
     <button class="skipb" id="pkSkip">Skip</button>
     <div class="packstage">
-      <div class="flash" id="pkFlash"></div>
+      <div class="beams" id="pkBeams"></div>
+      <div class="glowfloor" id="pkFloor"></div>
       <div id="pkSlot"></div>
       <div class="packbar"><span class="dots" id="pkDots"></span>
         <span class="tapon" id="pkTap">Tap to open</span></div>
     </div>`;
   document.body.appendChild(wrap);
 
-  const slot = wrap.querySelector("#pkSlot");
-  const flash = wrap.querySelector("#pkFlash");
-  const dots = wrap.querySelector("#pkDots");
-  const tap = wrap.querySelector("#pkTap");
+  const slot  = wrap.querySelector("#pkSlot");
+  const beams = wrap.querySelector("#pkBeams");
+  const floor = wrap.querySelector("#pkFloor");
+  const dots  = wrap.querySelector("#pkDots");
+  const tap   = wrap.querySelector("#pkTap");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const wait = ms => new Promise(r => setTimeout(r, reduce ? Math.min(ms,80) : ms));
+  const wait = ms => new Promise(r => setTimeout(r, reduce ? Math.min(ms,60) : ms));
 
   let cards = [], idx = 0, done = null, busy = false;
+
+  function lightUp(tier){
+    const t = TIER[tier] || TIER.silver;
+    beams.classList.remove("fire");
+    beams.style.setProperty("--dur", t.dur + "s");
+    let html = "";
+    for(let i = 0; i < t.beams; i++){
+      // centre beams tallest, edges shorter — gives the fan shape
+      const mid = (t.beams - 1) / 2;
+      const fall = mid ? 1 - Math.abs(i - mid) / (mid + 1.35) : 1;
+      const h = "calc(" + t.h + " * " + fall.toFixed(2) + ")";
+      html += `<span class="beam" style="--h:${h};background:linear-gradient(to top,${t.col},transparent);
+        animation-delay:${(Math.abs(i-mid)*38)}ms"></span>`;
+    }
+    beams.innerHTML = html;
+    floor.style.background = t.col;
+    void beams.offsetWidth;
+    beams.classList.add("fire");
+  }
 
   function packFace(label){
     return `<div class="thepack" id="pkPack">
@@ -763,50 +826,67 @@ const PACK = (function(){
       <span class="pw">${esc(label)}</span>
       <span class="pt">Tap to open</span></div>`;
   }
+
   function cardFace(c){
-    return `<div class="pcard ${c.tier} in">
-      <div class="rar">${esc(c.rarity || c.tier)}</div>
-      ${c.emoji ? `<div class="emj">${c.emoji}</div>` : ""}
-      ${c.big ? `<div class="big">${esc(c.big)}</div>` : ""}
-      <div class="ttl">${esc(c.title)}</div>
-      ${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ""}
+    const t = TIER[c.tier] || TIER.silver;
+    const stats = (c.stats || []).map(s =>
+      `<div class="futStat"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join("");
+    return `<div class="fut ${c.tier} in">
+      <div class="futHead">
+        <div>
+          <div class="futRate">${esc(c.rate || "")}</div>
+          <div class="futPos">${esc(c.pos || "")}</div>
+          <div class="futBar" style="background:currentColor"></div>
+          <div class="futEmj">${c.emoji || ""}</div>
+        </div>
+      </div>
+      <div class="futArt">${c.art || ""}</div>
+      <div class="futName">${esc(c.title)}</div>
+      ${stats ? `<div class="futStats">${stats}</div>` :
+        `<div class="futStats"><div class="futStat" style="flex:1">
+          <span style="letter-spacing:.06em;opacity:.85;font-size:10px">${esc(c.sub||"")}</span>
+        </div></div>`}
     </div>`;
   }
+
   function paintDots(){
     dots.innerHTML = cards.map((_,i)=>`<span class="dot ${i<=idx?"act":""}"></span>`).join("");
+  }
+
+  async function reveal(i){
+    idx = i;
+    const c = cards[i];
+    slot.innerHTML = "";
+    lightUp(c.tier);
+    await wait(Math.round((TIER[c.tier]||TIER.silver).dur * 520));
+    slot.innerHTML = cardFace(c);
+    paintDots();
+    tap.textContent = i >= cards.length - 1 ? "Tap to close" : "Tap for next";
   }
 
   async function burst(){
     if(busy) return; busy = true;
     const p = wrap.querySelector("#pkPack");
     if(p) p.classList.add("rip");
-    await wait(430);
-    flash.classList.add("go");
-    wrap.classList.add("lit");
-    await wait(160);
-    flash.classList.remove("go");
-    idx = 0;
-    slot.innerHTML = cardFace(cards[0]);
-    paintDots();
-    tap.textContent = cards.length > 1 ? "Tap for next" : "Tap to close";
+    await wait(560);
+    slot.innerHTML = "";
+    await reveal(0);
     busy = false;
   }
 
   async function advance(){
     if(busy) return;
-    if(!wrap.querySelector(".pcard")){ return burst(); }
+    if(!wrap.querySelector(".fut")) return burst();
     if(idx >= cards.length - 1) return close();
     busy = true;
-    idx++;
-    slot.innerHTML = cardFace(cards[idx]);
-    paintDots();
-    tap.textContent = idx >= cards.length - 1 ? "Tap to close" : "Tap for next";
-    await wait(120); busy = false;
+    await reveal(idx + 1);
+    busy = false;
   }
 
   function close(){
-    wrap.classList.remove("on","lit");
-    slot.innerHTML = "";
+    wrap.classList.remove("on");
+    beams.classList.remove("fire");
+    beams.innerHTML = ""; slot.innerHTML = "";
     document.body.style.overflow = "";
     if(done){ const d = done; done = null; d(); }
   }
@@ -819,9 +899,9 @@ const PACK = (function(){
   return {
     open(label, list){
       cards = list; idx = -1; busy = false;
+      beams.classList.remove("fire"); beams.innerHTML = "";
       slot.innerHTML = packFace(label);
-      dots.innerHTML = "";
-      tap.textContent = "Tap to open";
+      dots.innerHTML = ""; tap.textContent = "Tap to open";
       wrap.classList.add("on");
       document.body.style.overflow = "hidden";
       return new Promise(r => { done = r; });
@@ -829,40 +909,47 @@ const PACK = (function(){
   };
 })();
 
-/* Build the cards for one manager's week. */
-function buildWeekCards(w){
+/* rotating flavour so it doesn't go stale */
+const pick = (arr, wk) => arr[(Number(wk) || 0) % arr.length];
+const FLAVOR = {
+  high: ["Nobody came close.","The rest of the league is embarrassed.","Peaked. It is all downhill.","Sit down, everyone."],
+  win:  ["A win is a win. Barely.","Take it and do not look at the tape.","Survived.","Ugly, but counted."],
+  loss: ["Better luck never.","That one is going in the archive.","Outscored by a man not paying attention.","Rough."],
+  low:  ["Worst score in the league. Congratulations.","Historic in the wrong direction.","Did you set a lineup?","The bench outscored the starters. Probably."],
+  none: ["Neither good nor bad enough to mention.","Aggressively average. The worst kind.","No awards. No shame either. Some shame.","You existed this week."]
+};
+
+function buildWeekCards(w, wk){
   const out = [];
   const won = w.myScore > w.oppScore;
   const margin = Math.abs(w.myScore - w.oppScore).toFixed(1);
-  let tier, rarity, sub;
-  if(w.leagueHigh){ tier="gold"; rarity="League High";
-    sub = `Nobody scored more. ${won?"Beat":"Lost to"} ${w.opponent} ${w.myScore} to ${w.oppScore}.`; }
-  else if(w.leagueLow){ tier="dud"; rarity="League Low";
-    sub = `Worst score in the league. ${w.opponent} put up ${w.oppScore}. Rough.`; }
-  else if(won){ tier="silver"; rarity="Win";
-    sub = `Beat ${w.opponent} by ${margin}.`; }
-  else { tier="bronze"; rarity="Loss";
-    sub = `Lost to ${w.opponent} by ${margin}.`; }
+  let tier, art, flav;
+  if(w.leagueHigh){ tier="gold"; art="\u{1F451}"; flav=pick(FLAVOR.high,wk); }
+  else if(w.leagueLow){ tier="dud"; art="\u{1F480}"; flav=pick(FLAVOR.low,wk); }
+  else if(won){ tier="silver"; art="\u{1F4AA}"; flav=pick(FLAVOR.win,wk); }
+  else { tier="bronze"; art="\u{1F615}"; flav=pick(FLAVOR.loss,wk); }
 
-  out.push({ tier, rarity, big: w.myScore.toFixed(1),
-    title: won ? "W" : "L", sub });
+  out.push({
+    tier, art, emoji: won ? "\u2705" : "\u274C",
+    rate: w.myScore.toFixed(1), pos: won ? "W" : "L",
+    title: w.manager || ME || "You",
+    stats: [[w.oppScore.toFixed(1),"OPP"], [(won?"+":"-")+margin,"MRG"], [w.opponent,"VS"]]
+  });
 
   (w.awards||[]).forEach(a => out.push({
-    tier: a.good === false ? "dud" : (a.good ? "gold" : "silver"),
-    rarity: a.good === false ? "Dishonor" : "Award",
-    emoji: a.emoji || "\u{1F3C6}",
+    tier: a.tier || (a.good === false ? "dud" : "gold"),
+    art: a.emoji || "\u{1F3C6}", emoji: a.good === false ? "\u{1F921}" : "\u{1F3C5}",
+    rate: a.value || "", pos: a.good === false ? "LOL" : "AWD",
     title: a.title, sub: a.stat
   }));
 
   if(!(w.awards||[]).length){
-    out.push({ tier: w.leagueLow ? "dud" : "silver", rarity:"Nothing", emoji:"\u{1F937}",
-      title:"No awards this week",
-      sub:"You were neither good enough nor bad enough to be mentioned." });
+    out.push({ tier: w.leagueLow ? "dud" : "bronze", art:"\u{1F937}", emoji:"\u2796",
+      rate:"", pos:"", title:"No Awards", sub: pick(FLAVOR.none, wk) });
   }
   return out;
 }
 
-/* Fire the pack once per new week, per person, per device. */
 function maybeAutoPack(){
   if(!ME || !WEEKLY || !WEEKLY.week) return;
   let off = false, seen = null;
@@ -870,42 +957,42 @@ function maybeAutoPack(){
     off = localStorage.getItem("bromigos.noanim") === "1";
     seen = localStorage.getItem("bromigos.seenWeek");
   }catch(e){}
-  if(off) return;
-  if(String(seen) === String(WEEKLY.week)) return;
+  if(off || String(seen) === String(WEEKLY.week)) return;
   const mine = (WEEKLY.packs || {})[ME];
   if(!mine) return;
   try{ localStorage.setItem("bromigos.seenWeek", String(WEEKLY.week)); }catch(e){}
-  PACK.open("Week " + WEEKLY.week, buildWeekCards(mine));
+  PACK.open("Week " + WEEKLY.week, buildWeekCards(mine, WEEKLY.week));
 }
 
 /* ---------- demo harness (hidden unless ?pack=1) ---------- */
 if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
-  const SCENARIOS = {
-    "Gold: league high": {
-      myScore:151.8, oppScore:118.2, opponent:"Andy", leagueHigh:true,
-      awards:[
-        {title:"Scoring Machine", stat:"151.8 points. Second place was 22 back.", good:true, emoji:"\u{1F525}"},
-        {title:"Blowout King", stat:"Won by 33.6. Nobody else cracked 20.", good:true, emoji:"\u{1F4A5}"}
-      ]},
-    "Silver: normal win": {
-      myScore:124.4, oppScore:117.9, opponent:"Cody",
-      awards:[{title:"Sunday Scaries", stat:"Won by 6.5 with your kicker still playing.", good:true, emoji:"\u{1F630}"}]},
-    "Bronze: normal loss": {
-      myScore:109.2, oppScore:121.6, opponent:"Ryan",
-      awards:[{title:"Bench Points Champion", stat:"Left 41.3 on the bench. That would have won it twice.", good:false, emoji:"\u{1FA91}"}]},
-    "Dud: league low": {
-      myScore:78.4, oppScore:139.1, opponent:"Justin", leagueLow:true,
-      awards:[
-        {title:"Walking Disaster", stat:"78.4 points. The league average was 121.", good:false, emoji:"\u{1F480}"},
-        {title:"Punching Bag", stat:"Gave up 139.1, most of anyone this week.", good:false, emoji:"\u{1F94A}"}
-      ]}
+  const S = {
+    "Dud: league low": {manager:"Scotty",myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
+      awards:[{title:"Walking Disaster",stat:"78.4 points",value:"78",good:false,emoji:"\u{1F480}"},
+              {title:"Punching Bag",stat:"Gave up 139.1",value:"139",good:false,emoji:"\u{1F94A}"}]},
+    "Bronze: normal loss": {manager:"Scotty",myScore:109.2,oppScore:121.6,opponent:"Ryan",
+      awards:[{title:"Bench Champion",stat:"Left 41.3 on the bench",value:"41",good:false,emoji:"\u{1FA91}"}]},
+    "Silver: normal win": {manager:"Scotty",myScore:124.4,oppScore:117.9,opponent:"Cody",
+      awards:[{title:"Sunday Scaries",stat:"Won by 6.5",value:"6.5",good:true,emoji:"\u{1F630}"}]},
+    "Gold: league high": {manager:"Scotty",myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
+      awards:[{title:"Scoring Machine",stat:"151.8 points",value:"152",good:true,emoji:"\u{1F525}"},
+              {title:"Blowout King",stat:"Won by 33.6",value:"34",good:true,emoji:"\u{1F4A5}"}]}
   };
-  document.getElementById("demoBtns").innerHTML = Object.keys(SCENARIOS)
-    .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 14px/1 system-ui,sans-serif;letter-spacing:.06em;cursor:pointer">${k}</button>`).join("");
-  document.querySelectorAll(".demoGo").forEach(b=>{
-    b.onclick = () => PACK.open("Week 1", buildWeekCards(SCENARIOS[b.dataset.k]));
+  const btn = (k,extra) => `<button class="demoGo" data-k="${k}" ${extra||""} style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 14px/1 system-ui,sans-serif;letter-spacing:.06em;cursor:pointer">${k}</button>`;
+  document.getElementById("demoBtns").innerHTML = Object.keys(S).map(k=>btn(k)).join("");
+  document.querySelectorAll("#demoBtns .demoGo").forEach(b=>{
+    b.onclick = () => PACK.open("Week 1", buildWeekCards(S[b.dataset.k], 1));
   });
+
+  const SPECIAL = {blue:"Blue: clinched playoffs", orange:"Orange: 1 seed", purple:"Purple: first-round bye"};
+  document.getElementById("demoSpecial").innerHTML = Object.entries(SPECIAL)
+    .map(([t,l])=>`<button class="spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;padding:14px;border:1px solid #2C4257;border-radius:3px;background:transparent;color:var(--chalk);font:700 13px/1 system-ui,sans-serif;cursor:pointer">${l}</button>`).join("");
+  document.querySelectorAll(".spGo").forEach(b=>{
+    b.onclick = () => PACK.open("Preview", [{tier:b.dataset.t, art:"\u{1F3DF}\uFE0F", emoji:"\u2B50",
+      rate:"1", pos:"SEED", title:"Scotty", sub:"Reserved tier preview"}]);
+  });
+
   const na = document.getElementById("noanim");
   try{ na.checked = localStorage.getItem("bromigos.noanim")==="1"; }catch(e){}
   na.onchange = () => { try{ localStorage.setItem("bromigos.noanim", na.checked?"1":"0"); }catch(e){} };

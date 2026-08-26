@@ -1,0 +1,40 @@
+name: Update league data
+
+on:
+  schedule:
+    # 11:00 UTC daily = 7:00 AM ET during the season.
+    # Cron here is always UTC — it does not follow daylight saving.
+    - cron: "0 11 * * *"
+    # Tuesday morning extra run, after Monday night games settle.
+    - cron: "0 13 * * 2"
+  workflow_dispatch: {}   # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write          # required so the job can commit data/league.json
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch league data from ESPN
+        run: node scripts/fetch.js
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name "bromigos-bot"
+          git config user.email "actions@github.com"
+          git add data/league.json
+          if git diff --staged --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Update league data $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi

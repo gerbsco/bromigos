@@ -145,14 +145,70 @@
     text-transform:uppercase;margin-bottom:12px}
   .stale{background:rgba(178,58,47,.16);color:#E39A92}
   /* ================= PACK OPENING ================= */
+  @property --orbR { syntax:"<length>"; inherits:false; initial-value:0px; }
+
   .packwrap{position:fixed;inset:0;z-index:900;display:none;align-items:center;
     justify-content:center;background:radial-gradient(ellipse at 50% 58%,#0C2740 0%,#03080E 78%);
     padding:18px;overflow:hidden}
   .packwrap.on{display:flex}
   .packstage{position:relative;width:100%;max-width:360px;display:flex;flex-direction:column;
     align-items:center;justify-content:center}
+  .fx{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:1}
 
-  /* ---- core burst ---- */
+  /* --- stadium ray spokes --- */
+  .rays{position:absolute;left:50%;top:50%;width:900px;height:900px;margin:-450px 0 0 -450px;
+    opacity:0;border-radius:50%;pointer-events:none;
+    -webkit-mask-image:radial-gradient(circle,transparent 16%,#000 34%,#000 62%,transparent 84%);
+    mask-image:radial-gradient(circle,transparent 16%,#000 34%,#000 62%,transparent 84%)}
+  .rays.go{animation:raysIn 1.5s cubic-bezier(.15,.8,.3,1) forwards}
+  @keyframes raysIn{
+    0%{opacity:0;transform:rotate(0) scale(.35)}
+    26%{opacity:var(--rayA,.5)}
+    100%{opacity:0;transform:rotate(34deg) scale(1.25)}}
+
+  /* --- expanding halo ring --- */
+  .halo{position:absolute;left:50%;top:50%;width:240px;height:240px;margin:-120px 0 0 -120px;
+    border-radius:50%;opacity:0;pointer-events:none;border:3px solid var(--c,#FFE9A8)}
+  .halo.go{animation:haloOut 1s cubic-bezier(.1,.75,.25,1) forwards}
+  @keyframes haloOut{0%{opacity:0;transform:scale(.2)}
+    18%{opacity:.9}100%{opacity:0;transform:scale(2.6)}}
+
+  /* --- orbiting flares that wrap the card --- */
+  .ring{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;
+    opacity:0;transform:scale(.12)}
+  .ring.go{animation:ringOut var(--ringDur,1.15s) cubic-bezier(.14,.86,.26,1) forwards}
+  @keyframes ringOut{
+    0%{opacity:0;transform:scale(.12) rotate(0deg)}
+    18%{opacity:1}
+    64%{opacity:1;transform:scale(1) rotate(var(--spin,16deg))}
+    100%{opacity:0;transform:scale(1.16) rotate(calc(var(--spin,16deg) * 1.5))}}
+  .orb{position:absolute;left:0;top:0;width:var(--s,26px);height:var(--s,26px);
+    margin:calc(var(--s,26px) / -2) 0 0 calc(var(--s,26px) / -2);
+    transform:rotate(var(--a)) translateY(calc(var(--r) * -1)) rotate(calc(var(--a) * -1));
+    border-radius:50%;
+    background:radial-gradient(circle,#fff 0%,#fff 20%,var(--c,#FFE9A8) 42%,transparent 72%);
+    animation:orbPulse var(--pd,.85s) ease-out var(--od,0ms) both}
+  @keyframes orbPulse{0%{opacity:0;transform:rotate(var(--a)) translateY(calc(var(--r) * -1))
+      rotate(calc(var(--a) * -1)) scale(.2)}
+    30%{opacity:1;transform:rotate(var(--a)) translateY(calc(var(--r) * -1))
+      rotate(calc(var(--a) * -1)) scale(1.3)}
+    100%{opacity:.85;transform:rotate(var(--a)) translateY(calc(var(--r) * -1))
+      rotate(calc(var(--a) * -1)) scale(1)}}
+  .orb i{position:absolute;left:50%;top:50%;display:block;background:#fff;border-radius:3px}
+  .orb i.hz{width:calc(var(--s,26px) * 4.6);height:2.5px;transform:translate(-50%,-50%);
+    box-shadow:0 0 14px 3px var(--c,#FFE9A8)}
+  .orb i.vt{width:2.5px;height:calc(var(--s,26px) * 2.2);transform:translate(-50%,-50%);
+    box-shadow:0 0 10px 2px var(--c,#FFE9A8)}
+
+  /* --- big horizontal streaks, kept for the top tiers --- */
+  .streak{position:absolute;top:50%;height:3px;opacity:0;border-radius:3px;
+    background:linear-gradient(90deg,transparent,#fff 35%,#fff 65%,transparent);
+    box-shadow:0 0 22px 5px var(--c,#FFE9A8)}
+  .streak.go{animation:streakOut .85s cubic-bezier(.15,.85,.3,1) forwards}
+  @keyframes streakOut{0%{opacity:0;transform:scaleX(.1)}
+    28%{opacity:1;transform:scaleX(1.1)}100%{opacity:0;transform:scaleX(1)}}
+
+  /* --- core burst + sparks --- */
   .core{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;
     border-radius:50%;opacity:0;pointer-events:none;z-index:2;
     background:radial-gradient(circle,#fff 0%,#FFF0BE 26%,rgba(255,214,120,.55) 46%,transparent 72%)}
@@ -160,8 +216,6 @@
   @keyframes coreblast{0%{opacity:0;transform:scale(.15)}
     14%{opacity:1;transform:scale(1.5)}42%{opacity:.85;transform:scale(2.6)}
     100%{opacity:0;transform:scale(4.6)}}
-
-  /* ---- sparkle particles ---- */
   .spark{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;
     background:#FFE9A8;box-shadow:0 0 8px 2px rgba(255,220,150,.9);opacity:0;
     pointer-events:none;z-index:3}
@@ -170,33 +224,7 @@
     12%{opacity:1}
     100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.15)}}
 
-  /* ---- side flares (walkout) ---- */
-  .flarefield{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
-  .fl{position:absolute;top:50%;width:var(--s,30px);height:var(--s,30px);opacity:0;
-    border-radius:50%;
-    background:radial-gradient(circle,#fff 0%,#fff 18%,var(--c,#FFE9A8) 40%,rgba(255,220,140,0) 72%)}
-  .fl i{position:absolute;left:50%;top:50%;display:block;background:#fff;border-radius:3px;
-    transform-origin:center}
-  .fl i.hz{width:calc(var(--s,30px)*5.2);height:3px;transform:translate(-50%,-50%);
-    box-shadow:0 0 16px 4px var(--c,#FFE9A8)}
-  .fl i.vt{width:3px;height:calc(var(--s,30px)*2.6);transform:translate(-50%,-50%);
-    box-shadow:0 0 12px 3px var(--c,#FFE9A8)}
-  .fl i.d1{width:calc(var(--s,30px)*2.1);height:2px;transform:translate(-50%,-50%) rotate(38deg);
-    box-shadow:0 0 10px 2px var(--c,#FFE9A8);opacity:.75}
-  .fl i.d2{width:calc(var(--s,30px)*2.1);height:2px;transform:translate(-50%,-50%) rotate(-38deg);
-    box-shadow:0 0 10px 2px var(--c,#FFE9A8);opacity:.75}
-  .flarefield.fire .fl{animation:flarepop .78s cubic-bezier(.14,.86,.28,1) forwards}
-  @keyframes flarepop{
-    0%{opacity:0;transform:translateY(-50%) scale(.08)}
-    26%{opacity:1;transform:translateY(-50%) scale(1.32)}
-    58%{opacity:.92;transform:translateY(-50%) scale(1)}
-    100%{opacity:0;transform:translateY(-50%) scale(1.45)}}
-  .bloom{position:absolute;left:50%;top:50%;width:320px;height:320px;margin:-160px 0 0 -160px;
-    border-radius:50%;opacity:0;pointer-events:none;z-index:1;filter:blur(30px)}
-  .flarefield.fire .bloom{animation:bloomup 1s ease-out forwards}
-  @keyframes bloomup{0%{opacity:0;transform:scale(.3)}42%{opacity:.6}100%{opacity:0;transform:scale(2)}}
-
-  /* ---- pack + shards ---- */
+  /* --- pack + shards --- */
   .thepack{position:relative;z-index:4;width:184px;height:258px;margin:0 auto;border-radius:8px;
     cursor:pointer;background:linear-gradient(160deg,#1E4162 0%,#0A1E33 55%,#17364F 100%);
     border:1px solid rgba(217,162,39,.45);
@@ -223,55 +251,45 @@
   .cardslot{position:relative;z-index:5;min-height:356px;display:flex;align-items:center;
     justify-content:center}
   .hexskin{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='26' viewBox='0 0 30 26'%3E%3Cpath d='M15 0l7.5 4.3v8.7L15 17.3 7.5 13V4.3z' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1'/%3E%3C/svg%3E")}
+  .sticker{height:100%;max-height:118px;width:auto;max-width:88%;object-fit:contain;
+    display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+  .consArt .sticker{max-height:100px}
 
   .fut{position:relative;width:252px;height:352px;opacity:0;border-radius:7px;
-    padding:18px 16px 14px;display:flex;flex-direction:column;overflow:hidden;
-    box-shadow:0 22px 55px rgba(0,0,0,.65)}
+    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 22px 55px rgba(0,0,0,.65)}
   .fut.in{animation:walkout .82s cubic-bezier(.14,.9,.24,1) forwards}
   @keyframes walkout{0%{opacity:0;transform:translateY(56px) scale(.78)}
     55%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
-  .fut .gloss{position:absolute;inset:0;pointer-events:none;
+  .fut .gloss{position:absolute;inset:0;pointer-events:none;z-index:2;
     background:linear-gradient(118deg,transparent 40%,rgba(255,255,255,.16) 48%,transparent 55%)}
   .fut.matte .gloss{display:none}
 
-  /* --- match card: FIFA 13 panelling --- */
-  .fut{padding:0}
   .futTop{position:relative;z-index:1;display:flex;align-items:stretch;
     background:rgba(0,0,0,.16);border-bottom:1px solid rgba(0,0,0,.22)}
   .futL{position:relative;padding:15px 10px 12px 16px;min-width:104px;
-    background:rgba(255,255,255,.10);
-    clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
+    background:rgba(255,255,255,.10);clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
   .futL b{display:block;font:800 36px/.86 ui-monospace,Menlo,monospace;
     font-variant-numeric:tabular-nums;letter-spacing:-.035em}
   .futL span{display:block;margin-top:5px;font:800 11px/1 ui-monospace,Menlo,monospace;
     letter-spacing:.16em;opacity:.8}
   .futR{flex:1;padding:15px 15px 12px 4px;text-align:right;display:flex;
     flex-direction:column;justify-content:center}
-  .futR b{display:block;font:800 19px/1.05 system-ui,sans-serif;letter-spacing:.01em;
-    text-transform:uppercase}
+  .futR b{display:block;font:800 19px/1.05 system-ui,sans-serif;text-transform:uppercase}
   .futR span{display:block;margin-top:5px;font:700 9.5px/1.3 ui-monospace,Menlo,monospace;
     letter-spacing:.13em;text-transform:uppercase;opacity:.75}
-
-  .sticker{height:100%;max-height:118px;width:auto;max-width:88%;object-fit:contain;
-    display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
-  .consArt .sticker{max-height:100px}
   .futMid{position:relative;z-index:1;flex:1;display:flex;align-items:center;
-    justify-content:center;font-size:74px;line-height:1;
-    background:rgba(255,255,255,.05)}
+    justify-content:center;font-size:74px;line-height:1;background:rgba(255,255,255,.05)}
   .futMid .opp{position:absolute;right:12px;bottom:9px;text-align:right;
     font:700 9px/1.35 ui-monospace,Menlo,monospace;letter-spacing:.1em;
     text-transform:uppercase;opacity:.62}
   .futMid .opp b{display:block;font:800 15px/1 ui-monospace,Menlo,monospace;opacity:.95}
-
   .futStats{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;
-    background:rgba(0,0,0,.42);border-top:1px solid rgba(255,255,255,.12);
-    padding:9px 10px 10px}
+    background:rgba(0,0,0,.42);border-top:1px solid rgba(255,255,255,.12);padding:9px 10px 10px}
   .futCell{display:flex;align-items:baseline;gap:6px;padding:4px 5px}
   .futCell b{font:800 15px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
     min-width:46px;text-align:right}
   .futCell span{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.11em;opacity:.72}
 
-  /* --- consumable card --- */
   .cons{position:relative;width:240px;height:344px;opacity:0;border-radius:6px;
     padding:8px;display:flex;flex-direction:column;overflow:hidden;
     box-shadow:0 20px 46px rgba(0,0,0,.62)}
@@ -299,12 +317,13 @@
   /* ---- tiers ---- */
   .fut.bronzeC{background:#6B4A2A;background-image:linear-gradient(160deg,#8A6039,#4E3520 46%,#75512E);
     color:#E8D5C2}
-  .fut.bronze{background:linear-gradient(160deg,#CB8C4C,#7A4A22 46%,#B5763B);color:#FCEDDC}
-  .fut.silver{background:linear-gradient(160deg,#E6ECF2,#9AA7B4 46%,#D1DAE3);color:#222B35}
-  .fut.gold{background:linear-gradient(160deg,#F3D67C,#B08423 46%,#E6C466);color:#392A05}
+  .fut.bronze{background:linear-gradient(160deg,#E0A868,#7A4A22 46%,#C98A4B);color:#FFF3E4}
+  .fut.silverC{background:#7C848D;background-image:linear-gradient(160deg,#98A0A9,#5C646D 46%,#848C95);
+    color:#EDF1F5}
+  .fut.silver{background:linear-gradient(160deg,#F0F5FA,#9AA7B4 46%,#D8E1EA);color:#1F2833}
+  .fut.gold{background:linear-gradient(160deg,#FBE293,#B08423 46%,#EDCB6E);color:#392A05}
   .fut.totw{background:linear-gradient(163deg,#2E2E2E 0%,#080808 46%,#1F1F1F 100%);
     color:#F0C75E;border:1px solid rgba(240,199,94,.55)}
-  .fut.totw .scoreline,.fut.totw .futName{border-color:rgba(240,199,94,.5)}
   .fut.blue{background:linear-gradient(160deg,#84D6FF,#1B5C8A 46%,#5CB6EA);color:#05202D}
   .fut.orange{background:linear-gradient(160deg,#FFB35F,#B24A08 46%,#F18C34);color:#2C1303}
   .fut.purple{background:linear-gradient(160deg,#C89DFF,#4B2A86 46%,#A478E9);color:#1C0E33}
@@ -438,7 +457,7 @@
     <div class="card gold"><h3>Hidden from the league</h3>
       <p>Only at <b>?pack=1</b>. Live version fires once per week per person.</p></div>
     <div class="card"><h3>Weekly results</h3>
-      <p>Worst to best. TOTW is reserved for the single highest scorer in the league that week.</p>
+      <p>Worst to best. Flares wrap the card and grow with the result.</p>
       <div id="demoBtns"></div></div>
     <div class="card"><h3>Milestones</h3><p>Never fire from a normal week.</p>
       <div id="demoSpecial"></div></div>
@@ -814,58 +833,83 @@ function renderAll(){
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
 }
 
-Promise.all([
-  fetch("data/league.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null),
-  fetch("data/weekly.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null)
-]).then(([lg,wk])=>{
-  LIVE = lg; WEEKLY = wk;
-  const f = document.getElementById("freshness");
-  if(lg && lg.fetchedAt){
-    const when = new Date(lg.fetchedAt);
-    f.textContent = "League data updated " + when.toLocaleString(undefined,
-      {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-    if((Date.now()-when.getTime())/36e5 > 48) f.className = "stale";
-  } else {
-    f.textContent = "Live data not loaded yet \u2014 history below is complete.";
-  }
-  renderAll();
-  maybeAutoPack();
-});
+renderAll();
 
 
 /* ================= PACK OPENING ================= */
-const TIER = {
-  bronzeC:{ pairs:1, size:18, col:"#C79A6A", spread:78,  step:70, label:"Common" },
-  bronze: { pairs:2, size:24, col:"#E5B074", spread:96,  step:62, label:"Bronze" },
-  silver: { pairs:4, size:32, col:"#EAF1F8", spread:112, step:54, label:"Silver" },
-  gold:   { pairs:6, size:42, col:"#FFE9A8", spread:126, step:46, label:"Gold"   },
-  totw:   { pairs:9, size:54, col:"#FFD98A", spread:140, step:40, label:"Team of the Week" },
-  blue:   { pairs:10,size:54, col:"#BFEBFF", spread:144, step:39, label:"Milestone" },
-  orange: { pairs:11,size:58, col:"#FFD2A0", spread:148, step:38, label:"Milestone" },
-  purple: { pairs:11,size:58, col:"#E2C9FF", spread:148, step:38, label:"Milestone" }
-};
 
+/* ---- group-chat stickers ----
+   Filenames must match the repo exactly. If one is missing the card falls back
+   to an emoji and logs the failing path to the console. */
 const STICKERS = {
-  sob:     "img/IMG_8866.jpeg",  // crying, wiping tears
-  copium:  "img/IMG_8867.jpeg",  // crying but smiling
-  chair:   "img/IMG_8868.jpeg",  // folding chair
-  point:   "img/IMG_8869.jpeg",  // pointing
-  pout:    "img/IMG_8870.jpeg",  // sad puffy face
-  firepit: "img/IMG_8871.jpeg"   // sitting over the fire
+  sob:     { src:"img/IMG_8866.jpeg", fb:"\u{1F940}" },
+  copium:  { src:"img/IMG_8867.jpeg", fb:"\u{1FAE1}" },
+  chair:   { src:"img/IMG_8868.jpeg", fb:"\u{1FA91}" },
+  point:   { src:"img/IMG_8869.jpeg", fb:"\u{1FAF5}" },
+  pout:    { src:"img/IMG_8870.jpeg", fb:"\u{1F62E}\u200D\u{1F4A8}" },
+  firepit: { src:"img/IMG_8871.jpeg", fb:"\u{1F525}" }
 };
-const S_ = k => "img:" + k;
-const artHTML = a => (typeof a === "string" && a.slice(0,4) === "img:")
-  ? `<img class="sticker" src="${STICKERS[a.slice(4)] || ""}" alt="">`
-  : (a || "");
 
+/* try given path -> lowercase -> .png -> emoji */
+window.stickerFail = function(img){
+  const step = Number(img.dataset.step || 0);
+  const src  = img.getAttribute("src");
+  const parts = src.split("/");
+  const file = parts[parts.length - 1];
+  const dir  = parts.slice(0, -1).join("/");
+  if(step === 0){
+    img.dataset.step = "1";
+    img.src = dir + "/" + file.toLowerCase();
+    return;
+  }
+  if(step === 1){
+    img.dataset.step = "2";
+    img.src = dir + "/" + file.replace(/\.[^.]+$/, ".png");
+    return;
+  }
+  console.warn("[bromigos] sticker missing:", src);
+  const span = document.createElement("span");
+  span.textContent = img.dataset.fb || "";
+  span.style.fontSize = "72px";
+  img.replaceWith(span);
+};
+
+const S_ = k => "img:" + k;
+const artHTML = a => {
+  if(typeof a === "string" && a.slice(0,4) === "img:"){
+    const s = STICKERS[a.slice(4)];
+    if(!s) return "";
+    return `<img class="sticker" src="${s.src}" data-fb="${s.fb}" alt="" onerror="stickerFail(this)">`;
+  }
+  return a || "";
+};
+
+/* ---- tier presets: orbs wrap the card, streaks and rays only at the top ---- */
+const TIER = {
+  bronzeC:{ orbs:4,  size:16, r:150, spin:8,  dur:.95, streaks:0, rayA:0,   col:"#C79A6A" },
+  bronze: { orbs:6,  size:20, r:165, spin:11, dur:1.0, streaks:0, rayA:.18, col:"#E5B074" },
+  silverC:{ orbs:8,  size:23, r:175, spin:13, dur:1.05,streaks:0, rayA:.22, col:"#CFD8E1" },
+  silver: { orbs:11, size:28, r:185, spin:16, dur:1.1, streaks:2, rayA:.32, col:"#EAF1F8" },
+  gold:   { orbs:15, size:34, r:195, spin:20, dur:1.2, streaks:2, rayA:.46, col:"#FFE9A8" },
+  totw:   { orbs:22, size:40, r:205, spin:26, dur:1.35,streaks:4, rayA:.62, col:"#FFD98A" },
+  blue:   { orbs:24, size:42, r:210, spin:28, dur:1.4, streaks:4, rayA:.66, col:"#BFEBFF" },
+  orange: { orbs:26, size:44, r:212, spin:30, dur:1.45,streaks:4, rayA:.7,  col:"#FFD2A0" },
+  purple: { orbs:26, size:44, r:212, spin:30, dur:1.45,streaks:4, rayA:.7,  col:"#E2C9FF" }
+};
 
 const PACK = (function(){
+  try{
   const wrap = document.createElement("div");
   wrap.className = "packwrap";
   wrap.innerHTML = `
     <button class="skipb" id="pkSkip">Skip</button>
     <div class="packstage">
-      <div class="flarefield" id="pkFlares"></div>
+      <div class="fx">
+        <div class="rays" id="pkRays"></div>
+        <div class="halo" id="pkHalo"></div>
+        <div class="ring" id="pkRing"></div>
+        <div id="pkStreaks"></div>
+      </div>
       <div class="core" id="pkCore"></div>
       <div class="sparks" id="pkSparks"></div>
       <div class="cardslot" id="pkSlot"></div>
@@ -874,31 +918,68 @@ const PACK = (function(){
     </div>`;
   document.body.appendChild(wrap);
 
-  const slot=wrap.querySelector("#pkSlot"), field=wrap.querySelector("#pkFlares"),
-        core=wrap.querySelector("#pkCore"), sparks=wrap.querySelector("#pkSparks"),
-        dots=wrap.querySelector("#pkDots"), tap=wrap.querySelector("#pkTap");
+  const slot=wrap.querySelector("#pkSlot"), ring=wrap.querySelector("#pkRing"),
+        rays=wrap.querySelector("#pkRays"), halo=wrap.querySelector("#pkHalo"),
+        strk=wrap.querySelector("#pkStreaks"), core=wrap.querySelector("#pkCore"),
+        sparks=wrap.querySelector("#pkSparks"), dots=wrap.querySelector("#pkDots"),
+        tap=wrap.querySelector("#pkTap");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const wait = ms => new Promise(r=>setTimeout(r, reduce?Math.min(ms,60):ms));
   let cards=[], idx=0, done=null, busy=false;
 
-  function flares(tier){
+  function lightshow(tier){
     const t = TIER[tier] || TIER.silver;
-    field.classList.remove("fire");
-    let html = `<span class="bloom" style="background:radial-gradient(circle,${t.col},transparent 70%)"></span>`;
-    for(let i=0;i<t.pairs;i++){
-      const grow = 0.5 + (i/Math.max(t.pairs-1,1))*0.95;
-      const s = Math.round(t.size*grow);
-      const off = t.spread + i*t.step;
-      const drift = (i%2 ? -1 : 1) * (14 + i*9);
-      ["left","right"].forEach(side=>{
-        html += `<span class="fl" style="--s:${s}px;--c:${t.col};${side}:50%;
-          margin-${side}:${off}px;margin-top:${drift}px;animation-delay:${i*84}ms">
-          <i class="hz"></i><i class="vt"></i><i class="d1"></i><i class="d2"></i></span>`;
-      });
+
+    // spokes
+    rays.classList.remove("go");
+    rays.style.setProperty("--rayA", t.rayA);
+    rays.style.background = t.rayA
+      ? `repeating-conic-gradient(from 0deg at 50% 50%, ${t.col} 0deg 2.2deg, transparent 2.2deg 11deg)`
+      : "none";
+
+    // halo
+    halo.classList.remove("go");
+    halo.style.setProperty("--c", t.col);
+
+    // orbiting flares, distributed all the way around the card
+    ring.classList.remove("go");
+    ring.style.setProperty("--ringDur", t.dur + "s");
+    ring.style.setProperty("--spin", t.spin + "deg");
+    let html = "";
+    for(let i = 0; i < t.orbs; i++){
+      const a = (360 / t.orbs) * i + (i % 2 ? 6 : -6);
+      // sides sit wider than top/bottom so the ring hugs the card shape
+      const rad = a * Math.PI / 180;
+      const ell = t.r * (0.66 + 0.34 * Math.abs(Math.sin(rad)));
+      const s = Math.round(t.size * (0.7 + 0.3 * Math.abs(Math.sin(rad))));
+      const delay = Math.round(Math.abs(((i / t.orbs) * 2 - 1)) * 260);
+      html += `<span class="orb" style="--a:${a.toFixed(1)}deg;--r:${Math.round(ell)}px;
+        --s:${s}px;--c:${t.col};--od:${delay}ms;--pd:${(0.7 + (i%3)*0.08).toFixed(2)}s">
+        <i class="hz"></i><i class="vt"></i></span>`;
     }
-    field.innerHTML = html;
-    void field.offsetWidth;
-    field.classList.add("fire");
+    ring.innerHTML = html;
+
+    // wide horizontal streaks for the good stuff
+    let sh = "";
+    for(let i = 0; i < t.streaks; i++){
+      const side = i % 2 ? "right" : "left";
+      const row = Math.floor(i / 2);
+      const w = 210 + row * 90;
+      sh += `<span class="streak go" style="--c:${t.col};${side}:50%;
+        margin-${side}:${150 + row * 60}px;width:${w}px;
+        margin-top:${row ? (row % 2 ? -58 : 58) : 0}px;
+        animation-delay:${140 + row * 110}ms"></span>`;
+    }
+    strk.innerHTML = sh;
+
+    void ring.offsetWidth;
+    rays.classList.add("go"); halo.classList.add("go"); ring.classList.add("go");
+  }
+
+  function clearFx(){
+    ring.classList.remove("go"); ring.innerHTML = "";
+    rays.classList.remove("go"); halo.classList.remove("go");
+    strk.innerHTML = "";
   }
 
   function packFace(label){
@@ -916,11 +997,11 @@ const PACK = (function(){
 
   function fireSparks(){
     let h="";
-    for(let i=0;i<34;i++){
-      const a=Math.random()*Math.PI*2, d=90+Math.random()*230;
+    for(let i=0;i<38;i++){
+      const a=Math.random()*Math.PI*2, d=90+Math.random()*250;
       h+=`<span class="spark" style="--x:${Math.round(Math.cos(a)*d)}px;
         --y:${Math.round(Math.sin(a)*d)}px;--t:${(0.8+Math.random()*0.7).toFixed(2)}s;
-        animation-delay:${Math.round(Math.random()*180)}ms"></span>`;
+        animation-delay:${Math.round(Math.random()*200)}ms"></span>`;
     }
     sparks.innerHTML=h; sparks.classList.remove("go");
     void sparks.offsetWidth; sparks.classList.add("go");
@@ -936,8 +1017,7 @@ const PACK = (function(){
         <span class="opp"><b>${esc(c.theirs)}</b>${esc(c.oppName||"OPP")}</span></div>
       <div class="futStats">
         ${(c.stats||[]).map(s=>`<div class="futCell"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join("")}
-      </div>
-    </div>`;
+      </div></div>`;
 
   const consCard = c => `<div class="cons ${c.rarity} hexskin in">
       <div class="consHead"><span class="consTab">${c.icon||"\u2605"}</span>
@@ -946,8 +1026,7 @@ const PACK = (function(){
       <div class="consName">${esc(c.title)}</div>
       <div class="consDesc">${esc(c.desc||"")}</div>
       <div class="consFoot"><div class="v">${esc(c.value||"")}</div></div>
-      <div class="rarityTag">${esc(c.rarityLabel||"")}</div>
-    </div>`;
+      <div class="rarityTag">${esc(c.rarityLabel||"")}</div></div>`;
 
   const faceOf = c => c.type==="cons" ? consCard(c) : matchCard(c);
   const paintDots = () =>
@@ -955,9 +1034,10 @@ const PACK = (function(){
 
   async function reveal(i){
     idx=i; const c=cards[i];
-    slot.innerHTML="";
-    flares(c.flare || c.tier || (c.rarity==="rare"?"gold":"bronze"));
-    await wait(360);
+    slot.innerHTML=""; clearFx();
+    const tier = c.flare || c.tier || (c.rarity==="rare"?"gold":"silverC");
+    lightshow(tier);
+    await wait(300);
     slot.innerHTML=faceOf(c); paintDots();
     tap.textContent = i>=cards.length-1 ? "Tap to close" : "Tap for next";
   }
@@ -969,7 +1049,7 @@ const PACK = (function(){
     if(s) s.classList.add("go");
     core.classList.remove("go"); void core.offsetWidth; core.classList.add("go");
     fireSparks();
-    await wait(500);
+    await wait(470);
     slot.innerHTML="";
     await reveal(0);
     busy=false;
@@ -984,7 +1064,7 @@ const PACK = (function(){
 
   function close(){
     wrap.classList.remove("on");
-    field.classList.remove("fire"); field.innerHTML="";
+    clearFx();
     core.classList.remove("go"); sparks.classList.remove("go"); sparks.innerHTML="";
     slot.innerHTML=""; document.body.style.overflow="";
     if(done){ const d=done; done=null; d(); }
@@ -997,41 +1077,35 @@ const PACK = (function(){
 
   return { open(label,list){
     cards=list; idx=-1; busy=false;
-    field.classList.remove("fire"); field.innerHTML="";
-    sparks.innerHTML=""; core.classList.remove("go");
+    clearFx(); sparks.innerHTML=""; core.classList.remove("go");
     slot.innerHTML=packFace(label); dots.innerHTML="";
     tap.textContent="Tap to open";
     wrap.classList.add("on"); document.body.style.overflow="hidden";
     return new Promise(r=>{ done=r; });
   }};
+  }catch(err){
+    console.warn("[bromigos] pack unavailable:", err && err.message);
+    return { open(){ return Promise.resolve(); } };
+  }
 })();
 
-/* ---- group-chat stickers ----
-   Change the filenames here if they differ in the repo. Path is relative to index.html. */
-/* meme-current art, rotated weekly */
+/* ---- art ---- */
 const ART = {
-  win: ["\u{1FAE1}","\u{1F90C}","\u{1F5FF}","\u2728"],          // routine win, rotates
-  loss:[S_("sob"),"\u{1F940}","\u{1FAE0}","\u{1F62E}\u200D\u{1F4A8}"], // routine loss, rotates
-  low: ["\u{1F480}","\u{1FAE0}","\u{1F921}","\u{1F9CA}"]        // league low, rotates
+  winTight: ["\u{1FAE1}","\u{1F90C}","\u2728","\u{1F5FF}"],
+  winMod:   ["\u{1F621}","\u{1F4AF}","\u{1F525}","\u{1F92C}"],
+  lossMod:  [S_("sob"),"\u{1F940}","\u{1FAE0}","\u{1F62D}"],
+  low:      ["\u{1F480}","\u{1FAE0}","\u{1F921}","\u{1F9CA}"]
 };
-/* fixed art for the outcomes that earn their own picture */
 const FIXED = {
-  totw:      "\u{1F451}",   // league high
-  blowoutW:  S_("firepit"),  // won big
-  tightW:    S_("copium"),   // won close
-  tightL:    S_("pout"),     // lost close
-  blowoutL:  S_("chair")     // lost big
+  totw:     "\u{1F451}",     // league high
+  blowoutW: S_("firepit"),   // won big
+  tightL:   S_("copium"),    // lost close
+  blowoutL: S_("chair")      // lost big
 };
 const BIG = 25, TIGHT = 10;
 
-/* rotating flavour */
 const pick = (a,wk) => a[(Number(wk)||0) % a.length];
 const FLAVOR = {
-  high:["Nobody came close","The rest of the league is embarrassed","Peaked, all downhill now","Sit down everyone"],
-  big: ["Ran up the score","Never in doubt","Merciless","Cruel and unnecessary"],
-  win: ["A win is a win","Survived","Ugly but it counted","Take it and move on"],
-  loss:["Better luck never","Straight to the archive","Outscored and outclassed","Rough one"],
-  low: ["Worst in the league","Historic, wrong direction","Did you set a lineup","The bench outscored you"],
   none:["Neither good nor bad enough to mention. The worst outcome.",
         "Aggressively average. No card, no shame, no point.",
         "You did not win anything and you did not lose loudly enough to matter.",
@@ -1044,22 +1118,19 @@ function buildWeekCards(w, wk){
   const margin = Math.abs(w.myScore - w.oppScore);
   const mg = margin.toFixed(1);
   let tier, art, matte=false;
+
   if(w.leagueHigh){
     tier="totw"; art=FIXED.totw;
-  } else if(w.leagueLow){
-    tier="bronzeC"; matte=true;
-    art = margin >= BIG ? FIXED.blowoutL : pick(ART.low, wk);
   } else if(won){
-    tier = margin >= BIG ? "gold" : "silver";
-    art  = margin >= BIG ? FIXED.blowoutW
-         : margin <  TIGHT ? FIXED.tightW
-         : pick(ART.win, wk);
+    if(margin < TIGHT){ tier="silver";  art=pick(ART.winTight,wk); }
+    else if(margin >= BIG){ tier="gold"; art=FIXED.blowoutW; }
+    else { tier="gold"; art=pick(ART.winMod,wk); }
   } else {
-    tier="bronze";
-    art  = margin >= BIG ? FIXED.blowoutL
-         : margin <  TIGHT ? FIXED.tightL
-         : pick(ART.loss, wk);
+    if(margin < TIGHT){ tier="silverC"; art=FIXED.tightL; matte=true; }
+    else if(margin >= BIG || w.leagueLow){ tier="bronzeC"; art=FIXED.blowoutL; matte=true; }
+    else { tier="bronze"; art=pick(ART.lossMod,wk); }
   }
+  if(w.leagueLow && margin < BIG){ tier="bronzeC"; art=pick(ART.low,wk); matte=true; }
 
   const stats = [
     [(won?"+":"\u2212")+mg, "MRG"],
@@ -1073,8 +1144,7 @@ function buildWeekCards(w, wk){
     mine:w.myScore.toFixed(1), theirs:w.oppScore.toFixed(1),
     pos: won ? "WIN" : "LOSS",
     vs:(won?"def. ":"lost to ")+w.opponent,
-    oppName: w.opponent,
-    title:w.manager||ME||"You",
+    oppName: w.opponent, title:w.manager||ME||"You",
     stats, flare:tier });
 
   (w.awards||[]).forEach(a => out.push({
@@ -1085,14 +1155,14 @@ function buildWeekCards(w, wk){
     icon: a.icon || (a.good===false ? "\u2620\uFE0F" : "\u2605"),
     art: a.art || a.emoji || "\u{1F3C6}",
     title: a.title, desc: a.desc || "", value: a.stat,
-    flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silver")
+    flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silverC")
   }));
 
   if(!(w.awards||[]).length){
     out.push({ type:"cons", rarity:"common", rarityLabel:"Common",
       kind:"Weekly Superlative", icon:"\u2796", art:"\u{1F5FF}",
       title:"No Awards", desc:pick(FLAVOR.none,wk), value:"Nothing earned",
-      flare:"bronze" });
+      flare:"silverC" });
   }
   return out;
 }
@@ -1111,38 +1181,37 @@ function maybeAutoPack(){
 
 if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
-  const base = {manager:"Scotty", rank:null, bench:null, record:null, high:null, projected:null};
+  const base = {manager:"Scotty"};
   const S = {
-    "Bronze common: league low": {...base,myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
-      rank:10,bench:52.1,record:"0-1",high:14.2,projected:112.6,
-      awards:[{title:"Walking Disaster",desc:"Lowest score in the league. Not close, either.",stat:"78.4 points",good:false,emoji:"\u{1F480}"},
-              {title:"Punching Bag",desc:"Nobody had more points hung on them. You were the schedule's gift.",stat:"139.1 allowed",good:false,emoji:"\u{1F94A}"}]},
-    "Bronze: normal loss": {...base,myScore:109.2,oppScore:121.6,opponent:"Ryan",
-      rank:7,bench:41.3,record:"0-1",high:26.8,projected:118.9,
-      awards:[{title:"Bench Champion",desc:"Your bench would have won the game. You did not play them.",stat:"41.3 wasted",good:false,emoji:"\u{1FA91}"}]},
-    "Bronze: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",
+    "Bronze common: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",
       rank:9,bench:22.4,record:"0-1",high:19.3,projected:115.2,
-      awards:[{title:"Chair Recipient",desc:"Lost by more than anyone else this week. It was not competitive.",stat:"Lost by 42.6",good:false,emoji:"\u{1FA91}"}]},
-    "Silver: tight win": {...base,myScore:118.9,oppScore:114.2,opponent:"Austin",
+      awards:[{title:"Chair Recipient",desc:"Lost by more than anyone else. It was not competitive.",stat:"Lost by 42.6",good:false,art:S_("chair")}]},
+    "Bronze rare: moderate loss": {...base,myScore:109.2,oppScore:124.6,opponent:"Ryan",
+      rank:7,bench:41.3,record:"0-1",high:26.8,projected:118.9,
+      awards:[{title:"Bench Champion",desc:"Your bench would have won the game. You did not play them.",stat:"41.3 wasted",good:false,art:S_("pout")}]},
+    "Silver common: tight loss": {...base,myScore:117.4,oppScore:122.0,opponent:"Cody",
+      rank:6,bench:12.8,record:"0-1",high:27.1,projected:119.4,
+      awards:[{title:"Heartbreaker",desc:"Lost by less than a garbage time touchdown. Sleep well.",stat:"Lost by 4.6",rare:false,art:S_("copium")}]},
+    "Silver rare: tight win": {...base,myScore:118.9,oppScore:114.2,opponent:"Austin",
       rank:5,bench:15.2,record:"1-0",high:24.8,projected:117.0,
       awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 4.7",rare:false,emoji:"\u{1F630}"}]},
-    "Silver: normal win": {...base,myScore:124.4,oppScore:117.9,opponent:"Cody",
-      rank:4,bench:18.9,record:"1-0",high:29.4,projected:120.1,
-      awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 6.5",rare:false,emoji:"\u{1F630}"}]},
-    "Gold: blowout win": {...base,myScore:142.0,oppScore:104.8,opponent:"Bo",
+    "Gold rare: moderate win": {...base,myScore:131.6,oppScore:113.1,opponent:"Andy",
+      rank:3,bench:16.7,record:"1-0",high:28.9,projected:121.8,
+      awards:[{title:"Comfortable",desc:"Never really in danger. Boring, effective, deeply annoying.",stat:"Won by 18.5",rare:true,emoji:"\u{1F4AF}"}]},
+    "Gold rare: blowout win": {...base,myScore:142.0,oppScore:104.8,opponent:"Bo",
       rank:2,bench:12.4,record:"1-0",high:33.1,projected:125.7,
       awards:[{title:"Blowout King",desc:"Biggest margin of the week. It stopped being a game by noon.",stat:"Won by 37.2",rare:true,art:S_("point")}]},
-    "TOTW: highest scorer": {...base,myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
+    "TOTW: highest scorer": {...base,myScore:151.8,oppScore:118.2,opponent:"Justin",leagueHigh:true,
       rank:1,bench:9.8,record:"1-0",high:38.6,projected:127.3,
       awards:[{title:"Scoring Machine",desc:"Most points in the league. Everyone else played for second.",stat:"151.8 points",rare:true,emoji:"\u{1F525}"}]}
   };
   document.getElementById("demoBtns").innerHTML = Object.keys(S)
-    .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 13.5px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer">${k}</button>`).join("");
+    .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:13px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 13px/1 system-ui,sans-serif;letter-spacing:.04em;cursor:pointer">${k}</button>`).join("");
   document.querySelectorAll("#demoBtns .demoGo").forEach(b=>{
     b.onclick = () => PACK.open("Week 1", buildWeekCards(S[b.dataset.k], 1)); });
   const SP={blue:"Blue: clinched playoffs",orange:"Orange: 1 seed",purple:"Purple: first-round bye"};
   document.getElementById("demoSpecial").innerHTML = Object.entries(SP)
-    .map(([t,l])=>`<button class="spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;padding:14px;border:1px solid #2C4257;border-radius:3px;background:transparent;color:var(--chalk);font:700 13px/1 system-ui,sans-serif;cursor:pointer">${l}</button>`).join("");
+    .map(([t,l])=>`<button class="spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;padding:13px;border:1px solid #2C4257;border-radius:3px;background:transparent;color:var(--chalk);font:700 13px/1 system-ui,sans-serif;cursor:pointer">${l}</button>`).join("");
   document.querySelectorAll(".spGo").forEach(b=>{
     b.onclick = () => PACK.open("Milestone",[{type:"match",tier:b.dataset.t,flare:b.dataset.t,
       art:"\u{1F3DF}\uFE0F",mine:"1",theirs:"10",pos:"SEED",vs:"clinched",oppName:"teams",
@@ -1182,6 +1251,38 @@ function tick(){
   document.getElementById("s").textContent=String(Math.floor(diff/1000)).padStart(2,"0");
 }
 tick(); setInterval(tick,1000);
+
+/* Live data last: everything above already rendered from baked-in history,
+   so a failed or blocked fetch can never blank the page. */
+(function loadLive(){
+  const grab = (path) => {
+    try {
+      return fetch(path, {cache:"no-store"})
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
+    } catch (err) {
+      console.warn("[bromigos] cannot fetch", path, err && err.message);
+      return Promise.resolve(null);
+    }
+  };
+  Promise.all([grab("data/league.json"), grab("data/weekly.json")])
+    .then(([lg, wk]) => {
+      LIVE = lg; WEEKLY = wk;
+      const f = document.getElementById("freshness");
+      if(lg && lg.fetchedAt){
+        const when = new Date(lg.fetchedAt);
+        f.textContent = "League data updated " + when.toLocaleString(undefined,
+          {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+        if((Date.now()-when.getTime())/36e5 > 48) f.className = "stale";
+      } else {
+        f.textContent = "Live data not loaded yet \u2014 history below is complete.";
+      }
+      renderAll();
+      try { maybeAutoPack(); }
+      catch(e){ console.warn("[bromigos] pack skipped:", e && e.message); }
+    })
+    .catch(e => console.warn("[bromigos] live data failed:", e && e.message));
+})();
 </script>
 </body>
 </html>

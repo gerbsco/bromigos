@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-26T02:42:58.619Z",
+  "fetchedAt": "2026-08-26T12:01:25.508Z",
   "leagueId": "24869044",
   "season": "2026",
   "errors": [],
@@ -707,7 +707,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1787641637202,
+      "waiverLastExecutionDate": 1787728278400,
       "waiverProcessStatus": {}
     }
   },
@@ -1729,7 +1729,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1787641637202,
+      "waiverLastExecutionDate": 1787728278400,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -2611,7 +2611,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1787641637202,
+      "waiverLastExecutionDate": 1787728278400,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -6538,7 +6538,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 11,
+                          "rank": 10,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -9214,7 +9214,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 7,
+                          "rank": 6,
                           "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
@@ -10954,7 +10954,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 9,
+                          "rank": 8,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -12055,7 +12055,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 5,
+                          "rank": 7,
                           "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
@@ -15015,7 +15015,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 10,
+                          "rank": 9,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -16881,7 +16881,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 8,
+                          "rank": 11,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -22028,7 +22028,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 6,
+                          "rank": 5,
                           "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
@@ -24350,7 +24350,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1787641637202,
+      "waiverLastExecutionDate": 1787728278400,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -25365,7 +25365,7 @@
       "requestedMatchupPeriodId": 1,
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1787641637202,
+      "waiverLastExecutionDate": 1787728278400,
       "waiverProcessStatus": {}
     },
     "teams": [

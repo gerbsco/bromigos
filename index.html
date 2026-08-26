@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ultimo Bromigos — League HQ</title>
+<meta name="description" content="Ultimo Bromigos fantasy football league headquarters">
+<style>
+  :root{
+    --ink:#0E2438; --ink-2:#132C44; --paper:#FBF6EA; --rule:#C7BBA1;
+    --brass:#D9A227; --stamp:#B23A2F; --green:#4CAF7D; --text:#17222E;
+    --chalk:#EAE2CF; --dim:#93A6B8; --faint:#5D7086;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:var(--ink);
+    background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
+    color:var(--chalk);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:0 0 70px}
+  .wrap{max-width:660px;margin:0 auto;padding:0 14px}
+
+  header{padding:28px 0 14px;text-align:center}
+  .kicker{font:700 11px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--brass)}
+  h1{margin:10px 0 5px;font:800 clamp(28px,8.5vw,44px)/.94 system-ui,sans-serif;
+    letter-spacing:-.03em;text-transform:uppercase}
+  .sub{font-size:13.5px;color:var(--dim);margin:0}
+
+  .whoami{margin:16px 0 0;display:flex;gap:8px;align-items:center;justify-content:center;
+    flex-wrap:wrap}
+  .whoami label{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--faint)}
+  select{padding:10px 12px;border-radius:3px;border:1px solid #2C4257;background:var(--ink-2);
+    color:var(--chalk);font:600 14px/1 system-ui,sans-serif;max-width:100%}
+  select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+  .count{background:var(--ink-2);border:1px solid rgba(217,162,39,.3);border-radius:4px;
+    padding:18px 16px;margin:18px 0 4px;text-align:center}
+  .count .lbl{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--brass);margin-bottom:13px}
+  .clock{display:flex;justify-content:center;gap:6px}
+  .unit{flex:1;max-width:78px}
+  .unit b{display:block;font:800 clamp(23px,6.8vw,33px)/1 ui-monospace,Menlo,monospace;
+    color:var(--chalk);font-variant-numeric:tabular-nums}
+  .unit span{display:block;margin-top:5px;font:600 10px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  .when{margin:13px 0 0;font-size:13px;color:var(--dim)}
+
+  nav{display:flex;gap:5px;margin:16px 0 0;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  nav::-webkit-scrollbar{display:none}
+  nav button{flex:none;padding:11px 15px;border:1px solid #2C4257;border-radius:3px;
+    background:transparent;color:var(--dim);cursor:pointer;white-space:nowrap;
+    font:700 12.5px/1 system-ui,sans-serif;letter-spacing:.05em}
+  nav button[aria-selected=true]{background:var(--brass);border-color:var(--brass);color:#2A1C00}
+
+  .panel{display:none;padding-top:22px}
+  .panel.on{display:block}
+  h2{font:800 13px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--brass);margin:0 0 13px}
+  h2:not(:first-child){margin-top:32px}
+
+  .card{background:var(--ink-2);border-radius:4px;padding:16px;margin-bottom:11px;
+    border-left:3px solid #2C4257}
+  .card.gold{border-left-color:var(--brass)}
+  .card.red{border-left-color:var(--stamp)}
+  .card h3{margin:0 0 7px;font:800 16px/1.25 system-ui,sans-serif}
+  .card p{margin:0;font-size:14.5px;color:#BCCBD8;line-height:1.55}
+  .card p+p{margin-top:8px}
+  .plain{margin:11px 0;padding-left:20px}
+  .plain li{font-size:14px;color:#BCCBD8;line-height:1.7}
+
+  table{width:100%;border-collapse:collapse;margin-bottom:6px}
+  th{text-align:left;padding:0 6px 9px;font:700 10px/1.3 ui-monospace,Menlo,monospace;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid #2C4257}
+  th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+  td{padding:10px 6px;font-size:14px;border-bottom:1px solid rgba(234,226,207,.08);color:#CBD6E0}
+  td.n{font:600 13.5px/1.3 ui-monospace,Menlo,monospace}
+  tr.champ td{background:rgba(217,162,39,.09)}
+  tr.champ td:first-child{color:var(--brass);font-weight:700}
+  tr.you td{background:rgba(76,175,125,.10)}
+  .pos{color:var(--faint);font:700 12px/1 ui-monospace,Menlo,monospace;width:26px}
+  .who{display:block;font-size:11.5px;color:var(--faint);margin-top:2px}
+
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:9px}
+  .rule{background:var(--ink-2);border-radius:3px;padding:13px 14px;border-left:2px solid #2C4257}
+  .rule .k{font:700 9.5px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+  .rule .v{font:700 15px/1.3 system-ui,sans-serif;color:var(--chalk)}
+
+  .champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:9px;
+    margin-bottom:8px}
+  .ring{background:var(--ink-2);border-left:3px solid var(--brass);border-radius:3px;padding:12px 13px}
+  .ring .yr{display:block;font:800 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
+    color:var(--brass);margin-bottom:6px}
+  .ring .nm{display:block;font:800 15px/1.2 system-ui,sans-serif;color:var(--chalk)}
+  .ring .tm{display:block;margin-top:3px;font-size:11.5px;color:var(--faint);line-height:1.4}
+
+  .dos{background:var(--ink-2);border-radius:4px;padding:16px;margin-bottom:10px;
+    border-left:3px solid #2C4257}
+  .dos.ring2{border-left-color:var(--brass)}
+  .dos.you{border-left-color:var(--green)}
+  .dos .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .dos .nm{font:800 17px/1.2 system-ui,sans-serif;color:var(--chalk)}
+  .dos .rec{font:700 13px/1 ui-monospace,Menlo,monospace;color:var(--brass);flex:none}
+  .dos .sub2{margin:5px 0 0;font:500 11.5px/1.4 ui-monospace,Menlo,monospace;color:var(--faint)}
+  .dos .line{margin:11px 0 0;font-size:14px;color:#BCCBD8;line-height:1.5}
+  .strip{display:flex;gap:4px;margin:12px 0 0}
+  .yrbox{flex:1;text-align:center;padding:6px 2px;border-radius:2px;background:rgba(255,255,255,.05)}
+  .yrbox.win{background:var(--brass)}
+  .yrbox.win .p{color:#2A1C00}
+  .yrbox.none{opacity:.3}
+  .yrbox .y{display:block;font:600 9px/1 ui-monospace,Menlo,monospace;color:var(--faint)}
+  .yrbox .p{display:block;margin-top:3px;font:800 13px/1 ui-monospace,Menlo,monospace;color:var(--chalk)}
+
+  .locked{border:1px dashed #354E66;border-radius:4px;padding:26px 18px;text-align:center;
+    background:rgba(255,255,255,.02)}
+  .locked .ic{font-size:26px;margin-bottom:11px}
+  .locked h3{margin:0 0 8px;font:800 17px/1.25 system-ui,sans-serif;color:var(--chalk)}
+  .locked p{margin:0 auto;font-size:14px;color:var(--dim);max-width:400px;line-height:1.6}
+
+  .stamp{display:inline-block;padding:4px 9px;border-radius:2px;background:rgba(76,175,125,.14);
+    color:var(--green);font:700 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.12em;
+    text-transform:uppercase;margin-bottom:12px}
+  .stale{background:rgba(178,58,47,.16);color:#E39A92}
+  .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
+  footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">League HQ &middot; Season 8</div>
+    <h1>Ultimo<br>Bromigos</h1>
+    <p class="sub">10 teams &middot; Half PPR &middot; Est. 2019</p>
+    <div class="whoami">
+      <label for="me">Your team</label>
+      <select id="me"><option value="">Choose…</option></select>
+    </div>
+  </header>
+
+  <div class="count">
+    <div class="lbl" id="cdlabel">Draft in</div>
+    <div class="clock">
+      <div class="unit"><b id="d">--</b><span>Days</span></div>
+      <div class="unit"><b id="h">--</b><span>Hrs</span></div>
+      <div class="unit"><b id="m">--</b><span>Min</span></div>
+      <div class="unit"><b id="s">--</b><span>Sec</span></div>
+    </div>
+    <p class="when" id="cdwhen">Sunday, September 6 &middot; 5:00 PM ET</p>
+  </div>
+
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-p="hq">HQ</button>
+    <button role="tab" aria-selected="false" data-p="league">League</button>
+    <button role="tab" aria-selected="false" data-p="trade">Trades</button>
+    <button role="tab" aria-selected="false" data-p="wire">Wire</button>
+    <button role="tab" aria-selected="false" data-p="owners">Owners</button>
+    <button role="tab" aria-selected="false" data-p="history">History</button>
+  </nav>
+
+  <section class="panel on" id="hq">
+    <h2>Calendar</h2>
+    <div class="rules">
+      <div class="rule"><div class="k">Draft</div><div class="v">Sun Sept 6, 5:00 PM ET</div></div>
+      <div class="rule"><div class="k">Pick clock</div><div class="v">90 seconds, snake</div></div>
+      <div class="rule"><div class="k">Regular season</div><div class="v">Weeks 1&ndash;14</div></div>
+      <div class="rule"><div class="k">Trade deadline</div><div class="v">Wed Dec 2, noon ET</div></div>
+      <div class="rule"><div class="k">Playoffs</div><div class="v">Weeks 15&ndash;17, 6 teams</div></div>
+      <div class="rule"><div class="k">Byes</div><div class="v">Top 2 seeds</div></div>
+    </div>
+
+    <h2>Rules of Record</h2>
+    <div class="rules">
+      <div class="rule"><div class="k">Receptions</div><div class="v">0.5 &mdash; Half PPR</div></div>
+      <div class="rule"><div class="k">Passing TD</div><div class="v">4 points</div></div>
+      <div class="rule"><div class="k">Rush / Rec TD</div><div class="v">6 points</div></div>
+      <div class="rule"><div class="k">Big-play bonus</div><div class="v">+1 at 40yd, +2 at 50yd</div></div>
+      <div class="rule"><div class="k">Lineup</div><div class="v">QB &middot; 2RB &middot; 2WR &middot; WR/TE &middot; FLEX &middot; D/ST &middot; K</div></div>
+      <div class="rule"><div class="k">Bench / IR</div><div class="v">7 and 2</div></div>
+      <div class="rule"><div class="k">Waivers</div><div class="v">Rolling order, 24hr</div></div>
+      <div class="rule"><div class="k">Buy-in</div><div class="v">$50</div></div>
+    </div>
+    <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
+
+    <h2>On the Ballot</h2>
+    <div class="rules">
+      <div class="rule"><div class="k">01</div><div class="v">PPR level</div></div>
+      <div class="rule"><div class="k">02</div><div class="v">WR/TE slot</div></div>
+      <div class="rule"><div class="k">03</div><div class="v">Superflex</div></div>
+      <div class="rule"><div class="k">04</div><div class="v">Passing TD value</div></div>
+      <div class="rule"><div class="k">05</div><div class="v">Waivers vs. bidding</div></div>
+      <div class="rule"><div class="k">06</div><div class="v">Playoff field</div></div>
+      <div class="rule"><div class="k">07</div><div class="v">Draft order</div></div>
+      <div class="rule"><div class="k">08</div><div class="v">Keepers</div></div>
+      <div class="rule"><div class="k">09</div><div class="v">Buy-in</div></div>
+    </div>
+    <p class="note">Majority carries. Ties keep the current rule. Closes at the draft.</p>
+  </section>
+
+  <section class="panel" id="league"><div id="leagueBody"></div></section>
+  <section class="panel" id="trade"><div id="tradeBody"></div></section>
+  <section class="panel" id="wire"><div id="wireBody"></div></section>
+
+  <section class="panel" id="owners">
+    <h2>Owner Dossiers &middot; 2019&ndash;2025</h2>
+    <div id="dossiers"></div>
+    <h2>Record Book</h2>
+    <div class="card">
+      <p><b>Best season</b> &mdash; Austin Kneeland, 1,803 pts, 2021 (finished 4th)<br>
+      <b>Worst season</b> &mdash; James Goodrich, 1,221 pts, 2019<br>
+      <b>Most wins</b> &mdash; Scotty Gerben, 52<br>
+      <b>Most titles</b> &mdash; Scotty Gerben and bo, 2 each<br>
+      <b>Still waiting</b> &mdash; Abel, Shuman, Kneeland, Andy Gerben, Goodrich, Bennnett</p>
+    </div>
+    <div class="card red">
+      <h3>The 51&ndash;45 Club</h3>
+      <p>Cody Abel, Ryan Shuman and Austin Kneeland have each played seven seasons and finished with the exact same record. None has ever won. bo is 42&ndash;41 with two rings.</p>
+    </div>
+  </section>
+
+  <section class="panel" id="history">
+    <h2>Champions</h2>
+    <div class="champs" id="champs"></div>
+    <h2>All-Time Ledger</h2>
+    <table>
+      <thead><tr><th>Manager</th><th class="n">Record</th><th class="n">PF</th><th class="n">PA</th><th class="n">&#127942;</th></tr></thead>
+      <tbody id="tall"></tbody>
+    </table>
+    <p class="note">Seven completed seasons. 2019 and 2020 ran 13 games; every year since has run 14.</p>
+    <div id="seasons"></div>
+  </section>
+
+  <footer>
+    <span id="freshness">Loading league data&hellip;</span><br>
+    Updated daily from ESPN &middot; League ID 24869044
+  </footer>
+</div>
+
+<script>
+/* ==== SEASON HISTORY (static — these years are finished) ==== */
+const SEASONS = {
+"2025": [
+  ["TE University", "Scotty Gerben", "8-6", 1602.26, 1472.2, 1],
+  ["Loyalty", "Cody Abel", "11-3", 1691.76, 1477.56, 2],
+  ["Njigbas in Paris", "Austin Kneeland", "7-7", 1576.08, 1657.8, 3],
+  ["Super LaMario", "James Goodrich", "8-6", 1686.38, 1526.4, 4],
+  ["Team Dawson", "Andrew Dawson", "7-7", 1440.12, 1463.78, 5],
+  ["Catalina Wine Mixon", "Ryan Shuman", "8-6", 1444.02, 1473.38, 6],
+  ["Waddlin my white @$$ to victory", "Justin Bennnett", "5-9", 1396.4, 1492.26, 7],
+  ["They hit the second bowers", "Andy Gerben", "6-8", 1524.82, 1702.48, 8],
+  ["You're Toast", "bo", "6-8", 1470.5, 1472.1, 9],
+  ["Michael wilson @Andy", "Anthony Henders", "4-10", 1485.12, 1579.5, 10]
+],
+"2024": [
+  ["No Loyalty", "Anthony Henders", "8-6", 1518.44, 1520.58, 1],
+  ["Super LaMario", "James Goodrich", "7-7", 1661.84, 1706.42, 2],
+  ["Team Dawson", "Andrew Dawson", "10-4", 1680.18, 1450.6, 3],
+  ["Catalina Wine Mixon", "Ryan Shuman", "9-5", 1649.44, 1489.14, 4],
+  ["Ridley's Believe It or Not", "Austin Kneeland", "6-8", 1620.96, 1609.16, 5],
+  ["Loyalty", "Cody Abel", "7-7", 1585.56, 1535.6, 6],
+  ["Ma Homies CDeez", "Scotty Gerben", "5-9", 1536.38, 1565.02, 7],
+  ["Amari Poopers", "Andy Gerben", "6-8", 1353.48, 1549.76, 8],
+  ["Waddlin my white @$$ to victory", "Justin Bennnett", "6-8", 1477.86, 1602.14, 9],
+  ["You're Toast", "bo", "6-8", 1536.08, 1591.8, 10]
+],
+"2023": [
+  ["Calf Chuss", "Scotty Gerben", "10-4", 1628.6, 1463.52, 1],
+  ["Just In Time", "Justin Bennnett", "7-7", 1528.64, 1594.7, 2],
+  ["Team Dawson", "Andrew Dawson", "8-6", 1493.94, 1549.04, 3],
+  ["Catalina Wine Mixon", "Ryan Shuman", "11-3", 1785.52, 1484.6, 4],
+  ["Je gagnerai", "Cody Abel", "7-7", 1591.6, 1562.34, 5],
+  ["Bed Bath and Bijan", "James Goodrich", "6-8", 1555.16, 1673.8, 6],
+  ["Big Burrrtha", "Austin Kneeland", "5-9", 1507.94, 1530.14, 7],
+  ["You're Toast", "bo", "5-9", 1449.08, 1499.8, 8],
+  ["jones mccaffrey get hurt", "Anthony Henders", "6-8", 1540.5, 1581.18, 9],
+  ["Amari Poopers", "Andy Gerben", "5-9", 1433.86, 1575.72, 10]
+],
+"2022": [
+  ["You're Toast", "bo", "8-6", 1598.54, 1422.3, 1],
+  ["Zeke Get Injured", "Anthony Henders", "7-7", 1494.24, 1504.04, 2],
+  ["Ju Ju Believe N Life after Love", "Austin Kneeland", "10-4", 1621.54, 1509.12, 3],
+  ["Getting Chased by a Calf", "Cody Abel", "10-4", 1627.52, 1479.44, 4],
+  ["It Hurts so Good", "Ryan Shuman", "9-5", 1675.04, 1464.4, 5],
+  ["Team Dawson", "Andrew Dawson", "8-6", 1428.32, 1403.88, 6],
+  ["Amari Poopers", "Andy Gerben", "5-9", 1404.74, 1581.5, 7],
+  ["Calf Chuss", "Scotty Gerben", "6-8", 1525.54, 1493.3, 8],
+  ["Just In Time", "Justin Bennnett", "4-10", 1315.8, 1564.62, 9],
+  ["Kupp N'Cough", "James Goodrich", "3-11", 1415.9, 1684.58, 10]
+],
+"2021": [
+  ["You're Toast", "bo", "10-4", 1597.0, 1437.96, 1],
+  ["Amari Poopers", "Andy Gerben", "11-3", 1578.8, 1437.54, 2],
+  ["Check Mate", "Cody Abel", "7-7", 1463.9, 1546.28, 3],
+  ["You Shenault Pass", "Austin Kneeland", "10-4", 1803.34, 1547.72, 4],
+  ["Makin it Rayne", "Scotty Gerben", "8-6", 1636.12, 1564.98, 5],
+  ["Oh fuq I'm gonna Kareem", "Ryan Shuman", "6-8", 1561.9, 1517.3, 6],
+  ["Chubb It In", "James Goodrich", "6-8", 1545.22, 1581.96, 7],
+  ["Jaboo and the Crab Leggers", "Gavin Oliver", "5-9", 1439.1, 1592.8, 8],
+  ["Lamar Cookin", "Anthony Henders", "4-10", 1319.12, 1530.12, 9],
+  ["Team Dawson", "Andrew Dawson", "3-11", 1474.26, 1662.1, 10]
+],
+"2020": [
+  ["Team Dawson", "Andrew Dawson", "9-4", 1505.66, 1420.38, 1],
+  ["CeeDeez Nutz", "Anthony Henders", "10-3", 1506.58, 1340.92, 2],
+  ["Beats By Ray Rice", "James Goodrich", "6-7", 1510.04, 1421.54, 3],
+  ["Fuller House", "Scotty Gerben", "7-6", 1398.9, 1385.82, 4],
+  ["Dirty Landry Pile", "Austin Kneeland", "8-5", 1415.64, 1353.64, 5],
+  ["You're Toast", "bo", "7-6", 1518.76, 1427.9, 6],
+  ["Amari Poopers", "Andy Gerben", "5-8", 1466.44, 1474.74, 7],
+  ["Hotel, Motel, Golladay Inn", "Gavin Oliver", "6-7", 1392.74, 1530.68, 8],
+  ["Check Mate", "Cody Abel", "3-10", 1359.66, 1591.66, 9],
+  ["Fresh Prince of Helaire", "Ryan Shuman", "4-9", 1364.66, 1491.8, 10]
+],
+"2019": [
+  ["Taylor Park Boys", "Mike Hartley", "7-6", 1710.16, 1513.1, 1],
+  ["Check Mate", "Cody Abel", "6-7", 1456.88, 1337.8, 2],
+  ["Makin it Rayne", "Scotty Gerben", "8-5", 1571.8, 1291.36, 3],
+  ["Amari Poopers", "Andy Gerben", "8-5", 1470.3, 1496.22, 4],
+  ["Team Henders", "Anthony Henders", "8-5", 1463.62, 1312.14, 5],
+  ["Kerryon My Wayward Son", "Gavin Oliver", "8-5", 1406.22, 1356.66, 6],
+  ["Team Dawson", "Andrew Dawson", "5-8", 1298.6, 1435.76, 7],
+  ["Thomas's Tank Engines", "Ryan Shuman", "4-9", 1245.46, 1514.36, 8],
+  ["Beats By Ray Rice", "James Goodrich", "6-7", 1221.32, 1326.5, 9],
+  ["Glory to Godwin", "Austin Kneeland", "5-8", 1246.26, 1506.72, 10]
+],
+};
+
+const NOTES = {
+  "Scotty Gerben":"Most wins in league history and two rings. Finished 7th in between them.",
+  "bo":"Back-to-back titles in 2021 and 2022. Has finished 8th, 10th and 9th since.",
+  "Andrew Dawson":"Won 2020, then went 3-11 the very next season. Five top-half finishes in seven years.",
+  "Anthony Henders":"Champion in 2024, dead last in 2025. Also went 10-3 in 2020 and lost anyway.",
+  "Cody Abel":"Seven seasons, no ring. Went 3-10 in 2020 and 11-3 with a league high in 2025.",
+  "Ryan Shuman":"Opened his career 4-9 and 4-9. Top-six every year since. Still nothing to show.",
+  "Austin Kneeland":"Owns the best season ever played here \u2014 1,803 points in 2021. Finished 4th.",
+  "Andy Gerben":"11-3 and the 1 seed in 2021, out in the bracket. Most points allowed of anyone active.",
+  "James Goodrich":"Worst record in the league and the second-most points scored.",
+  "Justin Bennnett":"Runner-up in his second season. Fewer wins every year since."
+};
+const CURRENT = ["Scotty Gerben","bo","Andrew Dawson","Anthony Henders","Cody Abel",
+  "Ryan Shuman","Austin Kneeland","Andy Gerben","James Goodrich","Justin Bennnett"];
+
+const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const fmt = n => Math.round(n).toLocaleString();
+const YEARS = Object.keys(SEASONS).sort().reverse();
+const ALLY = YEARS.slice().reverse();
+
+/* ==== who am I ==== */
+let ME = "";
+try { ME = localStorage.getItem("bromigos.me") || ""; } catch(e) {}
+const sel = document.getElementById("me");
+CURRENT.slice().sort().forEach(m => {
+  const o = document.createElement("option");
+  o.value = m; o.textContent = m;
+  if(m === ME) o.selected = true;
+  sel.appendChild(o);
+});
+sel.onchange = () => {
+  ME = sel.value;
+  try { localStorage.setItem("bromigos.me", ME); } catch(e) {}
+  renderAll();
+};
+
+/* ==== history ==== */
+const led = {};
+YEARS.forEach(y => SEASONS[y].forEach(r => {
+  const m = r[1], p = r[2].split("-").map(Number);
+  if(!led[m]) led[m] = {w:0,l:0,pf:0,pa:0,t:0,yrs:0};
+  led[m].w+=p[0]; led[m].l+=p[1]; led[m].pf+=r[3]; led[m].pa+=r[4];
+  led[m].yrs++; if(r[5]===1) led[m].t++;
+}));
+
+document.getElementById("champs").innerHTML = YEARS.map(y => {
+  const c = SEASONS[y].find(r => r[5]===1);
+  return `<div class="ring"><span class="yr">${y}</span><span class="nm">${esc(c[1])}</span>
+    <span class="tm">${esc(c[0])} &middot; ${c[2]}</span></div>`;
+}).join("");
+
+document.getElementById("seasons").innerHTML = YEARS.map(y => `
+  <h2>${y} Final Standings</h2>
+  <table><thead><tr><th></th><th>Team</th><th class="n">Rec</th><th class="n">PF</th><th class="n">PA</th></tr></thead>
+  <tbody>${SEASONS[y].map((r,i)=>`<tr class="${r[5]===1?"champ":""}">
+    <td class="pos">${r[5]===1?"\u{1F3C6}":i+1}</td>
+    <td>${esc(r[0])}<span class="who">${esc(r[1])}</span></td>
+    <td class="n">${r[2]}</td><td class="n">${fmt(r[3])}</td><td class="n">${fmt(r[4])}</td>
+  </tr>`).join("")}</tbody></table>`).join("");
+
+function renderLedger(){
+  document.getElementById("tall").innerHTML = Object.entries(led)
+    .sort((a,b)=>(b[1].t-a[1].t)||(b[1].w-a[1].w)||(b[1].pf-a[1].pf))
+    .map(([m,v])=>`<tr class="${v.t?"champ":""} ${m===ME?"you":""}">
+      <td>${esc(m)}<span class="who">${v.yrs} season${v.yrs>1?"s":""}</span></td>
+      <td class="n">${v.w}-${v.l}</td><td class="n">${fmt(v.pf)}</td>
+      <td class="n">${fmt(v.pa)}</td><td class="n">${v.t?"\u{1F3C6}".repeat(v.t):"\u2014"}</td>
+    </tr>`).join("");
+}
+
+function renderDossiers(){
+  document.getElementById("dossiers").innerHTML = CURRENT.map(m => {
+    const v = led[m];
+    const strip = ALLY.map(y => {
+      const r = SEASONS[y].find(x => x[1]===m);
+      if(!r) return `<div class="yrbox none"><span class="y">${y.slice(2)}</span><span class="p">&ndash;</span></div>`;
+      return `<div class="yrbox ${r[5]===1?"win":""}"><span class="y">${y.slice(2)}</span>
+        <span class="p">${r[5]===1?"\u{1F3C6}":r[5]}</span></div>`;
+    }).join("");
+    return `<div class="dos ${m===ME?"you":(v.t?"ring2":"")}">
+      <div class="top"><span class="nm">${esc(m)}</span>
+        <span class="rec">${v.w}-${v.l}${v.t?" \u00b7 "+"\u{1F3C6}".repeat(v.t):""}</span></div>
+      <div class="sub2">${v.yrs} seasons &middot; ${fmt(v.pf)} PF &middot; ${fmt(v.pa)} PA</div>
+      <div class="strip">${strip}</div>
+      <p class="line">${esc(NOTES[m]||"")}</p></div>`;
+  }).join("");
+}
+
+/* ==== live data ==== */
+let LIVE = null;
+
+function lockedPanel(title, body){
+  return `<div class="locked"><div class="ic">&#128274;</div><h3>${title}</h3><p>${body}</p></div>`;
+}
+
+function renderLeague(){
+  const el = document.getElementById("leagueBody");
+  if(!LIVE || !LIVE.teams || !LIVE.teams.teams){
+    el.innerHTML = lockedPanel("Waiting on the first data pull",
+      "Standings appear here once the nightly job has run and the season is underway.");
+    return;
+  }
+  const teams = LIVE.teams.teams;
+  const drafted = LIVE.settings && LIVE.settings.draftDetail && LIVE.settings.draftDetail.drafted;
+  if(!drafted){
+    el.innerHTML = `<div class="stamp">Connected to ESPN</div>` +
+      lockedPanel("Standings open Week 1",
+        `All ${teams.length} teams are in and the league feed is live. Records fill in once games are played.`) +
+      `<h2>Teams</h2><table><thead><tr><th>Team</th><th class="n">Abbrev</th></tr></thead><tbody>` +
+      teams.map(t=>`<tr><td>${esc((t.name||"").trim())}</td>
+        <td class="n">${esc(t.abbrev||"")}</td></tr>`).join("") + `</tbody></table>`;
+    return;
+  }
+  const rows = teams.slice().sort((a,b)=>{
+    const ao=a.record.overall, bo=b.record.overall;
+    return (bo.wins-ao.wins) || (bo.pointsFor-ao.pointsFor);
+  });
+  el.innerHTML = `<h2>Standings</h2><table>
+    <thead><tr><th></th><th>Team</th><th class="n">Rec</th><th class="n">PF</th><th class="n">PA</th></tr></thead>
+    <tbody>${rows.map((t,i)=>{
+      const o=t.record.overall;
+      return `<tr><td class="pos">${i+1}</td><td>${esc((t.name||"").trim())}</td>
+        <td class="n">${o.wins}-${o.losses}</td>
+        <td class="n">${fmt(o.pointsFor)}</td><td class="n">${fmt(o.pointsAgainst)}</td></tr>`;
+    }).join("")}</tbody></table>`;
+}
+
+function renderTrade(){
+  const el = document.getElementById("tradeBody");
+  const drafted = LIVE && LIVE.settings && LIVE.settings.draftDetail && LIVE.settings.draftDetail.drafted;
+  if(!drafted){
+    el.innerHTML = lockedPanel("Unlocks after the draft",
+      "Rosters don't exist yet. Once they do, this becomes a drag-and-drop trade builder that recalculates both lineups as you go, plus ranked surplus-for-need matches across all nine other teams.");
+    return;
+  }
+  el.innerHTML = lockedPanel("Trade builder coming online",
+    "Rosters are in. The builder ships in the next update.");
+}
+
+function renderWire(){
+  const el = document.getElementById("wireBody");
+  if(!LIVE || !LIVE.freeAgents || !LIVE.freeAgents.length){
+    el.innerHTML = lockedPanel("Unlocks after the draft",
+      "The free-agent pool pulls nightly once the league drafts. Your board will be filtered to the holes on your roster, not a generic top 50.");
+    return;
+  }
+  el.innerHTML = lockedPanel("Waiver board coming online",
+    `${LIVE.freeAgents.length} available players in the feed. Rankings ship in the next update.`);
+}
+
+function renderAll(){
+  renderLedger(); renderDossiers(); renderLeague(); renderTrade(); renderWire();
+}
+
+fetch("data/league.json", {cache:"no-store"})
+  .then(r => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+  .then(j => {
+    LIVE = j;
+    const when = new Date(j.fetchedAt);
+    const hrs = (Date.now() - when.getTime()) / 3600000;
+    const f = document.getElementById("freshness");
+    f.textContent = "League data updated " + when.toLocaleString(undefined,
+      {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+    if(hrs > 48) f.className = "stale";
+    renderAll();
+  })
+  .catch(() => {
+    document.getElementById("freshness").textContent =
+      "Live data not loaded yet — history below is complete.";
+    renderAll();
+  });
+
+/* ==== tabs ==== */
+document.querySelectorAll("nav button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected","false"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+    b.setAttribute("aria-selected","true");
+    document.getElementById(b.dataset.p).classList.add("on");
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+});
+
+/* ==== countdown ==== */
+const DRAFT = new Date("2026-09-06T21:00:00Z").getTime();
+const DEADLINE = new Date("2026-12-02T17:00:00Z").getTime();
+function tick(){
+  const now = Date.now();
+  let target = DRAFT, label = "Draft in", when = "Sunday, September 6 \u00b7 5:00 PM ET";
+  if(now >= DRAFT){ target = DEADLINE; label = "Trade deadline in";
+    when = "Wednesday, December 2 \u00b7 12:00 PM ET"; }
+  document.getElementById("cdlabel").textContent = label;
+  document.getElementById("cdwhen").textContent = when;
+  let diff = Math.max(0, target - now);
+  const d=Math.floor(diff/864e5); diff-=d*864e5;
+  const h=Math.floor(diff/36e5);  diff-=h*36e5;
+  const m=Math.floor(diff/6e4);   diff-=m*6e4;
+  document.getElementById("d").textContent = d;
+  document.getElementById("h").textContent = String(h).padStart(2,"0");
+  document.getElementById("m").textContent = String(m).padStart(2,"0");
+  document.getElementById("s").textContent = String(Math.floor(diff/1000)).padStart(2,"0");
+}
+tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>

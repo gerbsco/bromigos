@@ -3,24 +3,16 @@
   "posted": "Preseason",
   "headline": "Seven years of evidence, now searchable",
   "body": [
-    "Congratulations. Every game any of you has ever played in this league is now on a website, sorted, and permanently public. You can no longer claim you were robbed in 2021. The math is right there and it says you scored 96 points.",
-    "The headline finding: Cody, Ryan and Austin have each played seven seasons and each finished 51-45. Same record. Same seven years. Combined championships between the three of them: zero. Bo is 42-41 and has two. Somewhere in there is a lesson about the value of trying hard and it is not a flattering one.",
-    "Austin holds the record for the best season anyone has ever had here, 1,803 points in 2021, roughly 130 a week. He finished fourth. Ryan went 11-3 in 2023 with the second-highest total ever recorded and also finished fourth. At some point this stops being bad luck and starts being a personality trait.",
-    "James has allowed 10,921 points, more than any human in league history, while scoring the second most. He is 42-54. He is not bad at fantasy football. He is being hunted.",
-    "Scotty won in 2023 and 2025 and finished 7th in the year between, which is either genius or a man who gets bored. Anthony won the whole thing in 2024 and came in dead last in 2025, a full round trip in twelve months. Dawson won in 2020 and immediately went 3-11. Nobody is safe and nobody has ever been safe.",
-    "Also worth noting: Mike won the very first title in 2019 and never played again. Career record 7-6, one ring, undefeated in championship games, retired at the top. The rest of you have spent six years chasing a ghost.",
-    "Pick your name from the dropdown to see your own file. Rule vote closes at the draft. Vote or forfeit the right to complain, which historically has stopped none of you."
+    "Every game any of you has ever played is now on a website, sorted and permanently public. You can no longer claim you were robbed in 2021. The math is right there and it says you scored 96 points.",
+    "The big one: Cody, Ryan and Austin have each played seven seasons and each finished 51-45. Same record, same seven years, zero championships between them. Bo is 42-41 with two rings. Somewhere in there is a lesson about the value of trying hard and it is not a flattering one.",
+    "Pick your name from the dropdown to see your own file. Rule vote closes at the draft."
   ],
   "changed": [
-    { "team": "Scotty", "dir": "up", "note": "Two rings in three years. Currently insufferable and technically entitled to it." },
-    { "team": "Bo", "dir": "up", "note": "Back to back in 2021 and 2022 with a career record of 42-41. Bare minimum, maximum hardware." },
+    { "team": "Scotty", "dir": "up", "note": "Two rings in three years. Insufferable and technically entitled to it." },
+    { "team": "Austin", "dir": "watch", "note": "Best season in league history, 1,803 points in 2021. Finished fourth." },
+    { "team": "James", "dir": "watch", "note": "Leads all-time in points scored and points allowed. Not bad at this, just hunted." },
     { "team": "Anthony", "dir": "down", "note": "Champion to last place in one calendar year. A speedrun." },
-    { "team": "Ryan", "dir": "watch", "note": "Four straight top-six finishes, zero trophies. Year eight or it is officially a curse." },
     { "team": "Justin", "dir": "down", "note": "Runner-up in 2023, then 7-7, 6-8, 5-9. Trending like a stock nobody should buy." },
-    { "team": "Austin", "dir": "watch", "note": "Owns the best season in league history and nothing else." },
-    { "team": "James", "dir": "watch", "note": "Leads all-time in points scored and points allowed. Chaos incarnate." },
-    { "team": "Andy", "dir": "down", "note": "Fewest points of anyone with seven seasons. Opponents hung 1,702 on him last year." },
-    { "team": "Cody", "dir": "watch", "note": "11-3 with a league high in points last season. Finished second. Naturally." },
-    { "team": "Dawson", "dir": "watch", "note": "50-46 lifetime with one ring. The most consistently fine team here." }
+    { "team": "Mike", "dir": "watch", "note": "Won in 2019, never came back. 7-6 career, undefeated in title games. Retired at the top." }
   ]
 }

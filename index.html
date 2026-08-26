@@ -144,6 +144,88 @@
     color:var(--green);font:700 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.12em;
     text-transform:uppercase;margin-bottom:12px}
   .stale{background:rgba(178,58,47,.16);color:#E39A92}
+  /* ================= PACK OPENING ================= */
+  .packwrap{position:fixed;inset:0;z-index:900;display:none;align-items:center;
+    justify-content:center;background:radial-gradient(circle at 50% 45%,#123049 0%,#050D16 70%);
+    padding:20px;overflow:hidden}
+  .packwrap.on{display:flex}
+  .rays{position:absolute;inset:-50%;opacity:0;pointer-events:none;
+    background:repeating-conic-gradient(from 0deg at 50% 50%,
+      rgba(217,162,39,.16) 0deg 6deg, transparent 6deg 14deg)}
+  .packwrap.lit .rays{opacity:1;animation:spin 22s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .packstage{position:relative;width:100%;max-width:330px;text-align:center}
+
+  .thepack{width:190px;height:265px;margin:0 auto;border-radius:10px;cursor:pointer;
+    background:linear-gradient(155deg,#1D3F5C 0%,#0C2138 55%,#16344E 100%);
+    border:1px solid rgba(217,162,39,.5);
+    box-shadow:0 18px 45px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.09);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px}
+  .thepack .pl{font:700 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--brass)}
+  .thepack .pw{font:800 25px/1.05 system-ui,sans-serif;color:var(--chalk);
+    letter-spacing:-.02em;padding:0 14px}
+  .thepack .pt{font-size:11.5px;color:var(--faint);margin-top:5px}
+  @media (prefers-reduced-motion:no-preference){
+    .thepack{animation:breathe 2.4s ease-in-out infinite}
+    .thepack.rip{animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
+  }
+  @keyframes breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.015)}}
+  @keyframes shake{10%,90%{transform:translateX(-3px) rotate(-1deg)}
+    20%,80%{transform:translateX(5px) rotate(1.5deg)}
+    30%,50%,70%{transform:translateX(-8px) rotate(-2deg)}
+    40%,60%{transform:translateX(8px) rotate(2deg)}
+    100%{transform:scale(1.5);opacity:0}}
+
+  .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;border-radius:50%}
+  .flash.go{animation:pop .5s ease-out both}
+  @keyframes pop{0%{opacity:0;transform:scale(.2)}18%{opacity:.85}100%{opacity:0;transform:scale(3)}}
+
+  .pcard{position:relative;width:100%;max-width:310px;margin:0 auto;border-radius:12px;
+    padding:26px 20px 22px;background:linear-gradient(165deg,#1A2C3E,#0B1B2A);
+    border:1px solid rgba(255,255,255,.13);text-align:center;opacity:0}
+  .pcard.in{animation:deal .55s cubic-bezier(.16,1.1,.3,1) both}
+  @keyframes deal{0%{opacity:0;transform:translateY(38px) scale(.86)}
+    100%{opacity:1;transform:translateY(0) scale(1)}}
+  .pcard.gold{border-color:rgba(217,162,39,.75);
+    background:linear-gradient(165deg,#3A2E10,#141F2C);
+    box-shadow:0 0 44px rgba(217,162,39,.4),0 18px 40px rgba(0,0,0,.55)}
+  .pcard.silver{border-color:rgba(200,210,220,.6);
+    background:linear-gradient(165deg,#28353F,#0F1C29);
+    box-shadow:0 0 26px rgba(200,210,220,.2),0 16px 34px rgba(0,0,0,.5)}
+  .pcard.bronze{border-color:rgba(184,115,51,.6);
+    background:linear-gradient(165deg,#33241A,#0F1C29);
+    box-shadow:0 14px 30px rgba(0,0,0,.5)}
+  .pcard.dud{border-color:rgba(120,135,150,.35);
+    background:linear-gradient(165deg,#1A222B,#0C141C);filter:saturate(.45)}
+
+  .pcard .rar{font:700 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.26em;
+    text-transform:uppercase;margin-bottom:14px}
+  .pcard.gold .rar{color:var(--brass)}
+  .pcard.silver .rar{color:#C8D2DC}
+  .pcard.bronze .rar{color:#D08B4E}
+  .pcard.dud .rar{color:#6F808F}
+  .pcard .big{font:800 clamp(40px,13vw,58px)/1 ui-monospace,Menlo,monospace;
+    color:var(--chalk);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .pcard.dud .big{color:#8B9AA8}
+  .pcard .ttl{margin-top:12px;font:800 19px/1.24 system-ui,sans-serif;color:var(--chalk)}
+  .pcard .sub{margin-top:9px;font-size:14px;color:#A9BBC9;line-height:1.55}
+  .pcard .emj{font-size:40px;line-height:1;margin-bottom:6px}
+
+  .packbar{margin-top:22px;display:flex;align-items:center;justify-content:center;gap:12px}
+  .dots{display:flex;gap:5px}
+  .dot{width:6px;height:6px;border-radius:50%;background:rgba(234,226,207,.25)}
+  .dot.act{background:var(--brass)}
+  .tapon{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--faint)}
+  .skipb{position:absolute;top:16px;right:16px;padding:9px 14px;border-radius:3px;
+    border:1px solid #2C4257;background:rgba(10,20,30,.6);color:var(--dim);
+    font:700 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
+    text-transform:uppercase;cursor:pointer;z-index:5}
+  .prefbar{margin-top:16px;font-size:12px;color:var(--faint)}
+  .prefbar label{cursor:pointer}
+
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
@@ -179,6 +261,7 @@
     <button role="tab" aria-selected="false" data-p="owners">Owners</button>
     <button role="tab" aria-selected="false" data-p="history">History</button>
     <button role="tab" aria-selected="false" data-p="rules">Rules</button>
+    <button role="tab" aria-selected="false" data-p="demo" id="demoTab" style="display:none">Pack</button>
   </nav>
 
   <section class="panel on" id="hq">
@@ -242,6 +325,24 @@
       <div class="rule"><div class="k">Buy-in</div><div class="v">$50</div></div>
     </div>
     <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
+  </section>
+
+  <section class="panel" id="demo">
+    <h2>Pack Opening &middot; Test Build</h2>
+    <div class="card gold">
+      <h3>Hidden from the league</h3>
+      <p>This tab only exists if the URL ends in <b>?pack=1</b>. Nobody else can reach it, including anyone who picks your name from the dropdown.</p>
+      <p>In the live version this fires automatically the first time someone opens the site after new results post, once per week per person. No tab, no button.</p>
+    </div>
+    <div class="card">
+      <h3>Try each outcome</h3>
+      <p>Four scenarios so you can judge how the good and bad ones feel.</p>
+      <div id="demoBtns"></div>
+    </div>
+    <div class="card">
+      <p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p>
+      <p class="note">This toggle ships in the real header so anyone who hates it can turn it off permanently.</p>
+    </div>
   </section>
 
   <footer>
@@ -628,7 +729,187 @@ Promise.all([
     f.textContent = "Live data not loaded yet \u2014 history below is complete.";
   }
   renderAll();
+  maybeAutoPack();
 });
+
+
+/* ================= PACK OPENING ================= */
+const PACK = (function(){
+  const wrap = document.createElement("div");
+  wrap.className = "packwrap";
+  wrap.innerHTML = `
+    <div class="rays"></div>
+    <button class="skipb" id="pkSkip">Skip</button>
+    <div class="packstage">
+      <div class="flash" id="pkFlash"></div>
+      <div id="pkSlot"></div>
+      <div class="packbar"><span class="dots" id="pkDots"></span>
+        <span class="tapon" id="pkTap">Tap to open</span></div>
+    </div>`;
+  document.body.appendChild(wrap);
+
+  const slot = wrap.querySelector("#pkSlot");
+  const flash = wrap.querySelector("#pkFlash");
+  const dots = wrap.querySelector("#pkDots");
+  const tap = wrap.querySelector("#pkTap");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const wait = ms => new Promise(r => setTimeout(r, reduce ? Math.min(ms,80) : ms));
+
+  let cards = [], idx = 0, done = null, busy = false;
+
+  function packFace(label){
+    return `<div class="thepack" id="pkPack">
+      <span class="pl">Ultimo Bromigos</span>
+      <span class="pw">${esc(label)}</span>
+      <span class="pt">Tap to open</span></div>`;
+  }
+  function cardFace(c){
+    return `<div class="pcard ${c.tier} in">
+      <div class="rar">${esc(c.rarity || c.tier)}</div>
+      ${c.emoji ? `<div class="emj">${c.emoji}</div>` : ""}
+      ${c.big ? `<div class="big">${esc(c.big)}</div>` : ""}
+      <div class="ttl">${esc(c.title)}</div>
+      ${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ""}
+    </div>`;
+  }
+  function paintDots(){
+    dots.innerHTML = cards.map((_,i)=>`<span class="dot ${i<=idx?"act":""}"></span>`).join("");
+  }
+
+  async function burst(){
+    if(busy) return; busy = true;
+    const p = wrap.querySelector("#pkPack");
+    if(p) p.classList.add("rip");
+    await wait(430);
+    flash.classList.add("go");
+    wrap.classList.add("lit");
+    await wait(160);
+    flash.classList.remove("go");
+    idx = 0;
+    slot.innerHTML = cardFace(cards[0]);
+    paintDots();
+    tap.textContent = cards.length > 1 ? "Tap for next" : "Tap to close";
+    busy = false;
+  }
+
+  async function advance(){
+    if(busy) return;
+    if(!wrap.querySelector(".pcard")){ return burst(); }
+    if(idx >= cards.length - 1) return close();
+    busy = true;
+    idx++;
+    slot.innerHTML = cardFace(cards[idx]);
+    paintDots();
+    tap.textContent = idx >= cards.length - 1 ? "Tap to close" : "Tap for next";
+    await wait(120); busy = false;
+  }
+
+  function close(){
+    wrap.classList.remove("on","lit");
+    slot.innerHTML = "";
+    document.body.style.overflow = "";
+    if(done){ const d = done; done = null; d(); }
+  }
+
+  wrap.addEventListener("click", e => {
+    if(e.target.id === "pkSkip") return close();
+    advance();
+  });
+
+  return {
+    open(label, list){
+      cards = list; idx = -1; busy = false;
+      slot.innerHTML = packFace(label);
+      dots.innerHTML = "";
+      tap.textContent = "Tap to open";
+      wrap.classList.add("on");
+      document.body.style.overflow = "hidden";
+      return new Promise(r => { done = r; });
+    }
+  };
+})();
+
+/* Build the cards for one manager's week. */
+function buildWeekCards(w){
+  const out = [];
+  const won = w.myScore > w.oppScore;
+  const margin = Math.abs(w.myScore - w.oppScore).toFixed(1);
+  let tier, rarity, sub;
+  if(w.leagueHigh){ tier="gold"; rarity="League High";
+    sub = `Nobody scored more. ${won?"Beat":"Lost to"} ${w.opponent} ${w.myScore} to ${w.oppScore}.`; }
+  else if(w.leagueLow){ tier="dud"; rarity="League Low";
+    sub = `Worst score in the league. ${w.opponent} put up ${w.oppScore}. Rough.`; }
+  else if(won){ tier="silver"; rarity="Win";
+    sub = `Beat ${w.opponent} by ${margin}.`; }
+  else { tier="bronze"; rarity="Loss";
+    sub = `Lost to ${w.opponent} by ${margin}.`; }
+
+  out.push({ tier, rarity, big: w.myScore.toFixed(1),
+    title: won ? "W" : "L", sub });
+
+  (w.awards||[]).forEach(a => out.push({
+    tier: a.good === false ? "dud" : (a.good ? "gold" : "silver"),
+    rarity: a.good === false ? "Dishonor" : "Award",
+    emoji: a.emoji || "\u{1F3C6}",
+    title: a.title, sub: a.stat
+  }));
+
+  if(!(w.awards||[]).length){
+    out.push({ tier: w.leagueLow ? "dud" : "silver", rarity:"Nothing", emoji:"\u{1F937}",
+      title:"No awards this week",
+      sub:"You were neither good enough nor bad enough to be mentioned." });
+  }
+  return out;
+}
+
+/* Fire the pack once per new week, per person, per device. */
+function maybeAutoPack(){
+  if(!ME || !WEEKLY || !WEEKLY.week) return;
+  let off = false, seen = null;
+  try{
+    off = localStorage.getItem("bromigos.noanim") === "1";
+    seen = localStorage.getItem("bromigos.seenWeek");
+  }catch(e){}
+  if(off) return;
+  if(String(seen) === String(WEEKLY.week)) return;
+  const mine = (WEEKLY.packs || {})[ME];
+  if(!mine) return;
+  try{ localStorage.setItem("bromigos.seenWeek", String(WEEKLY.week)); }catch(e){}
+  PACK.open("Week " + WEEKLY.week, buildWeekCards(mine));
+}
+
+/* ---------- demo harness (hidden unless ?pack=1) ---------- */
+if(new URLSearchParams(location.search).has("pack")){
+  document.getElementById("demoTab").style.display = "";
+  const SCENARIOS = {
+    "Gold: league high": {
+      myScore:151.8, oppScore:118.2, opponent:"Andy", leagueHigh:true,
+      awards:[
+        {title:"Scoring Machine", stat:"151.8 points. Second place was 22 back.", good:true, emoji:"\u{1F525}"},
+        {title:"Blowout King", stat:"Won by 33.6. Nobody else cracked 20.", good:true, emoji:"\u{1F4A5}"}
+      ]},
+    "Silver: normal win": {
+      myScore:124.4, oppScore:117.9, opponent:"Cody",
+      awards:[{title:"Sunday Scaries", stat:"Won by 6.5 with your kicker still playing.", good:true, emoji:"\u{1F630}"}]},
+    "Bronze: normal loss": {
+      myScore:109.2, oppScore:121.6, opponent:"Ryan",
+      awards:[{title:"Bench Points Champion", stat:"Left 41.3 on the bench. That would have won it twice.", good:false, emoji:"\u{1FA91}"}]},
+    "Dud: league low": {
+      myScore:78.4, oppScore:139.1, opponent:"Justin", leagueLow:true,
+      awards:[
+        {title:"Walking Disaster", stat:"78.4 points. The league average was 121.", good:false, emoji:"\u{1F480}"},
+        {title:"Punching Bag", stat:"Gave up 139.1, most of anyone this week.", good:false, emoji:"\u{1F94A}"}
+      ]}
+  };
+  document.getElementById("demoBtns").innerHTML = Object.keys(SCENARIOS)
+    .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 14px/1 system-ui,sans-serif;letter-spacing:.06em;cursor:pointer">${k}</button>`).join("");
+  document.querySelectorAll(".demoGo").forEach(b=>{
+    b.onclick = () => PACK.open("Week 1", buildWeekCards(SCENARIOS[b.dataset.k]));
+  });
+  const na = document.getElementById("noanim");
+  try{ na.checked = localStorage.getItem("bromigos.noanim")==="1"; }catch(e){}
+  na.onchange = () => { try{ localStorage.setItem("bromigos.noanim", na.checked?"1":"0"); }catch(e){} };
+}
 
 document.querySelectorAll("nav button").forEach(b=>{
   b.onclick=()=>{

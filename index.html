@@ -146,37 +146,58 @@
   .stale{background:rgba(178,58,47,.16);color:#E39A92}
   /* ================= PACK OPENING ================= */
   .packwrap{position:fixed;inset:0;z-index:900;display:none;align-items:center;
-    justify-content:center;background:radial-gradient(ellipse at 50% 60%,#0C2740 0%,#03080E 78%);
+    justify-content:center;background:radial-gradient(ellipse at 50% 58%,#0C2740 0%,#03080E 78%);
     padding:18px;overflow:hidden}
   .packwrap.on{display:flex}
   .packstage{position:relative;width:100%;max-width:360px;display:flex;flex-direction:column;
     align-items:center;justify-content:center}
 
-  /* ---- side flares (FIFA 17 walkout) ---- */
-  .flarefield{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:visible}
-  .fl{position:absolute;top:50%;width:var(--s,26px);height:var(--s,26px);margin-top:calc(var(--s,26px)/-2);
-    opacity:0;border-radius:50%;
-    background:radial-gradient(circle,#fff 0%,var(--c,#FFE9A8) 34%,rgba(255,220,140,0) 70%)}
-  .fl::before,.fl::after{content:"";position:absolute;left:50%;top:50%;background:#fff;
-    transform:translate(-50%,-50%);border-radius:2px}
-  .fl::before{width:calc(var(--s,26px)*2.4);height:2px;
-    box-shadow:0 0 10px 2px var(--c,#FFE9A8)}
-  .fl::after{width:2px;height:calc(var(--s,26px)*2.4);
-    box-shadow:0 0 10px 2px var(--c,#FFE9A8)}
-  .flarefield.fire .fl{animation:flarepop .62s cubic-bezier(.2,.9,.3,1) forwards}
+  /* ---- core burst ---- */
+  .core{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;
+    border-radius:50%;opacity:0;pointer-events:none;z-index:2;
+    background:radial-gradient(circle,#fff 0%,#FFF0BE 26%,rgba(255,214,120,.55) 46%,transparent 72%)}
+  .core.go{animation:coreblast .95s cubic-bezier(.1,.75,.25,1) forwards}
+  @keyframes coreblast{0%{opacity:0;transform:scale(.15)}
+    14%{opacity:1;transform:scale(1.5)}42%{opacity:.85;transform:scale(2.6)}
+    100%{opacity:0;transform:scale(4.6)}}
+
+  /* ---- sparkle particles ---- */
+  .spark{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;
+    background:#FFE9A8;box-shadow:0 0 8px 2px rgba(255,220,150,.9);opacity:0;
+    pointer-events:none;z-index:3}
+  .sparks.go .spark{animation:sparkfly var(--t,1.1s) cubic-bezier(.15,.7,.3,1) forwards}
+  @keyframes sparkfly{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
+    12%{opacity:1}
+    100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.15)}}
+
+  /* ---- side flares (walkout) ---- */
+  .flarefield{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
+  .fl{position:absolute;top:50%;width:var(--s,30px);height:var(--s,30px);opacity:0;
+    border-radius:50%;
+    background:radial-gradient(circle,#fff 0%,#fff 18%,var(--c,#FFE9A8) 40%,rgba(255,220,140,0) 72%)}
+  .fl i{position:absolute;left:50%;top:50%;display:block;background:#fff;border-radius:3px;
+    transform-origin:center}
+  .fl i.hz{width:calc(var(--s,30px)*5.2);height:3px;transform:translate(-50%,-50%);
+    box-shadow:0 0 16px 4px var(--c,#FFE9A8)}
+  .fl i.vt{width:3px;height:calc(var(--s,30px)*2.6);transform:translate(-50%,-50%);
+    box-shadow:0 0 12px 3px var(--c,#FFE9A8)}
+  .fl i.d1{width:calc(var(--s,30px)*2.1);height:2px;transform:translate(-50%,-50%) rotate(38deg);
+    box-shadow:0 0 10px 2px var(--c,#FFE9A8);opacity:.75}
+  .fl i.d2{width:calc(var(--s,30px)*2.1);height:2px;transform:translate(-50%,-50%) rotate(-38deg);
+    box-shadow:0 0 10px 2px var(--c,#FFE9A8);opacity:.75}
+  .flarefield.fire .fl{animation:flarepop .78s cubic-bezier(.14,.86,.28,1) forwards}
   @keyframes flarepop{
-    0%{opacity:0;transform:scale(.1)}
-    30%{opacity:1;transform:scale(1.25)}
-    62%{opacity:.9;transform:scale(1)}
-    100%{opacity:0;transform:scale(1.5)}
-  }
-  .bloom{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -150px;
-    border-radius:50%;opacity:0;pointer-events:none;z-index:1;filter:blur(28px)}
-  .flarefield.fire .bloom{animation:bloomup .9s ease-out forwards}
-  @keyframes bloomup{0%{opacity:0;transform:scale(.3)}45%{opacity:.55}100%{opacity:0;transform:scale(1.9)}}
+    0%{opacity:0;transform:translateY(-50%) scale(.08)}
+    26%{opacity:1;transform:translateY(-50%) scale(1.32)}
+    58%{opacity:.92;transform:translateY(-50%) scale(1)}
+    100%{opacity:0;transform:translateY(-50%) scale(1.45)}}
+  .bloom{position:absolute;left:50%;top:50%;width:320px;height:320px;margin:-160px 0 0 -160px;
+    border-radius:50%;opacity:0;pointer-events:none;z-index:1;filter:blur(30px)}
+  .flarefield.fire .bloom{animation:bloomup 1s ease-out forwards}
+  @keyframes bloomup{0%{opacity:0;transform:scale(.3)}42%{opacity:.6}100%{opacity:0;transform:scale(2)}}
 
   /* ---- pack + shards ---- */
-  .thepack{position:relative;z-index:3;width:184px;height:258px;margin:0 auto;border-radius:9px;
+  .thepack{position:relative;z-index:4;width:184px;height:258px;margin:0 auto;border-radius:8px;
     cursor:pointer;background:linear-gradient(160deg,#1E4162 0%,#0A1E33 55%,#17364F 100%);
     border:1px solid rgba(217,162,39,.45);
     box-shadow:0 18px 45px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08);
@@ -187,93 +208,102 @@
   .thepack .pt{font-size:11px;color:var(--faint);margin-top:4px;letter-spacing:.05em}
   @media (prefers-reduced-motion:no-preference){
     .thepack{animation:breathe 2.6s ease-in-out infinite}
-    .thepack.rip{animation:rip .5s cubic-bezier(.36,.07,.19,.97) forwards}
-  }
+    .thepack.rip{animation:rip .46s cubic-bezier(.36,.07,.19,.97) forwards}}
   @keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-  @keyframes rip{0%{transform:scale(1)}18%{transform:scale(1.06) rotate(-1.5deg)}
-    38%{transform:scale(1.02) rotate(2deg)}100%{transform:scale(2.2);opacity:0}}
-  .shard{position:absolute;left:50%;top:50%;width:26px;height:34px;z-index:3;
-    background:linear-gradient(150deg,#D9A227,#5C3E08);opacity:0;border-radius:2px}
-  .shards.go .shard{animation:fly .75s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes rip{0%{transform:scale(1)}22%{transform:scale(1.08)}100%{transform:scale(2.4);opacity:0}}
+  .shard{position:absolute;left:50%;top:50%;width:32px;height:42px;z-index:4;opacity:0;
+    background:linear-gradient(150deg,#F2D479,#8A6410 55%,#D9A227);border-radius:2px;
+    box-shadow:0 4px 14px rgba(0,0,0,.5)}
+  .shards.go .shard{animation:fly .8s cubic-bezier(.16,.7,.3,1) forwards}
   @keyframes fly{0%{opacity:1;transform:translate(-50%,-50%) rotate(0) scale(1)}
     100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y)))
-      rotate(var(--r)) scale(.4)}}
+      rotate(var(--r)) scale(.35)}}
 
   /* ================= CARDS ================= */
-  .cardslot{position:relative;z-index:4;min-height:356px;display:flex;align-items:center;
+  .cardslot{position:relative;z-index:5;min-height:356px;display:flex;align-items:center;
     justify-content:center}
-  .fut{position:relative;width:252px;height:352px;opacity:0;
-    border-radius:6px 6px 46px 46px / 6px 6px 28px 28px;
-    padding:19px 17px 15px;display:flex;flex-direction:column;
-    box-shadow:0 22px 55px rgba(0,0,0,.65)}
-  .fut.in{animation:walkout .8s cubic-bezier(.14,.9,.24,1) forwards}
-  @keyframes walkout{0%{opacity:0;transform:translateY(58px) scale(.76)}
-    55%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
-  .fut::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background:linear-gradient(118deg,transparent 38%,rgba(255,255,255,.2) 47%,transparent 56%)}
+  .hexskin{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='26' viewBox='0 0 30 26'%3E%3Cpath d='M15 0l7.5 4.3v8.7L15 17.3 7.5 13V4.3z' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1'/%3E%3C/svg%3E")}
 
-  /* --- match result card (FIFA 13 player layout) --- */
+  .fut{position:relative;width:252px;height:352px;opacity:0;border-radius:7px;
+    padding:18px 16px 14px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 22px 55px rgba(0,0,0,.65)}
+  .fut.in{animation:walkout .82s cubic-bezier(.14,.9,.24,1) forwards}
+  @keyframes walkout{0%{opacity:0;transform:translateY(56px) scale(.78)}
+    55%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
+  .fut .gloss{position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(118deg,transparent 40%,rgba(255,255,255,.16) 48%,transparent 55%)}
+  .fut.matte .gloss{display:none}
+
   .scoreline{display:flex;align-items:baseline;justify-content:center;gap:9px;
-    padding-bottom:11px;border-bottom:1.5px solid currentColor}
+    padding-bottom:10px;border-bottom:1.5px solid currentColor;position:relative;z-index:1}
   .scoreline .mine{font:800 40px/.9 ui-monospace,Menlo,monospace;
     font-variant-numeric:tabular-nums;letter-spacing:-.03em}
   .scoreline .dash{font:700 20px/1 ui-monospace,Menlo,monospace;opacity:.5}
   .scoreline .theirs{font:700 27px/.9 ui-monospace,Menlo,monospace;
     font-variant-numeric:tabular-nums;opacity:.72}
   .vsline{margin-top:7px;text-align:center;font:700 9.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.2em;text-transform:uppercase;opacity:.72}
-  .futArt{flex:1;display:flex;align-items:center;justify-content:center;font-size:78px;line-height:1}
+    letter-spacing:.2em;text-transform:uppercase;opacity:.72;position:relative;z-index:1}
+  .futArt{flex:1;display:flex;align-items:center;justify-content:center;font-size:76px;
+    line-height:1;position:relative;z-index:1}
   .futName{text-align:center;font:800 20px/1.15 system-ui,sans-serif;letter-spacing:.03em;
-    text-transform:uppercase;padding-bottom:10px;border-bottom:1.5px solid currentColor}
-  .marginbox{margin-top:11px;text-align:center}
+    text-transform:uppercase;padding-bottom:9px;border-bottom:1.5px solid currentColor;
+    position:relative;z-index:1}
+  .marginbox{margin-top:10px;text-align:center;position:relative;z-index:1}
   .marginbox b{display:block;font:800 25px/1 ui-monospace,Menlo,monospace;
     font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .marginbox span{display:block;margin-top:4px;font:700 8.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.18em;opacity:.75}
+    letter-spacing:.18em;opacity:.75;text-transform:uppercase}
 
-  /* --- consumable / formation card (superlatives) --- */
-  .cons{position:relative;width:236px;height:330px;opacity:0;border-radius:5px;
-    padding:9px;display:flex;flex-direction:column;
+  /* --- consumable card --- */
+  .cons{position:relative;width:240px;height:344px;opacity:0;border-radius:6px;
+    padding:8px;display:flex;flex-direction:column;overflow:hidden;
     box-shadow:0 20px 46px rgba(0,0,0,.62)}
-  .cons.in{animation:walkout .8s cubic-bezier(.14,.9,.24,1) forwards}
-  .consHead{position:relative;height:46px;display:flex;align-items:flex-start;
-    justify-content:flex-end;padding:5px 6px 0 0}
-  .consTab{position:absolute;left:0;top:0;width:74px;height:44px;
+  .cons.in{animation:walkout .82s cubic-bezier(.14,.9,.24,1) forwards}
+  .consHead{position:relative;height:44px;display:flex;align-items:flex-start;
+    justify-content:flex-end;padding:4px 6px 0 0;z-index:1}
+  .consTab{position:absolute;left:0;top:0;width:70px;height:42px;
     clip-path:polygon(0 0,100% 0,72% 100%,0 100%);
-    display:flex;align-items:center;justify-content:center;font-size:21px}
-  .consTitle{text-align:right;font:800 12.5px/1.12 system-ui,sans-serif;letter-spacing:.03em;
-    text-transform:uppercase;max-width:132px}
-  .consArt{flex:1;margin:2px 4px;border-radius:2px;display:flex;align-items:center;
-    justify-content:center;font-size:66px;background:#0B0D10;
+    display:flex;align-items:center;justify-content:center;font-size:19px}
+  .consTitle{text-align:right;font:800 11.5px/1.12 system-ui,sans-serif;letter-spacing:.04em;
+    text-transform:uppercase;max-width:130px}
+  .consArt{height:118px;margin:0 4px;border-radius:2px;display:flex;align-items:center;
+    justify-content:center;font-size:58px;background:#0A0C0F;position:relative;z-index:1;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
-  .consFoot{margin:7px 4px 3px;padding:8px 6px 9px;border-radius:2px;text-align:center;
-    background:linear-gradient(180deg,#9AA2AB,#767E88);color:#14181D}
-  .consFoot .k{font:700 12px/1.2 system-ui,sans-serif;letter-spacing:.04em}
-  .consFoot .v{margin-top:4px;font:800 15px/1.15 system-ui,sans-serif}
-  .rarityTag{margin-top:7px;text-align:center;font:700 8.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+  .consName{margin:9px 4px 0;text-align:center;font:800 16px/1.2 system-ui,sans-serif;
+    position:relative;z-index:1}
+  .consDesc{margin:6px 8px 0;text-align:center;font:500 12px/1.42 system-ui,sans-serif;
+    opacity:.9;position:relative;z-index:1;flex:1}
+  .consFoot{margin:0 4px 2px;padding:7px 6px 8px;border-radius:2px;text-align:center;
+    position:relative;z-index:1}
+  .consFoot .v{font:800 15px/1.15 system-ui,sans-serif}
+  .rarityTag{margin-top:6px;text-align:center;font:700 8.5px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.2em;text-transform:uppercase;opacity:.8;position:relative;z-index:1}
 
-  /* tiers */
-  .fut.dud{background:linear-gradient(160deg,#5D6873,#333C46 42%,#4C5761);color:#C6CED6}
-  .fut.bronze{background:linear-gradient(160deg,#CB8C4C,#7A4A22 42%,#B5763B);color:#FCEDDC}
-  .fut.silver{background:linear-gradient(160deg,#E6ECF2,#9AA7B4 42%,#D1DAE3);color:#222B35}
-  .fut.gold{background:linear-gradient(160deg,#F3D67C,#B08423 42%,#E6C466);color:#392A05}
-  .fut.totw{background:linear-gradient(163deg,#2B2B2B 0%,#0A0A0A 46%,#1E1E1E 100%);
-    color:#F0C75E;border:1px solid rgba(240,199,94,.5)}
-  .fut.totw .scoreline,.fut.totw .futName{border-color:rgba(240,199,94,.55)}
-  .fut.blue{background:linear-gradient(160deg,#84D6FF,#1B5C8A 42%,#5CB6EA);color:#05202D}
-  .fut.orange{background:linear-gradient(160deg,#FFB35F,#B24A08 42%,#F18C34);color:#2C1303}
-  .fut.purple{background:linear-gradient(160deg,#C89DFF,#4B2A86 42%,#A478E9);color:#1C0E33}
+  /* ---- tiers ---- */
+  .fut.bronzeC{background:#6B4A2A;background-image:linear-gradient(160deg,#8A6039,#4E3520 46%,#75512E);
+    color:#E8D5C2}
+  .fut.bronze{background:linear-gradient(160deg,#CB8C4C,#7A4A22 46%,#B5763B);color:#FCEDDC}
+  .fut.silver{background:linear-gradient(160deg,#E6ECF2,#9AA7B4 46%,#D1DAE3);color:#222B35}
+  .fut.gold{background:linear-gradient(160deg,#F3D67C,#B08423 46%,#E6C466);color:#392A05}
+  .fut.totw{background:linear-gradient(163deg,#2E2E2E 0%,#080808 46%,#1F1F1F 100%);
+    color:#F0C75E;border:1px solid rgba(240,199,94,.55)}
+  .fut.totw .scoreline,.fut.totw .futName{border-color:rgba(240,199,94,.5)}
+  .fut.blue{background:linear-gradient(160deg,#84D6FF,#1B5C8A 46%,#5CB6EA);color:#05202D}
+  .fut.orange{background:linear-gradient(160deg,#FFB35F,#B24A08 46%,#F18C34);color:#2C1303}
+  .fut.purple{background:linear-gradient(160deg,#C89DFF,#4B2A86 46%,#A478E9);color:#1C0E33}
 
-  .cons.common{background:linear-gradient(160deg,#8E97A1,#5A636D 45%,#79828C);color:#F2F5F8}
+  .cons.common{background:linear-gradient(160deg,#8E97A1,#5A636D 46%,#79828C);color:#F4F7FA}
   .cons.common .consTab{background:linear-gradient(160deg,#C3CBD3,#8A939D)}
-  .cons.rare{background:linear-gradient(160deg,#F0D274,#A87F20 45%,#DFBC5D);color:#332604}
+  .cons.common .consFoot{background:rgba(0,0,0,.28)}
+  .cons.rare{background:linear-gradient(160deg,#F0D274,#A87F20 46%,#DFBC5D);color:#312404}
   .cons.rare .consTab{background:linear-gradient(160deg,#FFF0BC,#D6AC3E)}
-  .cons.rare .consFoot{background:linear-gradient(180deg,#B9B2A0,#8F8878)}
-  .cons.shame{background:linear-gradient(160deg,#6E5560,#3A2A33 45%,#5A444F);color:#E6D5DD}
-  .cons.shame .consTab{background:linear-gradient(160deg,#9B7B88,#6B505C)}
+  .cons.rare .consFoot{background:rgba(0,0,0,.16)}
+  .cons.shame{background:#4A3229;background-image:linear-gradient(160deg,#5E4335,#33231C 46%,#4C3529);
+    color:#E3CDBE}
+  .cons.shame .consTab{background:linear-gradient(160deg,#7C5B49,#4A3428)}
+  .cons.shame .consFoot{background:rgba(0,0,0,.3)}
 
-  .packbar{position:relative;z-index:5;margin-top:18px;display:flex;align-items:center;
+  .packbar{position:relative;z-index:6;margin-top:16px;display:flex;align-items:center;
     justify-content:center;gap:12px}
   .dots{display:flex;gap:5px}
   .dot{width:6px;height:6px;border-radius:50%;background:rgba(234,226,207,.22)}
@@ -283,7 +313,7 @@
   .skipb{position:absolute;top:16px;right:16px;padding:9px 14px;border-radius:3px;
     border:1px solid #2C4257;background:rgba(6,14,22,.72);color:var(--dim);
     font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
-    text-transform:uppercase;cursor:pointer;z-index:6}
+    text-transform:uppercase;cursor:pointer;z-index:7}
 
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
@@ -388,23 +418,14 @@
 
   <section class="panel" id="demo">
     <h2>Pack Opening &middot; Test Build</h2>
-    <div class="card gold">
-      <h3>Hidden from the league</h3>
-      <p>Only reachable at <b>?pack=1</b>. Live version fires once per week per person, automatically.</p>
-    </div>
-    <div class="card">
-      <h3>Weekly results</h3>
-      <p>Worst to best. Flares grow in size, count and reach as the result improves.</p>
-      <div id="demoBtns"></div>
-    </div>
-    <div class="card">
-      <h3>Reserved tiers</h3>
-      <p>Never fire from a normal week. Held for clinching, the 1 seed, a first-round bye.</p>
-      <div id="demoSpecial"></div>
-    </div>
-    <div class="card">
-      <p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p>
-    </div>
+    <div class="card gold"><h3>Hidden from the league</h3>
+      <p>Only at <b>?pack=1</b>. Live version fires once per week per person.</p></div>
+    <div class="card"><h3>Weekly results</h3>
+      <p>Worst to best. TOTW is reserved for the single highest scorer in the league that week.</p>
+      <div id="demoBtns"></div></div>
+    <div class="card"><h3>Milestones</h3>
+      <p>Never fire from a normal week.</p><div id="demoSpecial"></div></div>
+    <div class="card"><p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p></div>
   </section>
 
   <footer>
@@ -796,16 +817,15 @@ Promise.all([
 
 
 /* ================= PACK OPENING ================= */
-/* flares: pairs per side, size + colour scale with the result */
 const TIER = {
-  dud:    { pairs:1, size:16, col:"#8FA0AE", spread:78,  step:70, label:"Common"  },
-  bronze: { pairs:2, size:22, col:"#E0A868", spread:96,  step:62, label:"Bronze"  },
-  silver: { pairs:4, size:30, col:"#EAF1F8", spread:112, step:54, label:"Silver"  },
-  gold:   { pairs:7, size:44, col:"#FFE9A8", spread:132, step:44, label:"Gold"    },
-  totw:   { pairs:9, size:52, col:"#FFD98A", spread:142, step:38, label:"Team of the Week" },
-  blue:   { pairs:9, size:50, col:"#BFEBFF", spread:140, step:40, label:"Special" },
-  orange: { pairs:10,size:54, col:"#FFD2A0", spread:146, step:38, label:"Special" },
-  purple: { pairs:10,size:54, col:"#E2C9FF", spread:146, step:38, label:"Special" }
+  bronzeC:{ pairs:1, size:18, col:"#C79A6A", spread:78,  step:70, label:"Common" },
+  bronze: { pairs:2, size:24, col:"#E5B074", spread:96,  step:62, label:"Bronze" },
+  silver: { pairs:4, size:32, col:"#EAF1F8", spread:112, step:54, label:"Silver" },
+  gold:   { pairs:6, size:42, col:"#FFE9A8", spread:126, step:46, label:"Gold"   },
+  totw:   { pairs:9, size:54, col:"#FFD98A", spread:140, step:40, label:"Team of the Week" },
+  blue:   { pairs:10,size:54, col:"#BFEBFF", spread:144, step:39, label:"Milestone" },
+  orange: { pairs:11,size:58, col:"#FFD2A0", spread:148, step:38, label:"Milestone" },
+  purple: { pairs:11,size:58, col:"#E2C9FF", spread:148, step:38, label:"Milestone" }
 };
 
 const PACK = (function(){
@@ -815,35 +835,34 @@ const PACK = (function(){
     <button class="skipb" id="pkSkip">Skip</button>
     <div class="packstage">
       <div class="flarefield" id="pkFlares"></div>
+      <div class="core" id="pkCore"></div>
+      <div class="sparks" id="pkSparks"></div>
       <div class="cardslot" id="pkSlot"></div>
       <div class="packbar"><span class="dots" id="pkDots"></span>
         <span class="tapon" id="pkTap">Tap to open</span></div>
     </div>`;
   document.body.appendChild(wrap);
 
-  const slot   = wrap.querySelector("#pkSlot");
-  const field  = wrap.querySelector("#pkFlares");
-  const dots   = wrap.querySelector("#pkDots");
-  const tap    = wrap.querySelector("#pkTap");
+  const slot=wrap.querySelector("#pkSlot"), field=wrap.querySelector("#pkFlares"),
+        core=wrap.querySelector("#pkCore"), sparks=wrap.querySelector("#pkSparks"),
+        dots=wrap.querySelector("#pkDots"), tap=wrap.querySelector("#pkTap");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const wait   = ms => new Promise(r => setTimeout(r, reduce ? Math.min(ms,60) : ms));
-
-  let cards = [], idx = 0, done = null, busy = false;
+  const wait = ms => new Promise(r=>setTimeout(r, reduce?Math.min(ms,60):ms));
+  let cards=[], idx=0, done=null, busy=false;
 
   function flares(tier){
     const t = TIER[tier] || TIER.silver;
     field.classList.remove("fire");
     let html = `<span class="bloom" style="background:radial-gradient(circle,${t.col},transparent 70%)"></span>`;
-    for(let i = 0; i < t.pairs; i++){
-      // grows outward from the card edge, each one bigger than the last
-      const grow = 0.55 + (i / Math.max(t.pairs-1,1)) * 0.85;
-      const s = Math.round(t.size * grow);
-      const off = t.spread + i * t.step;
-      const delay = i * 72;
-      const drift = (i % 2 ? -1 : 1) * (10 + i * 7);
-      ["left","right"].forEach(side => {
+    for(let i=0;i<t.pairs;i++){
+      const grow = 0.5 + (i/Math.max(t.pairs-1,1))*0.95;
+      const s = Math.round(t.size*grow);
+      const off = t.spread + i*t.step;
+      const drift = (i%2 ? -1 : 1) * (14 + i*9);
+      ["left","right"].forEach(side=>{
         html += `<span class="fl" style="--s:${s}px;--c:${t.col};${side}:50%;
-          margin-${side}:${off}px;margin-top:${drift - s/2}px;animation-delay:${delay}ms"></span>`;
+          margin-${side}:${off}px;margin-top:${drift}px;animation-delay:${i*84}ms">
+          <i class="hz"></i><i class="vt"></i><i class="d1"></i><i class="d2"></i></span>`;
       });
     }
     field.innerHTML = html;
@@ -852,157 +871,156 @@ const PACK = (function(){
   }
 
   function packFace(label){
-    let sh = "";
-    for(let i=0;i<10;i++){
-      const a = (i/10)*Math.PI*2;
-      sh += `<span class="shard" style="--x:${Math.cos(a)*190}px;--y:${Math.sin(a)*230}px;
-        --r:${Math.round(Math.cos(a)*300)}deg;animation-delay:${i*14}ms"></span>`;
+    let sh="";
+    for(let i=0;i<12;i++){
+      const a=(i/12)*Math.PI*2;
+      sh+=`<span class="shard" style="--x:${Math.cos(a)*200}px;--y:${Math.sin(a)*250}px;
+        --r:${Math.round(Math.cos(a)*340)}deg;animation-delay:${i*12}ms"></span>`;
     }
     return `<div class="shards" id="pkShards">${sh}</div>
       <div class="thepack" id="pkPack">
-        <span class="pl">Ultimo Bromigos</span>
-        <span class="pw">${esc(label)}</span>
+        <span class="pl">Ultimo Bromigos</span><span class="pw">${esc(label)}</span>
         <span class="pt">Tap to open</span></div>`;
   }
 
-  function matchCard(c){
-    return `<div class="fut ${c.tier} in">
-      <div class="scoreline">
-        <span class="mine">${esc(c.mine)}</span>
-        <span class="dash">:</span>
-        <span class="theirs">${esc(c.theirs)}</span>
-      </div>
+  function fireSparks(){
+    let h="";
+    for(let i=0;i<34;i++){
+      const a=Math.random()*Math.PI*2, d=90+Math.random()*230;
+      h+=`<span class="spark" style="--x:${Math.round(Math.cos(a)*d)}px;
+        --y:${Math.round(Math.sin(a)*d)}px;--t:${(0.8+Math.random()*0.7).toFixed(2)}s;
+        animation-delay:${Math.round(Math.random()*180)}ms"></span>`;
+    }
+    sparks.innerHTML=h; sparks.classList.remove("go");
+    void sparks.offsetWidth; sparks.classList.add("go");
+  }
+
+  const matchCard = c => `<div class="fut ${c.tier} hexskin ${c.matte?"matte":""} in">
+      <span class="gloss"></span>
+      <div class="scoreline"><span class="mine">${esc(c.mine)}</span>
+        <span class="dash">:</span><span class="theirs">${esc(c.theirs)}</span></div>
       <div class="vsline">${esc(c.vs)}</div>
       <div class="futArt">${c.art||""}</div>
       <div class="futName">${esc(c.title)}</div>
       <div class="marginbox"><b>${esc(c.margin)}</b><span>${esc(c.marginLabel)}</span></div>
     </div>`;
-  }
 
-  function consCard(c){
-    return `<div class="cons ${c.rarity} in">
-      <div class="consHead">
-        <span class="consTab">${c.icon||"\u2605"}</span>
-        <span class="consTitle">${esc(c.kind||"Superlative")}</span>
-      </div>
+  const consCard = c => `<div class="cons ${c.rarity} hexskin in">
+      <div class="consHead"><span class="consTab">${c.icon||"\u2605"}</span>
+        <span class="consTitle">${esc(c.kind||"Superlative")}</span></div>
       <div class="consArt">${c.art||""}</div>
-      <div class="consFoot">
-        <div class="k">${esc(c.title)}</div>
-        <div class="v">${esc(c.value||"")}</div>
-      </div>
+      <div class="consName">${esc(c.title)}</div>
+      <div class="consDesc">${esc(c.desc||"")}</div>
+      <div class="consFoot"><div class="v">${esc(c.value||"")}</div></div>
       <div class="rarityTag">${esc(c.rarityLabel||"")}</div>
     </div>`;
-  }
 
-  const faceOf = c => c.type === "cons" ? consCard(c) : matchCard(c);
-  function paintDots(){
+  const faceOf = c => c.type==="cons" ? consCard(c) : matchCard(c);
+  const paintDots = () =>
     dots.innerHTML = cards.map((_,i)=>`<span class="dot ${i<=idx?"act":""}"></span>`).join("");
-  }
 
   async function reveal(i){
-    idx = i;
-    const c = cards[i];
-    slot.innerHTML = "";
-    flares(c.flare || c.tier || (c.rarity === "rare" ? "gold" : "bronze"));
-    await wait(340);
-    slot.innerHTML = faceOf(c);
-    paintDots();
-    tap.textContent = i >= cards.length - 1 ? "Tap to close" : "Tap for next";
+    idx=i; const c=cards[i];
+    slot.innerHTML="";
+    flares(c.flare || c.tier || (c.rarity==="rare"?"gold":"bronze"));
+    await wait(360);
+    slot.innerHTML=faceOf(c); paintDots();
+    tap.textContent = i>=cards.length-1 ? "Tap to close" : "Tap for next";
   }
 
   async function burst(){
-    if(busy) return; busy = true;
-    const p = wrap.querySelector("#pkPack"), s = wrap.querySelector("#pkShards");
+    if(busy) return; busy=true;
+    const p=wrap.querySelector("#pkPack"), s=wrap.querySelector("#pkShards");
     if(p) p.classList.add("rip");
     if(s) s.classList.add("go");
-    await wait(470);
-    slot.innerHTML = "";
+    core.classList.remove("go"); void core.offsetWidth; core.classList.add("go");
+    fireSparks();
+    await wait(500);
+    slot.innerHTML="";
     await reveal(0);
-    busy = false;
+    busy=false;
   }
 
   async function advance(){
     if(busy) return;
     if(!slot.querySelector(".fut,.cons")) return burst();
-    if(idx >= cards.length - 1) return close();
-    busy = true; await reveal(idx + 1); busy = false;
+    if(idx>=cards.length-1) return close();
+    busy=true; await reveal(idx+1); busy=false;
   }
 
   function close(){
     wrap.classList.remove("on");
-    field.classList.remove("fire"); field.innerHTML = ""; slot.innerHTML = "";
-    document.body.style.overflow = "";
-    if(done){ const d = done; done = null; d(); }
+    field.classList.remove("fire"); field.innerHTML="";
+    core.classList.remove("go"); sparks.classList.remove("go"); sparks.innerHTML="";
+    slot.innerHTML=""; document.body.style.overflow="";
+    if(done){ const d=done; done=null; d(); }
   }
 
   wrap.addEventListener("click", e => {
-    if(e.target.id === "pkSkip") return close();
+    if(e.target.id==="pkSkip") return close();
     advance();
   });
 
-  return {
-    open(label, list){
-      cards = list; idx = -1; busy = false;
-      field.classList.remove("fire"); field.innerHTML = "";
-      slot.innerHTML = packFace(label);
-      dots.innerHTML = ""; tap.textContent = "Tap to open";
-      wrap.classList.add("on");
-      document.body.style.overflow = "hidden";
-      return new Promise(r => { done = r; });
-    }
-  };
+  return { open(label,list){
+    cards=list; idx=-1; busy=false;
+    field.classList.remove("fire"); field.innerHTML="";
+    sparks.innerHTML=""; core.classList.remove("go");
+    slot.innerHTML=packFace(label); dots.innerHTML="";
+    tap.textContent="Tap to open";
+    wrap.classList.add("on"); document.body.style.overflow="hidden";
+    return new Promise(r=>{ done=r; });
+  }};
 })();
 
-/* rotating flavour so it does not go stale */
-const pick = (a, wk) => a[(Number(wk)||0) % a.length];
+/* rotating flavour */
+const pick = (a,wk) => a[(Number(wk)||0) % a.length];
 const FLAVOR = {
   high:["Nobody came close","The rest of the league is embarrassed","Peaked, all downhill now","Sit down everyone"],
+  big: ["Ran up the score","Never in doubt","Merciless","Cruel and unnecessary"],
   win: ["A win is a win","Survived","Ugly but it counted","Take it and move on"],
   loss:["Better luck never","Straight to the archive","Outscored and outclassed","Rough one"],
   low: ["Worst in the league","Historic, wrong direction","Did you set a lineup","The bench outscored you"],
-  none:["Neither good nor bad enough to mention","Aggressively average","No awards, minimal shame","You existed this week"]
+  none:["Neither good nor bad enough to mention. The worst outcome.",
+        "Aggressively average. No card, no shame, no point.",
+        "You did not win anything and you did not lose loudly enough to matter.",
+        "Nothing happened to you this week. Existentially, anyway."]
 };
 
 function buildWeekCards(w, wk){
-  const out = [];
+  const out=[];
   const won = w.myScore > w.oppScore;
-  const margin = Math.abs(w.myScore - w.oppScore).toFixed(1);
-  let tier, art;
+  const margin = Math.abs(w.myScore - w.oppScore);
+  const mg = margin.toFixed(1);
+  let tier, art, matte=false;
   if(w.leagueHigh){ tier="totw"; art="\u{1F451}"; }
-  else if(w.leagueLow){ tier="dud"; art="\u{1F480}"; }
+  else if(w.leagueLow){ tier="bronzeC"; art="\u{1F480}"; matte=true; }
+  else if(won && margin >= 25){ tier="gold"; art="\u{1F4A5}"; }
   else if(won){ tier="silver"; art="\u{1F4AA}"; }
   else { tier="bronze"; art="\u{1F615}"; }
 
-  const flav = w.leagueHigh ? pick(FLAVOR.high,wk) : w.leagueLow ? pick(FLAVOR.low,wk)
-             : won ? pick(FLAVOR.win,wk) : pick(FLAVOR.loss,wk);
+  out.push({ type:"match", tier, art, matte,
+    mine:w.myScore.toFixed(1), theirs:w.oppScore.toFixed(1),
+    vs:(won?"def. ":"lost to ")+w.opponent,
+    title:w.manager||ME||"You",
+    margin:(won?"+":"\u2212")+mg,
+    marginLabel: won?"Margin of victory":"Margin of defeat",
+    flare:tier });
 
-  out.push({
-    type:"match", tier, art,
-    mine: w.myScore.toFixed(1), theirs: w.oppScore.toFixed(1),
-    vs: (won ? "def. " : "lost to ") + w.opponent,
-    title: w.manager || ME || "You",
-    margin: (won ? "+" : "\u2212") + margin,
-    marginLabel: won ? "Margin of victory" : "Margin of defeat",
-    flare: tier
-  });
-
-  (w.awards||[]).forEach(a => {
-    const rare = a.rare !== false && a.good !== false;
-    out.push({
-      type:"cons",
-      rarity: a.good === false ? "shame" : (a.rare ? "rare" : "common"),
-      rarityLabel: a.good === false ? "Dishonour" : (a.rare ? "Rare" : "Common"),
-      kind: a.good === false ? "Weekly Dishonour" : "Weekly Superlative",
-      icon: a.icon || (a.good === false ? "\u2620\uFE0F" : "\u2605"),
-      art: a.emoji || "\u{1F3C6}",
-      title: a.title, value: a.stat,
-      flare: a.good === false ? "dud" : (a.rare ? "gold" : "silver")
-    });
-  });
+  (w.awards||[]).forEach(a => out.push({
+    type:"cons",
+    rarity: a.good===false ? "shame" : (a.rare ? "rare" : "common"),
+    rarityLabel: a.good===false ? "Dishonour" : (a.rare ? "Rare" : "Common"),
+    kind: a.good===false ? "Weekly Dishonour" : "Weekly Superlative",
+    icon: a.icon || (a.good===false ? "\u2620\uFE0F" : "\u2605"),
+    art: a.emoji || "\u{1F3C6}",
+    title: a.title, desc: a.desc || "", value: a.stat,
+    flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silver")
+  }));
 
   if(!(w.awards||[]).length){
-    out.push({ type:"cons", rarity:"common", rarityLabel:"Common", kind:"Weekly Superlative",
-      icon:"\u2796", art:"\u{1F937}", title:"No Awards", value: pick(FLAVOR.none, wk),
+    out.push({ type:"cons", rarity:"common", rarityLabel:"Common",
+      kind:"Weekly Superlative", icon:"\u2796", art:"\u{1F937}",
+      title:"No Awards", desc:pick(FLAVOR.none,wk), value:"Nothing earned",
       flare:"bronze" });
   }
   return out;
@@ -1011,46 +1029,44 @@ function buildWeekCards(w, wk){
 function maybeAutoPack(){
   if(!ME || !WEEKLY || !WEEKLY.week) return;
   let off=false, seen=null;
-  try{ off = localStorage.getItem("bromigos.noanim")==="1";
-       seen = localStorage.getItem("bromigos.seenWeek"); }catch(e){}
-  if(off || String(seen) === String(WEEKLY.week)) return;
-  const mine = (WEEKLY.packs||{})[ME];
+  try{ off=localStorage.getItem("bromigos.noanim")==="1";
+       seen=localStorage.getItem("bromigos.seenWeek"); }catch(e){}
+  if(off || String(seen)===String(WEEKLY.week)) return;
+  const mine=(WEEKLY.packs||{})[ME];
   if(!mine) return;
-  try{ localStorage.setItem("bromigos.seenWeek", String(WEEKLY.week)); }catch(e){}
-  PACK.open("Week " + WEEKLY.week, buildWeekCards(mine, WEEKLY.week));
+  try{ localStorage.setItem("bromigos.seenWeek",String(WEEKLY.week)); }catch(e){}
+  PACK.open("Week "+WEEKLY.week, buildWeekCards(mine, WEEKLY.week));
 }
 
-/* ---------- demo harness ---------- */
 if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
   const S = {
-    "Dud: league low": {manager:"Scotty",myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
-      awards:[{title:"Walking Disaster",stat:"78.4 points",good:false,emoji:"\u{1F480}"},
-              {title:"Punching Bag",stat:"Gave up 139.1",good:false,emoji:"\u{1F94A}"}]},
+    "Bronze common: league low": {manager:"Scotty",myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
+      awards:[{title:"Walking Disaster",desc:"Lowest score in the league this week. Not close, either.",stat:"78.4 points",good:false,emoji:"\u{1F480}"},
+              {title:"Punching Bag",desc:"Nobody had more points hung on them. You were the schedule's gift.",stat:"139.1 allowed",good:false,emoji:"\u{1F94A}"}]},
     "Bronze: normal loss": {manager:"Scotty",myScore:109.2,oppScore:121.6,opponent:"Ryan",
-      awards:[{title:"Bench Champion",stat:"Left 41.3 on the bench",good:false,emoji:"\u{1FA91}"}]},
+      awards:[{title:"Bench Champion",desc:"Points you left sitting. Your bench would have won the game.",stat:"41.3 on the bench",good:false,emoji:"\u{1FA91}"}]},
     "Silver: normal win": {manager:"Scotty",myScore:124.4,oppScore:117.9,opponent:"Cody",
-      awards:[{title:"Sunday Scaries",stat:"Won by 6.5",rare:false,emoji:"\u{1F630}"}]},
-    "TOTW: league high": {manager:"Scotty",myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
-      awards:[{title:"Scoring Machine",stat:"151.8 points",rare:true,emoji:"\u{1F525}"},
-              {title:"Blowout King",stat:"Won by 33.6",rare:true,emoji:"\u{1F4A5}"}]}
+      awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 6.5",rare:false,emoji:"\u{1F630}"}]},
+    "Gold: blowout win": {manager:"Scotty",myScore:142.0,oppScore:104.8,opponent:"Bo",
+      awards:[{title:"Blowout King",desc:"Largest margin of the week. It stopped being a game by Sunday noon.",stat:"Won by 37.2",rare:true,emoji:"\u{1F4A5}"}]},
+    "TOTW: highest scorer": {manager:"Scotty",myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
+      awards:[{title:"Scoring Machine",desc:"Most points in the entire league this week. Everyone else was playing for second.",stat:"151.8 points",rare:true,emoji:"\u{1F525}"}]}
   };
   document.getElementById("demoBtns").innerHTML = Object.keys(S)
-    .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 14px/1 system-ui,sans-serif;letter-spacing:.06em;cursor:pointer">${k}</button>`).join("");
+    .map(k=>`<button class="demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;padding:14px;border:0;border-radius:3px;background:var(--brass);color:#2A1C00;font:800 13.5px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer">${k}</button>`).join("");
   document.querySelectorAll("#demoBtns .demoGo").forEach(b=>{
-    b.onclick = () => PACK.open("Week 1", buildWeekCards(S[b.dataset.k], 1));
-  });
-  const SP = {blue:"Blue: clinched playoffs", orange:"Orange: 1 seed", purple:"Purple: first-round bye"};
+    b.onclick = () => PACK.open("Week 1", buildWeekCards(S[b.dataset.k], 1)); });
+  const SP={blue:"Blue: clinched playoffs",orange:"Orange: 1 seed",purple:"Purple: first-round bye"};
   document.getElementById("demoSpecial").innerHTML = Object.entries(SP)
     .map(([t,l])=>`<button class="spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;padding:14px;border:1px solid #2C4257;border-radius:3px;background:transparent;color:var(--chalk);font:700 13px/1 system-ui,sans-serif;cursor:pointer">${l}</button>`).join("");
   document.querySelectorAll(".spGo").forEach(b=>{
-    b.onclick = () => PACK.open("Milestone", [{type:"match", tier:b.dataset.t, flare:b.dataset.t,
-      art:"\u{1F3DF}\uFE0F", mine:"1", theirs:"10", vs:"clinched", title:"Scotty",
-      margin:"1st", marginLabel:"Seed"}]);
-  });
-  const na = document.getElementById("noanim");
-  try{ na.checked = localStorage.getItem("bromigos.noanim")==="1"; }catch(e){}
-  na.onchange = () => { try{ localStorage.setItem("bromigos.noanim", na.checked?"1":"0"); }catch(e){} };
+    b.onclick = () => PACK.open("Milestone",[{type:"match",tier:b.dataset.t,flare:b.dataset.t,
+      art:"\u{1F3DF}\uFE0F",mine:"1",theirs:"10",vs:"clinched",title:"Scotty",
+      margin:"1st",marginLabel:"Seed"}]); });
+  const na=document.getElementById("noanim");
+  try{ na.checked=localStorage.getItem("bromigos.noanim")==="1"; }catch(e){}
+  na.onchange=()=>{ try{ localStorage.setItem("bromigos.noanim",na.checked?"1":"0"); }catch(e){} };
 }
 
 document.querySelectorAll("nav button").forEach(b=>{

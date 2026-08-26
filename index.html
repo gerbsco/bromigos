@@ -7,8 +7,7 @@
 <meta name="description" content="Ultimo Bromigos fantasy football league headquarters">
 <style>
   :root{
-    --ink:#0E2438; --ink-2:#132C44; --paper:#FBF6EA; --rule:#C7BBA1;
-    --brass:#D9A227; --stamp:#B23A2F; --green:#4CAF7D; --text:#17222E;
+    --ink:#0E2438; --ink-2:#132C44; --brass:#D9A227; --stamp:#B23A2F; --green:#4CAF7D;
     --chalk:#EAE2CF; --dim:#93A6B8; --faint:#5D7086;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -25,9 +24,7 @@
   h1{margin:10px 0 5px;font:800 clamp(28px,8.5vw,44px)/.94 system-ui,sans-serif;
     letter-spacing:-.03em;text-transform:uppercase}
   .sub{font-size:13.5px;color:var(--dim);margin:0}
-
-  .whoami{margin:16px 0 0;display:flex;gap:8px;align-items:center;justify-content:center;
-    flex-wrap:wrap}
+  .whoami{margin:16px 0 0;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
   .whoami label{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
     text-transform:uppercase;color:var(--faint)}
   select{padding:10px 12px;border-radius:3px;border:1px solid #2C4257;background:var(--ink-2);
@@ -63,11 +60,38 @@
     border-left:3px solid #2C4257}
   .card.gold{border-left-color:var(--brass)}
   .card.red{border-left-color:var(--stamp)}
+  .card.green{border-left-color:var(--green)}
   .card h3{margin:0 0 7px;font:800 16px/1.25 system-ui,sans-serif}
   .card p{margin:0;font-size:14.5px;color:#BCCBD8;line-height:1.55}
-  .card p+p{margin-top:8px}
-  .plain{margin:11px 0;padding-left:20px}
-  .plain li{font-size:14px;color:#BCCBD8;line-height:1.7}
+  .card p+p{margin-top:9px}
+
+  /* weekly writeup */
+  .recap{background:var(--ink-2);border-radius:4px;padding:20px 17px;margin-bottom:12px;
+    border-left:3px solid var(--brass)}
+  .recap .wk{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--brass);margin-bottom:9px}
+  .recap h3{margin:0 0 11px;font:800 20px/1.24 system-ui,sans-serif;letter-spacing:-.015em}
+  .recap p{margin:0 0 10px;font-size:15px;color:#C6D3DE;line-height:1.6}
+  .recap p:last-child{margin-bottom:0}
+
+  .moves{margin-top:12px}
+  .mv{display:flex;gap:10px;padding:9px 0;border-top:1px solid rgba(234,226,207,.1);
+    font-size:14px;color:#BCCBD8;line-height:1.5}
+  .mv .ar{flex:none;width:20px;font:800 15px/1.4 system-ui,sans-serif}
+  .mv.up .ar{color:var(--green)}
+  .mv.down .ar{color:var(--stamp)}
+  .mv.watch .ar{color:var(--brass)}
+  .mv b{color:var(--chalk)}
+
+  /* superlatives */
+  .awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+  .aw{background:var(--ink-2);border-radius:4px;padding:15px;border-left:3px solid #2C4257}
+  .aw.hot{border-left-color:var(--brass)}
+  .aw.cold{border-left-color:var(--stamp)}
+  .aw .ttl{font:700 10px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--brass);margin-bottom:7px}
+  .aw .win{font:800 16px/1.2 system-ui,sans-serif;color:var(--chalk)}
+  .aw .stat{margin-top:6px;font-size:13px;color:var(--dim);line-height:1.5}
 
   table{width:100%;border-collapse:collapse;margin-bottom:6px}
   th{text-align:left;padding:0 6px 9px;font:700 10px/1.3 ui-monospace,Menlo,monospace;
@@ -87,8 +111,7 @@
     text-transform:uppercase;color:var(--faint);margin-bottom:5px}
   .rule .v{font:700 15px/1.3 system-ui,sans-serif;color:var(--chalk)}
 
-  .champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:9px;
-    margin-bottom:8px}
+  .champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:9px;margin-bottom:8px}
   .ring{background:var(--ink-2);border-left:3px solid var(--brass);border-radius:3px;padding:12px 13px}
   .ring .yr{display:block;font:800 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
     color:var(--brass);margin-bottom:6px}
@@ -117,7 +140,6 @@
   .locked .ic{font-size:26px;margin-bottom:11px}
   .locked h3{margin:0 0 8px;font:800 17px/1.25 system-ui,sans-serif;color:var(--chalk)}
   .locked p{margin:0 auto;font-size:14px;color:var(--dim);max-width:400px;line-height:1.6}
-
   .stamp{display:inline-block;padding:4px 9px;border-radius:2px;background:rgba(76,175,125,.14);
     color:var(--green);font:700 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.12em;
     text-transform:uppercase;margin-bottom:12px}
@@ -138,7 +160,7 @@
     </div>
   </header>
 
-  <div class="count">
+  <div class="count" id="countdown">
     <div class="lbl" id="cdlabel">Draft in</div>
     <div class="clock">
       <div class="unit"><b id="d">--</b><span>Days</span></div>
@@ -156,45 +178,13 @@
     <button role="tab" aria-selected="false" data-p="wire">Wire</button>
     <button role="tab" aria-selected="false" data-p="owners">Owners</button>
     <button role="tab" aria-selected="false" data-p="history">History</button>
+    <button role="tab" aria-selected="false" data-p="rules">Rules</button>
   </nav>
 
   <section class="panel on" id="hq">
-    <h2>Calendar</h2>
-    <div class="rules">
-      <div class="rule"><div class="k">Draft</div><div class="v">Sun Sept 6, 5:00 PM ET</div></div>
-      <div class="rule"><div class="k">Pick clock</div><div class="v">90 seconds, snake</div></div>
-      <div class="rule"><div class="k">Regular season</div><div class="v">Weeks 1&ndash;14</div></div>
-      <div class="rule"><div class="k">Trade deadline</div><div class="v">Wed Dec 2, noon ET</div></div>
-      <div class="rule"><div class="k">Playoffs</div><div class="v">Weeks 15&ndash;17, 6 teams</div></div>
-      <div class="rule"><div class="k">Byes</div><div class="v">Top 2 seeds</div></div>
-    </div>
-
-    <h2>Rules of Record</h2>
-    <div class="rules">
-      <div class="rule"><div class="k">Receptions</div><div class="v">0.5 &mdash; Half PPR</div></div>
-      <div class="rule"><div class="k">Passing TD</div><div class="v">4 points</div></div>
-      <div class="rule"><div class="k">Rush / Rec TD</div><div class="v">6 points</div></div>
-      <div class="rule"><div class="k">Big-play bonus</div><div class="v">+1 at 40yd, +2 at 50yd</div></div>
-      <div class="rule"><div class="k">Lineup</div><div class="v">QB &middot; 2RB &middot; 2WR &middot; WR/TE &middot; FLEX &middot; D/ST &middot; K</div></div>
-      <div class="rule"><div class="k">Bench / IR</div><div class="v">7 and 2</div></div>
-      <div class="rule"><div class="k">Waivers</div><div class="v">Rolling order, 24hr</div></div>
-      <div class="rule"><div class="k">Buy-in</div><div class="v">$50</div></div>
-    </div>
-    <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
-
-    <h2>On the Ballot</h2>
-    <div class="rules">
-      <div class="rule"><div class="k">01</div><div class="v">PPR level</div></div>
-      <div class="rule"><div class="k">02</div><div class="v">WR/TE slot</div></div>
-      <div class="rule"><div class="k">03</div><div class="v">Superflex</div></div>
-      <div class="rule"><div class="k">04</div><div class="v">Passing TD value</div></div>
-      <div class="rule"><div class="k">05</div><div class="v">Waivers vs. bidding</div></div>
-      <div class="rule"><div class="k">06</div><div class="v">Playoff field</div></div>
-      <div class="rule"><div class="k">07</div><div class="v">Draft order</div></div>
-      <div class="rule"><div class="k">08</div><div class="v">Keepers</div></div>
-      <div class="rule"><div class="k">09</div><div class="v">Buy-in</div></div>
-    </div>
-    <p class="note">Majority carries. Ties keep the current rule. Closes at the draft.</p>
+    <div id="recap"></div>
+    <div id="awards"></div>
+    <div id="snapshot"></div>
   </section>
 
   <section class="panel" id="league"><div id="leagueBody"></div></section>
@@ -230,6 +220,30 @@
     <div id="seasons"></div>
   </section>
 
+  <section class="panel" id="rules">
+    <h2>Calendar</h2>
+    <div class="rules">
+      <div class="rule"><div class="k">Draft</div><div class="v">Sun Sept 6, 5:00 PM ET</div></div>
+      <div class="rule"><div class="k">Pick clock</div><div class="v">90 seconds, snake</div></div>
+      <div class="rule"><div class="k">Regular season</div><div class="v">Weeks 1&ndash;14</div></div>
+      <div class="rule"><div class="k">Trade deadline</div><div class="v">Wed Dec 2, noon ET</div></div>
+      <div class="rule"><div class="k">Playoffs</div><div class="v">Weeks 15&ndash;17, 6 teams</div></div>
+      <div class="rule"><div class="k">Byes</div><div class="v">Top 2 seeds</div></div>
+    </div>
+    <h2>Rules of Record</h2>
+    <div class="rules">
+      <div class="rule"><div class="k">Receptions</div><div class="v">0.5 &mdash; Half PPR</div></div>
+      <div class="rule"><div class="k">Passing TD</div><div class="v">4 points</div></div>
+      <div class="rule"><div class="k">Rush / Rec TD</div><div class="v">6 points</div></div>
+      <div class="rule"><div class="k">Big-play bonus</div><div class="v">+1 at 40yd, +2 at 50yd</div></div>
+      <div class="rule"><div class="k">Lineup</div><div class="v">QB &middot; 2RB &middot; 2WR &middot; WR/TE &middot; FLEX &middot; D/ST &middot; K</div></div>
+      <div class="rule"><div class="k">Bench / IR</div><div class="v">7 and 2</div></div>
+      <div class="rule"><div class="k">Waivers</div><div class="v">Rolling order, 24hr</div></div>
+      <div class="rule"><div class="k">Buy-in</div><div class="v">$50</div></div>
+    </div>
+    <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
+  </section>
+
   <footer>
     <span id="freshness">Loading league data&hellip;</span><br>
     Updated daily from ESPN &middot; League ID 24869044
@@ -237,7 +251,6 @@
 </div>
 
 <script>
-/* ==== SEASON HISTORY (static — these years are finished) ==== */
 const SEASONS = {
 "2025": [
   ["TE University", "Scotty Gerben", "8-6", 1602.26, 1472.2, 1],
@@ -342,41 +355,37 @@ const CURRENT = ["Scotty Gerben","bo","Andrew Dawson","Anthony Henders","Cody Ab
 
 const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 const fmt = n => Math.round(n).toLocaleString();
+const f1  = n => (Math.round(n*10)/10).toLocaleString(undefined,{minimumFractionDigits:1});
 const YEARS = Object.keys(SEASONS).sort().reverse();
 const ALLY = YEARS.slice().reverse();
 
-/* ==== who am I ==== */
-let ME = "";
-try { ME = localStorage.getItem("bromigos.me") || ""; } catch(e) {}
+let ME = ""; try { ME = localStorage.getItem("bromigos.me") || ""; } catch(e){}
 const sel = document.getElementById("me");
 CURRENT.slice().sort().forEach(m => {
   const o = document.createElement("option");
-  o.value = m; o.textContent = m;
-  if(m === ME) o.selected = true;
+  o.value = m; o.textContent = m; if(m===ME) o.selected = true;
   sel.appendChild(o);
 });
-sel.onchange = () => {
-  ME = sel.value;
-  try { localStorage.setItem("bromigos.me", ME); } catch(e) {}
-  renderAll();
-};
+sel.onchange = () => { ME = sel.value;
+  try { localStorage.setItem("bromigos.me", ME); } catch(e){}
+  renderAll(); };
 
-/* ==== history ==== */
+/* ---------- history ---------- */
 const led = {};
 YEARS.forEach(y => SEASONS[y].forEach(r => {
-  const m = r[1], p = r[2].split("-").map(Number);
-  if(!led[m]) led[m] = {w:0,l:0,pf:0,pa:0,t:0,yrs:0};
+  const m=r[1], p=r[2].split("-").map(Number);
+  if(!led[m]) led[m]={w:0,l:0,pf:0,pa:0,t:0,yrs:0};
   led[m].w+=p[0]; led[m].l+=p[1]; led[m].pf+=r[3]; led[m].pa+=r[4];
   led[m].yrs++; if(r[5]===1) led[m].t++;
 }));
 
-document.getElementById("champs").innerHTML = YEARS.map(y => {
-  const c = SEASONS[y].find(r => r[5]===1);
+document.getElementById("champs").innerHTML = YEARS.map(y=>{
+  const c=SEASONS[y].find(r=>r[5]===1);
   return `<div class="ring"><span class="yr">${y}</span><span class="nm">${esc(c[1])}</span>
     <span class="tm">${esc(c[0])} &middot; ${c[2]}</span></div>`;
 }).join("");
 
-document.getElementById("seasons").innerHTML = YEARS.map(y => `
+document.getElementById("seasons").innerHTML = YEARS.map(y=>`
   <h2>${y} Final Standings</h2>
   <table><thead><tr><th></th><th>Team</th><th class="n">Rec</th><th class="n">PF</th><th class="n">PA</th></tr></thead>
   <tbody>${SEASONS[y].map((r,i)=>`<tr class="${r[5]===1?"champ":""}">
@@ -391,15 +400,13 @@ function renderLedger(){
     .map(([m,v])=>`<tr class="${v.t?"champ":""} ${m===ME?"you":""}">
       <td>${esc(m)}<span class="who">${v.yrs} season${v.yrs>1?"s":""}</span></td>
       <td class="n">${v.w}-${v.l}</td><td class="n">${fmt(v.pf)}</td>
-      <td class="n">${fmt(v.pa)}</td><td class="n">${v.t?"\u{1F3C6}".repeat(v.t):"\u2014"}</td>
-    </tr>`).join("");
+      <td class="n">${fmt(v.pa)}</td><td class="n">${v.t?"\u{1F3C6}".repeat(v.t):"\u2014"}</td></tr>`).join("");
 }
-
 function renderDossiers(){
-  document.getElementById("dossiers").innerHTML = CURRENT.map(m => {
-    const v = led[m];
-    const strip = ALLY.map(y => {
-      const r = SEASONS[y].find(x => x[1]===m);
+  document.getElementById("dossiers").innerHTML = CURRENT.map(m=>{
+    const v=led[m];
+    const strip = ALLY.map(y=>{
+      const r=SEASONS[y].find(x=>x[1]===m);
       if(!r) return `<div class="yrbox none"><span class="y">${y.slice(2)}</span><span class="p">&ndash;</span></div>`;
       return `<div class="yrbox ${r[5]===1?"win":""}"><span class="y">${y.slice(2)}</span>
         <span class="p">${r[5]===1?"\u{1F3C6}":r[5]}</span></div>`;
@@ -413,93 +420,218 @@ function renderDossiers(){
   }).join("");
 }
 
-/* ==== live data ==== */
-let LIVE = null;
+/* ---------- live state ---------- */
+let LIVE = null, WEEKLY = null;
+const lock = (t,b) => `<div class="locked"><div class="ic">&#128274;</div><h3>${t}</h3><p>${b}</p></div>`;
+const drafted = () => !!(LIVE && LIVE.settings && LIVE.settings.draftDetail
+  && LIVE.settings.draftDetail.drafted);
+const teamList = () => (LIVE && LIVE.teams && LIVE.teams.teams) ? LIVE.teams.teams : [];
+const tname = t => (t.name||"").trim();
 
-function lockedPanel(title, body){
-  return `<div class="locked"><div class="ic">&#128274;</div><h3>${title}</h3><p>${body}</p></div>`;
+/* played games only */
+function playedGames(){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  return sch.filter(g => g.winner && g.winner !== "UNDECIDED"
+    && g.home && g.away && typeof g.home.totalPoints === "number");
+}
+
+/* ---------- weekly writeup ---------- */
+function renderRecap(){
+  const el = document.getElementById("recap");
+  if(!WEEKLY){
+    el.innerHTML = `<h2>This Week</h2>` + lock("First writeup lands after Week 1",
+      "Standings and awards below update themselves every morning. The recap gets written each Tuesday.");
+    return;
+  }
+  const body = (WEEKLY.body||[]).map(p=>`<p>${esc(p)}</p>`).join("");
+  const moves = (WEEKLY.changed||[]).map(c=>{
+    const dir = c.dir==="up"?"up":c.dir==="down"?"down":"watch";
+    const ar = dir==="up"?"\u2191":dir==="down"?"\u2193":"\u26A0";
+    return `<div class="mv ${dir}"><span class="ar">${ar}</span>
+      <span><b>${esc(c.team)}</b> &mdash; ${esc(c.note)}</span></div>`;
+  }).join("");
+  el.innerHTML = `<h2>This Week</h2>
+    <div class="recap">
+      <div class="wk">${esc(WEEKLY.week ? "Week "+WEEKLY.week : "Preseason")}${
+        WEEKLY.posted ? " \u00b7 " + esc(WEEKLY.posted) : ""}</div>
+      ${WEEKLY.headline ? `<h3>${esc(WEEKLY.headline)}</h3>` : ""}
+      ${body}
+      ${moves ? `<div class="moves">${moves}</div>` : ""}
+    </div>`;
+}
+
+/* ---------- superlatives (computed) ---------- */
+function renderAwards(){
+  const el = document.getElementById("awards");
+  const teams = teamList();
+  const games = playedGames();
+  if(!teams.length || !games.length){
+    el.innerHTML = `<h2>Superlatives</h2>` + lock("Awards start after Week 1",
+      "Every award here is calculated from real results \u2014 no opinions, no voting.");
+    return;
+  }
+
+  const byId = {};
+  teams.forEach(t => byId[t.id] = {
+    id:t.id, name:tname(t), scores:[], margins:[], oppPts:[],
+    w:t.record.overall.wins, l:t.record.overall.losses,
+    pf:t.record.overall.pointsFor, pa:t.record.overall.pointsAgainst,
+    close:0, blowouts:0
+  });
+
+  games.forEach(g=>{
+    [[g.home,g.away],[g.away,g.home]].forEach(([a,b])=>{
+      const t = byId[a.teamId]; if(!t) return;
+      const diff = a.totalPoints - b.totalPoints;
+      t.scores.push(a.totalPoints);
+      t.margins.push(diff);
+      t.oppPts.push(b.totalPoints);
+      if(diff < 0 && diff > -10) t.close++;
+      if(diff > 30) t.blowouts++;
+    });
+  });
+
+  const all = Object.values(byId).filter(t=>t.scores.length);
+  const avg = a => a.reduce((x,y)=>x+y,0)/a.length;
+  const sd = a => { const m=avg(a); return Math.sqrt(avg(a.map(x=>(x-m)**2))); };
+  const top = (arr,f) => arr.slice().sort((a,b)=>f(b)-f(a))[0];
+  const pfRank = all.slice().sort((a,b)=>b.pf-a.pf);
+  const winRank = all.slice().sort((a,b)=>b.w-a.w);
+  const rankOf = (arr,t) => arr.findIndex(x=>x.id===t.id)+1;
+  const ord = n => n+(["th","st","nd","rd"][(n%100-20)%10]||["th","st","nd","rd"][n%100]||"th");
+
+  const A = [];
+  const push = (ttl,win,stat,cls)=>A.push({ttl,win,stat,cls});
+
+  const machine = top(all,t=>t.pf);
+  push("Scoring Machine", machine.name,
+    `${fmt(machine.pf)} points, ${f1(avg(machine.scores))} a week.`, "hot");
+
+  const disaster = top(all,t=>-t.pf);
+  push("Walking Disaster", disaster.name,
+    `${fmt(disaster.pf)} points. Last in the league.`, "cold");
+
+  const unlucky = top(all,t=>(rankOf(winRank,t)-rankOf(pfRank,t)));
+  push("Unluckiest", unlucky.name,
+    `${ord(rankOf(pfRank,unlucky))} in scoring, ${ord(rankOf(winRank,unlucky))} in the standings. ${fmt(unlucky.pa)} allowed.`, "cold");
+
+  const fraud = top(all,t=>(rankOf(pfRank,t)-rankOf(winRank,t)));
+  if(fraud.id !== unlucky.id)
+    push("Fraud Watch", fraud.name,
+      `${fraud.w}-${fraud.l} on the ${ord(rankOf(pfRank,fraud))}-best scoring in the league.`, "hot");
+
+  const punching = top(all,t=>t.pa);
+  push("Punching Bag", punching.name,
+    `${fmt(punching.pa)} points allowed \u2014 most in the league.`, "cold");
+
+  const heart = top(all,t=>t.close);
+  if(heart.close>0) push("Heartbreaker", heart.name,
+    `${heart.close} loss${heart.close>1?"es":""} by under 10 points.`, "cold");
+
+  const blow = top(all,t=>t.blowouts);
+  if(blow.blowouts>0) push("Blowout King", blow.name,
+    `${blow.blowouts} win${blow.blowouts>1?"s":""} by 30 or more.`, "hot");
+
+  const boom = top(all,t=>sd(t.scores));
+  push("Boom or Bust", boom.name,
+    `High ${f1(Math.max(...boom.scores))}, low ${f1(Math.min(...boom.scores))}. Nobody swings harder.`, "");
+
+  const victim = top(all,t=>avg(t.oppPts));
+  push("Schedule Victim", victim.name,
+    `Opponents average ${f1(avg(victim.oppPts))} against him.`, "cold");
+
+  const dom = top(all,t=>t.w*100+t.pf);
+  push("Most Dominant", dom.name,
+    `${dom.w}-${dom.l}, ${fmt(dom.pf)} points, ${dom.pf>dom.pa?"+":""}${fmt(dom.pf-dom.pa)} differential.`, "hot");
+
+  el.innerHTML = `<h2>Superlatives</h2><div class="awards">` +
+    A.map(a=>`<div class="aw ${a.cls}"><div class="ttl">${a.ttl}</div>
+      <div class="win">${esc(a.win)}</div><div class="stat">${esc(a.stat)}</div></div>`).join("") +
+    `</div><p class="note">Recalculated every morning from completed games.</p>`;
+}
+
+/* ---------- standings ---------- */
+function standingsTable(limit){
+  const teams = teamList();
+  if(!teams.length) return "";
+  const rows = teams.slice().sort((a,b)=>{
+    const A=a.record.overall,B=b.record.overall;
+    return (B.wins-A.wins)||(B.pointsFor-A.pointsFor);
+  }).slice(0, limit||99);
+  return `<table><thead><tr><th></th><th>Team</th><th class="n">Rec</th>
+    <th class="n">PF</th><th class="n">PA</th></tr></thead><tbody>` +
+    rows.map((t,i)=>{const o=t.record.overall;
+      return `<tr><td class="pos">${i+1}</td><td>${esc(tname(t))}</td>
+        <td class="n">${o.wins}-${o.losses}</td>
+        <td class="n">${fmt(o.pointsFor)}</td><td class="n">${fmt(o.pointsAgainst)}</td></tr>`;
+    }).join("") + `</tbody></table>`;
+}
+
+function renderSnapshot(){
+  const el = document.getElementById("snapshot");
+  if(!playedGames().length){ el.innerHTML = ""; return; }
+  el.innerHTML = `<h2>Standings</h2>` + standingsTable(5) +
+    `<p class="note">Full table on the League tab.</p>`;
 }
 
 function renderLeague(){
   const el = document.getElementById("leagueBody");
-  if(!LIVE || !LIVE.teams || !LIVE.teams.teams){
-    el.innerHTML = lockedPanel("Waiting on the first data pull",
-      "Standings appear here once the nightly job has run and the season is underway.");
+  const teams = teamList();
+  if(!teams.length){
+    el.innerHTML = lock("Waiting on the first data pull",
+      "Standings appear here once the nightly job has run.");
     return;
   }
-  const teams = LIVE.teams.teams;
-  const drafted = LIVE.settings && LIVE.settings.draftDetail && LIVE.settings.draftDetail.drafted;
-  if(!drafted){
+  if(!playedGames().length){
     el.innerHTML = `<div class="stamp">Connected to ESPN</div>` +
-      lockedPanel("Standings open Week 1",
-        `All ${teams.length} teams are in and the league feed is live. Records fill in once games are played.`) +
+      lock("Standings open Week 1",
+        `All ${teams.length} teams are in and the feed is live. Records fill in once games are played.`) +
       `<h2>Teams</h2><table><thead><tr><th>Team</th><th class="n">Abbrev</th></tr></thead><tbody>` +
-      teams.map(t=>`<tr><td>${esc((t.name||"").trim())}</td>
-        <td class="n">${esc(t.abbrev||"")}</td></tr>`).join("") + `</tbody></table>`;
+      teams.map(t=>`<tr><td>${esc(tname(t))}</td><td class="n">${esc(t.abbrev||"")}</td></tr>`).join("") +
+      `</tbody></table>`;
     return;
   }
-  const rows = teams.slice().sort((a,b)=>{
-    const ao=a.record.overall, bo=b.record.overall;
-    return (bo.wins-ao.wins) || (bo.pointsFor-ao.pointsFor);
-  });
-  el.innerHTML = `<h2>Standings</h2><table>
-    <thead><tr><th></th><th>Team</th><th class="n">Rec</th><th class="n">PF</th><th class="n">PA</th></tr></thead>
-    <tbody>${rows.map((t,i)=>{
-      const o=t.record.overall;
-      return `<tr><td class="pos">${i+1}</td><td>${esc((t.name||"").trim())}</td>
-        <td class="n">${o.wins}-${o.losses}</td>
-        <td class="n">${fmt(o.pointsFor)}</td><td class="n">${fmt(o.pointsAgainst)}</td></tr>`;
-    }).join("")}</tbody></table>`;
+  el.innerHTML = `<h2>Standings</h2>` + standingsTable();
 }
 
 function renderTrade(){
-  const el = document.getElementById("tradeBody");
-  const drafted = LIVE && LIVE.settings && LIVE.settings.draftDetail && LIVE.settings.draftDetail.drafted;
-  if(!drafted){
-    el.innerHTML = lockedPanel("Unlocks after the draft",
-      "Rosters don't exist yet. Once they do, this becomes a drag-and-drop trade builder that recalculates both lineups as you go, plus ranked surplus-for-need matches across all nine other teams.");
-    return;
-  }
-  el.innerHTML = lockedPanel("Trade builder coming online",
-    "Rosters are in. The builder ships in the next update.");
+  document.getElementById("tradeBody").innerHTML = drafted()
+    ? lock("Trade builder coming online", "Rosters are in. Ships in the next update.")
+    : lock("Unlocks after the draft",
+        "Drag-and-drop builder that recalculates both lineups as you go, plus ranked surplus-for-need matches across all nine other teams.");
 }
-
 function renderWire(){
-  const el = document.getElementById("wireBody");
-  if(!LIVE || !LIVE.freeAgents || !LIVE.freeAgents.length){
-    el.innerHTML = lockedPanel("Unlocks after the draft",
-      "The free-agent pool pulls nightly once the league drafts. Your board will be filtered to the holes on your roster, not a generic top 50.");
-    return;
-  }
-  el.innerHTML = lockedPanel("Waiver board coming online",
-    `${LIVE.freeAgents.length} available players in the feed. Rankings ship in the next update.`);
+  const n = (LIVE && LIVE.freeAgents && LIVE.freeAgents.length) || 0;
+  document.getElementById("wireBody").innerHTML = n
+    ? lock("Waiver board coming online", `${n} available players in the feed. Rankings ship in the next update.`)
+    : lock("Unlocks after the draft",
+        "The free-agent pool pulls nightly once we draft. Your board gets filtered to the holes on your roster.");
 }
 
 function renderAll(){
-  renderLedger(); renderDossiers(); renderLeague(); renderTrade(); renderWire();
+  renderLedger(); renderDossiers(); renderRecap();
+  renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
 }
 
-fetch("data/league.json", {cache:"no-store"})
-  .then(r => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
-  .then(j => {
-    LIVE = j;
-    const when = new Date(j.fetchedAt);
-    const hrs = (Date.now() - when.getTime()) / 3600000;
-    const f = document.getElementById("freshness");
+Promise.all([
+  fetch("data/league.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null),
+  fetch("data/weekly.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null)
+]).then(([lg,wk])=>{
+  LIVE = lg; WEEKLY = wk;
+  const f = document.getElementById("freshness");
+  if(lg && lg.fetchedAt){
+    const when = new Date(lg.fetchedAt);
     f.textContent = "League data updated " + when.toLocaleString(undefined,
       {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-    if(hrs > 48) f.className = "stale";
-    renderAll();
-  })
-  .catch(() => {
-    document.getElementById("freshness").textContent =
-      "Live data not loaded yet — history below is complete.";
-    renderAll();
-  });
+    if((Date.now()-when.getTime())/36e5 > 48) f.className = "stale";
+  } else {
+    f.textContent = "Live data not loaded yet \u2014 history below is complete.";
+  }
+  renderAll();
+});
 
-/* ==== tabs ==== */
-document.querySelectorAll("nav button").forEach(b => {
-  b.onclick = () => {
+document.querySelectorAll("nav button").forEach(b=>{
+  b.onclick=()=>{
     document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected","false"));
     document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
     b.setAttribute("aria-selected","true");
@@ -508,24 +640,24 @@ document.querySelectorAll("nav button").forEach(b => {
   };
 });
 
-/* ==== countdown ==== */
-const DRAFT = new Date("2026-09-06T21:00:00Z").getTime();
-const DEADLINE = new Date("2026-12-02T17:00:00Z").getTime();
+const DRAFT=new Date("2026-09-06T21:00:00Z").getTime();
+const DEADLINE=new Date("2026-12-02T17:00:00Z").getTime();
 function tick(){
-  const now = Date.now();
-  let target = DRAFT, label = "Draft in", when = "Sunday, September 6 \u00b7 5:00 PM ET";
-  if(now >= DRAFT){ target = DEADLINE; label = "Trade deadline in";
-    when = "Wednesday, December 2 \u00b7 12:00 PM ET"; }
-  document.getElementById("cdlabel").textContent = label;
-  document.getElementById("cdwhen").textContent = when;
-  let diff = Math.max(0, target - now);
-  const d=Math.floor(diff/864e5); diff-=d*864e5;
-  const h=Math.floor(diff/36e5);  diff-=h*36e5;
-  const m=Math.floor(diff/6e4);   diff-=m*6e4;
-  document.getElementById("d").textContent = d;
-  document.getElementById("h").textContent = String(h).padStart(2,"0");
-  document.getElementById("m").textContent = String(m).padStart(2,"0");
-  document.getElementById("s").textContent = String(Math.floor(diff/1000)).padStart(2,"0");
+  const now=Date.now();
+  let target=DRAFT,label="Draft in",when="Sunday, September 6 \u00b7 5:00 PM ET";
+  if(now>=DRAFT){target=DEADLINE;label="Trade deadline in";
+    when="Wednesday, December 2 \u00b7 12:00 PM ET";}
+  if(now>=DEADLINE){document.getElementById("countdown").style.display="none";return;}
+  document.getElementById("cdlabel").textContent=label;
+  document.getElementById("cdwhen").textContent=when;
+  let diff=Math.max(0,target-now);
+  const d=Math.floor(diff/864e5);diff-=d*864e5;
+  const h=Math.floor(diff/36e5);diff-=h*36e5;
+  const m=Math.floor(diff/6e4);diff-=m*6e4;
+  document.getElementById("d").textContent=d;
+  document.getElementById("h").textContent=String(h).padStart(2,"0");
+  document.getElementById("m").textContent=String(m).padStart(2,"0");
+  document.getElementById("s").textContent=String(Math.floor(diff/1000)).padStart(2,"0");
 }
 tick(); setInterval(tick,1000);
 </script>

@@ -8,11 +8,30 @@
     "Pick your name from the dropdown to see your own file. Rule vote closes at the draft."
   ],
   "changed": [
-    { "team": "Scotty", "dir": "up", "note": "Two rings in three years. Insufferable and technically entitled to it." },
-    { "team": "Austin", "dir": "watch", "note": "Best season in league history, 1,803 points in 2021. Finished fourth." },
-    { "team": "James", "dir": "watch", "note": "Leads all-time in points scored and points allowed. Not bad at this, just hunted." },
-    { "team": "Anthony", "dir": "down", "note": "Champion to last place in one calendar year. A speedrun." },
-    { "team": "Justin", "dir": "down", "note": "Runner-up in 2023, then 7-7, 6-8, 5-9. Trending like a stock nobody should buy." },
-    { "team": "Mike", "dir": "watch", "note": "Won in 2019, never came back. 7-6 career, undefeated in title games. Retired at the top." }
+    {
+      "team": "Scotty",
+      "dir": "up",
+      "note": "Two rings in three years. Insufferable and technically entitled to it."
+    },
+    {
+      "team": "Austin",
+      "dir": "watch",
+      "note": "Best season in league history, 1,803 points in 2021. Finished fourth."
+    },
+    {
+      "team": "James",
+      "dir": "watch",
+      "note": "Leads all-time in points scored and points allowed. Not bad at this, just hunted."
+    },
+    {
+      "team": "Anthony",
+      "dir": "down",
+      "note": "Champion to last place in one calendar year. A speedrun."
+    },
+    {
+      "team": "Justin",
+      "dir": "down",
+      "note": "Runner-up in 2023, then 7-7, 6-8, 5-9. Trending like a stock nobody should buy."
+    }
   ]
 }

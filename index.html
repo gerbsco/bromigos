@@ -1070,7 +1070,7 @@ const PACK = (function(){
   function close(){
     wrap.classList.remove("on");
     clearFx();
-    core.classList.remove("go"); sparks.classList.remove("go"); sparks.innerHTML="";
+    sparks.classList.remove("go"); sparks.innerHTML="";
     slot.innerHTML=""; document.body.style.overflow="";
     if(done){ const d=done; done=null; d(); }
   }
@@ -1082,7 +1082,7 @@ const PACK = (function(){
 
   return { open(label,list){
     cards=list; idx=-1; busy=false;
-    clearFx(); sparks.innerHTML=""; core.classList.remove("go");
+    clearFx(); sparks.classList.remove("go"); sparks.innerHTML="";
     slot.innerHTML=packFace(label); dots.innerHTML="";
     tap.textContent="Tap to open";
     wrap.classList.add("on"); document.body.style.overflow="hidden";

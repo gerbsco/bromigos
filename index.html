@@ -185,15 +185,15 @@
   /* --- light that travels around the card --- */
   .sweep{position:absolute;left:50%;top:50%;width:430px;height:530px;
     margin:-265px 0 0 -215px;opacity:0;pointer-events:none;border-radius:26px;
-    -webkit-mask:radial-gradient(ellipse 42% 42% at 50% 50%,transparent 62%,#000 72%,#000 92%,transparent 100%);
-    mask:radial-gradient(ellipse 42% 42% at 50% 50%,transparent 62%,#000 72%,#000 92%,transparent 100%);
-    filter:blur(7px)}
+    -webkit-mask:radial-gradient(ellipse 42% 42% at 50% 50%,transparent 64%,#000 73%,#000 90%,transparent 99%);
+    mask:radial-gradient(ellipse 42% 42% at 50% 50%,transparent 64%,#000 73%,#000 90%,transparent 99%);
+    filter:blur(3px)}
   .sweep.go{animation:sweepRound var(--sweepDur,1.25s) cubic-bezier(.3,.05,.25,1) forwards}
   @keyframes sweepRound{
-    0%{opacity:0;transform:rotate(-40deg) scale(.72)}
-    16%{opacity:1}
-    72%{opacity:.95;transform:rotate(300deg) scale(1)}
-    100%{opacity:0;transform:rotate(384deg) scale(1.05)}}
+    0%{opacity:0;transform:rotate(-40deg) scale(.78)}
+    14%{opacity:var(--sweepA,1)}
+    74%{opacity:var(--sweepA,1);transform:rotate(300deg) scale(1)}
+    100%{opacity:0;transform:rotate(384deg) scale(1.04)}}
 
   /* --- rim glow hugging the card --- */
   .rim{position:absolute;left:50%;top:50%;width:268px;height:368px;margin:-184px 0 0 -134px;
@@ -975,8 +975,9 @@ const PACK = (function(){
     sweep.classList.remove("go");
     sweep.style.setProperty("--sweepDur", t.dur + "s");
     sweep.style.opacity = "";
+    sweep.style.setProperty("--sweepA", t.sweep);
     sweep.style.background = t.sweep
-      ? `conic-gradient(from 0deg, transparent 0deg, ${t.col} 26deg, #fff 46deg, ${t.col} 64deg, transparent 96deg, transparent 360deg)`
+      ? `conic-gradient(from 0deg, transparent 0deg, ${t.col} 22deg, #fff 42deg, ${t.col} 58deg, transparent 88deg, transparent 360deg)`
       : "none";
 
     rim.classList.remove("go");
@@ -997,14 +998,19 @@ const PACK = (function(){
     ring.innerHTML = html;
 
     void ring.offsetWidth;
-    if(t.rayA) rays.classList.add("go");
-    if(t.sweep){ sweep.style.opacity = t.sweep; sweep.classList.add("go"); }
+    if(t.rayA){ rays.style.opacity = ""; rays.classList.add("go"); }
+    if(t.sweep){ sweep.style.opacity = ""; sweep.classList.add("go"); }
     rim.classList.add("go");
   }
 
   function clearFx(){
     ring.innerHTML = "";
     [rays,halo,col,sweep,rim,core].forEach(el => el.classList.remove("go"));
+    // inline styles override the stylesheet, so they have to be cleared too
+    sweep.style.opacity = "0";
+    sweep.style.background = "none";
+    rays.style.opacity = "0";
+    rays.style.background = "none";
   }
 
   function packFace(label){
@@ -1061,10 +1067,11 @@ const PACK = (function(){
     idx=i; const c=cards[i];
     const tier = c.flare || c.tier || (c.rarity==="rare"?"gold":"silverC");
     slot.innerHTML=""; clearFx();
-    if(!skipBeam){ beam(tier); await wait(190); }
-    // card starts rising while the light is still up
-    slot.innerHTML=faceOf(c);
+    if(!skipBeam){ beam(tier); await wait(210); }
     wrapLight(tier);
+    // let the wrap get around the card before it rises into frame
+    await wait(300);
+    slot.innerHTML=faceOf(c);
     paintDots();
     tap.textContent = i>=cards.length-1 ? "Tap to close" : "Tap for next";
   }
@@ -1077,10 +1084,10 @@ const PACK = (function(){
     if(p) p.classList.add("rip");
     if(s) s.classList.add("go");
     fireSparks();
-    await wait(150);
+    await wait(140);
     beam(tier);            // beam rises out of the breaking pack
-    await wait(230);
-    await reveal(0, true); // card emerges inside the beam
+    await wait(250);
+    await reveal(0, true); // wrap fires, then the card rises into it
     busy=false;
   }
 
@@ -1128,6 +1135,28 @@ const FIXED = {
   blowoutL: S_("chair")      // lost big
 };
 const BIG = 25, TIGHT = 10;
+
+/* Nothing in a pack should show the same picture twice. If an award repeats art
+   already used, swap it for the first unused option from the matching pool. */
+const SUB = {
+  good: ["\u{1F525}","\u{1F4AF}","\u{1F5FF}","\u{1F90C}","\u2728","\u{1F451}",
+         "\u{1FAE1}","\u{1F60E}","\u{1F410}"],
+  bad:  ["\u{1F480}","\u{1FAE0}","\u{1F940}","\u{1F921}","\u{1F9CA}","\u{1F62D}",
+         "\u{1F62E}\u200D\u{1F4A8}","\u{1FA91}","\u{1F915}"]
+};
+function dedupeArt(cards){
+  const used = new Set();
+  cards.forEach((c, i) => {
+    const a = c.art;
+    if(i === 0){ used.add(a); return; }          // result card always keeps its art
+    if(a && !used.has(a)){ used.add(a); return; }
+    const pool = c.pool === "bad" ? SUB.bad : SUB.good;
+    const swap = pool.find(x => !used.has(x));
+    c.art = swap || "\u2b50";
+    used.add(c.art);
+  });
+  return cards;
+}
 
 const pick = (a,wk) => a[(Number(wk)||0) % a.length];
 const FLAVOR = {
@@ -1179,6 +1208,7 @@ function buildWeekCards(w, wk){
     kind: a.good===false ? "Weekly Dishonour" : "Weekly Superlative",
     icon: a.icon || (a.good===false ? "\u2620\uFE0F" : "\u2605"),
     art: a.art || a.emoji || "\u{1F3C6}",
+    pool: (a.good === false || !won) ? "bad" : "good",
     title: a.title, desc: a.desc || "", value: a.stat,
     flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silverC")
   }));
@@ -1186,10 +1216,10 @@ function buildWeekCards(w, wk){
   if(!(w.awards||[]).length){
     out.push({ type:"cons", rarity:"common", rarityLabel:"Common",
       kind:"Weekly Superlative", icon:"\u2796", art:"\u{1F5FF}",
-      title:"No Awards", desc:pick(FLAVOR.none,wk), value:"Nothing earned",
+      pool: won ? "good" : "bad", title:"No Awards", desc:pick(FLAVOR.none,wk), value:"Nothing earned",
       flare:"silverC" });
   }
-  return out;
+  return dedupeArt(out);
 }
 
 function maybeAutoPack(){

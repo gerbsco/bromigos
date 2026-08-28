@@ -345,6 +345,19 @@
     font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
     text-transform:uppercase;cursor:pointer;z-index:7}
 
+  .picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(154px,1fr));gap:8px}
+  .pk{display:flex;align-items:center;gap:11px;background:var(--ink-2);border-radius:4px;
+    padding:11px 12px;border-left:3px solid #2C4257}
+  .pk.mine{border-left-color:var(--green);background:rgba(76,175,125,.10)}
+  .pk.first{border-left-color:var(--brass);background:rgba(217,162,39,.10)}
+  .pk .no{flex:none;width:26px;text-align:center;font:800 17px/1 ui-monospace,Menlo,monospace;
+    color:var(--brass);font-variant-numeric:tabular-nums}
+  .pk.first .no{color:var(--brass)}
+  .pk .nm{flex:1;min-width:0}
+  .pk .nm b{display:block;font:800 14px/1.2 system-ui,sans-serif;color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pk .nm span{display:block;margin-top:3px;font:600 10.5px/1.3 ui-monospace,Menlo,monospace;
+    color:var(--faint);letter-spacing:.08em}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
@@ -385,6 +398,7 @@
 
   <section class="panel on" id="hq">
     <div id="recap"></div>
+    <div id="draft"></div>
     <div id="awards"></div>
     <div id="snapshot"></div>
   </section>
@@ -634,6 +648,37 @@ function renderDossiers(){
   }).join("");
 }
 
+/* ---------- draft order (2026 lottery result) ---------- */
+const DRAFT_ORDER = [
+  ["Super LaMario","James"],
+  ["Njigbas in Paris","Austin"],
+  ["You're Toast","Bo"],
+  ["Catalina Wine Mixon","Ryan"],
+  ["Michael wilson @Andy","Anthony"],
+  ["Loyalty","Cody"],
+  ["Waddlin my white @$$ to victory","Justin"],
+  ["Team Dawson","Dawson"],
+  ["TE University","Scotty"],
+  ["They hit the second bowers","Andy"]
+];
+
+function renderDraft(){
+  const n = DRAFT_ORDER.length;
+  document.getElementById("draft").innerHTML =
+    `<h2>Draft Order</h2><div class="picks">` +
+    DRAFT_ORDER.map(([team, man], i) => {
+      const p = i + 1;
+      const r2 = (n * 2) + 1 - p;   // snake: round 2
+      const r3 = (n * 2) + p;       // round 3
+      return `<div class="pk ${man===ME?"mine":(p===1?"first":"")}">
+        <span class="no">${p}</span>
+        <span class="nm"><b>${esc(man)}</b>
+          <span>${esc(team)} &middot; R2 #${r2} &middot; R3 #${r3}</span></span>
+      </div>`;
+    }).join("") +
+    `</div><p class="note">Snake format, 90 seconds a pick. Sunday Sept 6, 5:00 PM ET.</p>`;
+}
+
 /* ---------- live state ---------- */
 let LIVE = null, WEEKLY = null;
 const lock = (t,b) => `<div class="locked"><div class="ic">&#128274;</div><h3>${t}</h3><p>${b}</p></div>`;
@@ -823,7 +868,7 @@ function renderWire(){
 }
 
 function renderAll(){
-  renderLedger(); renderDossiers(); renderRecap();
+  renderLedger(); renderDossiers(); renderRecap(); renderDraft();
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
 }
 
@@ -926,26 +971,47 @@ const PACK = (function(){
     back.classList.add("go"); floor.classList.add("go");
   }
 
-  /* rows of flares marching outward from both sides of the card */
+  /* Flares fan out from both sides of the card in a small grid that always
+     fits the screen. Higher tiers get bigger, brighter flares rather than
+     more of them, so nothing ever clips off the edge. */
   function fireFlares(t){
     flares.classList.remove("go");
+    const availX = (window.innerWidth  || 390) / 2 - 8;
+    const availY = (window.innerHeight || 780) / 2 - 40;
+
+    const k = Math.min(1, Math.max(0.6, availX / 200));
+    const gap = t.gap * k, start = t.start * k;
+
+    // how many columns fit beside the card, capped at 2 on phones
+    const probe = t.size * 1.48 * k * 1.6;
+    let cols = Math.floor((availX - probe - start) / gap) + 1;
+    cols = Math.max(1, Math.min(cols, t.pairs, 3));
+
+    const rowGap = 84;
+    let rows = Math.max(1, Math.min(Math.ceil(t.pairs / cols), 3,
+      Math.floor(availY / rowGap) * 2 - 1 || 1));
+    const shown = Math.min(t.pairs, cols * rows);
+    rows = Math.ceil(shown / cols);
+
     let html = "";
-    for(let i = 0; i < t.pairs; i++){
-      const grow = 0.58 + (i / Math.max(t.pairs - 1, 1)) * 0.9;
-      const s = Math.round(t.size * grow);
-      const off = t.start + i * t.gap;
-      const drop = (i % 2 ? 1 : -1) * (16 + i * 11);
-      const od = 90 + i * 105;
+    for(let i = 0; i < shown; i++){
+      const c = i % cols, r = Math.floor(i / cols);
+      const grow = cols > 1 ? 0.62 + (c / (cols - 1)) * 0.86 : 1.05;
+      const s = Math.round(t.size * grow * k);
+      const off = Math.round(start + c * gap);
+      const spread = rows > 1 ? Math.round((r - (rows - 1) / 2) * rowGap) : 0;
+      const jitter = rows > 1 ? 0 : (c % 2 ? 14 : -14);
+      const od = 80 + c * 100 + r * 55;
       ["left","right"].forEach(side => {
         html += `<span class="fl" style="--s:${s}px;--c:${t.col};${side}:50%;
-          margin-${side}:${off}px;margin-top:${drop}px;--od:${od}ms">
+          margin-${side}:${off}px;margin-top:${spread + jitter}px;--od:${od}ms">
           <i class="hz"></i><i class="vt"></i><i class="dg"></i><i class="dg2"></i></span>`;
       });
     }
     flares.innerHTML = html;
     void flares.offsetWidth;
     flares.classList.add("go");
-    return 90 + (t.pairs - 1) * 105 + 500;
+    return 80 + (cols - 1) * 100 + (rows - 1) * 55 + 520;
   }
 
   function clearFx(){

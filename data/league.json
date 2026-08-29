@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-29T11:06:34.826Z",
+  "fetchedAt": "2026-08-29T21:54:01.376Z",
   "leagueId": "24869044",
   "season": "2026",
   "errors": [],
@@ -3300,15 +3300,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 37,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 37,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -11398,15 +11398,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 24,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 24,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -14226,15 +14226,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 25,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 25,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -15501,7 +15501,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Egbuka",
-                    "lastNewsDate": 1787946558000,
+                    "lastNewsDate": 1788013456000,
                     "lastVideoDate": 1787151224000,
                     "proTeamId": 27,
                     "rankings": {
@@ -19615,15 +19615,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 11,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 11,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -21423,15 +21423,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 7,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 7,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },

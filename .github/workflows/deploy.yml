@@ -3,6 +3,11 @@ name: Deploy site
 on:
   push:
     branches: [main]
+  # Commits pushed by GITHUB_TOKEN do NOT trigger a push event, so the nightly
+  # data job would never publish. Watching that workflow instead fixes it.
+  workflow_run:
+    workflows: ["Update league data"]
+    types: [completed]
   workflow_dispatch: {}
 
 permissions:
@@ -10,7 +15,6 @@ permissions:
   pages: write
   id-token: write
 
-# Never let deploys pile up. A newer push cancels the one waiting behind it.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -31,7 +35,7 @@ jobs:
       - name: Upload the site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .          # whole repo: index.html, data/, img/
+          path: .
 
       - name: Deploy to Pages
         id: deployment

@@ -353,6 +353,77 @@
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pk .nm span{display:block;margin-top:3px;font:600 10.5px/1.3 ui-monospace,Menlo,monospace;
     color:var(--faint);letter-spacing:.08em}
+  /* ================= TRADE + WIRE ================= */
+  .demoban{background:rgba(178,58,47,.16);border-left:3px solid var(--stamp);color:#F0C9C4;
+    padding:11px 13px;border-radius:3px;margin-bottom:14px;font-size:13px;line-height:1.5}
+  .demoban b{color:#FFD9D3}
+
+  .picker{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .picker select{flex:1;min-width:132px}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .col{background:var(--ink-2);border-radius:4px;padding:11px 10px;min-width:0}
+  .col h4{margin:0 0 9px;font:800 11px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--brass);overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .plr{display:flex;align-items:center;gap:7px;padding:7px 6px;border-radius:3px;
+    cursor:pointer;border:1px solid transparent;margin-bottom:4px;background:rgba(255,255,255,.03)}
+  .plr:active{background:rgba(255,255,255,.09)}
+  .plr.sel{border-color:var(--brass);background:rgba(217,162,39,.14)}
+  .plr .pos{flex:none;width:30px;text-align:center;border-radius:2px;padding:3px 0;
+    font:800 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.04em}
+  .pos.QB{background:#6D3B57;color:#FFD9EC}
+  .pos.RB{background:#2F5D46;color:#CFF3E1}
+  .pos.WR{background:#2C4C6E;color:#CFE6FF}
+  .pos.TE{background:#6B5327;color:#FFEBC2}
+  .pos.K{background:#4A4A55;color:#DDE1EA}
+  .pos.DST{background:#5A3A2A;color:#F2D8C8}
+  .plr .who2{flex:1;min-width:0}
+  .plr .who2 b{display:block;font:700 12.5px/1.2 system-ui,sans-serif;color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .plr .who2 span{display:block;margin-top:2px;font:500 9.5px/1.2 ui-monospace,Menlo,monospace;
+    color:var(--faint)}
+  .plr .pts{flex:none;font:800 12px/1 ui-monospace,Menlo,monospace;color:#BCCBD8;
+    font-variant-numeric:tabular-nums}
+  .plr.out{opacity:.35;text-decoration:line-through}
+  .plr.in{border-color:var(--green);background:rgba(76,175,125,.14)}
+
+  .verdict{margin-top:12px;background:var(--ink-2);border-radius:4px;padding:14px;
+    border-left:3px solid #2C4257}
+  .verdict.good{border-left-color:var(--green)}
+  .verdict.bad{border-left-color:var(--stamp)}
+  .vrow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;
+    color:#BCCBD8;border-bottom:1px solid rgba(234,226,207,.08)}
+  .vrow:last-child{border-bottom:0}
+  .vrow b{font:800 14px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+  .up{color:var(--green)} .down{color:#E08A80}
+
+  .ideas{margin-top:10px}
+  .idea{background:var(--ink-2);border-radius:4px;padding:13px;margin-bottom:9px;
+    border-left:3px solid var(--brass);cursor:pointer}
+  .idea .sw{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;
+    color:var(--chalk)}
+  .idea .sw em{font-style:normal;color:var(--faint);font:700 10px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.1em}
+  .idea .why{margin:8px 0 0;font-size:12.5px;color:#9FB3C4;line-height:1.5}
+
+  .wirerow{display:flex;align-items:center;gap:9px;background:var(--ink-2);border-radius:4px;
+    padding:10px;margin-bottom:6px;border-left:3px solid #2C4257}
+  .wirerow.fit{border-left-color:var(--green)}
+  .wirerow .rank{flex:none;width:22px;text-align:center;font:800 13px/1 ui-monospace,Menlo,monospace;
+    color:var(--faint)}
+  .wirerow .meta{flex:1;min-width:0}
+  .wirerow .meta b{display:block;font:700 13.5px/1.2 system-ui,sans-serif;color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .wirerow .meta span{display:block;margin-top:3px;font:500 10px/1.35 ui-monospace,Menlo,monospace;
+    color:var(--faint)}
+  .wirerow .hot{flex:none;padding:3px 7px;border-radius:2px;background:rgba(217,162,39,.16);
+    color:var(--brass);font:800 9px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.08em}
+  .needs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+  .need{padding:5px 9px;border-radius:2px;font:700 10.5px/1.3 ui-monospace,Menlo,monospace;
+    letter-spacing:.08em;background:rgba(255,255,255,.05);color:var(--dim)}
+  .need.weak{background:rgba(178,58,47,.18);color:#F0B9B2}
+  .need.strong{background:rgba(76,175,125,.16);color:#A7E3C4}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
@@ -591,6 +662,7 @@ CURRENT.slice().sort().forEach(m => {
 });
 sel.onchange = () => { ME = sel.value;
   try { localStorage.setItem("bromigos.me", ME); } catch(e){}
+  tradePartner = null; giveSel = new Set(); getSel = new Set();
   renderAll(); };
 
 /* ---------- history ---------- */
@@ -848,13 +920,19 @@ function renderLeague(){
   el.innerHTML = `<h2>Standings</h2>` + standingsTable();
 }
 
+const PREVIEW = new URLSearchParams(location.search).has("pack");
+
 function renderTrade(){
+  if(PREVIEW){ try{ return renderTradePro(); }
+    catch(e){ console.warn("[bromigos] trade module:", e && e.message); } }
   document.getElementById("tradeBody").innerHTML = drafted()
     ? lock("Trade builder coming online", "Rosters are in. Ships in the next update.")
     : lock("Unlocks after the draft",
         "Drag-and-drop builder that recalculates both lineups as you go, plus ranked surplus-for-need matches across all nine other teams.");
 }
 function renderWire(){
+  if(PREVIEW){ try{ return renderWirePro(); }
+    catch(e){ console.warn("[bromigos] wire module:", e && e.message); } }
   const n = (LIVE && LIVE.freeAgents && LIVE.freeAgents.length) || 0;
   document.getElementById("wireBody").innerHTML = n
     ? lock("Waiver board coming online", `${n} available players in the feed. Rankings ship in the next update.`)
@@ -867,8 +945,368 @@ function renderAll(){
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
 }
 
-renderAll();
 
+/* ================= TRADE + WIRE ================= */
+/* Lineup: QB, 2 RB, 2 WR, WR/TE, FLEX, D/ST, K. Most restrictive slots fill first. */
+const SLOTS = [
+  { k:"QB",   elig:["QB"] },
+  { k:"D/ST", elig:["DST"] },
+  { k:"K",    elig:["K"] },
+  { k:"RB",   elig:["RB"] },
+  { k:"RB",   elig:["RB"] },
+  { k:"WR",   elig:["WR"] },
+  { k:"WR",   elig:["WR"] },
+  { k:"W/T",  elig:["WR","TE"] },
+  { k:"FLEX", elig:["RB","WR","TE"] }
+];
+
+/* Greedy optimal-ish lineup. Fills the narrowest slots first so a lone TE
+   is not wasted in the FLEX while the W/T sits empty. */
+function bestLineup(players){
+  const pool = players.filter(p => !p.ir).slice().sort((a,b) => b.proj - a.proj);
+  const used = new Set();
+  const filled = [];
+  SLOTS.forEach(slot => {
+    const pick = pool.find(p => !used.has(p.id) && slot.elig.includes(p.pos));
+    if(pick) used.add(pick.id);
+    filled.push({ slot: slot.k, player: pick || null });
+  });
+  const total = filled.reduce((s,f) => s + (f.player ? f.player.proj : 0), 0);
+  const bench = pool.filter(p => !used.has(p.id));
+  return { filled, total, bench };
+}
+
+/* Depth score per position: starters plus a discounted first backup. */
+function posProfile(players){
+  const out = {};
+  ["QB","RB","WR","TE"].forEach(pos => {
+    const at = players.filter(p => p.pos === pos).sort((a,b) => b.proj - a.proj);
+    const need = pos === "RB" ? 2 : pos === "WR" ? 2 : 1;
+    const starters = at.slice(0, need);
+    const avg = starters.length ? starters.reduce((s,p)=>s+p.proj,0) / starters.length : 0;
+    out[pos] = { count: at.length, avg, depth: at.length - need, top: at[0] || null };
+  });
+  return out;
+}
+
+function leagueMedians(teams){
+  const med = {};
+  ["QB","RB","WR","TE"].forEach(pos => {
+    const vals = teams.map(t => posProfile(t.players)[pos].avg).sort((a,b)=>a-b);
+    med[pos] = vals[Math.floor(vals.length/2)] || 0;
+  });
+  return med;
+}
+
+function gradeTeam(team, med){
+  const prof = posProfile(team.players);
+  const g = {};
+  Object.keys(prof).forEach(pos => {
+    const m = med[pos] || 1;
+    const ratio = m ? prof[pos].avg / m : 1;
+    g[pos] = { ...prof[pos],
+      label: ratio >= 1.12 ? "strong" : ratio <= 0.9 ? "weak" : "ok",
+      ratio };
+  });
+  return g;
+}
+
+/* Value of a roster = optimal starting lineup projection. A trade is worth
+   looking at only if that number rises for BOTH teams. */
+const rosterValue = players => bestLineup(players).total;
+
+function applyTrade(players, out, inc){
+  const gone = new Set(out.map(p => p.id));
+  return players.filter(p => !gone.has(p.id)).concat(inc);
+}
+
+/* Scan a partner for swaps that help both sides. 1-for-1 and 2-for-1. */
+function findTrades(mine, theirs, limit = 6){
+  const baseA = rosterValue(mine.players), baseB = rosterValue(theirs.players);
+  const ideas = [];
+  const push = (give, get) => {
+    const a = rosterValue(applyTrade(mine.players, give, get)) - baseA;
+    const b = rosterValue(applyTrade(theirs.players, get, give)) - baseB;
+    if(a > 0.4 && b > 0.4) ideas.push({ give, get, a, b, score: Math.min(a,b) });
+  };
+  // Value is always computed against the FULL roster. Only the pool of players
+  // considered for a swap is narrowed, since nobody trades kickers or defenses.
+  const ok = p => p.pos !== "K" && p.pos !== "DST";
+  const A = mine.players.filter(ok), B = theirs.players.filter(ok);
+  A.forEach(g => B.forEach(r => {
+    if(g.pos === r.pos) return;              // same-position swaps rarely help both
+    push([g], [r]);
+  }));
+  A.forEach(g1 => A.forEach(g2 => {
+    if(g1.id >= g2.id) return;
+    B.forEach(r => { if(r.proj > g1.proj) push([g1,g2],[r]); });
+  }));
+  B.forEach(r1 => B.forEach(r2 => {
+    if(r1.id >= r2.id) return;
+    A.forEach(g => { if(g.proj > r1.proj) push([g],[r1,r2]); });
+  }));
+  const seen = new Set();
+  return ideas.sort((x,y) => y.score - x.score).filter(i => {
+    const key = i.give.map(p=>p.id).sort()+"|"+i.get.map(p=>p.id).sort();
+    if(seen.has(key)) return false;
+    seen.add(key); return true;
+  }).slice(0, limit);
+}
+
+/* ---------- turn the ESPN payload into the model above ---------- */
+const POS_MAP = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
+function normalizeLive(){
+  const src = LIVE && LIVE.rosters && LIVE.rosters.teams;
+  if(!src || !src.length || !src[0].roster) return null;
+  const nameOf = id => {
+    const t = (LIVE.teams && LIVE.teams.teams || []).find(x => x.id === id);
+    return t ? (t.name||"").trim() : "Team " + id;
+  };
+  const manOf = tName => {
+    const hit = SEASONS["2025"].find(r => r[0] === tName);
+    return hit ? hit[1] : tName;
+  };
+  return src.map(t => {
+    const entries = (t.roster && t.roster.entries) || [];
+    const players = entries.map(e => {
+      const p = (e.playerPoolEntry && e.playerPoolEntry.player) || {};
+      const projStat = (p.stats || []).find(s => s.statSourceId === 1) || {};
+      const realStat = (p.stats || []).find(s => s.statSourceId === 0) || {};
+      return {
+        id: String(p.id || e.playerId),
+        name: p.fullName || "Unknown",
+        pos: POS_MAP[p.defaultPositionId] || "WR",
+        team: p.proTeamId || "",
+        proj: Math.round((projStat.appliedTotal || 0) * 10) / 10,
+        avg:  Math.round((realStat.appliedAverage || 0) * 10) / 10,
+        bye:  p.byeWeek || null,
+        own:  p.ownership ? Math.round(p.ownership.percentOwned) : null,
+        ir:   e.lineupSlotId === 21,
+        injury: p.injuryStatus && p.injuryStatus !== "ACTIVE" ? p.injuryStatus : null
+      };
+    });
+    const tn = nameOf(t.id);
+    return { id: t.id, teamName: tn, manager: manOf(tn), players };
+  });
+}
+
+/* ---------- demo fixture (clearly fake players) ---------- */
+function demoRosters(){
+  const first = ["Cole","Marcus","Deon","Trey","Isaiah","Rhett","Kobe","Amari","Jaxon","Silas",
+    "Bryce","Nico","Tobias","Rashad","Emmitt","Dane","Kellen","Vance","Omar","Levi"];
+  const last = ["Vell","Pryor","Hallock","Bantry","Sarno","Quist","Marsh","Delgado","Rowe","Fenn",
+    "Ashby","Cordero","Nunez","Behr","Talley","Ivers","Massey","Ruhl","Okafor","Salter"];
+  const nfl = ["BUF","KC","SF","DAL","PHI","MIA","DET","BAL","CIN","GB"];
+  const rnd = (i,s) => { const x = Math.sin(i*127.1 + s*311.7) * 43758.5453; return x - Math.floor(x); };
+  const build = (tName, man, seed) => {
+    const plan = ["QB","QB","RB","RB","RB","RB","WR","WR","WR","WR","WR","TE","TE","K","DST"];
+    const players = plan.map((pos, j) => {
+      const i = seed * 40 + j;
+      const band = { QB:[14,26], RB:[5,20], WR:[5,19], TE:[3,13], K:[6,11], DST:[4,12] }[pos];
+      const proj = Math.round((band[0] + rnd(i,1) * (band[1]-band[0])) * 10) / 10;
+      return {
+        id: `${seed}-${j}`,
+        name: pos === "DST" ? nfl[Math.floor(rnd(i,2)*10)] + " D/ST"
+              : `${first[Math.floor(rnd(i,3)*20)]} ${last[Math.floor(rnd(i,4)*20)]}`,
+        pos, team: nfl[Math.floor(rnd(i,5)*10)],
+        proj, avg: Math.round((proj * (0.85 + rnd(i,6)*0.3)) * 10)/10,
+        bye: 5 + Math.floor(rnd(i,7)*9),
+        own: Math.round(30 + rnd(i,8)*70),
+        ir: false,
+        injury: rnd(i,9) > 0.9 ? "QUESTIONABLE" : null
+      };
+    });
+    return { id: seed+1, teamName: tName, manager: man, players };
+  };
+  return DRAFT_ORDER.map((d, i) => build(d[0], d[1], i));
+}
+
+function demoFreeAgents(){
+  const rnd = (i,s) => { const x = Math.sin(i*91.7 + s*221.3) * 43758.5453; return x - Math.floor(x); };
+  const first = ["Quinn","Bo","Cade","Dorian","Malik","Tate","Roman","Ezra","Jalen","Finn"];
+  const last = ["Whitcomb","Iyer","Renner","Basso","Kemp","Voss","Lang","Fontaine","Beck","Orr"];
+  const pos = ["RB","WR","WR","TE","RB","WR","QB","TE","RB","WR","WR","RB","K","DST","WR"];
+  return pos.map((p, j) => ({
+    id: "fa-" + j,
+    name: p === "DST" ? "Titans D/ST" : `${first[Math.floor(rnd(j,1)*10)]} ${last[Math.floor(rnd(j,2)*10)]}`,
+    pos: p, team: "FA",
+    proj: Math.round((3 + rnd(j,3) * 12) * 10)/10,
+    avg: Math.round((2 + rnd(j,4) * 11) * 10)/10,
+    own: Math.round(rnd(j,5) * 45),
+    trend: Math.round(rnd(j,6) * 9000),
+    snapPct: Math.round(20 + rnd(j,7) * 70),
+    tgtShare: p === "RB" ? null : Math.round(8 + rnd(j,8) * 22),
+    injury: null, bye: 5 + Math.floor(rnd(j,9)*9), ir:false
+  })).sort((a,b) => b.proj - a.proj);
+}
+
+/* ---------- shared state ---------- */
+let ROSTERS = null, FREEAGENTS = null, IS_DEMO = false;
+let tradePartner = null, giveSel = new Set(), getSel = new Set();
+
+function loadRosterModel(){
+  const live = normalizeLive();
+  if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
+  else { ROSTERS = demoRosters(); IS_DEMO = true; }
+  const faLive = (LIVE && LIVE.freeAgents) || null;
+  FREEAGENTS = (faLive && faLive.length) ? faLive.map(p => ({
+    id:String(p.id), name:p.player?.fullName || "Unknown",
+    pos: POS_MAP[p.player?.defaultPositionId] || "WR", team:"FA",
+    proj: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===1)?.appliedTotal||0)*10)/10,
+    avg: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===0)?.appliedAverage||0)*10)/10,
+    own: p.player?.ownership ? Math.round(p.player.ownership.percentOwned) : null,
+    trend: null, snapPct:null, tgtShare:null, injury:null, bye:p.player?.byeWeek||null, ir:false
+  })) : demoFreeAgents();
+  // fold Sleeper trending onto free agents when both are live
+  const tr = (LIVE && LIVE.trending && LIVE.trending.adds) || [];
+  if(tr.length && faLive){
+    const byName = {}; tr.forEach(t => byName[t.name] = t.count);
+    FREEAGENTS.forEach(p => { if(byName[p.name]) p.trend = byName[p.name]; });
+  }
+}
+
+const myTeam = () => (ROSTERS || []).find(t => t.manager === ME) || (ROSTERS || [])[0];
+
+const plrRow = (p, cls) => `<div class="plr ${cls||""}" data-pid="${p.id}">
+    <span class="pos ${p.pos}">${p.pos}</span>
+    <span class="who2"><b>${esc(p.name)}</b>
+      <span>${esc(p.team||"")}${p.bye?" \u00b7 BYE "+p.bye:""}${p.injury?" \u00b7 "+p.injury.slice(0,1):""}</span></span>
+    <span class="pts">${p.proj.toFixed(1)}</span>
+  </div>`;
+
+const demoBanner = () => IS_DEMO
+  ? `<div class="demoban"><b>Demo data.</b> These are invented players and made-up
+     projections so the layout can be tested before the draft. Everything switches to
+     real rosters automatically once ESPN has them.</div>` : "";
+
+/* ---------- Trade Center ---------- */
+function renderTradePro(){
+  const el = document.getElementById("tradeBody");
+  if(!ROSTERS) loadRosterModel();
+  const me = myTeam();
+  if(!me){ el.innerHTML = lock("Pick your team","Choose your name up top to use the trade builder."); return; }
+  const others = ROSTERS.filter(t => t.id !== me.id);
+  if(!tradePartner || !others.find(t => t.id === tradePartner)) tradePartner = others[0].id;
+  const them = ROSTERS.find(t => t.id === tradePartner);
+
+  const med = leagueMedians(ROSTERS);
+  const gMe = gradeTeam(me, med);
+  const give = me.players.filter(p => giveSel.has(p.id));
+  const get  = them.players.filter(p => getSel.has(p.id));
+
+  const beforeA = rosterValue(me.players), beforeB = rosterValue(them.players);
+  const afterA  = rosterValue(applyTrade(me.players, give, get));
+  const afterB  = rosterValue(applyTrade(them.players, get, give));
+  const dA = afterA - beforeA, dB = afterB - beforeB;
+  const live = give.length || get.length;
+
+  const byeClash = () => {
+    const post = applyTrade(me.players, give, get);
+    const weeks = {};
+    post.forEach(p => { if(p.bye) weeks[p.bye] = (weeks[p.bye]||0)+1; });
+    const bad = Object.entries(weeks).filter(([,n]) => n >= 5);
+    return bad.length ? `Week ${bad[0][0]}: ${bad[0][1]} players on bye` : null;
+  };
+
+  el.innerHTML = demoBanner() +
+    `<div class="needs">` + Object.entries(gMe).map(([pos,g]) =>
+      `<span class="need ${g.label==="strong"?"strong":g.label==="weak"?"weak":""}">${pos} ${
+        g.label==="strong"?"surplus":g.label==="weak"?"need":"ok"}</span>`).join("") + `</div>` +
+    `<div class="picker">
+      <select id="tp">${others.map(t =>
+        `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>${esc(t.manager)} \u00b7 ${esc(t.teamName)}</option>`).join("")}</select>
+    </div>
+    <p class="note" style="margin-top:0">Tap players on either side to build a deal.</p>
+    <div class="cols">
+      <div class="col"><h4>${esc(me.manager)} sends</h4>
+        ${me.players.slice().sort((a,b)=>b.proj-a.proj).map(p =>
+          plrRow(p, giveSel.has(p.id) ? "sel out" : "")).join("")}</div>
+      <div class="col" id="theirCol"><h4>${esc(them.manager)} sends</h4>
+        ${them.players.slice().sort((a,b)=>b.proj-a.proj).map(p =>
+          plrRow(p, getSel.has(p.id) ? "sel in" : "")).join("")}</div>
+    </div>` +
+    (live ? `<div class="verdict ${dA>0&&dB>0?"good":(dA<0&&dB<0?"bad":"")}">
+      <div class="vrow"><span>${esc(me.manager)} starting lineup</span>
+        <b class="${dA>0?"up":dA<0?"down":""}">${dA>0?"+":""}${dA.toFixed(1)}</b></div>
+      <div class="vrow"><span>${esc(them.manager)} starting lineup</span>
+        <b class="${dB>0?"up":dB<0?"down":""}">${dB>0?"+":""}${dB.toFixed(1)}</b></div>
+      <div class="vrow"><span>Players moving</span><b>${give.length} for ${get.length}</b></div>
+      ${byeClash() ? `<div class="vrow"><span>Bye week crunch</span><b>${esc(byeClash())}</b></div>` : ""}
+      <p class="note">${dA>0&&dB>0
+        ? "Both starting lineups improve on projection. Worth sending."
+        : dA>0||dB>0
+        ? "Only one side gains on projection. The other has to want it for a reason the numbers do not see."
+        : "Neither side gains. Projections are not everything, but this is a hard sell."}</p>
+    </div>` : "") +
+    `<h2>Ideas with ${esc(them.manager)}</h2><div class="ideas" id="ideas"></div>`;
+
+  const ideas = findTrades(me, them);
+  document.getElementById("ideas").innerHTML = ideas.length ? ideas.map((i,n) =>
+    `<div class="idea" data-idea="${n}">
+      <div class="sw"><em>You send</em> ${i.give.map(p=>esc(p.name)).join(" + ")}
+        <em>get</em> ${i.get.map(p=>esc(p.name)).join(" + ")}</div>
+      <p class="why">Your lineup +${i.a.toFixed(1)}, theirs +${i.b.toFixed(1)}.
+        Tap to load it into the builder.</p>
+    </div>`).join("")
+    : `<p class="note">No swap with ${esc(them.manager)} improves both starting lineups right now.
+       Try another manager.</p>`;
+
+  document.getElementById("tp").onchange = e => {
+    tradePartner = Number(e.target.value); giveSel.clear(); getSel.clear(); renderTradePro();
+  };
+  el.querySelectorAll(".col .plr").forEach(row => {
+    row.onclick = () => {
+      const pid = row.dataset.pid;
+      const mineSide = !row.closest("#theirCol");
+      const set = mineSide ? giveSel : getSel;
+      set.has(pid) ? set.delete(pid) : set.add(pid);
+      renderTradePro();
+    };
+  });
+  el.querySelectorAll(".idea").forEach(card => {
+    card.onclick = () => {
+      const i = ideas[Number(card.dataset.idea)];
+      giveSel = new Set(i.give.map(p=>p.id));
+      getSel  = new Set(i.get.map(p=>p.id));
+      renderTradePro(); window.scrollTo({top:0,behavior:"smooth"});
+    };
+  });
+}
+
+/* ---------- Waiver Wire ---------- */
+function renderWirePro(){
+  const el = document.getElementById("wireBody");
+  if(!ROSTERS) loadRosterModel();
+  const me = myTeam();
+  if(!me){ el.innerHTML = lock("Pick your team","Choose your name up top to see your board."); return; }
+
+  const med = leagueMedians(ROSTERS);
+  const g = gradeTeam(me, med);
+  const weak = Object.entries(g).filter(([,v]) => v.label === "weak").map(([p]) => p);
+  const scored = FREEAGENTS.map(p => {
+    const fit = weak.includes(p.pos);
+    const trendPts = p.trend ? Math.min(p.trend / 900, 8) : 0;
+    return { ...p, fit, score: p.proj + trendPts + (fit ? 4 : 0) };
+  }).sort((a,b) => b.score - a.score);
+
+  el.innerHTML = demoBanner() +
+    `<div class="needs">` + Object.entries(g).map(([pos,v]) =>
+      `<span class="need ${v.label==="strong"?"strong":v.label==="weak"?"weak":""}">${pos} ${
+        v.label==="strong"?"surplus":v.label==="weak"?"need":"ok"}</span>`).join("") + `</div>` +
+    `<p class="note" style="margin-top:0">Ranked for ${esc(me.manager)}. Green edge means it fills a hole
+      on your roster, not just a good player in the abstract.</p>` +
+    scored.slice(0, 18).map((p, i) => `<div class="wirerow ${p.fit?"fit":""}">
+      <span class="rank">${i+1}</span>
+      <span class="pos ${p.pos}">${p.pos}</span>
+      <span class="meta"><b>${esc(p.name)}</b>
+        <span>${p.proj.toFixed(1)} proj${p.own!=null?" \u00b7 "+p.own+"% rostered":""}${
+          p.snapPct!=null?" \u00b7 "+p.snapPct+"% snaps":""}${
+          p.tgtShare!=null?" \u00b7 "+p.tgtShare+"% tgt":""}</span></span>
+      ${p.trend ? `<span class="hot">+${p.trend > 999 ? (p.trend/1000).toFixed(1)+"k" : p.trend}</span>` : ""}
+    </div>`).join("") +
+    `<p class="note">Adds counted across all Sleeper leagues in the last 48 hours.
+      A spike usually means a role changed before the projections caught up.</p>`;
+}
 
 /* ================= PACK OPENING ================= */
 
@@ -1328,6 +1766,9 @@ function tick(){
   document.getElementById("s").textContent=String(Math.floor(diff/1000)).padStart(2,"0");
 }
 tick(); setInterval(tick,1000);
+
+/* first paint from baked-in history, after every module is defined */
+renderAll();
 
 /* Live data last: everything above already rendered from baked-in history,
    so a failed or blocked fetch can never blank the page. */

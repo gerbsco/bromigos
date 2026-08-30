@@ -243,39 +243,76 @@
     display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
   .consArt .sticker{max-height:100px}
 
-  .fut{position:relative;width:252px;height:352px;border-radius:7px;
-    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 22px 55px rgba(0,0,0,.65)}
-  @keyframes walkout{0%{opacity:0;transform:translateY(56px) scale(.78)}
-    55%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
-  .fut .gloss{position:absolute;inset:0;pointer-events:none;z-index:2;
-    background:linear-gradient(118deg,transparent 40%,rgba(255,255,255,.16) 48%,transparent 55%)}
-  .fut.matte .gloss{display:none}
+  /* --- card body: rating block, angled cut, left rail, stat band --- */
+  .fut{position:relative;width:252px;height:352px;border-radius:8px;
+    display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 22px 55px rgba(0,0,0,.68), inset 0 0 0 1px rgba(255,255,255,.16),
+      inset 0 1px 0 rgba(255,255,255,.3)}
+  .fut .gloss{position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:
+      radial-gradient(120% 80% at 22% 8%, rgba(255,255,255,.26), transparent 58%),
+      linear-gradient(118deg,transparent 41%,rgba(255,255,255,.14) 48%,transparent 54%)}
+  .fut.matte .gloss{background:radial-gradient(120% 80% at 22% 8%,rgba(255,255,255,.08),transparent 60%)}
 
-  .futTop{position:relative;z-index:1;display:flex;align-items:stretch;
-    background:rgba(0,0,0,.16);border-bottom:1px solid rgba(0,0,0,.22)}
-  .futL{position:relative;padding:15px 10px 12px 16px;min-width:104px;
-    background:rgba(255,255,255,.10);clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
-  .futL b{display:block;font:800 36px/.86 ui-monospace,Menlo,monospace;
-    font-variant-numeric:tabular-nums;letter-spacing:-.035em}
-  .futL span{display:block;margin-top:5px;font:800 11px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.16em;opacity:.8}
-  .futR{flex:1;padding:15px 15px 12px 4px;text-align:right;display:flex;
-    flex-direction:column;justify-content:center}
-  .futR b{display:block;font:800 19px/1.05 system-ui,sans-serif;text-transform:uppercase}
-  .futR span{display:block;margin-top:5px;font:700 9.5px/1.3 ui-monospace,Menlo,monospace;
-    letter-spacing:.13em;text-transform:uppercase;opacity:.75}
-  .futMid{position:relative;z-index:1;flex:1;display:flex;align-items:center;
-    justify-content:center;font-size:74px;line-height:1;background:rgba(255,255,255,.05)}
-  .futMid .opp{position:absolute;right:12px;bottom:9px;text-align:right;
-    font:700 9px/1.35 ui-monospace,Menlo,monospace;letter-spacing:.1em;
-    text-transform:uppercase;opacity:.62}
-  .futMid .opp b{display:block;font:800 15px/1 ui-monospace,Menlo,monospace;opacity:.95}
-  .futStats{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;
-    background:rgba(0,0,0,.42);border-top:1px solid rgba(255,255,255,.12);padding:9px 10px 10px}
-  .futCell{display:flex;align-items:baseline;gap:6px;padding:4px 5px}
-  .futCell b{font:800 15px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
-    min-width:46px;text-align:right}
-  .futCell span{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.11em;opacity:.72}
+  .futTop{position:relative;z-index:1;display:flex;align-items:stretch;min-height:78px}
+  .futL{position:relative;padding:14px 12px 12px 15px;min-width:100px;
+    background:rgba(255,255,255,.13);
+    clip-path:polygon(0 0,100% 0,78% 100%,0 100%)}
+  .futL b{display:block;font:800 35px/.84 ui-monospace,Menlo,monospace;
+    font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+  .futL span{display:block;margin-top:6px;font:800 11px/1 system-ui,sans-serif;
+    letter-spacing:.1em;opacity:.82}
+  .futR{flex:1;padding:15px 14px 12px 2px;text-align:right;display:flex;
+    flex-direction:column;justify-content:center;background:rgba(0,0,0,.14)}
+  .futR b{display:block;font:800 20px/1.02 system-ui,sans-serif;letter-spacing:-.01em;
+    text-transform:uppercase}
+  .futR span{display:block;margin-top:5px;font:600 10px/1.3 system-ui,sans-serif;
+    letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+
+  .futBody{position:relative;z-index:1;flex:1;display:flex;min-height:0;
+    background:rgba(255,255,255,.05);border-top:1px solid rgba(0,0,0,.22)}
+  .rail{flex:none;width:46px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:9px;border-right:1px solid rgba(0,0,0,.16);
+    background:rgba(0,0,0,.10)}
+  .rail .chipw{font:800 11px/1 ui-monospace,Menlo,monospace;padding:5px 6px;border-radius:3px;
+    background:rgba(0,0,0,.22);letter-spacing:.02em}
+  .rail .tm{font:700 9px/1.1 system-ui,sans-serif;letter-spacing:.04em;opacity:.72;
+    text-align:center;padding:0 3px;word-break:break-word}
+  .futMid{position:relative;flex:1;display:flex;align-items:center;justify-content:center;
+    font-size:70px;line-height:1;min-width:0}
+  .futMid .opp{position:absolute;right:11px;bottom:8px;text-align:right;
+    font:600 8.5px/1.3 system-ui,sans-serif;letter-spacing:.06em;
+    text-transform:uppercase;opacity:.6}
+  .futMid .opp b{display:block;font:800 15px/1 ui-monospace,Menlo,monospace;opacity:.95;
+    font-variant-numeric:tabular-nums}
+
+  .futStats{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1px 1fr;
+    background:rgba(0,0,0,.46);border-top:1px solid rgba(255,255,255,.14);padding:9px 8px 10px}
+  .futStats .div{background:rgba(255,255,255,.14);margin:2px 0}
+  .futCol{display:flex;flex-direction:column;gap:2px}
+  .futCell{display:flex;align-items:baseline;gap:7px;padding:3px 7px}
+  .futCell b{font:800 14.5px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
+    min-width:44px;text-align:right}
+  .futCell span{font:700 9px/1 system-ui,sans-serif;letter-spacing:.07em;opacity:.68}
+
+  /* ---- collections binder ---- */
+  .binderCtl{display:flex;gap:6px;margin-bottom:14px}
+  .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px}
+  .mini{position:relative;aspect-ratio:5/7;border-radius:6px;overflow:hidden;cursor:pointer;
+    display:flex;flex-direction:column;padding:8px 7px;
+    box-shadow:0 6px 16px rgba(0,0,0,.42), inset 0 0 0 1px rgba(255,255,255,.14)}
+  .mini .mtop{display:flex;align-items:baseline;justify-content:space-between;gap:4px}
+  .mini .mrate{font:800 17px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
+    letter-spacing:-.03em}
+  .mini .mwk{font:700 8.5px/1 system-ui,sans-serif;opacity:.7}
+  .mini .mart{flex:1;display:flex;align-items:center;justify-content:center;font-size:26px}
+  .mini .mart img{max-height:38px;max-width:80%;object-fit:contain}
+  .mini .mname{font:700 9.5px/1.2 system-ui,sans-serif;text-align:center;
+    border-top:1px solid rgba(0,0,0,.25);padding-top:5px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .binderEmpty{border:1px dashed #354E66;border-radius:5px;padding:26px 18px;text-align:center;
+    background:rgba(255,255,255,.02);color:var(--dim);font-size:14px;line-height:1.6}
+  .bcount{font:400 12.5px/1.6 system-ui,sans-serif;color:var(--faint);margin:0 0 14px}
 
   .cons{position:relative;width:240px;height:344px;border-radius:6px;margin:0 auto;
     padding:8px;display:flex;flex-direction:column;overflow:hidden;
@@ -519,6 +556,7 @@
     <button role="tab" aria-selected="false" data-p="history">History</button>
     <button role="tab" aria-selected="false" data-p="rules">Rules</button>
     <button role="tab" aria-selected="false" data-p="demo" id="demoTab" style="display:none">Pack</button>
+    <button role="tab" aria-selected="false" data-p="binder" id="binderTab" style="display:none">Binder</button>
   </nav>
 
   <section class="panel on" id="hq">
@@ -584,6 +622,8 @@
     </div>
     <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
   </section>
+
+  <section class="panel" id="binder"><div id="binderBody"></div></section>
 
   <section class="panel" id="demo">
     <h2>Pack Opening &middot; Test Build</h2>
@@ -1002,6 +1042,7 @@ function renderWire(){
 function renderAll(){
   renderLedger(); renderDossiers(); renderRecap(); renderDraft();
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
+  try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }
 }
 
 
@@ -1422,6 +1463,100 @@ function renderWirePro(){
   el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort=b.dataset.sort; renderWirePro(); });
 }
 
+/* ================= COLLECTIONS BINDER ================= */
+/* Every card a manager pulls is kept on their own device, so the season
+   builds into something they can look back through. */
+const binderKey = () => "bromigos.binder." + (ME || "anon");
+
+function readBinder(){
+  try { return JSON.parse(localStorage.getItem(binderKey()) || "[]"); }
+  catch(e){ return []; }
+}
+function saveToBinder(cards, week){
+  if(!ME || !week) return;
+  try {
+    const have = readBinder();
+    const seen = new Set(have.map(c => c.key));
+    cards.forEach(c => {
+      const key = week + ":" + (c.type||"match") + ":" + (c.title||"");
+      if(seen.has(key)) return;
+      have.push({
+        key, week,
+        type: c.type || "match",
+        tier: c.tier || (c.rarity === "rare" ? "gold" : c.rarity === "shame" ? "bronzeC" : "silverC"),
+        rarity: c.rarity || null,
+        title: c.title || "",
+        rate: c.mine || c.value || "",
+        pos: c.pos || (c.rarity ? "AWARD" : ""),
+        art: c.art || "",
+        sub: c.vs || c.desc || "",
+        ts: Date.now()
+      });
+    });
+    localStorage.setItem(binderKey(), JSON.stringify(have));
+  } catch(e){ /* private browsing, nothing to do */ }
+}
+
+const TIER_RANK = { totw:6, purple:6, orange:6, blue:6, gold:5, silver:4, silverC:3, bronze:2, bronzeC:1 };
+const TIER_NAME = { totw:"Team of the week", gold:"Gold", silver:"Silver",
+  silverC:"Silver common", bronze:"Bronze", bronzeC:"Bronze common",
+  blue:"Milestone", orange:"Milestone", purple:"Milestone" };
+
+let binderSort = "week";
+function renderBinder(){
+  const el = document.getElementById("binderBody");
+  if(!el) return;
+  if(!ME){
+    el.innerHTML = `<div class="binderEmpty">Pick your name at the top and your cards will show up here.</div>`;
+    return;
+  }
+  const cards = readBinder();
+  const controls = `<div class="binderCtl">
+      <button class="cbtn" aria-pressed="${binderSort==="week"}" data-bs="week">By week</button>
+      <button class="cbtn" aria-pressed="${binderSort==="rarity"}" data-bs="rarity">By rarity</button>
+    </div>`;
+
+  if(!cards.length){
+    el.innerHTML = controls + `<div class="binderEmpty">
+      Nothing collected yet. Every card you pull on a Tuesday lands here and stays for the season,
+      so you can scroll back through the good weeks and the bad ones.</div>`;
+    el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => { binderSort = b.dataset.bs; renderBinder(); });
+    return;
+  }
+
+  const groups = {};
+  if(binderSort === "week"){
+    cards.forEach(c => { (groups["Week " + c.week] ||= []).push(c); });
+  } else {
+    cards.forEach(c => { (groups[TIER_NAME[c.tier] || "Other"] ||= []).push(c); });
+  }
+  const order = binderSort === "week"
+    ? Object.keys(groups).sort((a,b) => Number(b.split(" ")[1]) - Number(a.split(" ")[1]))
+    : Object.keys(groups).sort((a,b) => {
+        const rank = n => Math.max(...Object.entries(TIER_NAME)
+          .filter(([,v]) => v === n).map(([k]) => TIER_RANK[k] || 0), 0);
+        return rank(b) - rank(a);
+      });
+
+  const best = cards.reduce((m,c) => Math.max(m, TIER_RANK[c.tier]||0), 0);
+  const bestName = Object.entries(TIER_RANK).find(([,v]) => v === best);
+
+  el.innerHTML = controls +
+    `<p class="bcount">${cards.length} card${cards.length>1?"s":""} collected across ${
+      new Set(cards.map(c => c.week)).size} week${new Set(cards.map(c=>c.week)).size>1?"s":""}${
+      bestName ? `. Best pull so far: ${TIER_NAME[bestName[0]] || bestName[0]}` : ""}.</p>` +
+    order.map(g => `<h2>${esc(g)}</h2><div class="bgrid">` +
+      groups[g].map(c => `<div class="mini ${c.tier}" title="${esc(c.title)}">
+        <span class="gloss"></span>
+        <div class="mtop"><span class="mrate">${esc(c.rate||"")}</span>
+          <span class="mwk">${binderSort==="week" ? esc(c.pos||"") : "W"+c.week}</span></div>
+        <div class="mart">${artHTML(c.art)}</div>
+        <div class="mname">${esc(c.title)}</div>
+      </div>`).join("") + `</div>`).join("");
+
+  el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => { binderSort = b.dataset.bs; renderBinder(); });
+}
+
 /* ================= PACK OPENING ================= */
 
 /* ---- group-chat stickers ----
@@ -1585,17 +1720,28 @@ const PACK = (function(){
     void sparks.offsetWidth; sparks.classList.add("go");
   }
 
-  const matchCard = c => `<div class="fut ${c.tier} ${c.matte?"matte":""} in">
+  const matchCard = c => {
+    const cells = (c.stats || []);
+    const col = list => `<div class="futCol">${list.map(s =>
+      `<div class="futCell"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join("")}</div>`;
+    return `<div class="fut ${c.tier} ${c.matte?"matte":""} in">
       <span class="gloss"></span>
       <div class="futTop">
         <div class="futL"><b>${esc(c.mine)}</b><span>${esc(c.pos||"PTS")}</span></div>
         <div class="futR"><b>${esc(c.title)}</b><span>${esc(c.vs)}</span></div>
       </div>
-      <div class="futMid hexskin">${artHTML(c.art)}
-        <span class="opp"><b>${esc(c.theirs)}</b>${esc(c.oppName||"OPP")}</span></div>
+      <div class="futBody">
+        <div class="rail">
+          <span class="chipw">${esc(c.wk || "W1")}</span>
+          <span class="tm">${esc(c.club || "Bromigos")}</span>
+        </div>
+        <div class="futMid hexskin">${artHTML(c.art)}
+          <span class="opp"><b>${esc(c.theirs)}</b>${esc(c.oppName||"OPP")}</span></div>
+      </div>
       <div class="futStats">
-        ${(c.stats||[]).map(s=>`<div class="futCell"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join("")}
+        ${col(cells.slice(0,3))}<div class="div"></div>${col(cells.slice(3,6))}
       </div></div>`;
+  };
 
   const consCard = c => `<div class="cons ${c.rarity} hexskin in">
       <div class="consHead"><span class="consTab">${c.icon||"\u2605"}</span>
@@ -1771,6 +1917,7 @@ function buildWeekCards(w, wk){
   out.push({ type:"match", tier, art, matte,
     mine:w.myScore.toFixed(1), theirs:w.oppScore.toFixed(1),
     pos: won ? "WIN" : "LOSS",
+    wk: "W" + (wk || 1), club: w.club || (w.manager || ME || ""),
     vs:(won?"def. ":"lost to ")+w.opponent,
     oppName: w.opponent, title:w.manager||ME||"You",
     stats, flare:tier });
@@ -1805,11 +1952,14 @@ function maybeAutoPack(){
   const mine=(WEEKLY.packs||{})[ME];
   if(!mine) return;
   try{ localStorage.setItem("bromigos.seenWeek",String(WEEKLY.week)); }catch(e){}
-  PACK.open("Week "+WEEKLY.week, buildWeekCards(mine, WEEKLY.week));
+  const cards = buildWeekCards(mine, WEEKLY.week);
+  saveToBinder(cards, WEEKLY.week);
+  PACK.open("Week "+WEEKLY.week, cards);
 }
 
 if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
+  document.getElementById("binderTab").style.display = "";
   const base = {manager:"Scotty"};
   const S = {
     "Bronze common: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",

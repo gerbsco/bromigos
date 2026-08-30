@@ -579,15 +579,16 @@
 
   <nav role="tablist">
     <button role="tab" aria-selected="true" data-p="hq">HQ</button>
+    <button role="tab" aria-selected="false" data-p="team" id="teamTab" style="display:none">My Team</button>
     <button role="tab" aria-selected="false" data-p="league">League</button>
     <button role="tab" aria-selected="false" data-p="trade">Trades</button>
+    <button role="tab" aria-selected="false" data-p="block" id="blockTab" style="display:none">Block</button>
     <button role="tab" aria-selected="false" data-p="wire">Wire</button>
     <button role="tab" aria-selected="false" data-p="owners">Owners</button>
     <button role="tab" aria-selected="false" data-p="history">History</button>
     <button role="tab" aria-selected="false" data-p="rules">Rules</button>
-    <button role="tab" aria-selected="false" data-p="demo" id="demoTab" style="display:none">Pack</button>
-    <button role="tab" aria-selected="false" data-p="team" id="teamTab" style="display:none">My Team</button>
     <button role="tab" aria-selected="false" data-p="binder" id="binderTab" style="display:none">Binder</button>
+    <button role="tab" aria-selected="false" data-p="demo" id="demoTab" style="display:none">Pack</button>
   </nav>
 
   <section class="panel on" id="hq">
@@ -655,6 +656,8 @@
   </section>
 
   <section class="panel" id="team"><div id="teamBody"></div></section>
+
+  <section class="panel" id="block"><div id="blockBody"></div></section>
 
   <section class="panel" id="binder"><div id="binderBody"></div></section>
 
@@ -1076,6 +1079,7 @@ function renderAll(){
   renderLedger(); renderDossiers(); renderRecap(); renderDraft();
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
+  try{ renderBlockPage(); }catch(e){ console.warn("[bromigos] block:", e && e.message); }
   try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }
 }
 
@@ -1322,8 +1326,7 @@ const plrRow = (p, slot, picked, side, owner) => `<div class="plr ${picked?"pick
     data-pid="${p.id}" data-side="${side}">
     <span class="slot">${slot||""}</span>
     <span class="pos ${p.pos}">${p.pos}</span>
-    <span class="who2"><b>${esc(p.name)}${
-      typeof isBlocked === "function" && isBlocked(p.id, owner) ? `<span class="blockTag">available</span>` : ""}</b>
+    <span class="who2"><b>${esc(p.name)}</b>
       <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}</span></span>
     <span class="pts">${p.proj.toFixed(1)}</span>
     <span class="tick">\u2713</span>
@@ -1604,7 +1607,7 @@ async function pullBlocks(){
 
 /* Repaint through the gated renderers so nothing preview-only leaks out. */
 function refreshBlockViews(){
-  try { if(PREVIEW){ renderTeamPage(); renderTrade(); } } catch(e){}
+  try { if(PREVIEW){ renderTeamPage(); renderBlockPage(); renderTrade(); } } catch(e){}
 }
 
 async function pushBlock(){
@@ -1731,6 +1734,60 @@ function renderTeamPage(){
   });
 }
 
+/* ================= LEAGUE TRADE BLOCK ================= */
+function renderBlockPage(){
+  const el = document.getElementById("blockBody");
+  if(!el) return;
+  if(!PREVIEW){ el.innerHTML = ""; return; }
+  if(!ROSTERS) loadRosterModel();
+  BLOCK ||= readBlock();
+
+  const byId = {};
+  ROSTERS.forEach(t => t.players.forEach(p => { byId[p.id] = { p, team: t }; }));
+
+  // my own flags come off this device, everyone else's off the sheet
+  const listed = [];
+  [...BLOCK].forEach(id => { if(byId[id]) listed.push({ ...byId[id], mine: true }); });
+  Object.entries(BLOCKS).forEach(([man, ids]) => {
+    ids.forEach(id => {
+      if(!byId[id]) return;
+      if(byId[id].team.manager === ME && BLOCK.has(id)) return;   // already counted
+      listed.push({ ...byId[id], mine: byId[id].team.manager === ME });
+    });
+  });
+
+  const seen = new Set();
+  const rows = listed.filter(x => { if(seen.has(x.p.id)) return false; seen.add(x.p.id); return true; });
+
+  const me = myTeam();
+  const gMe = me ? gradeTeam(me, leagueMedians(ROSTERS)) : {};
+  const myWeak = Object.entries(gMe).filter(([,v]) => v.label === "weak").map(([p]) => p);
+
+  const groups = {};
+  rows.forEach(x => { (groups[x.team.manager] ||= []).push(x); });
+  const order = Object.keys(groups).sort((a,b) => (a === ME ? -1 : b === ME ? 1 : a.localeCompare(b)));
+
+  el.innerHTML = demoBanner() +
+    `<p class="note" style="margin:0 0 14px">${esc(blockStatusLine())}
+      Flag your own players on the My Team tab.</p>` +
+    (rows.length
+      ? order.map(man => {
+          const t = groups[man][0].team;
+          return `<h2>${esc(man)}${man === ME ? " (you)" : ""}</h2>
+            <p class="note" style="margin:-4px 0 9px">${esc(t.teamName)}</p>` +
+            groups[man].map(x => `<div class="plr" style="cursor:default">
+              <span class="slot">${myWeak.includes(x.p.pos) && man !== ME ? "\u2b50" : ""}</span>
+              <span class="pos ${x.p.pos}">${x.p.pos}</span>
+              <span class="who2"><b>${esc(x.p.name)}</b>
+                <span>${esc(x.p.team||"")}${x.p.bye?", bye "+x.p.bye:""}${
+                  myWeak.includes(x.p.pos) && man !== ME ? " \u00b7 fills your gap" : ""}</span></span>
+              <span class="pts">${x.p.proj.toFixed(1)}</span>
+              <span class="tick"></span></div>`).join("");
+        }).join("")
+      : `<div class="binderEmpty">Nobody has listed a player yet.
+          Go to My Team and tap anyone you would move.</div>`);
+}
+
 /* ================= COLLECTIONS BINDER ================= */
 /* Every card a manager pulls is kept on their own device, so the season
    builds into something they can look back through. */
@@ -1771,10 +1828,40 @@ const TIER_NAME = { totw:"Team of the week", gold:"Gold", silver:"Silver",
   blue:"Milestone", orange:"Milestone", purple:"Milestone" };
 
 let binderSort = "week";
+/* Fills the binder with one card per tier so the grid can be judged before
+   any real weeks exist. Preview only, and it never overwrites real pulls. */
+function seedBinderSamples(){
+  if(!PREVIEW || !ME) return;
+  if(readBinder().length) return;
+  const wk = w => ({ manager: ME, ...w });
+  const weeks = [
+    [1, wk({myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
+      awards:[{title:"Scoring Machine",stat:"151.8 points",rare:true,
+        desc:"Most points in the league. Everyone else played for second."}]})],
+    [2, wk({myScore:142.0,oppScore:104.8,opponent:"Bo",
+      awards:[{title:"Blowout King",stat:"Won by 37.2",rare:true,
+        desc:"Biggest margin of the week. Over by noon."}]})],
+    [3, wk({myScore:118.9,oppScore:114.2,opponent:"Austin",
+      awards:[{title:"Sunday Scaries",stat:"Won by 4.7",rare:false,
+        desc:"Thin enough to ruin your evening anyway."}]})],
+    [4, wk({myScore:117.4,oppScore:122.0,opponent:"Cody",
+      awards:[{title:"Heartbreaker",stat:"Lost by 4.6",rare:false,
+        desc:"Beaten by less than a garbage time score."}]})],
+    [5, wk({myScore:109.2,oppScore:124.6,opponent:"Ryan",
+      awards:[{title:"Bench Champion",stat:"41.3 wasted",good:false,
+        desc:"Your bench would have won it. You did not play them."}]})],
+    [6, wk({myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
+      awards:[{title:"Walking Disaster",stat:"78.4 points",good:false,
+        desc:"Lowest score in the league. Not close either."}]})]
+  ];
+  weeks.forEach(([n, w]) => saveToBinder(buildWeekCards(w, n), n));
+}
+
 function renderBinder(){
   const el = document.getElementById("binderBody");
   if(!el) return;
   if(!PREVIEW){ el.innerHTML = ""; return; }
+  try { seedBinderSamples(); } catch(e){ console.warn("[bromigos] samples:", e && e.message); }
   if(!ME){
     el.innerHTML = `<div class="binderEmpty">Pick your name at the top and your cards will show up here.</div>`;
     return;
@@ -1811,7 +1898,7 @@ function renderBinder(){
   const bestName = Object.entries(TIER_RANK).find(([,v]) => v === best);
 
   el.innerHTML = controls +
-    `<p class="bcount">${cards.length} card${cards.length>1?"s":""} collected across ${
+    `<p class="bcount">${IS_DEMO?"Sample cards for testing. ":""}${cards.length} card${cards.length>1?"s":""} collected across ${
       new Set(cards.map(c => c.week)).size} week${new Set(cards.map(c=>c.week)).size>1?"s":""}${
       bestName ? `. Best pull so far: ${TIER_NAME[bestName[0]] || bestName[0]}` : ""}.</p>` +
     order.map(g => `<h2>${esc(g)}</h2><div class="bgrid">` +
@@ -2231,6 +2318,7 @@ if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
   document.getElementById("binderTab").style.display = "";
   document.getElementById("teamTab").style.display = "";
+  document.getElementById("blockTab").style.display = "";
   const base = {manager:"Scotty"};
   const S = {
     "Bronze common: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",

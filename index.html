@@ -310,6 +310,10 @@
   .mini .mname{font:700 9.5px/1.2 system-ui,sans-serif;text-align:center;
     border-top:1px solid rgba(0,0,0,.25);padding-top:5px;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mini .mrar{margin-top:3px;text-align:center;font:600 7.5px/1.2 system-ui,sans-serif;
+    letter-spacing:.04em;opacity:.72;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .plr.tappable{cursor:pointer}
+  .plr.tappable .tick{border:0;color:#7E93A6;font-size:18px}
   .binderEmpty{border:1px dashed #354E66;border-radius:5px;padding:26px 18px;text-align:center;
     background:rgba(255,255,255,.02);color:var(--dim);font-size:14px;line-height:1.6}
   .bcount{font:400 12.5px/1.6 system-ui,sans-serif;color:var(--faint);margin:0 0 14px}
@@ -550,6 +554,7 @@
   .blockTag{display:inline-block;margin-left:7px;padding:3px 6px;border-radius:3px;
     background:rgba(217,162,39,.2);color:var(--brass);
     font:700 9.5px/1 system-ui,sans-serif;vertical-align:middle}
+  .subnav{display:flex;gap:6px;margin-bottom:16px}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
@@ -581,10 +586,7 @@
     <button role="tab" aria-selected="true" data-p="hq">HQ</button>
     <button role="tab" aria-selected="false" data-p="team" id="teamTab" style="display:none">My Team</button>
     <button role="tab" aria-selected="false" data-p="trade">Trades</button>
-    <button role="tab" aria-selected="false" data-p="block" id="blockTab" style="display:none">Block</button>
     <button role="tab" aria-selected="false" data-p="wire">Wire</button>
-    <button role="tab" aria-selected="false" data-p="league">League</button>
-    <button role="tab" aria-selected="false" data-p="owners">Owners</button>
     <button role="tab" aria-selected="false" data-p="history">History</button>
     <button role="tab" aria-selected="false" data-p="rules">Rules</button>
     <button role="tab" aria-selected="false" data-p="binder" id="binderTab" style="display:none">Binder</button>
@@ -596,16 +598,24 @@
     <div id="draft"></div>
     <div id="awards"></div>
     <div id="snapshot"></div>
+    <div id="leagueBody"></div>
   </section>
 
-  <section class="panel" id="league"><div id="leagueBody"></div></section>
-  <section class="panel" id="trade"><div id="tradeBody"></div></section>
+  <section class="panel" id="trade">
+    <div class="subnav" id="tradeNav" style="display:none">
+      <button class="cbtn" aria-pressed="true" data-tv="build">Build a trade</button>
+      <button class="cbtn" aria-pressed="false" data-tv="block">League block</button>
+    </div>
+    <div id="tradeBody"></div>
+    <div id="blockBody" style="display:none"></div>
+  </section>
   <section class="panel" id="wire"><div id="wireBody"></div></section>
 
-  <section class="panel" id="owners">
-    <h2>Owner Dossiers &middot; 2019&ndash;2025</h2>
+  </div>
+
+  <section class="panel" id="history">
+    <h2>Owners</h2>
     <div id="dossiers"></div>
-    <h2>Record Book</h2>
     <div class="card">
       <p><b>Best season:</b> Austin, 1,803 pts, 2021 (finished 4th)<br>
       <b>Worst season:</b> James, 1,221 pts, 2019<br>
@@ -617,9 +627,7 @@
       <h3>The 51&ndash;45 Club</h3>
       <p>Cody, Ryan and Austin have each played seven seasons and finished with the exact same record. None has ever won. Bo is 42&ndash;41 with two rings.</p>
     </div>
-  </section>
 
-  <section class="panel" id="history">
     <h2>Champions</h2>
     <div class="champs" id="champs"></div>
     <h2>All-Time Ledger</h2>
@@ -656,8 +664,6 @@
   </section>
 
   <section class="panel" id="team"><div id="teamBody"></div></section>
-
-  <section class="panel" id="block"><div id="blockBody"></div></section>
 
   <section class="panel" id="binder"><div id="binderBody"></div></section>
 
@@ -915,8 +921,13 @@ function renderRecap(){
   }).join("");
   el.innerHTML = `<h2>This Week</h2>
     <div class="recap">
-      <div class="wk">${esc(WEEKLY.week ? "Week "+WEEKLY.week : "Preseason")}${
-        WEEKLY.posted ? " \u00b7 " + esc(WEEKLY.posted) : ""}</div>
+      <div class="wk">${(() => {
+        const wk = WEEKLY.week ? "Week " + WEEKLY.week : "";
+        const on = WEEKLY.posted || "";
+        // don't print the same label twice when there is no week number yet
+        const parts = [wk, on].filter(Boolean).filter((v,i,a) => a.indexOf(v) === i);
+        return esc(parts.join(" \u00b7 ") || "Preseason");
+      })()}</div>
       ${WEEKLY.headline ? `<h3>${esc(WEEKLY.headline)}</h3>` : ""}
       ${body}
       ${moves ? `<div class="moves">${moves}</div>` : ""}
@@ -1032,9 +1043,7 @@ function standingsTable(limit){
 
 function renderSnapshot(){
   const el = document.getElementById("snapshot");
-  if(!playedGames().length){ el.innerHTML = ""; return; }
-  el.innerHTML = `<h2>Standings</h2>` + standingsTable(5) +
-    `<p class="note">Full table on the League tab.</p>`;
+  el.innerHTML = "";
 }
 
 function renderLeague(){
@@ -1057,7 +1066,23 @@ function renderLeague(){
   el.innerHTML = `<h2>Standings</h2>` + standingsTable();
 }
 
+let tradeView = "build";
+function paintTradeNav(){
+  const nav = document.getElementById("tradeNav");
+  const body = document.getElementById("tradeBody");
+  const block = document.getElementById("blockBody");
+  if(!nav || !body || !block) return;
+  nav.style.display = PREVIEW ? "flex" : "none";
+  body.style.display  = (!PREVIEW || tradeView === "build") ? "" : "none";
+  block.style.display = (PREVIEW && tradeView === "block") ? "" : "none";
+  nav.querySelectorAll("[data-tv]").forEach(b => {
+    b.setAttribute("aria-pressed", String(b.dataset.tv === tradeView));
+    b.onclick = () => { tradeView = b.dataset.tv; paintTradeNav(); };
+  });
+}
+
 function renderTrade(){
+  paintTradeNav();
   if(PREVIEW){ try{ return renderTradePro(); }
     catch(e){ console.warn("[bromigos] trade module:", e && e.message); } }
   document.getElementById("tradeBody").innerHTML = drafted()
@@ -1591,6 +1616,9 @@ function absorbBlocks(data){
   Object.entries(data.blocks).forEach(([man, v]) => {
     BLOCKS[man] = new Set((v && v.ids) || []);
   });
+  // What this device knows about my own list always wins over the server copy,
+  // so a slow reply can never wipe a flag I just added.
+  if(ME){ BLOCK ||= readBlock(); BLOCKS[ME] = new Set([...BLOCK]); }
   blockSyncState = "ok";
 }
 
@@ -1610,19 +1638,30 @@ function refreshBlockViews(){
   try { if(PREVIEW){ renderTeamPage(); renderBlockPage(); renderTrade(); } } catch(e){}
 }
 
-async function pushBlock(){
+let pushTimer = null, pushSeq = 0;
+/* Taps come in bursts. Wait for them to stop, send once, and ignore any reply
+   that is no longer the newest request. */
+function pushBlock(){
   BLOCK ||= readBlock();
-  if(!BLOCK_URL || !ME || !PREVIEW){ return; }
+  if(!BLOCK_URL || !ME || !PREVIEW) return;
   blockSyncState = "saving";
-  try {
-    const url = BLOCK_URL + "?action=save&manager=" + encodeURIComponent(ME) +
-                "&ids=" + encodeURIComponent([...BLOCK].join(","));
-    absorbBlocks(await jsonp(url));
-  } catch(err){
-    blockSyncState = "error";
-    console.warn("[bromigos] could not save block:", err && err.message);
-  }
   refreshBlockViews();
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(async () => {
+    const seq = ++pushSeq;
+    try {
+      const url = BLOCK_URL + "?action=save&manager=" + encodeURIComponent(ME) +
+                  "&ids=" + encodeURIComponent([...BLOCK].join(","));
+      const data = await jsonp(url);
+      if(seq !== pushSeq) return;          // a newer save already went out
+      absorbBlocks(data);
+    } catch(err){
+      if(seq !== pushSeq) return;
+      blockSyncState = "error";
+      console.warn("[bromigos] could not save block:", err && err.message);
+    }
+    refreshBlockViews();
+  }, 450);
 }
 
 /* Whose flag is it: mine comes from this device, everyone else from the sheet. */
@@ -1745,47 +1784,64 @@ function renderBlockPage(){
   const byId = {};
   ROSTERS.forEach(t => t.players.forEach(p => { byId[p.id] = { p, team: t }; }));
 
-  // my own flags come off this device, everyone else's off the sheet
-  const listed = [];
-  [...BLOCK].forEach(id => { if(byId[id]) listed.push({ ...byId[id], mine: true }); });
-  Object.entries(BLOCKS).forEach(([man, ids]) => {
+  const merged = {};
+  Object.entries(BLOCKS).forEach(([man, ids]) => { merged[man] = new Set([...ids]); });
+  if(ME) merged[ME] = new Set([...(merged[ME] || []), ...BLOCK]);
+
+  const rows = [];
+  let unresolved = 0;
+  Object.entries(merged).forEach(([man, ids]) => {
     ids.forEach(id => {
-      if(!byId[id]) return;
-      if(byId[id].team.manager === ME && BLOCK.has(id)) return;   // already counted
-      listed.push({ ...byId[id], mine: byId[id].team.manager === ME });
+      if(byId[id]) rows.push({ ...byId[id], listedBy: man });
+      else unresolved++;
     });
   });
-
-  const seen = new Set();
-  const rows = listed.filter(x => { if(seen.has(x.p.id)) return false; seen.add(x.p.id); return true; });
 
   const me = myTeam();
   const gMe = me ? gradeTeam(me, leagueMedians(ROSTERS)) : {};
   const myWeak = Object.entries(gMe).filter(([,v]) => v.label === "weak").map(([p]) => p);
 
   const groups = {};
-  rows.forEach(x => { (groups[x.team.manager] ||= []).push(x); });
-  const order = Object.keys(groups).sort((a,b) => (a === ME ? -1 : b === ME ? 1 : a.localeCompare(b)));
+  rows.forEach(x => { (groups[x.listedBy] ||= []).push(x); });
+  const order = Object.keys(groups).sort((a,b) =>
+    a === ME ? -1 : b === ME ? 1 : a.localeCompare(b));
 
   el.innerHTML = demoBanner() +
     `<p class="note" style="margin:0 0 14px">${esc(blockStatusLine())}
-      Flag your own players on the My Team tab.</p>` +
+      Flag your own players on the My Team tab.${
+      unresolved ? ` ${unresolved} listing${unresolved>1?"s":""} could not be matched to a current roster.` : ""}</p>` +
     (rows.length
       ? order.map(man => {
           const t = groups[man][0].team;
-          return `<h2>${esc(man)}${man === ME ? " (you)" : ""}</h2>
-            <p class="note" style="margin:-4px 0 9px">${esc(t.teamName)}</p>` +
-            groups[man].map(x => `<div class="plr" style="cursor:default">
-              <span class="slot">${myWeak.includes(x.p.pos) && man !== ME ? "\u2b50" : ""}</span>
+          const mine = man === ME;
+          return `<h2>${esc(man)}${mine ? " (you)" : ""}</h2>
+            <p class="note" style="margin:-4px 0 9px">${esc(t.teamName)}${
+              mine ? "" : " \u00b7 tap anyone to start a trade"}</p>` +
+            groups[man].map(x => `<div class="plr ${mine?"":"tappable"}"
+                ${mine ? 'style="cursor:default"' : `data-goto="${x.p.id}" data-team="${x.team.id}"`}>
+              <span class="slot">${myWeak.includes(x.p.pos) && !mine ? "\u2b50" : ""}</span>
               <span class="pos ${x.p.pos}">${x.p.pos}</span>
               <span class="who2"><b>${esc(x.p.name)}</b>
                 <span>${esc(x.p.team||"")}${x.p.bye?", bye "+x.p.bye:""}${
-                  myWeak.includes(x.p.pos) && man !== ME ? " \u00b7 fills your gap" : ""}</span></span>
+                  myWeak.includes(x.p.pos) && !mine ? " \u00b7 fills your gap" : ""}</span></span>
               <span class="pts">${x.p.proj.toFixed(1)}</span>
-              <span class="tick"></span></div>`).join("");
+              <span class="tick">${mine ? "" : "\u203a"}</span></div>`).join("");
         }).join("")
       : `<div class="binderEmpty">Nobody has listed a player yet.
           Go to My Team and tap anyone you would move.</div>`);
+
+  el.querySelectorAll("[data-goto]").forEach(r => {
+    r.onclick = () => {
+      tradePartner = Number(r.dataset.team);
+      giveSel = new Set();
+      getSel = new Set([r.dataset.goto]);
+      tradeView = "build";
+      renderTrade();
+      const btn = document.querySelector('nav button[data-p="trade"]');
+      if(btn) btn.click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+  });
 }
 
 /* ================= COLLECTIONS BINDER ================= */
@@ -1822,8 +1878,8 @@ function saveToBinder(cards, week){
   } catch(e){ /* private browsing, nothing to do */ }
 }
 
-const TIER_RANK = { totw:6, purple:6, orange:6, blue:6, gold:5, silver:4, silverC:3, bronze:2, bronzeC:1 };
-const TIER_NAME = { totw:"Team of the week", gold:"Gold", silver:"Silver",
+var TIER_RANK = { totw:6, purple:6, orange:6, blue:6, gold:5, silver:4, silverC:3, bronze:2, bronzeC:1 };
+var TIER_NAME = { totw:"Team of the week", gold:"Gold", silver:"Silver",
   silverC:"Silver common", bronze:"Bronze", bronzeC:"Bronze common",
   blue:"Milestone", orange:"Milestone", purple:"Milestone" };
 
@@ -1908,6 +1964,7 @@ function renderBinder(){
           <span class="mwk">${binderSort==="week" ? esc(c.pos||"") : "W"+c.week}</span></div>
         <div class="mart">${artHTML(c.art)}</div>
         <div class="mname">${esc(c.title)}</div>
+        <div class="mrar">${esc(TIER_NAME[c.tier] || "")}</div>
       </div>`).join("") + `</div>`).join("");
 
   el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => { binderSort = b.dataset.bs; renderBinder(); });

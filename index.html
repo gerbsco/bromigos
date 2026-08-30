@@ -358,20 +358,47 @@
     padding:11px 13px;border-radius:3px;margin-bottom:14px;font-size:13px;line-height:1.5}
   .demoban b{color:#FFD9D3}
 
-  .picker{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-  .picker select{flex:1;min-width:132px}
+  .picker{margin-bottom:12px}
+  .picker select{width:100%}
 
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .col{background:var(--ink-2);border-radius:4px;padding:11px 10px;min-width:0}
-  .col h4{margin:0 0 9px;font:800 11px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--brass);overflow:hidden;text-overflow:ellipsis;
-    white-space:nowrap}
-  .plr{display:flex;align-items:center;gap:7px;padding:7px 6px;border-radius:3px;
-    cursor:pointer;border:1px solid transparent;margin-bottom:4px;background:rgba(255,255,255,.03)}
+  /* deal tray */
+  .tray{background:var(--ink-2);border-radius:5px;padding:13px;margin-bottom:14px;
+    border:1px solid #2C4257}
+  .tray.live{border-color:var(--brass)}
+  .traySide{margin-bottom:10px}
+  .traySide:last-of-type{margin-bottom:0}
+  .trayLbl{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;min-height:30px;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border-radius:3px;
+    background:rgba(217,162,39,.16);color:var(--chalk);
+    font:700 12px/1 system-ui,sans-serif;cursor:pointer}
+  .chip.get{background:rgba(76,175,125,.18)}
+  .chip .x{opacity:.6;font:800 13px/1 system-ui,sans-serif}
+  .chip small{font:600 10px/1 ui-monospace,Menlo,monospace;opacity:.7}
+  .chips .empty{font-size:12.5px;color:var(--faint)}
+  .trayBtns{display:flex;gap:7px;margin-top:11px}
+  .tbtn{flex:1;padding:10px;border-radius:3px;border:1px solid #2C4257;background:transparent;
+    color:var(--dim);font:700 11.5px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer}
+  .tbtn.on{background:var(--brass);border-color:var(--brass);color:#2A1C00}
+
+  /* roster lists */
+  .rost{margin-bottom:16px}
+  .rostHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    margin-bottom:8px}
+  .rostHead b{font:800 14px/1.2 system-ui,sans-serif;color:var(--chalk)}
+  .rostHead span{font:700 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;
+    color:var(--faint);text-transform:uppercase}
+  .subhead{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--brass);margin:12px 0 6px;opacity:.8}
+  .plr{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:4px;
+    cursor:pointer;border:1px solid transparent;margin-bottom:5px;
+    background:rgba(255,255,255,.035)}
   .plr:active{background:rgba(255,255,255,.09)}
-  .plr.sel{border-color:var(--brass);background:rgba(217,162,39,.14)}
-  .plr .pos{flex:none;width:30px;text-align:center;border-radius:2px;padding:3px 0;
-    font:800 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.04em}
+  .plr .slot{flex:none;width:34px;font:800 9px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.05em;color:var(--faint);text-align:center}
+  .plr .pos{flex:none;width:32px;text-align:center;border-radius:2px;padding:4px 0;
+    font:800 9px/1 ui-monospace,Menlo,monospace}
   .pos.QB{background:#6D3B57;color:#FFD9EC}
   .pos.RB{background:#2F5D46;color:#CFF3E1}
   .pos.WR{background:#2C4C6E;color:#CFE6FF}
@@ -379,46 +406,57 @@
   .pos.K{background:#4A4A55;color:#DDE1EA}
   .pos.DST{background:#5A3A2A;color:#F2D8C8}
   .plr .who2{flex:1;min-width:0}
-  .plr .who2 b{display:block;font:700 12.5px/1.2 system-ui,sans-serif;color:var(--chalk);
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .plr .who2 span{display:block;margin-top:2px;font:500 9.5px/1.2 ui-monospace,Menlo,monospace;
+  .plr .who2 b{display:block;font:700 13.5px/1.25 system-ui,sans-serif;color:var(--chalk)}
+  .plr .who2 span{display:block;margin-top:2px;font:500 10px/1.2 ui-monospace,Menlo,monospace;
     color:var(--faint)}
-  .plr .pts{flex:none;font:800 12px/1 ui-monospace,Menlo,monospace;color:#BCCBD8;
-    font-variant-numeric:tabular-nums}
-  .plr.out{opacity:.35;text-decoration:line-through}
-  .plr.in{border-color:var(--green);background:rgba(76,175,125,.14)}
+  .plr .pts{flex:none;font:800 13.5px/1 ui-monospace,Menlo,monospace;color:#BCCBD8;
+    font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
+  .plr .tick{flex:none;width:20px;height:20px;border-radius:3px;border:1.5px solid #46586B;
+    display:flex;align-items:center;justify-content:center;font:800 12px/1 system-ui,sans-serif;
+    color:transparent}
+  .plr.picked{background:rgba(217,162,39,.16);border-color:var(--brass)}
+  .plr.picked .tick{background:var(--brass);border-color:var(--brass);color:#2A1C00}
+  .plr.picked.get{background:rgba(76,175,125,.16);border-color:var(--green)}
+  .plr.picked.get .tick{background:var(--green);border-color:var(--green);color:#06231A}
 
-  .verdict{margin-top:12px;background:var(--ink-2);border-radius:4px;padding:14px;
+  .verdict{background:var(--ink-2);border-radius:5px;padding:14px;margin-top:11px;
     border-left:3px solid #2C4257}
   .verdict.good{border-left-color:var(--green)}
   .verdict.bad{border-left-color:var(--stamp)}
-  .vrow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;
+  .vrow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:13.5px;
     color:#BCCBD8;border-bottom:1px solid rgba(234,226,207,.08)}
-  .vrow:last-child{border-bottom:0}
+  .vrow:last-of-type{border-bottom:0}
   .vrow b{font:800 14px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
   .up{color:var(--green)} .down{color:#E08A80}
 
-  .ideas{margin-top:10px}
-  .idea{background:var(--ink-2);border-radius:4px;padding:13px;margin-bottom:9px;
+  .idea{background:var(--ink-2);border-radius:4px;padding:13px;margin-bottom:8px;
     border-left:3px solid var(--brass);cursor:pointer}
-  .idea .sw{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;
-    color:var(--chalk)}
-  .idea .sw em{font-style:normal;color:var(--faint);font:700 10px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.1em}
-  .idea .why{margin:8px 0 0;font-size:12.5px;color:#9FB3C4;line-height:1.5}
+  .idea .sw{font-size:13.5px;color:var(--chalk);line-height:1.5}
+  .idea .sw em{font-style:normal;color:var(--faint);font:700 9.5px/1 ui-monospace,Menlo,monospace;
+    letter-spacing:.12em;text-transform:uppercase}
+  .idea .why{margin:8px 0 0;font-size:12.5px;color:#9FB3C4}
+
+  /* controls */
+  .ctrls{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
+  .cgroup{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .cgroup::-webkit-scrollbar{display:none}
+  .cbtn{flex:none;padding:8px 12px;border-radius:3px;border:1px solid #2C4257;
+    background:transparent;color:var(--dim);cursor:pointer;white-space:nowrap;
+    font:700 11.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em}
+  .cbtn[aria-pressed=true]{background:var(--brass);border-color:var(--brass);color:#2A1C00}
 
   .wirerow{display:flex;align-items:center;gap:9px;background:var(--ink-2);border-radius:4px;
     padding:10px;margin-bottom:6px;border-left:3px solid #2C4257}
   .wirerow.fit{border-left-color:var(--green)}
-  .wirerow .rank{flex:none;width:22px;text-align:center;font:800 13px/1 ui-monospace,Menlo,monospace;
+  .wirerow .rank{flex:none;width:20px;text-align:center;font:800 12px/1 ui-monospace,Menlo,monospace;
     color:var(--faint)}
   .wirerow .meta{flex:1;min-width:0}
-  .wirerow .meta b{display:block;font:700 13.5px/1.2 system-ui,sans-serif;color:var(--chalk);
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .wirerow .meta span{display:block;margin-top:3px;font:500 10px/1.35 ui-monospace,Menlo,monospace;
-    color:var(--faint)}
-  .wirerow .hot{flex:none;padding:3px 7px;border-radius:2px;background:rgba(217,162,39,.16);
-    color:var(--brass);font:800 9px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.08em}
+  .wirerow .meta b{display:block;font:700 13.5px/1.2 system-ui,sans-serif;color:var(--chalk)}
+  .wstats{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+  .wstat{font:600 10px/1.2 ui-monospace,Menlo,monospace;color:var(--faint)}
+  .wstat b{color:#BCCBD8;font-weight:800}
+  .wirerow .hot{flex:none;padding:4px 7px;border-radius:2px;background:rgba(217,162,39,.16);
+    color:var(--brass);font:800 9.5px/1.3 ui-monospace,Menlo,monospace}
   .needs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
   .need{padding:5px 9px;border-radius:2px;font:700 10.5px/1.3 ui-monospace,Menlo,monospace;
     letter-spacing:.08em;background:rgba(255,255,255,.05);color:var(--dim)}
@@ -1167,17 +1205,46 @@ function loadRosterModel(){
 
 const myTeam = () => (ROSTERS || []).find(t => t.manager === ME) || (ROSTERS || [])[0];
 
-const plrRow = (p, cls) => `<div class="plr ${cls||""}" data-pid="${p.id}">
+/* Split a roster into lineup slots then bench, so it reads like ESPN does. */
+function rosterSections(players){
+  const lu = bestLineup(players);
+  const used = new Set(lu.filled.filter(f=>f.player).map(f=>f.player.id));
+  return {
+    starters: lu.filled,
+    bench: players.filter(p => !used.has(p.id)).sort((a,b) => b.proj - a.proj),
+    total: lu.total
+  };
+}
+
+const plrRow = (p, slot, picked, side) => `<div class="plr ${picked?"picked":""} ${side==="get"?"get":""}"
+    data-pid="${p.id}" data-side="${side}">
+    <span class="slot">${slot||""}</span>
     <span class="pos ${p.pos}">${p.pos}</span>
     <span class="who2"><b>${esc(p.name)}</b>
       <span>${esc(p.team||"")}${p.bye?" \u00b7 BYE "+p.bye:""}${p.injury?" \u00b7 "+p.injury.slice(0,1):""}</span></span>
     <span class="pts">${p.proj.toFixed(1)}</span>
+    <span class="tick">\u2713</span>
   </div>`;
 
+function rosterBlock(team, sel, side){
+  const s = rosterSections(team.players);
+  const rows = s.starters.map(f => f.player
+    ? plrRow(f.player, f.slot, sel.has(f.player.id), side)
+    : `<div class="plr" style="opacity:.4"><span class="slot">${f.slot}</span>
+        <span class="pos" style="background:#2A3644;color:#7C8EA0">--</span>
+        <span class="who2"><b>Empty</b></span><span class="pts">0.0</span>
+        <span class="tick"></span></div>`).join("");
+  const bench = s.bench.map(p => plrRow(p, "BE", sel.has(p.id), side)).join("");
+  return `<div class="rost">
+    <div class="rostHead"><b>${esc(team.manager)}</b><span>${s.total.toFixed(1)} starters</span></div>
+    <div class="subhead">Starting lineup</div>${rows}
+    <div class="subhead">Bench</div>${bench}
+  </div>`;
+}
+
 const demoBanner = () => IS_DEMO
-  ? `<div class="demoban"><b>Demo data.</b> These are invented players and made-up
-     projections so the layout can be tested before the draft. Everything switches to
-     real rosters automatically once ESPN has them.</div>` : "";
+  ? `<div class="demoban"><b>Demo data.</b> Invented players and made-up projections so the
+     layout can be tested before the draft. Switches to real rosters automatically.</div>` : "";
 
 /* ---------- Trade Center ---------- */
 function renderTradePro(){
@@ -1193,73 +1260,79 @@ function renderTradePro(){
   const gMe = gradeTeam(me, med);
   const give = me.players.filter(p => giveSel.has(p.id));
   const get  = them.players.filter(p => getSel.has(p.id));
-
-  const beforeA = rosterValue(me.players), beforeB = rosterValue(them.players);
-  const afterA  = rosterValue(applyTrade(me.players, give, get));
-  const afterB  = rosterValue(applyTrade(them.players, get, give));
-  const dA = afterA - beforeA, dB = afterB - beforeB;
   const live = give.length || get.length;
 
+  const beforeA = rosterValue(me.players), beforeB = rosterValue(them.players);
+  const dA = rosterValue(applyTrade(me.players, give, get)) - beforeA;
+  const dB = rosterValue(applyTrade(them.players, get, give)) - beforeB;
+
   const byeClash = () => {
-    const post = applyTrade(me.players, give, get);
-    const weeks = {};
-    post.forEach(p => { if(p.bye) weeks[p.bye] = (weeks[p.bye]||0)+1; });
-    const bad = Object.entries(weeks).filter(([,n]) => n >= 5);
-    return bad.length ? `Week ${bad[0][0]}: ${bad[0][1]} players on bye` : null;
+    const post = applyTrade(me.players, give, get), w = {};
+    post.forEach(p => { if(p.bye) w[p.bye] = (w[p.bye]||0)+1; });
+    const bad = Object.entries(w).filter(([,n]) => n >= 5);
+    return bad.length ? `Week ${bad[0][0]}: ${bad[0][1]} on bye` : null;
   };
+  const chip = (p, cls) => `<span class="chip ${cls}" data-drop="${p.id}" data-side="${cls}">
+    ${esc(p.name)} <small>${p.proj.toFixed(1)}</small><span class="x">\u00d7</span></span>`;
 
   el.innerHTML = demoBanner() +
     `<div class="needs">` + Object.entries(gMe).map(([pos,g]) =>
       `<span class="need ${g.label==="strong"?"strong":g.label==="weak"?"weak":""}">${pos} ${
-        g.label==="strong"?"surplus":g.label==="weak"?"need":"ok"}</span>`).join("") + `</div>` +
-    `<div class="picker">
-      <select id="tp">${others.map(t =>
-        `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>${esc(t.manager)} \u00b7 ${esc(t.teamName)}</option>`).join("")}</select>
-    </div>
-    <p class="note" style="margin-top:0">Tap players on either side to build a deal.</p>
-    <div class="cols">
-      <div class="col"><h4>${esc(me.manager)} sends</h4>
-        ${me.players.slice().sort((a,b)=>b.proj-a.proj).map(p =>
-          plrRow(p, giveSel.has(p.id) ? "sel out" : "")).join("")}</div>
-      <div class="col" id="theirCol"><h4>${esc(them.manager)} sends</h4>
-        ${them.players.slice().sort((a,b)=>b.proj-a.proj).map(p =>
-          plrRow(p, getSel.has(p.id) ? "sel in" : "")).join("")}</div>
+        g.label==="strong"?"surplus":g.label==="weak"?"need":"ok"}</span>`).join("") + `</div>
+    <div class="picker"><select id="tp">${others.map(t =>
+      `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>vs ${esc(t.manager)} \u00b7 ${esc(t.teamName)}</option>`
+      ).join("")}</select></div>
+
+    <div class="tray ${live?"live":""}">
+      <div class="traySide"><div class="trayLbl">${esc(me.manager)} sends</div>
+        <div class="chips">${give.length ? give.map(p=>chip(p,"give")).join("")
+          : `<span class="empty">Tap players below to add them</span>`}</div></div>
+      <div class="traySide"><div class="trayLbl">${esc(them.manager)} sends</div>
+        <div class="chips">${get.length ? get.map(p=>chip(p,"get")).join("")
+          : `<span class="empty">Nothing selected yet</span>`}</div></div>
+      ${live ? `<div class="trayBtns"><button class="tbtn" id="clr">Clear deal</button></div>` : ""}
     </div>` +
-    (live ? `<div class="verdict ${dA>0&&dB>0?"good":(dA<0&&dB<0?"bad":"")}">
-      <div class="vrow"><span>${esc(me.manager)} starting lineup</span>
+    (live ? `<div class="verdict ${dA>0&&dB>0?"good":(dA<=0&&dB<=0?"bad":"")}">
+      <div class="vrow"><span>${esc(me.manager)} lineup</span>
         <b class="${dA>0?"up":dA<0?"down":""}">${dA>0?"+":""}${dA.toFixed(1)}</b></div>
-      <div class="vrow"><span>${esc(them.manager)} starting lineup</span>
+      <div class="vrow"><span>${esc(them.manager)} lineup</span>
         <b class="${dB>0?"up":dB<0?"down":""}">${dB>0?"+":""}${dB.toFixed(1)}</b></div>
       <div class="vrow"><span>Players moving</span><b>${give.length} for ${get.length}</b></div>
-      ${byeClash() ? `<div class="vrow"><span>Bye week crunch</span><b>${esc(byeClash())}</b></div>` : ""}
-      <p class="note">${dA>0&&dB>0
-        ? "Both starting lineups improve on projection. Worth sending."
-        : dA>0||dB>0
-        ? "Only one side gains on projection. The other has to want it for a reason the numbers do not see."
-        : "Neither side gains. Projections are not everything, but this is a hard sell."}</p>
-    </div>` : "") +
-    `<h2>Ideas with ${esc(them.manager)}</h2><div class="ideas" id="ideas"></div>`;
+      ${byeClash() ? `<div class="vrow"><span>Bye crunch</span><b>${esc(byeClash())}</b></div>` : ""}
+      <p class="note">${dA>0&&dB>0 ? "Both starting lineups improve. Worth sending."
+        : dA>0||dB>0 ? "Only one side gains on projection."
+        : "Neither side gains on projection."}</p></div>` : "") +
+    `<h2>Rosters</h2>` +
+    rosterBlock(me, giveSel, "give") +
+    rosterBlock(them, getSel, "get") +
+    `<h2>Ideas with ${esc(them.manager)}</h2><div id="ideas"></div>`;
 
   const ideas = findTrades(me, them);
   document.getElementById("ideas").innerHTML = ideas.length ? ideas.map((i,n) =>
-    `<div class="idea" data-idea="${n}">
-      <div class="sw"><em>You send</em> ${i.give.map(p=>esc(p.name)).join(" + ")}
-        <em>get</em> ${i.get.map(p=>esc(p.name)).join(" + ")}</div>
-      <p class="why">Your lineup +${i.a.toFixed(1)}, theirs +${i.b.toFixed(1)}.
-        Tap to load it into the builder.</p>
+    `<div class="idea" data-idea="${n}"><div class="sw">
+      <em>send</em> ${i.give.map(p=>esc(p.name)).join(" + ")}
+      &nbsp;<em>get</em> ${i.get.map(p=>esc(p.name)).join(" + ")}</div>
+      <p class="why">You +${i.a.toFixed(1)}, ${esc(them.manager)} +${i.b.toFixed(1)}. Tap to load.</p>
     </div>`).join("")
-    : `<p class="note">No swap with ${esc(them.manager)} improves both starting lineups right now.
-       Try another manager.</p>`;
+    : `<p class="note">No swap with ${esc(them.manager)} improves both lineups right now.</p>`;
 
   document.getElementById("tp").onchange = e => {
     tradePartner = Number(e.target.value); giveSel.clear(); getSel.clear(); renderTradePro();
   };
-  el.querySelectorAll(".col .plr").forEach(row => {
+  const clr = document.getElementById("clr");
+  if(clr) clr.onclick = () => { giveSel.clear(); getSel.clear(); renderTradePro(); };
+  el.querySelectorAll(".plr[data-pid]").forEach(row => {
     row.onclick = () => {
-      const pid = row.dataset.pid;
-      const mineSide = !row.closest("#theirCol");
-      const set = mineSide ? giveSel : getSel;
-      set.has(pid) ? set.delete(pid) : set.add(pid);
+      const set = row.dataset.side === "give" ? giveSel : getSel;
+      const id = row.dataset.pid;
+      set.has(id) ? set.delete(id) : set.add(id);
+      renderTradePro();
+    };
+  });
+  el.querySelectorAll(".chip[data-drop]").forEach(c => {
+    c.onclick = ev => {
+      ev.stopPropagation();
+      (c.dataset.side === "give" ? giveSel : getSel).delete(c.dataset.drop);
       renderTradePro();
     };
   });
@@ -1274,38 +1347,62 @@ function renderTradePro(){
 }
 
 /* ---------- Waiver Wire ---------- */
+let wireFilter = "ALL", wireSort = "fit";
 function renderWirePro(){
   const el = document.getElementById("wireBody");
   if(!ROSTERS) loadRosterModel();
   const me = myTeam();
   if(!me){ el.innerHTML = lock("Pick your team","Choose your name up top to see your board."); return; }
 
-  const med = leagueMedians(ROSTERS);
-  const g = gradeTeam(me, med);
+  const g = gradeTeam(me, leagueMedians(ROSTERS));
   const weak = Object.entries(g).filter(([,v]) => v.label === "weak").map(([p]) => p);
-  const scored = FREEAGENTS.map(p => {
+
+  let rows = FREEAGENTS.map(p => {
     const fit = weak.includes(p.pos);
-    const trendPts = p.trend ? Math.min(p.trend / 900, 8) : 0;
-    return { ...p, fit, score: p.proj + trendPts + (fit ? 4 : 0) };
-  }).sort((a,b) => b.score - a.score);
+    return { ...p, fit, score: p.proj + (p.trend ? Math.min(p.trend/900, 8) : 0) + (fit ? 4 : 0) };
+  });
+  if(wireFilter !== "ALL") rows = rows.filter(p => p.pos === wireFilter);
+  const sorters = {
+    fit:   (a,b) => b.score - a.score,
+    proj:  (a,b) => b.proj - a.proj,
+    trend: (a,b) => (b.trend||0) - (a.trend||0),
+    own:   (a,b) => (a.own??101) - (b.own??101),
+    snaps: (a,b) => (b.snapPct||0) - (a.snapPct||0)
+  };
+  rows.sort(sorters[wireSort] || sorters.fit);
+
+  const POSES = ["ALL","QB","RB","WR","TE","K","DST"];
+  const SORTS = [["fit","Best fit"],["proj","Projection"],["trend","Trending"],
+                 ["own","Least rostered"],["snaps","Snap share"]];
 
   el.innerHTML = demoBanner() +
     `<div class="needs">` + Object.entries(g).map(([pos,v]) =>
       `<span class="need ${v.label==="strong"?"strong":v.label==="weak"?"weak":""}">${pos} ${
-        v.label==="strong"?"surplus":v.label==="weak"?"need":"ok"}</span>`).join("") + `</div>` +
-    `<p class="note" style="margin-top:0">Ranked for ${esc(me.manager)}. Green edge means it fills a hole
-      on your roster, not just a good player in the abstract.</p>` +
-    scored.slice(0, 18).map((p, i) => `<div class="wirerow ${p.fit?"fit":""}">
+        v.label==="strong"?"surplus":v.label==="weak"?"need":"ok"}</span>`).join("") + `</div>
+    <div class="ctrls">
+      <div class="cgroup">${POSES.map(p =>
+        `<button class="cbtn" aria-pressed="${wireFilter===p}" data-pos="${p}">${p}</button>`).join("")}</div>
+      <div class="cgroup">${SORTS.map(([k,l]) =>
+        `<button class="cbtn" aria-pressed="${wireSort===k}" data-sort="${k}">${l}</button>`).join("")}</div>
+    </div>
+    <p class="note" style="margin-top:0">${rows.length} available${
+      weak.length?` \u00b7 green edge fills your ${weak.join(" or ")} hole`:""}.</p>` +
+    (rows.length ? rows.slice(0,25).map((p,i) => `<div class="wirerow ${p.fit?"fit":""}">
       <span class="rank">${i+1}</span>
       <span class="pos ${p.pos}">${p.pos}</span>
-      <span class="meta"><b>${esc(p.name)}</b>
-        <span>${p.proj.toFixed(1)} proj${p.own!=null?" \u00b7 "+p.own+"% rostered":""}${
-          p.snapPct!=null?" \u00b7 "+p.snapPct+"% snaps":""}${
-          p.tgtShare!=null?" \u00b7 "+p.tgtShare+"% tgt":""}</span></span>
-      ${p.trend ? `<span class="hot">+${p.trend > 999 ? (p.trend/1000).toFixed(1)+"k" : p.trend}</span>` : ""}
-    </div>`).join("") +
-    `<p class="note">Adds counted across all Sleeper leagues in the last 48 hours.
-      A spike usually means a role changed before the projections caught up.</p>`;
+      <span class="meta"><b>${esc(p.name)}</b><span class="wstats">
+        <span class="wstat"><b>${p.proj.toFixed(1)}</b> proj</span>
+        ${p.own!=null?`<span class="wstat"><b>${p.own}%</b> rost</span>`:""}
+        ${p.snapPct!=null?`<span class="wstat"><b>${p.snapPct}%</b> snaps</span>`:""}
+        ${p.tgtShare!=null?`<span class="wstat"><b>${p.tgtShare}%</b> tgt</span>`:""}
+        ${p.bye?`<span class="wstat">BYE <b>${p.bye}</b></span>`:""}
+      </span></span>
+      ${p.trend ? `<span class="hot">+${p.trend>999?(p.trend/1000).toFixed(1)+"k":p.trend}</span>` : ""}
+    </div>`).join("") : `<p class="note">Nobody available at that position.</p>`) +
+    `<p class="note">Trending counts adds across all Sleeper leagues in the last 48 hours.</p>`;
+
+  el.querySelectorAll("[data-pos]").forEach(b => b.onclick = () => { wireFilter = b.dataset.pos; renderWirePro(); });
+  el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort = b.dataset.sort; renderWirePro(); });
 }
 
 /* ================= PACK OPENING ================= */

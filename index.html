@@ -2372,10 +2372,11 @@ function maybeAutoPack(){
 }
 
 if(new URLSearchParams(location.search).has("pack")){
-  document.getElementById("demoTab").style.display = "";
-  document.getElementById("binderTab").style.display = "";
-  document.getElementById("teamTab").style.display = "";
-  document.getElementById("blockTab").style.display = "";
+  // reveal the preview-only tabs; skip any that no longer exist
+  ["demoTab","binderTab","teamTab"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.style.display = "";
+  });
   const base = {manager:"Scotty"};
   const S = {
     "Bronze common: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",

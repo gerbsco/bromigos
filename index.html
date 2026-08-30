@@ -19,42 +19,42 @@
   .wrap{max-width:660px;margin:0 auto;padding:0 14px}
 
   header{padding:28px 0 14px;text-align:center}
-  .kicker{font:700 11px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.22em;
-    text-transform:uppercase;color:var(--brass)}
+  .kicker{font:600 12px/1 system-ui,sans-serif;letter-spacing:.04em;color:var(--brass)}
   h1{margin:10px 0 5px;font:800 clamp(28px,8.5vw,44px)/.94 system-ui,sans-serif;
     letter-spacing:-.03em;text-transform:uppercase}
   .sub{font-size:13.5px;color:var(--dim);margin:0}
   .whoami{margin:16px 0 0;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
-  .whoami label{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--faint)}
+  .whoami label{font:400 13px/1 system-ui,sans-serif;color:var(--dim)}
   select{padding:10px 12px;border-radius:3px;border:1px solid #2C4257;background:var(--ink-2);
     color:var(--chalk);font:600 14px/1 system-ui,sans-serif;max-width:100%}
   select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 
   .count{background:var(--ink-2);border:1px solid rgba(217,162,39,.3);border-radius:4px;
     padding:18px 16px;margin:18px 0 4px;text-align:center}
-  .count .lbl{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;
-    text-transform:uppercase;color:var(--brass);margin-bottom:13px}
+  .count .lbl{font:600 13px/1 system-ui,sans-serif;letter-spacing:.02em;color:var(--brass);
+    margin-bottom:14px}
   .clock{display:flex;justify-content:center;gap:6px}
   .unit{flex:1;max-width:78px}
   .unit b{display:block;font:800 clamp(23px,6.8vw,33px)/1 ui-monospace,Menlo,monospace;
     color:var(--chalk);font-variant-numeric:tabular-nums}
-  .unit span{display:block;margin-top:5px;font:600 10px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  .unit span{display:block;margin-top:6px;font:400 11px/1 system-ui,sans-serif;
+    letter-spacing:.02em;color:var(--faint)}
   .when{margin:13px 0 0;font-size:13px;color:var(--dim)}
 
   nav{display:flex;gap:5px;margin:16px 0 0;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
   nav::-webkit-scrollbar{display:none}
-  nav button{flex:none;padding:11px 15px;border:1px solid #2C4257;border-radius:3px;
+  nav button{flex:none;padding:10px 15px;border:1px solid #2C4257;border-radius:20px;
     background:transparent;color:var(--dim);cursor:pointer;white-space:nowrap;
-    font:700 12.5px/1 system-ui,sans-serif;letter-spacing:.05em}
+    font:600 13px/1 system-ui,sans-serif;transition:background .12s,color .12s}
+  nav button:active{background:rgba(255,255,255,.06)}
   nav button[aria-selected=true]{background:var(--brass);border-color:var(--brass);color:#2A1C00}
 
   .panel{display:none;padding-top:22px}
   .panel.on{display:block}
-  h2{font:800 13px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--brass);margin:0 0 13px}
-  h2:not(:first-child){margin-top:32px}
+  h2{display:flex;align-items:center;gap:12px;margin:0 0 13px;
+    font:600 14px/1.2 system-ui,sans-serif;letter-spacing:.01em;color:var(--chalk)}
+  h2::after{content:"";flex:1;height:1px;background:rgba(234,226,207,.14)}
+  h2:not(:first-child){margin-top:30px}
 
   .card{background:var(--ink-2);border-radius:4px;padding:16px;margin-bottom:11px;
     border-left:3px solid #2C4257}
@@ -68,8 +68,7 @@
   /* weekly writeup */
   .recap{background:var(--ink-2);border-radius:4px;padding:20px 17px;margin-bottom:12px;
     border-left:3px solid var(--brass)}
-  .recap .wk{font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;
-    text-transform:uppercase;color:var(--brass);margin-bottom:9px}
+  .recap .wk{font:600 12px/1 system-ui,sans-serif;color:var(--brass);margin-bottom:10px}
   .recap h3{margin:0 0 11px;font:800 20px/1.24 system-ui,sans-serif;letter-spacing:-.015em}
   .recap p{margin:0 0 10px;font-size:15px;color:#C6D3DE;line-height:1.6}
   .recap p:last-child{margin-bottom:0}
@@ -88,16 +87,15 @@
   .aw{background:var(--ink-2);border-radius:4px;padding:15px;border-left:3px solid #2C4257}
   .aw.hot{border-left-color:var(--brass)}
   .aw.cold{border-left-color:var(--stamp)}
-  .aw .ttl{font:700 10px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--brass);margin-bottom:7px}
+  .aw .ttl{font:600 12px/1.3 system-ui,sans-serif;color:var(--brass);margin-bottom:8px}
   .aw .win{font:800 16px/1.2 system-ui,sans-serif;color:var(--chalk)}
   .aw .stat{margin-top:6px;font-size:13px;color:var(--dim);line-height:1.5}
 
   table{width:100%;border-collapse:collapse;margin-bottom:6px}
-  th{text-align:left;padding:0 6px 9px;font:700 10px/1.3 ui-monospace,Menlo,monospace;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid #2C4257}
+  th{text-align:left;padding:0 6px 10px;font:600 11px/1.3 system-ui,sans-serif;
+    letter-spacing:.02em;color:var(--faint);border-bottom:1px solid rgba(234,226,207,.14)}
   th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
-  td{padding:10px 6px;font-size:14px;border-bottom:1px solid rgba(234,226,207,.08);color:#CBD6E0}
+  td{padding:11px 6px;font-size:14px;font-variant-numeric:tabular-nums;border-bottom:1px solid rgba(234,226,207,.08);color:#CBD6E0}
   td.n{font:600 13.5px/1.3 ui-monospace,Menlo,monospace}
   tr.champ td{background:rgba(217,162,39,.09)}
   tr.champ td:first-child{color:var(--brass);font-weight:700}
@@ -106,15 +104,14 @@
   .who{display:block;font-size:11.5px;color:var(--faint);margin-top:2px}
 
   .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:9px}
-  .rule{background:var(--ink-2);border-radius:3px;padding:13px 14px;border-left:2px solid #2C4257}
-  .rule .k{font:700 9.5px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+  .rule{background:var(--ink-2);border-radius:5px;padding:14px;border-left:2px solid #2C4257}
+  .rule .k{font:400 11.5px/1.3 system-ui,sans-serif;color:var(--faint);margin-bottom:6px}
   .rule .v{font:700 15px/1.3 system-ui,sans-serif;color:var(--chalk)}
 
   .champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:9px;margin-bottom:8px}
   .ring{background:var(--ink-2);border-left:3px solid var(--brass);border-radius:3px;padding:12px 13px}
-  .ring .yr{display:block;font:800 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
-    color:var(--brass);margin-bottom:6px}
+  .ring .yr{display:block;font:700 12px/1 ui-monospace,Menlo,monospace;color:var(--brass);
+    margin-bottom:7px;font-variant-numeric:tabular-nums}
   .ring .nm{display:block;font:800 15px/1.2 system-ui,sans-serif;color:var(--chalk)}
   .ring .tm{display:block;margin-top:3px;font-size:11.5px;color:var(--faint);line-height:1.4}
 
@@ -342,7 +339,7 @@
 
   /* draft order boxes */
   .picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(154px,1fr));gap:8px}
-  .pk{display:flex;align-items:center;gap:11px;background:var(--ink-2);border-radius:4px;
+  .pk{display:flex;align-items:center;gap:12px;background:var(--ink-2);border-radius:5px;
     padding:11px 12px;border-left:3px solid #2C4257}
   .pk.mine{border-left-color:var(--green);background:rgba(76,175,125,.10)}
   .pk.first{border-left-color:var(--brass);background:rgba(217,162,39,.10)}
@@ -351,8 +348,8 @@
   .pk .nm{flex:1;min-width:0}
   .pk .nm b{display:block;font:800 14px/1.2 system-ui,sans-serif;color:var(--chalk);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .pk .nm span{display:block;margin-top:3px;font:600 10.5px/1.3 ui-monospace,Menlo,monospace;
-    color:var(--faint);letter-spacing:.08em}
+  .pk .nm span{display:block;margin-top:4px;font:400 11.5px/1.35 system-ui,sans-serif;
+    color:var(--faint)}
   /* ================= TRADE + WIRE ================= */
   .demoban{background:rgba(178,58,47,.14);border-left:2px solid var(--stamp);color:#EBC3BC;
     padding:12px 14px;border-radius:0 4px 4px 0;margin-bottom:18px;font-size:13px;line-height:1.55}
@@ -412,15 +409,17 @@
     background:rgba(255,255,255,.035);border:1px solid transparent}
   .plr:active{background:rgba(255,255,255,.08)}
   .plr .slot{font:600 11px/1 system-ui,sans-serif;color:#7E93A6;text-align:left}
-  .plr .pos{text-align:center;border-radius:3px;padding:5px 0;
-    font:700 10px/1 system-ui,sans-serif;letter-spacing:.02em}
-  .pos.QB{background:#7A3E60;color:#FFDDF0}
-  .pos.RB{background:#2E6650;color:#CFF5E3}
-  .pos.WR{background:#2B5580;color:#D2E9FF}
-  .pos.TE{background:#7A5C24;color:#FFEEC6}
-  .pos.K{background:#4C4F5C;color:#E2E6EE}
-  .pos.DST{background:#68402C;color:#F6DCCB}
-  .pos.mt{background:#243444;color:#5D7086}
+  /* ---- position colours: tinted, bordered, legible on navy ---- */
+  .pos{display:inline-flex;align-items:center;justify-content:center;
+    border-radius:5px;padding:5px 0;font:700 10.5px/1 system-ui,sans-serif;
+    letter-spacing:.03em;border:1px solid}
+  .pos.QB {background:rgba(255,143,184,.14); border-color:rgba(255,143,184,.42); color:#FF9EC2}
+  .pos.RB {background:rgba(95,217,160,.14);  border-color:rgba(95,217,160,.42);  color:#6FE0AC}
+  .pos.WR {background:rgba(107,182,255,.14); border-color:rgba(107,182,255,.42); color:#7EC0FF}
+  .pos.TE {background:rgba(255,197,92,.14);  border-color:rgba(255,197,92,.42);  color:#FFCE72}
+  .pos.K  {background:rgba(166,180,196,.12); border-color:rgba(166,180,196,.36); color:#AFBDCC}
+  .pos.DST{background:rgba(199,155,255,.14); border-color:rgba(199,155,255,.42); color:#CBA6FF}
+  .pos.mt {background:transparent;           border-color:#2A3C4E;              color:#4E637A}
   .plr .who2{min-width:0}
   .plr .who2 b{display:block;font:600 14.5px/1.25 system-ui,sans-serif;color:var(--chalk);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -495,7 +494,7 @@
     <h1>Ultimo<br>Bromigos</h1>
     <p class="sub">10 teams &middot; Half PPR &middot; Est. 2019</p>
     <div class="whoami">
-      <label for="me">Your team</label>
+      <label for="me">I am</label>
       <select id="me"><option value="">Choose…</option></select>
     </div>
   </header>

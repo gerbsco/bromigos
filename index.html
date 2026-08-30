@@ -520,6 +520,36 @@
   .need.weak::before{background:#D2685C}
   .need.strong{background:rgba(76,175,125,.14);color:#A7E3C4}
   .need.strong::before{background:var(--green)}
+  /* ---- team page ---- */
+  .teamHero{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    background:linear-gradient(135deg,#1B3C58,#122A40);border-radius:7px;padding:18px 16px;
+    margin-bottom:20px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+  .th-name{font:700 19px/1.2 system-ui,sans-serif;color:var(--chalk)}
+  .th-man{margin-top:5px;font:400 13px/1 system-ui,sans-serif;color:#9FB6C9}
+  .th-seed{flex:none;text-align:right}
+  .th-seed b{display:block;font:800 32px/1 ui-monospace,Menlo,monospace;color:var(--brass);
+    font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+  .th-seed span{display:block;margin-top:5px;font:400 10.5px/1.3 system-ui,sans-serif;
+    color:var(--faint);max-width:92px}
+
+  .grade{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:12px;
+    background:var(--ink-2);border-radius:5px;padding:12px;margin-bottom:6px}
+  .gpos{text-align:center;border-radius:5px;padding:6px 0;border:1px solid;
+    font:700 10.5px/1 system-ui,sans-serif}
+  .gpos.QB{background:rgba(255,143,184,.14);border-color:rgba(255,143,184,.42);color:#FF9EC2}
+  .gpos.RB{background:rgba(95,217,160,.14);border-color:rgba(95,217,160,.42);color:#6FE0AC}
+  .gpos.WR{background:rgba(107,182,255,.14);border-color:rgba(107,182,255,.42);color:#7EC0FF}
+  .gpos.TE{background:rgba(255,197,92,.14);border-color:rgba(255,197,92,.42);color:#FFCE72}
+  .gbody b{display:block;font:600 13.5px/1.25 system-ui,sans-serif;color:var(--chalk)}
+  .gbody span{display:block;margin-top:4px;font:400 12px/1.45 system-ui,sans-serif;color:#8FA3B5}
+  .gnum{font:700 15px/1 ui-monospace,Menlo,monospace;color:#C3D2DE;
+    font-variant-numeric:tabular-nums}
+
+  .plr.blocked{background:rgba(217,162,39,.13);border-color:rgba(217,162,39,.45)}
+  .plr.blocked .tick{background:var(--brass);border-color:var(--brass);color:#2A1C00}
+  .blockTag{display:inline-block;margin-left:7px;padding:3px 6px;border-radius:3px;
+    background:rgba(217,162,39,.2);color:var(--brass);
+    font:700 9.5px/1 system-ui,sans-serif;vertical-align:middle}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
@@ -556,6 +586,7 @@
     <button role="tab" aria-selected="false" data-p="history">History</button>
     <button role="tab" aria-selected="false" data-p="rules">Rules</button>
     <button role="tab" aria-selected="false" data-p="demo" id="demoTab" style="display:none">Pack</button>
+    <button role="tab" aria-selected="false" data-p="team" id="teamTab" style="display:none">My Team</button>
     <button role="tab" aria-selected="false" data-p="binder" id="binderTab" style="display:none">Binder</button>
   </nav>
 
@@ -622,6 +653,8 @@
     </div>
     <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
   </section>
+
+  <section class="panel" id="team"><div id="teamBody"></div></section>
 
   <section class="panel" id="binder"><div id="binderBody"></div></section>
 
@@ -761,7 +794,7 @@ CURRENT.slice().sort().forEach(m => {
 });
 sel.onchange = () => { ME = sel.value;
   try { localStorage.setItem("bromigos.me", ME); } catch(e){}
-  tradePartner = null; giveSel = new Set(); getSel = new Set();
+  tradePartner = null; giveSel = new Set(); getSel = new Set(); BLOCK = null;
   renderAll(); };
 
 /* ---------- history ---------- */
@@ -1042,6 +1075,7 @@ function renderWire(){
 function renderAll(){
   renderLedger(); renderDossiers(); renderRecap(); renderDraft();
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
+  try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
   try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }
 }
 
@@ -1284,11 +1318,12 @@ function rosterSections(players){
   return { starters, bench, tail, total: lu.total };
 }
 
-const plrRow = (p, slot, picked, side) => `<div class="plr ${picked?"picked":""} ${side==="get"?"get":""}"
+const plrRow = (p, slot, picked, side, owner) => `<div class="plr ${picked?"picked":""} ${side==="get"?"get":""}"
     data-pid="${p.id}" data-side="${side}">
     <span class="slot">${slot||""}</span>
     <span class="pos ${p.pos}">${p.pos}</span>
-    <span class="who2"><b>${esc(p.name)}</b>
+    <span class="who2"><b>${esc(p.name)}${
+      typeof isBlocked === "function" && isBlocked(p.id, owner) ? `<span class="blockTag">available</span>` : ""}</b>
       <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}</span></span>
     <span class="pts">${p.proj.toFixed(1)}</span>
     <span class="tick">\u2713</span>
@@ -1303,11 +1338,12 @@ const sectHead = (title, tot) => `<div class="sect"><h3>${title}</h3><span class
 
 function rosterBlock(team, sel, side){
   const s = rosterSections(team.players);
-  const line = f => f.player ? plrRow(f.player, f.slot, sel.has(f.player.id), side) : emptyRow(f.slot);
+  const line = f => f.player
+    ? plrRow(f.player, f.slot, sel.has(f.player.id), side, team.manager) : emptyRow(f.slot);
   return sectHead(`${team.manager}'s lineup`, s.total) +
     s.starters.map(line).join("") +
     sectHead("Bench") + (s.bench.length
-      ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side)).join("")
+      ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side, team.manager)).join("")
       : `<p class="note">Nobody on the bench.</p>`) +
     sectHead("Kicker and defense") + s.tail.map(line).join("");
 }
@@ -1461,6 +1497,232 @@ function renderWirePro(){
 
   el.querySelectorAll("[data-pos]").forEach(b => b.onclick = () => { wireFilter=b.dataset.pos; renderWirePro(); });
   el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort=b.dataset.sort; renderWirePro(); });
+}
+
+/* ================= AWARD ART ================= */
+/* Each superlative gets art that matches what it means, with several options
+   so the same award looks different week to week. Keys are matched loosely
+   against the award title. */
+const AWARD_ART = [
+  [/scoring machine|league high|high score|most points/i, ["\u{1F525}","\u{1F680}","\u26A1","\u{1F30B}","\u{1F4A3}"]],
+  [/walking disaster|league low|lowest|worst score/i,     ["\u{1F480}","\u{1FAA6}","\u{1F6AE}","\u{1F573}\uFE0F","\u{1F32B}\uFE0F"]],
+  [/blowout|beatdown|demolition|king/i,                   ["\u{1FA91}","\u{1F528}","\u{1F9E8}","\u{1F682}","\u{1F3AF}"]],
+  [/punching bag|allowed|points against/i,                ["\u{1F94A}","\u{1F915}","\u{1F9F1}","\u{1F6A8}"]],
+  [/bench/i,                                              ["\u{1F6CB}\uFE0F","\u{1F648}","\u{1FAE5}","\u{1F5D1}\uFE0F"]],
+  [/heartbreak|scaries|close|last second|walk.?off/i,     ["\u{1F630}","\u23F1\uFE0F","\u{1F3A2}","\u{1FAE0}","\u{1F494}"]],
+  [/unluck|cursed|robbed/i,                               ["\u{1F3B0}","\u{1F0CF}","\u2614","\u{1F32A}\uFE0F"]],
+  [/fraud|paper|pretend/i,                                ["\u{1F3AD}","\u{1F9E2}","\u{1FAA4}","\u{1F0CF}"]],
+  [/schedule|victim|gauntlet/i,                           ["\u{1F5D3}\uFE0F","\u{1FAA4}","\u26D3\uFE0F","\u{1F3AF}"]],
+  [/boom|bust|volatile|swing/i,                           ["\u{1F3A2}","\u{1F3B2}","\u{1F30A}","\u{1F4C9}"]],
+  [/dominant|juggernaut|best record/i,                    ["\u{1F451}","\u{1F410}","\u{1F98D}","\u{1F3DB}\uFE0F"]],
+  [/comfortable|routine|never in doubt|cruise/i,          ["\u{1F634}","\u{1F9D8}","\u2615","\u{1F6CB}\uFE0F"]],
+  [/trade/i,                                              ["\u{1F91D}","\u2696\uFE0F","\u{1F501}","\u{1F4E6}"]],
+  [/injur|hospital|hurt/i,                                ["\u{1F3E5}","\u{1FA79}","\u{1F9B4}","\u{1F915}"]],
+  [/waiver|pickup|wire|streamer/i,                        ["\u{1F9F2}","\u{1F3A3}","\u{1F575}\uFE0F","\u{1F4E1}"]],
+  [/kicker|field goal/i,                                  ["\u{1F45F}","\u{1F3AF}","\u{1F944}"]],
+  [/defen|d\/st/i,                                        ["\u{1F6E1}\uFE0F","\u{1F512}","\u{1F9F1}"]],
+  [/quarterback|qb/i,                                     ["\u{1F3C8}","\u{1F3AF}","\u{1F9E4}"]],
+  [/streak|hot|roll/i,                                    ["\u{1F525}","\u{1F4C8}","\u{1F3C3}","\u26A1"]],
+  [/cold|slump|drought/i,                                 ["\u{1FAAB}","\u{1F3DC}\uFE0F","\u{1F4C9}","\u{1F573}\uFE0F"]]
+];
+const ART_FALLBACK = {
+  good: ["\u{1F3C6}","\u{1F947}","\u2B50","\u{1F396}\uFE0F","\u{1F44F}"],
+  bad:  ["\u{1F926}","\u{1F62D}","\u{1FAE0}","\u{1F644}","\u{1F41B}"]
+};
+function awardArt(title, wk, good){
+  const hit = AWARD_ART.find(([re]) => re.test(title || ""));
+  const pool = hit ? hit[1] : (good === false ? ART_FALLBACK.bad : ART_FALLBACK.good);
+  return pick(pool, wk);
+}
+
+/* ================= TRADE BLOCK ================= */
+/* Kept per person on their own device. Anyone can mark their own players; the
+   trade builder flags them wherever they appear. */
+const blockKey = () => "bromigos.block." + (ME || "anon");
+function readBlock(){
+  try { return new Set(JSON.parse(localStorage.getItem(blockKey()) || "[]")); }
+  catch(e){ return new Set(); }
+}
+function writeBlock(set){
+  try { localStorage.setItem(blockKey(), JSON.stringify([...set])); } catch(e){}
+}
+let BLOCK = null;
+const onBlock = id => isBlocked(id);
+function toggleBlock(id){
+  BLOCK ||= readBlock();
+  BLOCK.has(id) ? BLOCK.delete(id) : BLOCK.add(id);
+  writeBlock(BLOCK);
+}
+
+/* ================= SHARED TRADE BLOCK ================= */
+/* Paste the Apps Script web app URL here (ends in /exec) to turn the trade
+   block into a league-wide list. Left blank, everything still works but each
+   person only sees their own flags. */
+const BLOCK_URL = "https://script.google.com/macros/s/AKfycbwUD3dOiN-1c789CD6j-HZXVTXyjRKtZI1nFAEDAbeDaFeKS1vBmZiiUODIH_02Qz3gLA/exec";
+
+let BLOCKS = {};          // manager -> Set of player ids, from the sheet
+let blockSyncState = BLOCK_URL ? "loading" : "off";
+
+/* JSONP: a plain script tag, so no CORS negotiation to get wrong. */
+function jsonp(url, timeoutMs){
+  return new Promise((resolve, reject) => {
+    const cb = "bromigosCb" + Math.random().toString(36).slice(2, 9);
+    const s = document.createElement("script");
+    let done = false;
+    const cleanup = () => {
+      done = true;
+      try { delete window[cb]; } catch(e){ window[cb] = undefined; }
+      if(s.parentNode) s.parentNode.removeChild(s);
+    };
+    window[cb] = data => { if(!done){ cleanup(); resolve(data); } };
+    s.onerror = () => { if(!done){ cleanup(); reject(new Error("script blocked")); } };
+    s.src = url + (url.indexOf("?") > -1 ? "&" : "?") + "callback=" + cb;
+    document.body.appendChild(s);
+    setTimeout(() => { if(!done){ cleanup(); reject(new Error("timed out")); } }, timeoutMs || 8000);
+  });
+}
+
+function absorbBlocks(data){
+  if(!data || !data.blocks) return;
+  BLOCKS = {};
+  Object.entries(data.blocks).forEach(([man, v]) => {
+    BLOCKS[man] = new Set((v && v.ids) || []);
+  });
+  blockSyncState = "ok";
+}
+
+async function pullBlocks(){
+  if(!BLOCK_URL) return;
+  try {
+    absorbBlocks(await jsonp(BLOCK_URL));
+  } catch(err){
+    blockSyncState = "error";
+    console.warn("[bromigos] trade block offline:", err && err.message);
+  }
+  try { renderTeamPage(); renderTradePro(); } catch(e){}
+}
+
+async function pushBlock(){
+  BLOCK ||= readBlock();
+  if(!BLOCK_URL || !ME){ return; }
+  blockSyncState = "saving";
+  try {
+    const url = BLOCK_URL + "?action=save&manager=" + encodeURIComponent(ME) +
+                "&ids=" + encodeURIComponent([...BLOCK].join(","));
+    absorbBlocks(await jsonp(url));
+  } catch(err){
+    blockSyncState = "error";
+    console.warn("[bromigos] could not save block:", err && err.message);
+  }
+  try { renderTeamPage(); renderTradePro(); } catch(e){}
+}
+
+/* Whose flag is it: mine comes from this device, everyone else from the sheet. */
+function isBlocked(playerId, manager){
+  if(manager && manager !== ME) return !!(BLOCKS[manager] && BLOCKS[manager].has(playerId));
+  BLOCK ||= readBlock();
+  if(BLOCK.has(playerId)) return true;
+  return !!(BLOCKS[ME] && BLOCKS[ME].has(playerId));
+}
+
+const blockStatusLine = () => {
+  if(blockSyncState === "off") return `Saved on this device only. Add the sheet link to share it with the league.`;
+  if(blockSyncState === "loading") return `Loading the league's block\u2026`;
+  if(blockSyncState === "saving")  return `Saving\u2026`;
+  if(blockSyncState === "error")   return `Could not reach the league sheet, so this is saved on your device for now.`;
+  const n = Object.values(BLOCKS).filter(s => s.size).length;
+  return n ? `Shared with the league. ${n} manager${n>1?"s have":" has"} players listed.`
+           : `Shared with the league. Nobody has listed anyone yet.`;
+};
+
+/* ================= TEAM PAGE ================= */
+const GRADE_DOT = { strong:"\u{1F7E2}", ok:"\u{1F7E1}", weak:"\u{1F534}" };
+const GRADE_WHY = {
+  QB: { strong:"Set every week, no thinking required.",
+        ok:"Fine. Not a problem, not an edge.",
+        weak:"Below what the rest of the league starts here." },
+  RB: { strong:"Two you trust plus cover behind them.",
+        ok:"Two startable backs. Thin if one goes down.",
+        weak:"Least reliable spot on the roster." },
+  WR: { strong:"Deep enough to fill the flex from here.",
+        ok:"Two solid, then it drops off.",
+        weak:"Starting someone you would rather bench." },
+  TE: { strong:"An actual edge at a position most of the league punts.",
+        ok:"Playable. Nobody is jealous.",
+        weak:"Streaming territory." }
+};
+
+function renderTeamPage(){
+  const el = document.getElementById("teamBody");
+  if(!el) return;
+  if(!ROSTERS) loadRosterModel();
+  const me = myTeam();
+  if(!me){ el.innerHTML = lock("Pick your team","Choose your name at the top."); return; }
+  BLOCK ||= readBlock();
+
+  const med = leagueMedians(ROSTERS);
+  const g = gradeTeam(me, med);
+  const s = rosterSections(me.players);
+  const ranked = ROSTERS.map(t => ({ t, v: rosterValue(t.players) })).sort((a,b) => b.v - a.v);
+  const seed = ranked.findIndex(r => r.t.id === me.id) + 1;
+
+  const weak = Object.entries(g).filter(([,v]) => v.label === "weak").map(([p]) => p);
+  const strong = Object.entries(g).filter(([,v]) => v.label === "strong").map(([p]) => p);
+
+  const byes = {};
+  me.players.forEach(p => { if(p.bye) byes[p.bye] = (byes[p.bye]||0)+1; });
+  const worstBye = Object.entries(byes).sort((a,b) => b[1]-a[1])[0];
+  const hidden = worstBye && worstBye[1] >= 4
+    ? `Week ${worstBye[0]} is going to hurt. You have ${worstBye[1]} players on bye at once.`
+    : (me.players.filter(p => p.injury).length >= 3
+      ? `${me.players.filter(p=>p.injury).length} players carrying an injury tag right now.`
+      : "Nothing hiding in the roster that the grades do not already show.");
+
+  const row = p => `<div class="plr ${onBlock(p.id)?"blocked":""}" data-block="${p.id}">
+      <span class="slot">${onBlock(p.id) ? "\u{1F4E4}" : ""}</span>
+      <span class="pos ${p.pos}">${p.pos}</span>
+      <span class="who2"><b>${esc(p.name)}</b>
+        <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}</span></span>
+      <span class="pts">${p.proj.toFixed(1)}</span>
+      <span class="tick">\u2713</span></div>`;
+
+  el.innerHTML = demoBanner() +
+    `<div class="teamHero">
+      <div><div class="th-name">${esc(me.teamName)}</div>
+        <div class="th-man">${esc(me.manager)}</div></div>
+      <div class="th-seed"><b>${seed}</b><span>of ${ROSTERS.length} on projection</span></div>
+    </div>
+
+    <h2>Position grades</h2>
+    ${Object.entries(g).map(([pos,v]) => `<div class="grade">
+      <span class="gpos ${pos}">${pos}</span>
+      <span class="gbody"><b>${GRADE_DOT[v.label]} ${
+        v.label==="strong"?"Strength":v.label==="weak"?"Weakness":"Average"}</b>
+        <span>${GRADE_WHY[pos][v.label]}</span></span>
+      <span class="gnum">${v.avg.toFixed(1)}</span></div>`).join("")}
+
+    <h2>What to do about it</h2>
+    <div class="card"><h3>Biggest strength</h3>
+      <p>${strong.length ? `${strong.join(" and ")}. Deep enough to trade from without breaking the lineup.`
+        : "No position clears the league by much. Balanced, which also means no leverage in a trade."}</p></div>
+    <div class="card red"><h3>Biggest weakness</h3>
+      <p>${weak.length ? `${weak.join(" and ")}. This is where a win gets left on the table.`
+        : "Nothing is genuinely weak. Keep an eye on injuries rather than chasing upgrades."}</p></div>
+    <div class="card"><h3>Hidden problem</h3><p>${esc(hidden)}</p></div>
+    <div class="card"><h3>Waiver priority</h3>
+      <p>${weak.length ? `Watch ${weak.join(" and ")} on the wire before anything else.`
+        : "Nothing urgent. Take the best available upside."}</p></div>
+
+    <h2>Trade block</h2>
+    <p class="note" style="margin:0 0 12px">Tap anyone to list them as available.
+      ${esc(blockStatusLine())}</p>
+    ${s.starters.filter(f=>f.player).map(f=>row(f.player)).join("")}
+    ${s.bench.map(row).join("")}
+    ${s.tail.filter(f=>f.player).map(f=>row(f.player)).join("")}`;
+
+  el.querySelectorAll("[data-block]").forEach(r => {
+    r.onclick = () => { toggleBlock(r.dataset.block); renderTeamPage(); renderTradePro(); pushBlock(); };
+  });
 }
 
 /* ================= COLLECTIONS BINDER ================= */
@@ -1844,9 +2106,9 @@ const PACK = (function(){
 /* ---- art ---- */
 const ART = {
   winTight: ["\u{1FAE1}","\u{1F90C}","\u2728","\u{1F5FF}"],
-  winMod:   ["\u{1F621}","\u{1F4AF}","\u{1F525}","\u{1F92C}"],
+  winMod:   ["\u{1F621}","\u{1F624}","\u{1F525}","\u{1F92C}"],
   lossMod:  [S_("sob"),"\u{1F940}","\u{1FAE0}","\u{1F62D}"],
-  low:      ["\u{1F480}","\u{1FAE0}","\u{1F921}","\u{1F9CA}"]
+  low:      ["\u{1F480}","\u{1FAE0}","\u{1F921}","\u{1FAA6}"]
 };
 const FIXED = {
   totw:     "\u{1F451}",     // league high
@@ -1859,10 +2121,11 @@ const BIG = 25, TIGHT = 10;
 /* Nothing in a pack should show the same picture twice. If an award repeats art
    already used, swap it for the first unused option from the matching pool. */
 const SUB = {
-  good: ["\u{1F525}","\u{1F4AF}","\u{1F5FF}","\u{1F90C}","\u2728","\u{1F451}",
-         "\u{1FAE1}","\u{1F60E}","\u{1F410}"],
-  bad:  ["\u{1F480}","\u{1FAE0}","\u{1F940}","\u{1F921}","\u{1F9CA}","\u{1F62D}",
-         "\u{1F62E}\u200D\u{1F4A8}","\u{1FA91}","\u{1F915}"]
+  good: ["\u{1F525}","\u{1F947}","\u{1F5FF}","\u{1F90C}","\u2728","\u{1F451}",
+         "\u{1FAE1}","\u{1F60E}","\u{1F410}","\u{1F680}","\u26A1","\u{1F396}\uFE0F"],
+  bad:  ["\u{1F480}","\u{1FAE0}","\u{1F940}","\u{1F921}","\u{1FAA6}","\u{1F62D}",
+         "\u{1FAE5}","\u{1FA91}","\u{1F915}","\u{1FAA6}","\u{1F644}",
+         "\u{1F41B}","\u2614","\u{1F4C9}"]
 };
 function dedupeArt(cards){
   const used = new Set();
@@ -1928,7 +2191,7 @@ function buildWeekCards(w, wk){
     rarityLabel: a.good===false ? "Dishonour" : (a.rare ? "Rare" : "Common"),
     kind: a.good===false ? "Weekly Dishonour" : "Weekly Superlative",
     icon: a.icon || (a.good===false ? "\u2620\uFE0F" : "\u2605"),
-    art: a.art || a.emoji || "\u{1F3C6}",
+    art: a.art || a.emoji || awardArt(a.title, wk, a.good),
     pool: (a.good === false || !won) ? "bad" : "good",
     title: a.title, desc: a.desc || "", value: a.stat,
     flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silverC")
@@ -1960,6 +2223,7 @@ function maybeAutoPack(){
 if(new URLSearchParams(location.search).has("pack")){
   document.getElementById("demoTab").style.display = "";
   document.getElementById("binderTab").style.display = "";
+  document.getElementById("teamTab").style.display = "";
   const base = {manager:"Scotty"};
   const S = {
     "Bronze common: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",
@@ -1976,7 +2240,7 @@ if(new URLSearchParams(location.search).has("pack")){
       awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 4.7",rare:false,emoji:"\u{1F630}"}]},
     "Gold rare: moderate win": {...base,myScore:131.6,oppScore:113.1,opponent:"Andy",
       rank:3,bench:16.7,record:"1-0",high:28.9,projected:121.8,
-      awards:[{title:"Comfortable",desc:"Never really in danger. Boring, effective, deeply annoying.",stat:"Won by 18.5",rare:true,emoji:"\u{1F4AF}"}]},
+      awards:[{title:"Comfortable",desc:"Never really in danger. Boring, effective, deeply annoying.",stat:"Won by 18.5",rare:true}]},
     "Gold rare: blowout win": {...base,myScore:142.0,oppScore:104.8,opponent:"Bo",
       rank:2,bench:12.4,record:"1-0",high:33.1,projected:125.7,
       awards:[{title:"Blowout King",desc:"Biggest margin of the week. It stopped being a game by noon.",stat:"Won by 37.2",rare:true,art:S_("point")}]},
@@ -2033,6 +2297,7 @@ tick(); setInterval(tick,1000);
 
 /* first paint from baked-in history, after every module is defined */
 renderAll();
+try{ pullBlocks(); }catch(e){ console.warn("[bromigos] block sync:", e && e.message); }
 
 /* Live data last: everything above already rendered from baked-in history,
    so a failed or blocked fetch can never blank the page. */

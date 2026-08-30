@@ -677,6 +677,8 @@
 </div>
 
 <script>
+const PREVIEW = new URLSearchParams(location.search).has("pack");
+
 const SEASONS = {
 "2025": [
   ["TE University", "Scotty", "8-6", 1602.26, 1472.2, 1],
@@ -1051,8 +1053,6 @@ function renderLeague(){
   }
   el.innerHTML = `<h2>Standings</h2>` + standingsTable();
 }
-
-const PREVIEW = new URLSearchParams(location.search).has("pack");
 
 function renderTrade(){
   if(PREVIEW){ try{ return renderTradePro(); }
@@ -1592,19 +1592,24 @@ function absorbBlocks(data){
 }
 
 async function pullBlocks(){
-  if(!BLOCK_URL) return;
+  if(!BLOCK_URL || !PREVIEW) return;
   try {
     absorbBlocks(await jsonp(BLOCK_URL));
   } catch(err){
     blockSyncState = "error";
     console.warn("[bromigos] trade block offline:", err && err.message);
   }
-  try { renderTeamPage(); renderTradePro(); } catch(e){}
+  refreshBlockViews();
+}
+
+/* Repaint through the gated renderers so nothing preview-only leaks out. */
+function refreshBlockViews(){
+  try { if(PREVIEW){ renderTeamPage(); renderTrade(); } } catch(e){}
 }
 
 async function pushBlock(){
   BLOCK ||= readBlock();
-  if(!BLOCK_URL || !ME){ return; }
+  if(!BLOCK_URL || !ME || !PREVIEW){ return; }
   blockSyncState = "saving";
   try {
     const url = BLOCK_URL + "?action=save&manager=" + encodeURIComponent(ME) +
@@ -1614,7 +1619,7 @@ async function pushBlock(){
     blockSyncState = "error";
     console.warn("[bromigos] could not save block:", err && err.message);
   }
-  try { renderTeamPage(); renderTradePro(); } catch(e){}
+  refreshBlockViews();
 }
 
 /* Whose flag is it: mine comes from this device, everyone else from the sheet. */
@@ -1655,6 +1660,7 @@ const GRADE_WHY = {
 function renderTeamPage(){
   const el = document.getElementById("teamBody");
   if(!el) return;
+  if(!PREVIEW){ el.innerHTML = ""; return; }
   if(!ROSTERS) loadRosterModel();
   const me = myTeam();
   if(!me){ el.innerHTML = lock("Pick your team","Choose your name at the top."); return; }
@@ -1721,7 +1727,7 @@ function renderTeamPage(){
     ${s.tail.filter(f=>f.player).map(f=>row(f.player)).join("")}`;
 
   el.querySelectorAll("[data-block]").forEach(r => {
-    r.onclick = () => { toggleBlock(r.dataset.block); renderTeamPage(); renderTradePro(); pushBlock(); };
+    r.onclick = () => { toggleBlock(r.dataset.block); refreshBlockViews(); pushBlock(); };
   });
 }
 
@@ -1768,6 +1774,7 @@ let binderSort = "week";
 function renderBinder(){
   const el = document.getElementById("binderBody");
   if(!el) return;
+  if(!PREVIEW){ el.innerHTML = ""; return; }
   if(!ME){
     el.innerHTML = `<div class="binderEmpty">Pick your name at the top and your cards will show up here.</div>`;
     return;

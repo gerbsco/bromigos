@@ -354,114 +354,136 @@
   .pk .nm span{display:block;margin-top:3px;font:600 10.5px/1.3 ui-monospace,Menlo,monospace;
     color:var(--faint);letter-spacing:.08em}
   /* ================= TRADE + WIRE ================= */
-  .demoban{background:rgba(178,58,47,.16);border-left:3px solid var(--stamp);color:#F0C9C4;
-    padding:11px 13px;border-radius:3px;margin-bottom:14px;font-size:13px;line-height:1.5}
-  .demoban b{color:#FFD9D3}
+  .demoban{background:rgba(178,58,47,.14);border-left:2px solid var(--stamp);color:#EBC3BC;
+    padding:12px 14px;border-radius:0 4px 4px 0;margin-bottom:18px;font-size:13px;line-height:1.55}
+  .demoban b{color:#FFD9D3;font-weight:700}
 
-  .picker{margin-bottom:12px}
-  .picker select{width:100%}
+  /* section divider: label sits on the rule, sentence case */
+  .sect{display:flex;align-items:center;gap:12px;margin:22px 0 10px}
+  .sect:first-child{margin-top:0}
+  .sect h3{margin:0;font:600 13px/1 system-ui,sans-serif;color:var(--chalk);letter-spacing:.01em;
+    flex:none}
+  .sect .rule{flex:1;height:1px;background:rgba(234,226,207,.14)}
+  .sect .tot{flex:none;font:700 12px/1 ui-monospace,Menlo,monospace;color:var(--brass);
+    font-variant-numeric:tabular-nums}
 
-  /* deal tray */
-  .tray{background:var(--ink-2);border-radius:5px;padding:13px;margin-bottom:14px;
-    border:1px solid #2C4257}
-  .tray.live{border-color:var(--brass)}
-  .traySide{margin-bottom:10px}
-  .traySide:last-of-type{margin-bottom:0}
-  .trayLbl{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--faint);margin-bottom:7px}
-  .chips{display:flex;gap:6px;flex-wrap:wrap;min-height:30px;align-items:center}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border-radius:3px;
-    background:rgba(217,162,39,.16);color:var(--chalk);
-    font:700 12px/1 system-ui,sans-serif;cursor:pointer}
-  .chip.get{background:rgba(76,175,125,.18)}
-  .chip .x{opacity:.6;font:800 13px/1 system-ui,sans-serif}
-  .chip small{font:600 10px/1 ui-monospace,Menlo,monospace;opacity:.7}
-  .chips .empty{font-size:12.5px;color:var(--faint)}
-  .trayBtns{display:flex;gap:7px;margin-top:11px}
-  .tbtn{flex:1;padding:10px;border-radius:3px;border:1px solid #2C4257;background:transparent;
-    color:var(--dim);font:700 11.5px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer}
-  .tbtn.on{background:var(--brass);border-color:var(--brass);color:#2A1C00}
+  .picker{margin-bottom:16px}
+  .picker select{width:100%;padding:13px 12px;font-size:15px}
 
-  /* roster lists */
-  .rost{margin-bottom:16px}
-  .rostHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-    margin-bottom:8px}
-  .rostHead b{font:800 14px/1.2 system-ui,sans-serif;color:var(--chalk)}
-  .rostHead span{font:700 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;
-    color:var(--faint);text-transform:uppercase}
-  .subhead{font:800 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--brass);margin:12px 0 6px;opacity:.8}
-  .plr{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:4px;
-    cursor:pointer;border:1px solid transparent;margin-bottom:5px;
-    background:rgba(255,255,255,.035)}
-  .plr:active{background:rgba(255,255,255,.09)}
-  .plr .slot{flex:none;width:34px;font:800 9px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.05em;color:var(--faint);text-align:center}
-  .plr .pos{flex:none;width:32px;text-align:center;border-radius:2px;padding:4px 0;
-    font:800 9px/1 ui-monospace,Menlo,monospace}
-  .pos.QB{background:#6D3B57;color:#FFD9EC}
-  .pos.RB{background:#2F5D46;color:#CFF3E1}
-  .pos.WR{background:#2C4C6E;color:#CFE6FF}
-  .pos.TE{background:#6B5327;color:#FFEBC2}
-  .pos.K{background:#4A4A55;color:#DDE1EA}
-  .pos.DST{background:#5A3A2A;color:#F2D8C8}
-  .plr .who2{flex:1;min-width:0}
-  .plr .who2 b{display:block;font:700 13.5px/1.25 system-ui,sans-serif;color:var(--chalk)}
-  .plr .who2 span{display:block;margin-top:2px;font:500 10px/1.2 ui-monospace,Menlo,monospace;
-    color:var(--faint)}
-  .plr .pts{flex:none;font:800 13.5px/1 ui-monospace,Menlo,monospace;color:#BCCBD8;
-    font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
-  .plr .tick{flex:none;width:20px;height:20px;border-radius:3px;border:1.5px solid #46586B;
-    display:flex;align-items:center;justify-content:center;font:800 12px/1 system-ui,sans-serif;
-    color:transparent}
-  .plr.picked{background:rgba(217,162,39,.16);border-color:var(--brass)}
+  /* ---- deal tray ---- */
+  .tray{background:#16344F;border-radius:6px;overflow:hidden;margin-bottom:16px;
+    box-shadow:0 6px 20px rgba(0,0,0,.3)}
+  .tray.live{box-shadow:0 6px 20px rgba(0,0,0,.3), 0 0 0 1px var(--brass)}
+  .half{padding:13px 14px}
+  .half + .half{border-top:1px solid rgba(0,0,0,.28)}
+  .half .lbl{font:600 12px/1 system-ui,sans-serif;color:#9FB6C9;margin-bottom:9px}
+  .half .lbl b{color:var(--chalk);font-weight:700}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:32px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:7px 9px;border-radius:4px;
+    background:rgba(255,255,255,.08);cursor:pointer;border:1px solid transparent}
+  .chip b{font:600 13px/1 system-ui,sans-serif;color:var(--chalk)}
+  .chip i{font-style:normal;font:700 11px/1 ui-monospace,Menlo,monospace;color:#9FB6C9;
+    font-variant-numeric:tabular-nums}
+  .chip .x{font:400 16px/1 system-ui,sans-serif;color:#8FA3B5;margin-left:1px}
+  .chip.give{background:rgba(217,162,39,.2);border-color:rgba(217,162,39,.45)}
+  .chip.get{background:rgba(76,175,125,.2);border-color:rgba(76,175,125,.45)}
+  .chips .empty{font-size:13px;color:#7E93A6}
+  .clearRow{padding:0 14px 13px}
+  .tbtn{width:100%;padding:11px;border-radius:4px;border:1px solid #35506A;background:transparent;
+    color:#9FB6C9;font:600 13px/1 system-ui,sans-serif;cursor:pointer}
+  .tbtn:active{background:rgba(255,255,255,.06)}
+
+  /* ---- verdict scoreboard ---- */
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(0,0,0,.3);
+    border-radius:6px;overflow:hidden;margin-bottom:16px}
+  .vcell{background:var(--ink-2);padding:15px 14px;text-align:center}
+  .vcell .name{font:600 12px/1 system-ui,sans-serif;color:#9FB6C9;margin-bottom:8px}
+  .vcell .delta{font:800 27px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em;color:#8FA3B5}
+  .vcell .delta.up{color:var(--green)}
+  .vcell .delta.down{color:#E08A80}
+  .vnote{grid-column:1/-1;background:var(--ink-2);padding:12px 14px;font-size:13px;
+    color:#A9BCCB;line-height:1.5;text-align:center}
+  .vnote.good{color:#A7E3C4} .vnote.bad{color:#E8B0A8}
+
+  /* ---- roster rows: fixed grid so every column lines up ---- */
+  .plr{display:grid;grid-template-columns:38px 34px 1fr auto 22px;align-items:center;gap:10px;
+    padding:10px 12px;border-radius:5px;cursor:pointer;margin-bottom:4px;
+    background:rgba(255,255,255,.035);border:1px solid transparent}
+  .plr:active{background:rgba(255,255,255,.08)}
+  .plr .slot{font:600 11px/1 system-ui,sans-serif;color:#7E93A6;text-align:left}
+  .plr .pos{text-align:center;border-radius:3px;padding:5px 0;
+    font:700 10px/1 system-ui,sans-serif;letter-spacing:.02em}
+  .pos.QB{background:#7A3E60;color:#FFDDF0}
+  .pos.RB{background:#2E6650;color:#CFF5E3}
+  .pos.WR{background:#2B5580;color:#D2E9FF}
+  .pos.TE{background:#7A5C24;color:#FFEEC6}
+  .pos.K{background:#4C4F5C;color:#E2E6EE}
+  .pos.DST{background:#68402C;color:#F6DCCB}
+  .pos.mt{background:#243444;color:#5D7086}
+  .plr .who2{min-width:0}
+  .plr .who2 b{display:block;font:600 14.5px/1.25 system-ui,sans-serif;color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .plr .who2 span{display:block;margin-top:3px;font:400 11.5px/1.2 system-ui,sans-serif;
+    color:#7E93A6}
+  .plr .pts{font:700 15px/1 ui-monospace,Menlo,monospace;color:#C3D2DE;
+    font-variant-numeric:tabular-nums;text-align:right}
+  .plr .tick{width:20px;height:20px;border-radius:4px;border:1.5px solid #3E5468;
+    display:flex;align-items:center;justify-content:center;
+    font:700 12px/1 system-ui,sans-serif;color:transparent}
+  .plr.picked{background:rgba(217,162,39,.15);border-color:rgba(217,162,39,.5)}
   .plr.picked .tick{background:var(--brass);border-color:var(--brass);color:#2A1C00}
-  .plr.picked.get{background:rgba(76,175,125,.16);border-color:var(--green)}
+  .plr.picked.get{background:rgba(76,175,125,.15);border-color:rgba(76,175,125,.5)}
   .plr.picked.get .tick{background:var(--green);border-color:var(--green);color:#06231A}
+  .plr.mute{opacity:.45;cursor:default}
 
-  .verdict{background:var(--ink-2);border-radius:5px;padding:14px;margin-top:11px;
-    border-left:3px solid #2C4257}
-  .verdict.good{border-left-color:var(--green)}
-  .verdict.bad{border-left-color:var(--stamp)}
-  .vrow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:13.5px;
-    color:#BCCBD8;border-bottom:1px solid rgba(234,226,207,.08)}
-  .vrow:last-of-type{border-bottom:0}
-  .vrow b{font:800 14px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
-  .up{color:var(--green)} .down{color:#E08A80}
+  /* ---- ideas ---- */
+  .idea{background:var(--ink-2);border-radius:5px;padding:14px;margin-bottom:8px;cursor:pointer;
+    border:1px solid rgba(217,162,39,.28)}
+  .idea:active{background:#16344F}
+  .idea .sw{font-size:14px;color:var(--chalk);line-height:1.55}
+  .idea .sw i{font-style:normal;color:#7E93A6;font-weight:400}
+  .idea .why{margin:9px 0 0;font-size:12.5px;color:#8FA3B5}
+  .idea .why b{color:var(--green);font-weight:700;font-family:ui-monospace,Menlo,monospace}
 
-  .idea{background:var(--ink-2);border-radius:4px;padding:13px;margin-bottom:8px;
-    border-left:3px solid var(--brass);cursor:pointer}
-  .idea .sw{font-size:13.5px;color:var(--chalk);line-height:1.5}
-  .idea .sw em{font-style:normal;color:var(--faint);font:700 9.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.12em;text-transform:uppercase}
-  .idea .why{margin:8px 0 0;font-size:12.5px;color:#9FB3C4}
-
-  /* controls */
-  .ctrls{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
-  .cgroup{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  /* ---- filter controls ---- */
+  .ctrls{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+  .cgroup{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
   .cgroup::-webkit-scrollbar{display:none}
-  .cbtn{flex:none;padding:8px 12px;border-radius:3px;border:1px solid #2C4257;
-    background:transparent;color:var(--dim);cursor:pointer;white-space:nowrap;
-    font:700 11.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em}
+  .cbtn{flex:none;padding:9px 13px;border-radius:20px;border:1px solid #35506A;
+    background:transparent;color:#9FB6C9;cursor:pointer;white-space:nowrap;
+    font:600 12.5px/1 system-ui,sans-serif}
   .cbtn[aria-pressed=true]{background:var(--brass);border-color:var(--brass);color:#2A1C00}
 
-  .wirerow{display:flex;align-items:center;gap:9px;background:var(--ink-2);border-radius:4px;
-    padding:10px;margin-bottom:6px;border-left:3px solid #2C4257}
-  .wirerow.fit{border-left-color:var(--green)}
-  .wirerow .rank{flex:none;width:20px;text-align:center;font:800 12px/1 ui-monospace,Menlo,monospace;
-    color:var(--faint)}
-  .wirerow .meta{flex:1;min-width:0}
-  .wirerow .meta b{display:block;font:700 13.5px/1.2 system-ui,sans-serif;color:var(--chalk)}
-  .wstats{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
-  .wstat{font:600 10px/1.2 ui-monospace,Menlo,monospace;color:var(--faint)}
-  .wstat b{color:#BCCBD8;font-weight:800}
-  .wirerow .hot{flex:none;padding:4px 7px;border-radius:2px;background:rgba(217,162,39,.16);
-    color:var(--brass);font:800 9.5px/1.3 ui-monospace,Menlo,monospace}
-  .needs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
-  .need{padding:5px 9px;border-radius:2px;font:700 10.5px/1.3 ui-monospace,Menlo,monospace;
-    letter-spacing:.08em;background:rgba(255,255,255,.05);color:var(--dim)}
-  .need.weak{background:rgba(178,58,47,.18);color:#F0B9B2}
-  .need.strong{background:rgba(76,175,125,.16);color:#A7E3C4}
+  /* ---- waiver rows ---- */
+  .wirerow{display:grid;grid-template-columns:22px 34px 1fr auto;align-items:center;gap:11px;
+    background:var(--ink-2);border-radius:5px;padding:11px 12px;margin-bottom:5px;
+    border-left:3px solid transparent}
+  .wirerow.fit{border-left-color:var(--green);background:#16344F}
+  .wirerow .rank{font:700 13px/1 ui-monospace,Menlo,monospace;color:#5D7086;text-align:center;
+    font-variant-numeric:tabular-nums}
+  .wirerow .meta{min-width:0}
+  .wirerow .meta b{display:block;font:600 14.5px/1.25 system-ui,sans-serif;color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .wstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px;
+    max-width:290px}
+  .wstat{min-width:0}
+  .wstat b{display:block;font:700 12.5px/1 ui-monospace,Menlo,monospace;color:#C3D2DE;
+    font-variant-numeric:tabular-nums}
+  .wstat span{display:block;margin-top:2px;font:400 10px/1 system-ui,sans-serif;color:#6B8095}
+  .wirerow .hot{padding:5px 8px;border-radius:12px;background:rgba(217,162,39,.18);
+    color:var(--brass);font:700 11px/1 ui-monospace,Menlo,monospace;
+    font-variant-numeric:tabular-nums}
+
+  /* ---- need pills ---- */
+  .needs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+  .need{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:20px;
+    font:600 12.5px/1 system-ui,sans-serif;background:rgba(255,255,255,.05);color:#9FB6C9}
+  .need::before{content:"";width:7px;height:7px;border-radius:50%;background:#5D7086}
+  .need.weak{background:rgba(178,58,47,.16);color:#F0B9B2}
+  .need.weak::before{background:#D2685C}
+  .need.strong{background:rgba(76,175,125,.14);color:#A7E3C4}
+  .need.strong::before{background:var(--green)}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
@@ -1206,14 +1228,20 @@ function loadRosterModel(){
 const myTeam = () => (ROSTERS || []).find(t => t.manager === ME) || (ROSTERS || [])[0];
 
 /* Split a roster into lineup slots then bench, so it reads like ESPN does. */
+/* Roster reads in lineup order, then bench, with kicker and defense last. */
+const DISPLAY_ORDER = ["QB","RB","WR","W/T","FLEX"];
+const TAIL = p => p.pos === "K" || p.pos === "DST";
+
 function rosterSections(players){
   const lu = bestLineup(players);
-  const used = new Set(lu.filled.filter(f=>f.player).map(f=>f.player.id));
-  return {
-    starters: lu.filled,
-    bench: players.filter(p => !used.has(p.id)).sort((a,b) => b.proj - a.proj),
-    total: lu.total
-  };
+  const used = new Set(lu.filled.filter(f => f.player).map(f => f.player.id));
+  const starters = lu.filled
+    .filter(f => DISPLAY_ORDER.includes(f.slot))
+    .sort((a,b) => DISPLAY_ORDER.indexOf(a.slot) - DISPLAY_ORDER.indexOf(b.slot));
+  const bench = players.filter(p => !used.has(p.id) && !TAIL(p)).sort((a,b) => b.proj - a.proj);
+  const tail = lu.filled.filter(f => !DISPLAY_ORDER.includes(f.slot))
+    .concat(players.filter(p => !used.has(p.id) && TAIL(p)).map(p => ({ slot:"BE", player:p })));
+  return { starters, bench, tail, total: lu.total };
 }
 
 const plrRow = (p, slot, picked, side) => `<div class="plr ${picked?"picked":""} ${side==="get"?"get":""}"
@@ -1221,30 +1249,36 @@ const plrRow = (p, slot, picked, side) => `<div class="plr ${picked?"picked":""}
     <span class="slot">${slot||""}</span>
     <span class="pos ${p.pos}">${p.pos}</span>
     <span class="who2"><b>${esc(p.name)}</b>
-      <span>${esc(p.team||"")}${p.bye?" \u00b7 BYE "+p.bye:""}${p.injury?" \u00b7 "+p.injury.slice(0,1):""}</span></span>
+      <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}</span></span>
     <span class="pts">${p.proj.toFixed(1)}</span>
     <span class="tick">\u2713</span>
   </div>`;
 
+const emptyRow = slot => `<div class="plr mute"><span class="slot">${slot}</span>
+    <span class="pos mt">\u2014</span><span class="who2"><b>Nobody</b></span>
+    <span class="pts">0.0</span><span class="tick"></span></div>`;
+
+const sectHead = (title, tot) => `<div class="sect"><h3>${title}</h3><span class="rule"></span>${
+  tot!=null ? `<span class="tot">${tot.toFixed(1)}</span>` : ""}</div>`;
+
 function rosterBlock(team, sel, side){
   const s = rosterSections(team.players);
-  const rows = s.starters.map(f => f.player
-    ? plrRow(f.player, f.slot, sel.has(f.player.id), side)
-    : `<div class="plr" style="opacity:.4"><span class="slot">${f.slot}</span>
-        <span class="pos" style="background:#2A3644;color:#7C8EA0">--</span>
-        <span class="who2"><b>Empty</b></span><span class="pts">0.0</span>
-        <span class="tick"></span></div>`).join("");
-  const bench = s.bench.map(p => plrRow(p, "BE", sel.has(p.id), side)).join("");
-  return `<div class="rost">
-    <div class="rostHead"><b>${esc(team.manager)}</b><span>${s.total.toFixed(1)} starters</span></div>
-    <div class="subhead">Starting lineup</div>${rows}
-    <div class="subhead">Bench</div>${bench}
-  </div>`;
+  const line = f => f.player ? plrRow(f.player, f.slot, sel.has(f.player.id), side) : emptyRow(f.slot);
+  return sectHead(`${team.manager}'s lineup`, s.total) +
+    s.starters.map(line).join("") +
+    sectHead("Bench") + (s.bench.length
+      ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side)).join("")
+      : `<p class="note">Nobody on the bench.</p>`) +
+    sectHead("Kicker and defense") + s.tail.map(line).join("");
 }
 
 const demoBanner = () => IS_DEMO
   ? `<div class="demoban"><b>Demo data.</b> Invented players and made-up projections so the
      layout can be tested before the draft. Switches to real rosters automatically.</div>` : "";
+
+const needPills = g => `<div class="needs">` + Object.entries(g).map(([pos,v]) =>
+  `<span class="need ${v.label==="strong"?"strong":v.label==="weak"?"weak":""}">${pos} ${
+    v.label==="strong"?"surplus":v.label==="weak"?"thin":"set"}</span>`).join("") + `</div>`;
 
 /* ---------- Trade Center ---------- */
 function renderTradePro(){
@@ -1256,65 +1290,58 @@ function renderTradePro(){
   if(!tradePartner || !others.find(t => t.id === tradePartner)) tradePartner = others[0].id;
   const them = ROSTERS.find(t => t.id === tradePartner);
 
-  const med = leagueMedians(ROSTERS);
-  const gMe = gradeTeam(me, med);
+  const gMe = gradeTeam(me, leagueMedians(ROSTERS));
   const give = me.players.filter(p => giveSel.has(p.id));
   const get  = them.players.filter(p => getSel.has(p.id));
   const live = give.length || get.length;
-
-  const beforeA = rosterValue(me.players), beforeB = rosterValue(them.players);
-  const dA = rosterValue(applyTrade(me.players, give, get)) - beforeA;
-  const dB = rosterValue(applyTrade(them.players, get, give)) - beforeB;
+  const dA = rosterValue(applyTrade(me.players, give, get)) - rosterValue(me.players);
+  const dB = rosterValue(applyTrade(them.players, get, give)) - rosterValue(them.players);
 
   const byeClash = () => {
-    const post = applyTrade(me.players, give, get), w = {};
-    post.forEach(p => { if(p.bye) w[p.bye] = (w[p.bye]||0)+1; });
+    const w = {}; applyTrade(me.players, give, get).forEach(p => { if(p.bye) w[p.bye]=(w[p.bye]||0)+1; });
     const bad = Object.entries(w).filter(([,n]) => n >= 5);
-    return bad.length ? `Week ${bad[0][0]}: ${bad[0][1]} on bye` : null;
+    return bad.length ? `Watch week ${bad[0][0]}, you would have ${bad[0][1]} players on bye.` : "";
   };
   const chip = (p, cls) => `<span class="chip ${cls}" data-drop="${p.id}" data-side="${cls}">
-    ${esc(p.name)} <small>${p.proj.toFixed(1)}</small><span class="x">\u00d7</span></span>`;
+    <b>${esc(p.name)}</b><i>${p.proj.toFixed(1)}</i><span class="x">\u00d7</span></span>`;
+  const sign = n => (n > 0 ? "+" : "") + n.toFixed(1);
 
-  el.innerHTML = demoBanner() +
-    `<div class="needs">` + Object.entries(gMe).map(([pos,g]) =>
-      `<span class="need ${g.label==="strong"?"strong":g.label==="weak"?"weak":""}">${pos} ${
-        g.label==="strong"?"surplus":g.label==="weak"?"need":"ok"}</span>`).join("") + `</div>
-    <div class="picker"><select id="tp">${others.map(t =>
-      `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>vs ${esc(t.manager)} \u00b7 ${esc(t.teamName)}</option>`
+  el.innerHTML = demoBanner() + needPills(gMe) +
+    `<div class="picker"><select id="tp">${others.map(t =>
+      `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>Trade with ${esc(t.manager)} \u2014 ${esc(t.teamName)}</option>`
       ).join("")}</select></div>
 
     <div class="tray ${live?"live":""}">
-      <div class="traySide"><div class="trayLbl">${esc(me.manager)} sends</div>
+      <div class="half"><div class="lbl"><b>${esc(me.manager)}</b> gives up</div>
         <div class="chips">${give.length ? give.map(p=>chip(p,"give")).join("")
-          : `<span class="empty">Tap players below to add them</span>`}</div></div>
-      <div class="traySide"><div class="trayLbl">${esc(them.manager)} sends</div>
+          : `<span class="empty">Tap anyone below to add them</span>`}</div></div>
+      <div class="half"><div class="lbl"><b>${esc(them.manager)}</b> gives up</div>
         <div class="chips">${get.length ? get.map(p=>chip(p,"get")).join("")
-          : `<span class="empty">Nothing selected yet</span>`}</div></div>
-      ${live ? `<div class="trayBtns"><button class="tbtn" id="clr">Clear deal</button></div>` : ""}
+          : `<span class="empty">Nothing picked yet</span>`}</div></div>
+      ${live ? `<div class="clearRow"><button class="tbtn" id="clr">Clear this deal</button></div>` : ""}
     </div>` +
-    (live ? `<div class="verdict ${dA>0&&dB>0?"good":(dA<=0&&dB<=0?"bad":"")}">
-      <div class="vrow"><span>${esc(me.manager)} lineup</span>
-        <b class="${dA>0?"up":dA<0?"down":""}">${dA>0?"+":""}${dA.toFixed(1)}</b></div>
-      <div class="vrow"><span>${esc(them.manager)} lineup</span>
-        <b class="${dB>0?"up":dB<0?"down":""}">${dB>0?"+":""}${dB.toFixed(1)}</b></div>
-      <div class="vrow"><span>Players moving</span><b>${give.length} for ${get.length}</b></div>
-      ${byeClash() ? `<div class="vrow"><span>Bye crunch</span><b>${esc(byeClash())}</b></div>` : ""}
-      <p class="note">${dA>0&&dB>0 ? "Both starting lineups improve. Worth sending."
-        : dA>0||dB>0 ? "Only one side gains on projection."
-        : "Neither side gains on projection."}</p></div>` : "") +
-    `<h2>Rosters</h2>` +
+    (live ? `<div class="verdict">
+      <div class="vcell"><div class="name">${esc(me.manager)}</div>
+        <div class="delta ${dA>0?"up":dA<0?"down":""}">${sign(dA)}</div></div>
+      <div class="vcell"><div class="name">${esc(them.manager)}</div>
+        <div class="delta ${dB>0?"up":dB<0?"down":""}">${sign(dB)}</div></div>
+      <div class="vnote ${dA>0&&dB>0?"good":(dA<=0&&dB<=0?"bad":"")}">${
+        dA>0&&dB>0 ? "Both starting lineups get better. Send it."
+        : dA>0||dB>0 ? "Only one lineup improves, so the other side needs a reason the projections cannot see."
+        : "Neither lineup improves on projection."} ${byeClash()}</div>
+    </div>` : "") +
     rosterBlock(me, giveSel, "give") +
     rosterBlock(them, getSel, "get") +
-    `<h2>Ideas with ${esc(them.manager)}</h2><div id="ideas"></div>`;
+    sectHead(`Ideas with ${esc(them.manager)}`) + `<div id="ideas"></div>`;
 
   const ideas = findTrades(me, them);
   document.getElementById("ideas").innerHTML = ideas.length ? ideas.map((i,n) =>
     `<div class="idea" data-idea="${n}"><div class="sw">
-      <em>send</em> ${i.give.map(p=>esc(p.name)).join(" + ")}
-      &nbsp;<em>get</em> ${i.get.map(p=>esc(p.name)).join(" + ")}</div>
-      <p class="why">You +${i.a.toFixed(1)}, ${esc(them.manager)} +${i.b.toFixed(1)}. Tap to load.</p>
+      <i>You send</i> ${i.give.map(p=>esc(p.name)).join(" and ")}
+      <i>for</i> ${i.get.map(p=>esc(p.name)).join(" and ")}</div>
+      <p class="why">Your lineup <b>+${i.a.toFixed(1)}</b>, theirs <b>+${i.b.toFixed(1)}</b>. Tap to load it.</p>
     </div>`).join("")
-    : `<p class="note">No swap with ${esc(them.manager)} improves both lineups right now.</p>`;
+    : `<p class="note">Nothing with ${esc(them.manager)} improves both lineups right now. Try someone else.</p>`;
 
   document.getElementById("tp").onchange = e => {
     tradePartner = Number(e.target.value); giveSel.clear(); getSel.clear(); renderTradePro();
@@ -1330,17 +1357,13 @@ function renderTradePro(){
     };
   });
   el.querySelectorAll(".chip[data-drop]").forEach(c => {
-    c.onclick = ev => {
-      ev.stopPropagation();
-      (c.dataset.side === "give" ? giveSel : getSel).delete(c.dataset.drop);
-      renderTradePro();
-    };
+    c.onclick = ev => { ev.stopPropagation();
+      (c.dataset.side === "give" ? giveSel : getSel).delete(c.dataset.drop); renderTradePro(); };
   });
   el.querySelectorAll(".idea").forEach(card => {
     card.onclick = () => {
       const i = ideas[Number(card.dataset.idea)];
-      giveSel = new Set(i.give.map(p=>p.id));
-      getSel  = new Set(i.get.map(p=>p.id));
+      giveSel = new Set(i.give.map(p=>p.id)); getSel = new Set(i.get.map(p=>p.id));
       renderTradePro(); window.scrollTo({top:0,behavior:"smooth"});
     };
   });
@@ -1348,6 +1371,7 @@ function renderTradePro(){
 
 /* ---------- Waiver Wire ---------- */
 let wireFilter = "ALL", wireSort = "fit";
+const FLEXPOS = ["RB","WR","TE"];
 function renderWirePro(){
   const el = document.getElementById("wireBody");
   if(!ROSTERS) loadRosterModel();
@@ -1357,52 +1381,46 @@ function renderWirePro(){
   const g = gradeTeam(me, leagueMedians(ROSTERS));
   const weak = Object.entries(g).filter(([,v]) => v.label === "weak").map(([p]) => p);
 
-  let rows = FREEAGENTS.map(p => {
-    const fit = weak.includes(p.pos);
-    return { ...p, fit, score: p.proj + (p.trend ? Math.min(p.trend/900, 8) : 0) + (fit ? 4 : 0) };
-  });
-  if(wireFilter !== "ALL") rows = rows.filter(p => p.pos === wireFilter);
+  let rows = FREEAGENTS.map(p => ({ ...p, fit: weak.includes(p.pos),
+    score: p.proj + (p.trend ? Math.min(p.trend/900, 8) : 0) + (weak.includes(p.pos) ? 4 : 0) }));
+  if(wireFilter === "FLEX") rows = rows.filter(p => FLEXPOS.includes(p.pos));
+  else if(wireFilter !== "ALL") rows = rows.filter(p => p.pos === wireFilter);
+
   const sorters = {
-    fit:   (a,b) => b.score - a.score,
-    proj:  (a,b) => b.proj - a.proj,
-    trend: (a,b) => (b.trend||0) - (a.trend||0),
-    own:   (a,b) => (a.own??101) - (b.own??101),
-    snaps: (a,b) => (b.snapPct||0) - (a.snapPct||0)
+    fit:(a,b)=>b.score-a.score, proj:(a,b)=>b.proj-a.proj,
+    trend:(a,b)=>(b.trend||0)-(a.trend||0), own:(a,b)=>(a.own??101)-(b.own??101),
+    snaps:(a,b)=>(b.snapPct||0)-(a.snapPct||0)
   };
   rows.sort(sorters[wireSort] || sorters.fit);
 
-  const POSES = ["ALL","QB","RB","WR","TE","K","DST"];
+  const POSES = [["ALL","Everyone"],["FLEX","Flex"],["QB","QB"],["RB","RB"],
+                 ["WR","WR"],["TE","TE"],["K","K"],["DST","D/ST"]];
   const SORTS = [["fit","Best fit"],["proj","Projection"],["trend","Trending"],
                  ["own","Least rostered"],["snaps","Snap share"]];
+  const stat = (v, l) => v == null ? "" : `<span class="wstat"><b>${v}</b><span>${l}</span></span>`;
 
-  el.innerHTML = demoBanner() +
-    `<div class="needs">` + Object.entries(g).map(([pos,v]) =>
-      `<span class="need ${v.label==="strong"?"strong":v.label==="weak"?"weak":""}">${pos} ${
-        v.label==="strong"?"surplus":v.label==="weak"?"need":"ok"}</span>`).join("") + `</div>
-    <div class="ctrls">
-      <div class="cgroup">${POSES.map(p =>
-        `<button class="cbtn" aria-pressed="${wireFilter===p}" data-pos="${p}">${p}</button>`).join("")}</div>
+  el.innerHTML = demoBanner() + needPills(g) +
+    `<div class="ctrls">
+      <div class="cgroup">${POSES.map(([k,l]) =>
+        `<button class="cbtn" aria-pressed="${wireFilter===k}" data-pos="${k}">${l}</button>`).join("")}</div>
       <div class="cgroup">${SORTS.map(([k,l]) =>
         `<button class="cbtn" aria-pressed="${wireSort===k}" data-sort="${k}">${l}</button>`).join("")}</div>
     </div>
-    <p class="note" style="margin-top:0">${rows.length} available${
-      weak.length?` \u00b7 green edge fills your ${weak.join(" or ")} hole`:""}.</p>` +
+    <p class="note" style="margin:0 0 12px">${rows.length} available${
+      weak.length ? `. A green edge means it fills your ${weak.join(" or ")} gap` : ""}.</p>` +
     (rows.length ? rows.slice(0,25).map((p,i) => `<div class="wirerow ${p.fit?"fit":""}">
       <span class="rank">${i+1}</span>
       <span class="pos ${p.pos}">${p.pos}</span>
       <span class="meta"><b>${esc(p.name)}</b><span class="wstats">
-        <span class="wstat"><b>${p.proj.toFixed(1)}</b> proj</span>
-        ${p.own!=null?`<span class="wstat"><b>${p.own}%</b> rost</span>`:""}
-        ${p.snapPct!=null?`<span class="wstat"><b>${p.snapPct}%</b> snaps</span>`:""}
-        ${p.tgtShare!=null?`<span class="wstat"><b>${p.tgtShare}%</b> tgt</span>`:""}
-        ${p.bye?`<span class="wstat">BYE <b>${p.bye}</b></span>`:""}
+        ${stat(p.proj.toFixed(1),"projected")}${stat(p.own!=null?p.own+"%":null,"rostered")}
+        ${stat(p.snapPct!=null?p.snapPct+"%":null,"snaps")}${stat(p.tgtShare!=null?p.tgtShare+"%":null,"targets")}
       </span></span>
       ${p.trend ? `<span class="hot">+${p.trend>999?(p.trend/1000).toFixed(1)+"k":p.trend}</span>` : ""}
-    </div>`).join("") : `<p class="note">Nobody available at that position.</p>`) +
-    `<p class="note">Trending counts adds across all Sleeper leagues in the last 48 hours.</p>`;
+    </div>`).join("") : `<p class="note">Nobody available there. Try another position.</p>`) +
+    `<p class="note">Trending counts how many Sleeper leagues added a player in the last 48 hours.</p>`;
 
-  el.querySelectorAll("[data-pos]").forEach(b => b.onclick = () => { wireFilter = b.dataset.pos; renderWirePro(); });
-  el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort = b.dataset.sort; renderWirePro(); });
+  el.querySelectorAll("[data-pos]").forEach(b => b.onclick = () => { wireFilter=b.dataset.pos; renderWirePro(); });
+  el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort=b.dataset.sort; renderWirePro(); });
 }
 
 /* ================= PACK OPENING ================= */

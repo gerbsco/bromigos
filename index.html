@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ultimo Bromigos — League HQ</title>
 <meta name="description" content="Ultimo Bromigos fantasy football league headquarters">
@@ -314,6 +315,17 @@
     letter-spacing:.04em;opacity:.72;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .plr.tappable{cursor:pointer}
   .plr.tappable .tick{border:0;color:#7E93A6;font-size:18px}
+  .mini.bronzeC{background:linear-gradient(160deg,#8A6039,#4E3520 46%,#75512E);color:#E8D5C2}
+  .mini.bronze {background:linear-gradient(160deg,#E0A868,#7A4A22 46%,#C98A4B);color:#FFF3E4}
+  .mini.silverC{background:linear-gradient(160deg,#98A0A9,#5C646D 46%,#848C95);color:#EDF1F5}
+  .mini.silver {background:linear-gradient(160deg,#F0F5FA,#9AA7B4 46%,#D8E1EA);color:#1F2833}
+  .mini.gold   {background:linear-gradient(160deg,#FBE293,#B08423 46%,#EDCB6E);color:#392A05}
+  .mini.totw   {background:linear-gradient(163deg,#2E2E2E,#080808 46%,#1F1F1F);color:#F0C75E;
+    box-shadow:0 6px 16px rgba(0,0,0,.5), inset 0 0 0 1px rgba(240,199,94,.5)}
+  .mini.blue   {background:linear-gradient(160deg,#84D6FF,#1B5C8A 46%,#5CB6EA);color:#05202D}
+  .mini.orange {background:linear-gradient(160deg,#FFB35F,#B24A08 46%,#F18C34);color:#2C1303}
+  .mini.purple {background:linear-gradient(160deg,#C89DFF,#4B2A86 46%,#A478E9);color:#1C0E33}
+  .mini .mart img{filter:drop-shadow(0 3px 6px rgba(0,0,0,.4))}
   .binderEmpty{border:1px dashed #354E66;border-radius:5px;padding:26px 18px;text-align:center;
     background:rgba(255,255,255,.02);color:var(--dim);font-size:14px;line-height:1.6}
   .bcount{font:400 12.5px/1.6 system-ui,sans-serif;color:var(--faint);margin:0 0 14px}
@@ -1567,6 +1579,14 @@ function awardArt(title, wk, good){
 /* Kept per person on their own device. Anyone can mark their own players; the
    trade builder flags them wherever they appear. */
 const blockKey = () => "bromigos.block." + (ME || "anon");
+/* Entries are stored as "id~Name~POS". The name is the durable part: demo
+   rosters regenerate and ESPN ids change at the draft, but a name still
+   matches. Bare ids from older versions still load. */
+const entryId   = e => String(e).split("~")[0];
+const entryName = e => String(e).split("~")[1] || "";
+const entryPos  = e => String(e).split("~")[2] || "";
+const makeEntry = p => `${p.id}~${p.name}~${p.pos}`;
+
 function readBlock(){
   try { return new Set(JSON.parse(localStorage.getItem(blockKey()) || "[]")); }
   catch(e){ return new Set(); }
@@ -1578,7 +1598,12 @@ let BLOCK = null;
 const onBlock = id => isBlocked(id);
 function toggleBlock(id){
   BLOCK ||= readBlock();
-  BLOCK.has(id) ? BLOCK.delete(id) : BLOCK.add(id);
+  const existing = [...BLOCK].find(e => entryId(e) === id);
+  if(existing){ BLOCK.delete(existing); }
+  else {
+    const found = (ROSTERS || []).flatMap(t => t.players).find(p => p.id === id);
+    BLOCK.add(found ? makeEntry(found) : id);
+  }
   writeBlock(BLOCK);
 }
 
@@ -1586,7 +1611,7 @@ function toggleBlock(id){
 /* Paste the Apps Script web app URL here (ends in /exec) to turn the trade
    block into a league-wide list. Left blank, everything still works but each
    person only sees their own flags. */
-const BLOCK_URL = "https://script.google.com/macros/s/AKfycbwUD3dOiN-1c789CD6j-HZXVTXyjRKtZI1nFAEDAbeDaFeKS1vBmZiiUODIH_02Qz3gLA/exec";
+const BLOCK_URL = "https://script.google.com/macros/s/AKfycbz4NuWa3WpyE4gOT0s-iFktnO5Zz3GN_lrbfwV7XjO9YdJcdpMEx9dsRU7ca-J9iD3C/exec";
 
 let BLOCKS = {};          // manager -> Set of player ids, from the sheet
 let blockSyncState = BLOCK_URL ? "loading" : "off";
@@ -1651,7 +1676,7 @@ function pushBlock(){
     const seq = ++pushSeq;
     try {
       const url = BLOCK_URL + "?action=save&manager=" + encodeURIComponent(ME) +
-                  "&ids=" + encodeURIComponent([...BLOCK].join(","));
+                  "&ids=" + encodeURIComponent([...BLOCK].join("|"));
       const data = await jsonp(url);
       if(seq !== pushSeq) return;          // a newer save already went out
       absorbBlocks(data);
@@ -1666,10 +1691,10 @@ function pushBlock(){
 
 /* Whose flag is it: mine comes from this device, everyone else from the sheet. */
 function isBlocked(playerId, manager){
-  if(manager && manager !== ME) return !!(BLOCKS[manager] && BLOCKS[manager].has(playerId));
+  const hit = set => set && [...set].some(e => entryId(e) === playerId);
+  if(manager && manager !== ME) return hit(BLOCKS[manager]);
   BLOCK ||= readBlock();
-  if(BLOCK.has(playerId)) return true;
-  return !!(BLOCKS[ME] && BLOCKS[ME].has(playerId));
+  return hit(BLOCK) || hit(BLOCKS[ME]);
 }
 
 const blockStatusLine = () => {
@@ -1788,12 +1813,22 @@ function renderBlockPage(){
   Object.entries(BLOCKS).forEach(([man, ids]) => { merged[man] = new Set([...ids]); });
   if(ME) merged[ME] = new Set([...(merged[ME] || []), ...BLOCK]);
 
+  // name lookup so a listing survives an id change (demo reshuffle, or the draft)
+  const byName = {};
+  ROSTERS.forEach(t => t.players.forEach(p => {
+    byName[(p.name + "|" + p.pos).toLowerCase()] = { p, team: t };
+  }));
+
   const rows = [];
-  let unresolved = 0;
-  Object.entries(merged).forEach(([man, ids]) => {
-    ids.forEach(id => {
-      if(byId[id]) rows.push({ ...byId[id], listedBy: man });
-      else unresolved++;
+  Object.entries(merged).forEach(([man, entries]) => {
+    entries.forEach(e => {
+      const id = entryId(e), nm = entryName(e), ps = entryPos(e);
+      let hit = byId[id];
+      if(!hit && nm) hit = byName[(nm + "|" + ps).toLowerCase()];
+      if(hit) rows.push({ ...hit, listedBy: man, stale: false });
+      else if(nm) rows.push({ p:{ id, name:nm, pos:ps||"--", team:"", proj:0, bye:null },
+                              team:{ id:null, manager:man, teamName:"" },
+                              listedBy: man, stale: true });
     });
   });
 
@@ -1809,22 +1844,23 @@ function renderBlockPage(){
   el.innerHTML = demoBanner() +
     `<p class="note" style="margin:0 0 14px">${esc(blockStatusLine())}
       Flag your own players on the My Team tab.${
-      unresolved ? ` ${unresolved} listing${unresolved>1?"s":""} could not be matched to a current roster.` : ""}</p>` +
+      ""}</p>` +
     (rows.length
       ? order.map(man => {
-          const t = groups[man][0].team;
+          const t = groups[man].find(x => !x.stale)?.team || groups[man][0].team;
           const mine = man === ME;
           return `<h2>${esc(man)}${mine ? " (you)" : ""}</h2>
             <p class="note" style="margin:-4px 0 9px">${esc(t.teamName)}${
               mine ? "" : " \u00b7 tap anyone to start a trade"}</p>` +
-            groups[man].map(x => `<div class="plr ${mine?"":"tappable"}"
-                ${mine ? 'style="cursor:default"' : `data-goto="${x.p.id}" data-team="${x.team.id}"`}>
+            groups[man].map(x => `<div class="plr ${(mine||x.stale)?"":"tappable"} ${x.stale?"mute":""}"
+                ${(mine||x.stale) ? 'style="cursor:default"' : `data-goto="${x.p.id}" data-team="${x.team.id}"`}>
               <span class="slot">${myWeak.includes(x.p.pos) && !mine ? "\u2b50" : ""}</span>
               <span class="pos ${x.p.pos}">${x.p.pos}</span>
               <span class="who2"><b>${esc(x.p.name)}</b>
-                <span>${esc(x.p.team||"")}${x.p.bye?", bye "+x.p.bye:""}${
-                  myWeak.includes(x.p.pos) && !mine ? " \u00b7 fills your gap" : ""}</span></span>
-              <span class="pts">${x.p.proj.toFixed(1)}</span>
+                <span>${x.stale ? "listed on an older roster"
+                  : esc(x.p.team||"") + (x.p.bye?", bye "+x.p.bye:"") +
+                    (myWeak.includes(x.p.pos) && !mine ? " \u00b7 fills your gap" : "")}</span></span>
+              <span class="pts">${x.stale ? "" : x.p.proj.toFixed(1)}</span>
               <span class="tick">${mine ? "" : "\u203a"}</span></div>`).join("");
         }).join("")
       : `<div class="binderEmpty">Nobody has listed a player yet.

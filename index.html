@@ -288,17 +288,20 @@
   .consArt .sticker{max-height:100px}
 
   /* --- card body: rating block, angled cut, left rail, stat band --- */
-  .fut{position:relative;width:252px;height:352px;border-radius:8px;
+  .fut{position:relative;width:252px;height:352px;border-radius:6px;
     display:flex;flex-direction:column;overflow:hidden;
-    box-shadow:0 22px 55px rgba(0,0,0,.68), inset 0 0 0 1px rgba(255,255,255,.16),
-      inset 0 1px 0 rgba(255,255,255,.3)}
+    background:var(--base,#7B8289);color:var(--ink,#F3F6F9);
+    border:3px solid var(--edge,#9BA2AA);
+    box-shadow:0 22px 55px rgba(0,0,0,.68), inset 0 0 0 1px rgba(0,0,0,.30)}
   .fut .gloss{position:absolute;inset:0;pointer-events:none;z-index:3;
     background:
-      radial-gradient(120% 80% at 22% 8%, rgba(255,255,255,.26), transparent 58%),
-      linear-gradient(118deg,transparent 41%,rgba(255,255,255,.14) 48%,transparent 54%)}
-  .fut.matte .gloss{background:radial-gradient(120% 80% at 22% 8%,rgba(255,255,255,.08),transparent 60%)}
+      linear-gradient(118deg,transparent 38%,rgba(255,255,255,.13) 47%,transparent 55%),
+      radial-gradient(130% 70% at 20% 4%, rgba(255,255,255,.14), transparent 60%)}
+  .fut.matte .gloss{background:linear-gradient(118deg,transparent 40%,rgba(255,255,255,.05) 48%,transparent 56%)}
 
-  .futTop{position:relative;z-index:1;display:flex;align-items:stretch;min-height:78px}
+  .futTop{position:relative;z-index:1;display:flex;align-items:stretch;min-height:78px;
+    background:linear-gradient(101deg,transparent 44%,var(--wedge,rgba(0,0,0,.2)) 44%);
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.22)}
   .futL{position:relative;padding:14px 12px 12px 15px;min-width:100px;
     background:rgba(255,255,255,.13);
     clip-path:polygon(0 0,100% 0,78% 100%,0 100%)}
@@ -331,10 +334,12 @@
     font-variant-numeric:tabular-nums}
 
   .futStats{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1px 1fr;
-    background:rgba(0,0,0,.46);border-top:1px solid rgba(255,255,255,.14);padding:9px 8px 10px}
-  .futStats .div{background:rgba(255,255,255,.14);margin:2px 0}
-  .futCol{display:flex;flex-direction:column;gap:2px}
-  .futCell{display:flex;align-items:baseline;gap:7px;padding:3px 7px}
+    background:var(--bar,rgba(0,0,0,.4));border-top:1px solid rgba(0,0,0,.30);
+    padding:7px 6px 8px}
+  .futStats .div{background:rgba(0,0,0,.26);margin:2px 0}
+  .futCol{display:flex;flex-direction:column;gap:1px}
+  .futCell{display:flex;align-items:baseline;gap:7px;padding:4px 7px;border-radius:2px}
+  .futCell:nth-child(even){background:rgba(0,0,0,.13)}
   .futCell b{font:800 14.5px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
     min-width:44px;text-align:right}
   .futCell span{font:700 9px/1 system-ui,sans-serif;letter-spacing:.07em;opacity:.68}
@@ -407,21 +412,22 @@
   .rarityTag{margin-top:6px;text-align:center;font:700 8.5px/1 ui-monospace,Menlo,monospace;
     letter-spacing:.2em;text-transform:uppercase;opacity:.8;position:relative;z-index:1}
 
-  /* ---- tiers ---- */
-  .fut.bronzeC{background:#6B4A2A;background-image:linear-gradient(160deg,#8A6039,#4E3520 46%,#75512E);
-    color:#E8D5C2}
-  .fut.bronze{background:linear-gradient(160deg,#E0A868,#7A4A22 46%,#C98A4B);color:#FFF3E4}
-  .fut.silverC{background:#7C848D;background-image:linear-gradient(160deg,#98A0A9,#5C646D 46%,#848C95);
-    color:#EDF1F5}
-  .fut.silver{background:linear-gradient(160deg,#F0F5FA,#9AA7B4 46%,#D8E1EA);color:#1F2833}
-  .fut.goldC{background:#8A6A24;background-image:linear-gradient(160deg,#C4A85E,#6E5418 46%,#A98E3F);
-    color:#372A06}
-  .fut.gold{background:linear-gradient(160deg,#FBE293,#B08423 46%,#EDCB6E);color:#392A05}
-  .fut.totw{background:linear-gradient(163deg,#2E2E2E 0%,#080808 46%,#1F1F1F 100%);
-    color:#F0C75E;border:1px solid rgba(240,199,94,.55)}
-  .fut.blue{background:linear-gradient(160deg,#84D6FF,#1B5C8A 46%,#5CB6EA);color:#05202D}
-  .fut.orange{background:linear-gradient(160deg,#FFB35F,#B24A08 46%,#F18C34);color:#2C1303}
-  .fut.purple{background:linear-gradient(160deg,#C89DFF,#4B2A86 46%,#A478E9);color:#1C0E33}
+  /* ---- tiers, FIFA 12 recipe ----
+     Each tier is a mostly flat colour block inside a lighter frame ring, with a
+     darker diagonal wedge behind the name and a banded stat block along the
+     bottom. Commons sit dark and muted, rares are brighter with more contrast
+     in the frame. Four variables carry it: the base fill, the frame, the text
+     ink and the stat bar wash. */
+  .fut.bronzeC{--base:#6B4726;--edge:#8A5E38;--ink:#F0E1CF;--bar:rgba(0,0,0,.42);--wedge:rgba(0,0,0,.22)}
+  .fut.bronze {--base:#8E5B2C;--edge:#C68E52;--ink:#FFF2E1;--bar:rgba(0,0,0,.34);--wedge:rgba(0,0,0,.24)}
+  .fut.silverC{--base:#7B8289;--edge:#9BA2AA;--ink:#F3F6F9;--bar:rgba(0,0,0,.38);--wedge:rgba(0,0,0,.18)}
+  .fut.silver {--base:#B2BCC6;--edge:#E2E9F0;--ink:#1C242E;--bar:rgba(0,0,0,.24);--wedge:rgba(0,0,0,.15)}
+  .fut.goldC  {--base:#997A2D;--edge:#C4A254;--ink:#2D2205;--bar:rgba(0,0,0,.38);--wedge:rgba(0,0,0,.18)}
+  .fut.gold   {--base:#D6B14E;--edge:#F6E098;--ink:#332604;--bar:rgba(0,0,0,.27);--wedge:rgba(0,0,0,.17)}
+  .fut.totw   {--base:#111111;--edge:#E7C46A;--ink:#F0C75E;--bar:rgba(255,255,255,.07);--wedge:rgba(231,196,106,.13)}
+  .fut.blue   {--base:#12649F;--edge:#6ABBE9;--ink:#EBF7FF;--bar:rgba(0,0,0,.30);--wedge:rgba(0,0,0,.22)}
+  .fut.orange {--base:#C2560B;--edge:#F79B45;--ink:#FFF0E2;--bar:rgba(0,0,0,.30);--wedge:rgba(0,0,0,.22)}
+  .fut.purple {--base:#523090;--edge:#A67CE0;--ink:#F4EBFF;--bar:rgba(0,0,0,.30);--wedge:rgba(0,0,0,.22)}
 
   .cons.common{background:linear-gradient(160deg,#8E97A1,#5A636D 46%,#79828C);color:#F4F7FA}
   .cons.common .consTab{background:linear-gradient(160deg,#C3CBD3,#8A939D)}
@@ -1887,7 +1893,7 @@ function renderWirePro(){
   };
   rows.sort(sorters[wireSort] || sorters.fit);
 
-  const POSES = [["ALL","Everyone"],["FLEX","Flex"],["QB","QB"],["RB","RB"],
+  const POSES = [["ALL","All"],["FLEX","Flex"],["QB","QB"],["RB","RB"],
                  ["WR","WR"],["TE","TE"],["K","K"],["DST","D/ST"]];
   const SORTS = [["fit","Best fit"],["proj","Projection"],["trend","Trending"],
                  ["own","Least rostered"],["snaps","Snap share"]];
@@ -2563,8 +2569,8 @@ function saveToBinder(cards, week){
 }
 
 var TIER_RANK = { totw:6, goldC:4.5, purple:6, orange:6, blue:6, gold:5, silver:4, silverC:3, bronze:2, bronzeC:1 };
-var TIER_NAME = { totw:"Team of the week", gold:"Gold", goldC:"Gold common", silver:"Silver",
-  silverC:"Silver common", bronze:"Bronze", bronzeC:"Bronze common",
+var TIER_NAME = { totw:"Team of the week", gold:"Gold rare", goldC:"Gold common",
+  silver:"Silver rare", silverC:"Silver common", bronze:"Bronze rare", bronzeC:"Bronze common",
   blue:"Milestone", orange:"Milestone", purple:"Milestone" };
 
 /* The binder shows the same card art as the pack, scaled to fit the grid.
@@ -2605,24 +2611,39 @@ function seedBinderSamples(){
   if(!PREVIEW || !ME) return;   // fixtures only, never seeded for the league
   if(readBinder().length) return;
   const wk = w => ({ manager: ME, ...w });
+  /* Full stat lines on purpose. A real week always carries rank, bench, record,
+     top starter and projection, so the samples have to as well or the grid
+     looks broken when it is only the fixtures that are thin. */
   const weeks = [
     [1, wk({myScore:151.8,oppScore:118.2,opponent:"Andy",leagueHigh:true,
+      rank:1,bench:38.4,record:"1-0",high:34.2,projected:121.6,
       awards:[{title:"Scoring Machine",stat:"151.8 points",rare:true,
+        reason:"Highest score in the league, 151.8",
         desc:"Most points in the league. Everyone else played for second."}]})],
     [2, wk({myScore:142.0,oppScore:104.8,opponent:"Bo",
+      rank:2,bench:44.1,record:"2-0",high:29.8,projected:118.9,
       awards:[{title:"Blowout King",stat:"Won by 37.2",rare:true,
+        reason:"Biggest winning margin, 37.2",
         desc:"Biggest margin of the week. Over by noon."}]})],
     [3, wk({myScore:118.9,oppScore:114.2,opponent:"Austin",
+      rank:4,bench:51.7,record:"3-0",high:26.4,projected:112.3,
       awards:[{title:"Sunday Scaries",stat:"Won by 4.7",rare:false,
+        reason:"Closest win of the week, 4.7",
         desc:"Thin enough to ruin your evening anyway."}]})],
     [4, wk({myScore:117.4,oppScore:122.0,opponent:"Cody",
+      rank:6,bench:33.9,record:"3-1",high:24.1,projected:120.8,
       awards:[{title:"Heartbreaker",stat:"Lost by 4.6",rare:false,
+        reason:"Closest loss of the week, 4.6",
         desc:"Beaten by less than a garbage time score."}]})],
     [5, wk({myScore:109.2,oppScore:124.6,opponent:"Ryan",
+      rank:8,bench:150.5,record:"3-2",high:22.7,projected:114.0,
       awards:[{title:"Bench Champion",stat:"41.3 wasted",good:false,
+        reason:"Bench outscored the starters by 41.3",
         desc:"Your bench would have won it. You did not play them."}]})],
     [6, wk({myScore:78.4,oppScore:139.1,opponent:"Justin",leagueLow:true,
+      rank:10,bench:29.6,record:"3-3",high:19.3,projected:108.7,
       awards:[{title:"Walking Disaster",stat:"78.4 points",good:false,
+        reason:"Lowest score in the league, 78.4",
         desc:"Lowest score in the league. Not close either."}]})]
   ];
   weeks.forEach(([n, w]) => saveToBinder(buildWeekCards(w, n), n));
@@ -2930,7 +2951,16 @@ const PACK = (function(){
     const hold = fireFlares(t);
     await wait(Math.max(hold - 220, 260));
 
-    // 3. it turns over
+    // 3. the walkout beat. FIFA 17's real tell was not the flare itself, it was
+    //    the pause: on a big pull the light swelled and everything stopped for a
+    //    moment before the card turned. Only the top tiers get it, so the beat
+    //    itself is information rather than decoration.
+    if(t.bl >= 0.68){
+      back.style.setProperty("--blA", Math.min(1, Number(t.bl) + 0.22));
+      await wait(430);
+    }
+
+    // 4. it turns over
     flip.classList.remove("rise");
     flip.style.opacity = "1";
     void flip.offsetWidth;
@@ -3106,7 +3136,7 @@ if(PREVIEW){
     "Silver rare: tight win": {...base,myScore:118.9,oppScore:114.2,opponent:"Austin",
       rank:5,bench:15.2,record:"1-0",high:24.8,projected:117.0,
       awards:[{title:"Sunday Scaries",desc:"Won by a margin thin enough to ruin your evening anyway.",stat:"Won by 4.7",rare:false,emoji:"\u{1F630}"}]},
-    "Gold rare: moderate win": {...base,myScore:131.6,oppScore:113.1,opponent:"Andy",
+    "Gold common: moderate win": {...base,myScore:131.6,oppScore:113.1,opponent:"Andy",
       rank:3,bench:16.7,record:"1-0",high:28.9,projected:121.8,
       awards:[{title:"Comfortable",desc:"Never really in danger. Boring, effective, deeply annoying.",stat:"Won by 18.5",rare:true}]},
     "Gold rare: blowout win": {...base,myScore:142.0,oppScore:104.8,opponent:"Bo",
@@ -3153,27 +3183,8 @@ function applyHash(){
 }
 window.addEventListener("hashchange", applyHash);
 
-/* swipe left and right to move between visible tabs */
-(function swipeTabs(){
-  let x0 = null, y0 = null;
-  document.addEventListener("touchstart", e => {
-    if(e.touches.length !== 1) return;
-    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
-  }, {passive:true});
-  document.addEventListener("touchend", e => {
-    if(x0 === null) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - x0, dy = t.clientY - y0;
-    x0 = null;
-    if(Math.abs(dx) < 60 || Math.abs(dy) > 48) return;      // ignore scrolls
-    if(document.querySelector(".packwrap.on")) return;      // not during a pack
-    const tabs = [...document.querySelectorAll("nav button")]
-      .filter(b => b.style.display !== "none");
-    const i = tabs.findIndex(b => b.getAttribute("aria-selected") === "true");
-    const next = tabs[i + (dx < 0 ? 1 : -1)];
-    if(next) next.click();
-  }, {passive:true});
-})();
+/* Navigation is the pill row only. Swiping was removed: it fought the
+   horizontal scroll of the pill strip and the card grids. */
 
 document.querySelectorAll("nav button").forEach(b=>{
   b.onclick=()=>{

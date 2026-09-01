@@ -124,59 +124,91 @@ const WEEK = {
   ok("and puts the score in the big-number slot", () => /futL"><b>78\.4<\/b>/.test(mh));
 }
 
-/* ---------- stale sample fixtures replace themselves ---------- */
+/* ---------- fixtures from ANY earlier build get swept ----------
+   The shape that matters is the untagged one. Entries written before fixtures
+   carried a demo flag have no flag at all, so every "is this stale" test
+   against the entry itself answers no and they survive forever. This is the
+   case that shipped broken twice. */
 {
-  const { sandbox: S, setVar } =
+  const { sandbox: S, byId, setVar } =
     boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
   setVar("ME", '"Scotty"');
 
-  /* what an older build left behind: fixtures with a thin card and an old seed */
-  S.saveToBinder(S.buildWeekCards({ manager:"Scotty", myScore:78.4, oppScore:139.1,
-    opponent:"Justin", leagueLow:true, awards:[] }, 6), 6, true);
-  const stale = S.readBinder().map(c => ({ ...c, seed: 1 }));
-  S.localStorage.setItem("bromigos.binder.v2.Scotty", JSON.stringify(stale));
-  ok("stale fixtures are present to begin with", () => [S.readBinder().length === 1,
-    S.readBinder().length]);
+  const untagged = [{
+    key:"6:match:Scotty", week:6, type:"match", tier:"bronzeC", title:"Scotty",
+    rate:"78.4", pos:"LOSS", art:"chair", sub:"lost to Justin", ts:1,
+    card:{ type:"match", tier:"bronzeC", mine:"78.4", pos:"LOSS", title:"Scotty",
+           vs:"lost to Justin", wk:"W6", club:"Scotty", art:"chair",
+           theirs:"139.1", oppName:"Justin",
+           stats:[["\u221260.7","MRG"],["\u2014","RNK"],["\u2014","BEN"],
+                  ["\u2014","REC"],["\u2014","TOP"],["\u2014","PRJ"]] }
+  }];
+  S.localStorage.setItem("bromigos.binder.v2.Scotty", JSON.stringify(untagged));
+  ok("the stored entry really has no demo flag", () =>
+    S.readBinder()[0].demo === undefined);
 
   S.renderBinder();
   const after = S.readBinder();
-  ok("stale fixtures are cleared and reseeded", () => [after.length > 1, after.length]);
-  ok("every fixture now carries the current seed", () =>
-    after.filter(c => c.demo).every(c => c.seed === S.SEED_VERSION || c.seed === 2));
-  ok("reseeded result cards carry a full stat line", () => {
-    const m = after.find(c => c.type === "match");
-    const html = S.miniCard(m);
-    return [(html.match(/futCell/g) || []).length === 6 && html.indexOf("RNK") >= 0
-            && !/<b>&mdash;<\/b>/.test(html), (html.match(/futCell/g) || []).length];
+  ok("untagged fixtures are swept and reseeded", () => [after.length === 12, after.length]);
+  ok("reseeded cards carry a full stat line", () => {
+    const html = S.miniCard(after.find(c => c.type === "match"));
+    const stats = html.split("futStats")[1] || "";
+    return [!/\u2014/.test(stats) && /RNK/.test(stats) && /PRJ/.test(stats),
+            (html.match(/futCell/g) || []).length];
   });
-  ok("and real values, not dashes", () => {
-    const m = after.find(c => c.type === "match");
-    return !/\u2014/.test(S.miniCard(m).split("futStats")[1] || "");
-  });
+  ok("the seed marker is written so the sweep runs once", () =>
+    [S.localStorage.getItem("bromigos.binderSeed.Scotty") === String(S.SEED_VERSION || 3),
+     S.localStorage.getItem("bromigos.binderSeed.Scotty")]);
+
+  const count = S.readBinder().length;
+  S.renderBinder();
+  ok("a second render does not re-sweep", () => [S.readBinder().length === count,
+    S.readBinder().length]);
 }
 
-/* ---------- a real collection is never touched by that cleanup ---------- */
+/* ---------- a real collection survives the sweep ---------- */
 {
   const { sandbox: S, setVar } =
     boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
   setVar("ME", '"Scotty"');
 
-  S.saveToBinder(S.buildWeekCards(WEEK, 4), 4);          // a real pull, no demo flag
+  S.saveToBinder(S.buildWeekCards(WEEK, 4), 4);          // real pull, demo false
   const real = S.readBinder();
-  ok("the real pull is stored untagged", () => real.every(c => c.demo === false));
+  ok("a real pull is stored with demo false, not undefined", () =>
+    [real.every(c => c.demo === false), JSON.stringify(real.map(c => c.demo))]);
 
-  /* drop a stale fixture in beside it */
+  /* drop an untagged fixture in beside it, no marker set */
   S.localStorage.setItem("bromigos.binder.v2.Scotty", JSON.stringify(
     real.concat([{ key:"9:match:old", week:9, type:"match", tier:"bronze",
-                   title:"Scotty", rate:"1.0", demo:true, seed:1, ts:1 }])));
+                   title:"Scotty", rate:"1.0", ts:1 }])));
 
   S.renderBinder();
   const after = S.readBinder();
-  ok("the stale fixture is gone", () => !after.some(c => c.key === "9:match:old"));
-  ok("every real card survived", () => [real.every(r => after.some(a => a.key === r.key)),
-    after.map(c => c.key).join(",")]);
-  ok("and nothing was reseeded over the top of them", () =>
+  ok("the untagged fixture is gone", () => !after.some(c => c.key === "9:match:old"));
+  ok("every real card survived", () =>
+    [real.every(r => after.some(a => a.key === r.key)), after.map(c => c.key).join(",")]);
+  ok("nothing was reseeded over the top of them", () =>
     [!after.some(c => c.demo), after.filter(c => c.demo).length]);
+}
+
+/* ---------- the rebuild control is commissioner only ---------- */
+{
+  const { sandbox: S, byId, setVar } =
+    boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
+  setVar("ME", '"Scotty"');
+  S.renderBinder();
+  ok("rebuild control shows under ?pack=1", () =>
+    /data-bs="reset"/.test(byId("binderBody").innerHTML));
+}
+{
+  const { sandbox: S, byId, setVar } =
+    boot({ search: "", now: AFTER_PACKS, storage: true });
+  setVar("ME", '"Scotty"');
+  S.renderBinder();
+  ok("rebuild control is hidden on the public link", () =>
+    !/data-bs="reset"/.test(byId("binderBody").innerHTML));
+  ok("and no fixtures are seeded there either", () => [S.readBinder().length === 0,
+    S.readBinder().length]);
 }
 
 /* ---------- the storage key is versioned ---------- */

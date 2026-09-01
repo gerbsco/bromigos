@@ -142,6 +142,40 @@
   .yrbox .y{display:block;font:600 9px/1 ui-monospace,Menlo,monospace;color:var(--faint)}
   .yrbox .p{display:block;margin-top:3px;font:800 13px/1 ui-monospace,Menlo,monospace;color:var(--chalk)}
 
+  .hhpick{display:flex;gap:8px;align-items:center;margin-bottom:11px}
+  .hhpick select{flex:1;min-width:0}
+  .hhvs{flex:none;font:700 11px/1 system-ui,sans-serif;color:var(--faint);letter-spacing:.12em}
+  .hhbug{background:var(--ink-2);border-radius:4px;padding:18px 12px;margin-bottom:11px;
+    border-left:3px solid var(--brass);display:flex;align-items:center;gap:8px}
+  .hhs{flex:1;min-width:0;text-align:center}
+  .hhs b{display:block;font:800 15px/1.2 system-ui,sans-serif;color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hhs i{display:block;margin-top:8px;font:800 38px/1 ui-monospace,Menlo,monospace;
+    font-style:normal;color:var(--faint);font-variant-numeric:tabular-nums}
+  .hhs.lead i{color:var(--brass)}
+  .hhres{font:800 12px/1 ui-monospace,Menlo,monospace}
+  .hhres.w{color:#8FD9B4}
+  .hhres.l{color:#E39A92}
+  .hhres.t{color:var(--faint)}
+  tr.hhsel td{background:rgba(217,162,39,.09)}
+  .hhmore{margin:4px 0 14px}
+  .hhmore summary{cursor:pointer;list-style:none;padding:11px 0;
+    font:600 13px/1 system-ui,sans-serif;color:var(--brass)}
+  .hhmore summary::-webkit-details-marker{display:none}
+  .hhmore summary::before{content:"\25B8";display:inline-block;margin-right:7px;
+    transition:transform .15s}
+  .hhmore[open] summary::before{transform:rotate(90deg)}
+  .hhmx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .hhmx table{min-width:500px;margin-bottom:0}
+  .hhmx th{text-align:center;padding:0 3px 8px;font:700 10px/1 ui-monospace,Menlo,monospace}
+  .hhmx td{text-align:center;padding:8px 3px;
+    font:600 12px/1 ui-monospace,Menlo,monospace}
+  .hhmx .rowh{text-align:left;position:sticky;left:0;background:var(--ink);
+    min-width:62px;font:700 12px/1 system-ui,sans-serif;color:var(--chalk)}
+  .hhmx td.self{color:var(--faint)}
+  .hhmx td.good{color:#8FD9B4}
+  .hhmx td.bad{color:#E39A92}
+
   .locked{border:1px dashed #354E66;border-radius:4px;padding:26px 18px;text-align:center;
     background:rgba(255,255,255,.02)}
   .locked .ic{font-size:26px;margin-bottom:11px}
@@ -684,9 +718,13 @@
   </section>
   <section class="panel" id="wire"><div id="wireBody"></div></section>
 
-  </div>
-
   <section class="panel" id="history">
+    <div class="subnav" id="histNav" style="display:none">
+      <button class="cbtn" aria-pressed="true" data-hv="owners">Owners</button>
+      <button class="cbtn" aria-pressed="false" data-hv="h2h">Head to head</button>
+    </div>
+
+    <div id="ownersBody">
     <h2>Owners</h2>
     <div id="dossiers"></div>
     <div class="card">
@@ -710,6 +748,9 @@
     </table>
     <p class="note">Seven completed seasons. 2019 and 2020 ran 13 games; every year since has run 14.</p>
     <div id="seasons"></div>
+    </div>
+
+    <div id="h2hBody" style="display:none"></div>
   </section>
 
   <section class="panel" id="rules">
@@ -759,7 +800,45 @@
 </div>
 
 <script>
-const PREVIEW = new URLSearchParams(location.search).has("pack");
+/* ---------- visibility gates ----------
+   Three phases. ?pack=1 forces everything on so the commissioner can test.
+
+     always      HQ, Rules, History owners, countdown, the lock cards
+     at draft    My Team, Trades, Wire, trade block, head to head
+     week 1 tue  Binder, and the weekly pack that drops on login
+
+   liveDraft unlocks on either signal: ESPN reporting the draft is done, or the
+   clock passing draft time. Either alone is enough, so a failed league.json
+   cannot keep the league locked out mid-season. If the draft ever moves, edit
+   DRAFT_AT below and the countdown follows it too.
+
+   livePacks is purely a date. Packs are a Tuesday-morning event, not something
+   that should fire the moment a stat corrects. */
+const PREVIEW  = new URLSearchParams(location.search).has("pack");
+const DRAFT_AT = new Date("2026-09-06T21:00:00Z").getTime();   // Sun Sept 6, 5:00 PM ET
+const PACKS_AT = new Date("2026-09-15T13:00:00Z").getTime();   // Tue Sept 15, 9:00 AM ET
+
+function liveDraft(){
+  if(PREVIEW) return true;
+  if(Date.now() >= DRAFT_AT) return true;
+  try {
+    return !!(LIVE && LIVE.settings && LIVE.settings.draftDetail
+              && LIVE.settings.draftDetail.drafted);
+  } catch(e){ return false; }
+}
+function livePacks(){ return PREVIEW || Date.now() >= PACKS_AT; }
+
+/* Tabs follow the gates. Called from renderAll, so the My Team tab can appear
+   the moment live data confirms the draft without a page reload. */
+function paintTabs(){
+  const show = (id, on) => {
+    const el = document.getElementById(id);
+    if(el) el.style.display = on ? "" : "none";
+  };
+  show("teamTab",   liveDraft());
+  show("binderTab", livePacks());
+  show("demoTab",   PREVIEW);      // the pack test bench stays commissioner-only
+}
 
 const SEASONS = {
 "2025": [
@@ -879,6 +958,7 @@ CURRENT.slice().sort().forEach(m => {
 sel.onchange = () => { ME = sel.value;
   try { localStorage.setItem("bromigos.me", ME); } catch(e){}
   tradePartner = null; giveSel = new Set(); getSel = new Set(); BLOCK = null;
+  h2hA = ""; h2hB = "";
   renderAll(); };
 
 /* ---------- history ---------- */
@@ -1116,7 +1196,7 @@ function standingsTable(limit){
 
 function renderSnapshot(){
   const el = document.getElementById("snapshot");
-  if(!PREVIEW){ el.innerHTML = ""; return; }
+  if(!liveDraft()){ el.innerHTML = ""; return; }
   if(!ROSTERS) loadRosterModel();
   SEASON = buildSeason();
   let html = "";
@@ -1151,9 +1231,10 @@ function paintTradeNav(){
   const body = document.getElementById("tradeBody");
   const block = document.getElementById("blockBody");
   if(!nav || !body || !block) return;
-  nav.style.display = PREVIEW ? "flex" : "none";
-  body.style.display  = (!PREVIEW || tradeView === "build") ? "" : "none";
-  block.style.display = (PREVIEW && tradeView === "block") ? "" : "none";
+  const on = liveDraft();
+  nav.style.display = on ? "flex" : "none";
+  body.style.display  = (!on || tradeView === "build") ? "" : "none";
+  block.style.display = (on && tradeView === "block") ? "" : "none";
   nav.querySelectorAll("[data-tv]").forEach(b => {
     b.setAttribute("aria-pressed", String(b.dataset.tv === tradeView));
     b.onclick = () => { tradeView = b.dataset.tv; paintTradeNav(); };
@@ -1162,7 +1243,7 @@ function paintTradeNav(){
 
 function renderTrade(){
   paintTradeNav();
-  if(PREVIEW){ try{ return renderTradePro(); }
+  if(liveDraft()){ try{ return renderTradePro(); }
     catch(e){ console.warn("[bromigos] trade module:", e && e.message); } }
   document.getElementById("tradeBody").innerHTML = drafted()
     ? lock("Trade builder coming online", "Rosters are in. Ships in the next update.")
@@ -1170,7 +1251,7 @@ function renderTrade(){
         "Drag-and-drop builder that recalculates both lineups as you go, plus ranked surplus-for-need matches across all nine other teams.");
 }
 function renderWire(){
-  if(PREVIEW){ try{ return renderWirePro(); }
+  if(liveDraft()){ try{ return renderWirePro(); }
     catch(e){ console.warn("[bromigos] wire module:", e && e.message); } }
   const n = (LIVE && LIVE.freeAgents && LIVE.freeAgents.length) || 0;
   document.getElementById("wireBody").innerHTML = n
@@ -1179,9 +1260,236 @@ function renderWire(){
         "The free-agent pool pulls nightly once we draft. Your board gets filtered to the holes on your roster.");
 }
 
+/* ================= HEAD TO HEAD ================= */
+/* data/h2h.json is built by scripts/h2h.mjs and refreshed by the nightly job.
+   { seasons:[], managers:[], games:[[season, week, A, aPts, B, bPts, tier]] }
+   tier: 0 regular season, 1 playoffs, 2 consolation. */
+
+let H2H = null;
+let histView = "owners";
+let h2hA = "", h2hB = "", h2hTier = "all";
+
+const TIERNAME = ["", "playoffs", "consolation"];
+
+function h2hPool(){
+  const g = (H2H && Array.isArray(H2H.games)) ? H2H.games : [];
+  return h2hTier === "reg" ? g.filter(x => x[6] === 0) : g;
+}
+function h2hManagers(){
+  const s = new Set();
+  const g = (H2H && Array.isArray(H2H.games)) ? H2H.games : [];
+  g.forEach(x => { s.add(x[2]); s.add(x[4]); });
+  return [...s].sort();
+}
+
+/* every pairing in one pass: "A|B" holds the series from A's side */
+function h2hIndex(){
+  const ix = {};
+  const bump = (a, b, mine, theirs) => {
+    const k = a + "|" + b;
+    const r = ix[k] || (ix[k] = {w:0,l:0,t:0,pf:0,pa:0,n:0});
+    r.pf += mine; r.pa += theirs; r.n++;
+    if(mine > theirs) r.w++; else if(mine < theirs) r.l++; else r.t++;
+  };
+  h2hPool().forEach(g => { bump(g[2],g[4],g[3],g[5]); bump(g[4],g[2],g[5],g[3]); });
+  return ix;
+}
+
+/* one pairing with the full game log, from A's side */
+function h2hSeries(a, b){
+  const out = {w:0,l:0,t:0,pf:0,pa:0,games:[]};
+  h2hPool().forEach(g => {
+    let mine, theirs;
+    if(g[2] === a && g[4] === b){ mine = g[3]; theirs = g[5]; }
+    else if(g[4] === a && g[2] === b){ mine = g[5]; theirs = g[3]; }
+    else return;
+    out.pf += mine; out.pa += theirs;
+    if(mine > theirs) out.w++; else if(mine < theirs) out.l++; else out.t++;
+    out.games.push({season:g[0], week:g[1], mine, theirs, tier:g[6]});
+  });
+  out.games.sort((x,y) => (x.season - y.season) || (x.week - y.week));
+  return out;
+}
+
+function h2hStreak(games){
+  if(!games.length) return "None yet";
+  const last = games[games.length - 1];
+  if(last.mine === last.theirs) return "Last one tied";
+  const won = last.mine > last.theirs;
+  let n = 0;
+  for(let i = games.length - 1; i >= 0; i--){
+    const g = games[i];
+    if(g.mine === g.theirs) break;
+    if((g.mine > g.theirs) !== won) break;
+    n++;
+  }
+  if(n === 1) return won ? "Won the last one" : "Lost the last one";
+  return (won ? "Won " : "Lost ") + n + " straight";
+}
+
+/* whoever they have played most, so the default pairing is never a stranger */
+function h2hTopRival(a, mgrs, ix){
+  let best = null, n = -1;
+  mgrs.forEach(m => {
+    if(m === a) return;
+    const r = ix[a + "|" + m];
+    if(r && r.n > n){ n = r.n; best = m; }
+  });
+  return best || mgrs.find(m => m !== a) || a;
+}
+
+function paintHistoryNav(){
+  const nav = document.getElementById("histNav");
+  const own = document.getElementById("ownersBody");
+  const h2h = document.getElementById("h2hBody");
+  if(!nav || !own || !h2h) return;
+  const on = liveDraft();
+  nav.style.display = on ? "flex" : "none";
+  own.style.display = (!on || histView === "owners") ? "" : "none";
+  h2h.style.display = (on && histView === "h2h") ? "" : "none";
+  nav.querySelectorAll("[data-hv]").forEach(b => {
+    b.setAttribute("aria-pressed", String(b.dataset.hv === histView));
+    b.onclick = () => { histView = b.dataset.hv; paintHistoryNav(); };
+  });
+}
+
+function renderH2H(){
+  const el = document.getElementById("h2hBody");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+
+  const mgrs = h2hManagers();
+  if(!mgrs.length){
+    el.innerHTML = `<h2>Head to Head</h2>` + lock("No matchup file yet",
+      "data/h2h.json has not been built. Run <b>node scripts/h2h.mjs</b> or wait for the nightly job. "
+      + "Every meeting since 2019 shows up here once the file lands.");
+    return;
+  }
+
+  const ix = h2hIndex();
+  if(mgrs.indexOf(h2hA) < 0) h2hA = (mgrs.indexOf(ME) >= 0) ? ME : mgrs[0];
+  if(mgrs.indexOf(h2hB) < 0 || h2hB === h2hA) h2hB = h2hTopRival(h2hA, mgrs, ix);
+
+  const s = h2hSeries(h2hA, h2hB);
+  const opt = cur => mgrs.map(m => `<option value="${esc(m)}"${m === cur ? " selected" : ""}>`
+    + `${esc(m)}${CURRENT.indexOf(m) < 0 ? " (former)" : ""}</option>`).join("");
+
+  let html = `<h2>Head to Head</h2>
+    <div class="hhpick">
+      <select id="h2hSelA" aria-label="First manager">${opt(h2hA)}</select>
+      <span class="hhvs">VS</span>
+      <select id="h2hSelB" aria-label="Second manager">${opt(h2hB)}</select>
+    </div>
+    <div class="subnav">
+      <button class="cbtn" data-ht="all" aria-pressed="${h2hTier === "all"}">All games</button>
+      <button class="cbtn" data-ht="reg" aria-pressed="${h2hTier === "reg"}">Regular season</button>
+    </div>`;
+
+  if(!s.games.length){
+    html += `<div class="card"><h3>Never met</h3><p>${esc(h2hA)} and ${esc(h2hB)} have not played
+      each other under this filter. Try switching back to all games.</p></div>`;
+  } else {
+    let bigW = null, bigL = null, close = null, po = 0;
+    s.games.forEach(g => {
+      const d = g.mine - g.theirs;
+      if(d > 0 && (!bigW || d > bigW.mine - bigW.theirs)) bigW = g;
+      if(d < 0 && (!bigL || d < bigL.mine - bigL.theirs)) bigL = g;
+      if(!close || Math.abs(d) < Math.abs(close.mine - close.theirs)) close = g;
+      if(g.tier === 1) po++;
+    });
+    const n = s.games.length;
+    const marg = g => f1(Math.abs(g.mine - g.theirs)) + " in " + g.season;
+
+    html += `<div class="hhbug">
+      <div class="hhs${s.w > s.l ? " lead" : ""}"><b>${esc(h2hA)}</b><i>${s.w}</i></div>
+      <div class="hhvs">VS</div>
+      <div class="hhs${s.l > s.w ? " lead" : ""}"><b>${esc(h2hB)}</b><i>${s.l}</i></div>
+    </div>
+    <div class="rules">
+      <div class="rule"><div class="k">Meetings</div><div class="v">${n}${s.t ? ", " + s.t + " tied" : ""}</div></div>
+      <div class="rule"><div class="k">Average score</div><div class="v">${f1(s.pf/n)} to ${f1(s.pa/n)}</div></div>
+      <div class="rule"><div class="k">Streak for ${esc(h2hA)}</div><div class="v">${h2hStreak(s.games)}</div></div>
+      <div class="rule"><div class="k">Playoff meetings</div><div class="v">${po || "None"}</div></div>
+      <div class="rule"><div class="k">Best win</div><div class="v">${bigW ? "by " + marg(bigW) : "None"}</div></div>
+      <div class="rule"><div class="k">Worst loss</div><div class="v">${bigL ? "by " + marg(bigL) : "None"}</div></div>
+      <div class="rule"><div class="k">Closest game</div><div class="v">${close ? "by " + marg(close) : "&mdash;"}</div></div>
+      <div class="rule"><div class="k">Total points</div><div class="v">${fmt(s.pf)} to ${fmt(s.pa)}</div></div>
+    </div>
+    <details class="hhmore"><summary>Every meeting, ${n} games</summary>
+      <table><thead><tr><th>Season</th><th class="n">Wk</th>
+        <th class="n">${esc(h2hA)}</th><th class="n">${esc(h2hB)}</th><th class="n"></th></tr></thead>
+      <tbody>${s.games.slice().reverse().map(g => {
+        const r = g.mine > g.theirs ? "w" : (g.mine < g.theirs ? "l" : "t");
+        return `<tr><td>${g.season}${g.tier ? `<span class="who">${TIERNAME[g.tier]}</span>` : ""}</td>
+          <td class="n">${g.week}</td><td class="n">${f1(g.mine)}</td><td class="n">${f1(g.theirs)}</td>
+          <td class="n"><span class="hhres ${r}">${r.toUpperCase()}</span></td></tr>`;
+      }).join("")}</tbody></table></details>`;
+  }
+
+  /* how the first manager fares against the whole league */
+  const rows = mgrs.filter(m => m !== h2hA)
+    .map(m => ({ m, r: ix[h2hA + "|" + m] }))
+    .filter(x => x.r && x.r.n)
+    .sort((a, b) => (b.r.w - b.r.l) - (a.r.w - a.r.l) || (b.r.pf - b.r.pa) - (a.r.pf - a.r.pa));
+
+  const solid = rows.filter(x => x.r.n >= 3);
+  if(solid.length >= 2){
+    const top = solid[0], bot = solid[solid.length - 1];
+    html += `<div class="card gold"><h3>${esc(h2hA)} around the league</h3>
+      <p><b>Favourite opponent:</b> ${esc(top.m)}, ${top.r.w}-${top.r.l}<br>
+      <b>Personal problem:</b> ${esc(bot.m)}, ${bot.r.w}-${bot.r.l}</p></div>`;
+  }
+
+  html += `<h2>${esc(h2hA)} vs everyone</h2>
+    <table><thead><tr><th>Opponent</th><th class="n">Record</th><th class="n">Pts diff</th></tr></thead>
+    <tbody>${rows.map(x => {
+      const d = x.r.pf - x.r.pa;
+      return `<tr class="${x.m === h2hB ? "hhsel" : ""}"><td>${esc(x.m)}
+        <span class="who">${x.r.n} game${x.r.n > 1 ? "s" : ""}</span></td>
+        <td class="n">${x.r.w}-${x.r.l}${x.r.t ? "-" + x.r.t : ""}</td>
+        <td class="n">${d >= 0 ? "+" : "&minus;"}${fmt(Math.abs(d))}</td></tr>`;
+    }).join("")}</tbody></table>`;
+
+  /* full grid, current managers only so it stays readable on a phone */
+  const grid = CURRENT.filter(m => mgrs.indexOf(m) >= 0);
+  const abbr = m => m.slice(0, 3).toUpperCase();
+  html += `<details class="hhmore"><summary>Full grid, everyone vs everyone</summary>
+    <div class="hhmx"><table>
+    <thead><tr><th class="rowh"></th>${grid.map(m => `<th>${abbr(m)}</th>`).join("")}</tr></thead>
+    <tbody>${grid.map(r => `<tr><td class="rowh">${esc(r)}</td>${grid.map(c => {
+      if(c === r) return `<td class="self">&middot;</td>`;
+      const v = ix[r + "|" + c];
+      if(!v) return `<td class="self">&ndash;</td>`;
+      return `<td class="${v.w > v.l ? "good" : (v.w < v.l ? "bad" : "")}">${v.w}-${v.l}</td>`;
+    }).join("")}</tr>`).join("")}</tbody></table></div>
+    <p class="note">Read across: each row is that manager's record against the column.</p></details>
+    <p class="note">${(H2H.seasons || []).length} seasons on file, ${(H2H.games || []).length} games.
+      Playoff and consolation games are included unless you filter to regular season.</p>`;
+
+  el.innerHTML = html;
+
+  const sa = document.getElementById("h2hSelA");
+  const sb = document.getElementById("h2hSelB");
+  if(sa) sa.onchange = () => {
+    const v = sa.value;
+    if(v === h2hB) h2hB = h2hA;      // swap rather than collide
+    h2hA = v; renderH2H();
+  };
+  if(sb) sb.onchange = () => {
+    const v = sb.value;
+    if(v === h2hA) h2hA = h2hB;
+    h2hB = v; renderH2H();
+  };
+  el.querySelectorAll("[data-ht]").forEach(b => {
+    b.onclick = () => { h2hTier = b.dataset.ht; renderH2H(); };
+  });
+}
+
 function renderAll(){
+  paintTabs();
   renderLedger(); renderDossiers(); renderRecap(); renderDraft();
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
+  try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
   try{ renderBlockPage(); }catch(e){ console.warn("[bromigos] block:", e && e.message); }
   try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }
@@ -1715,7 +2023,7 @@ function absorbBlocks(data){
 }
 
 async function pullBlocks(){
-  if(!BLOCK_URL || !PREVIEW) return;
+  if(!BLOCK_URL || !liveDraft()) return;
   try {
     absorbBlocks(await jsonp(BLOCK_URL));
   } catch(err){
@@ -1727,7 +2035,7 @@ async function pullBlocks(){
 
 /* Repaint through the gated renderers so nothing preview-only leaks out. */
 function refreshBlockViews(){
-  try { if(PREVIEW){ renderTeamPage(); renderBlockPage(); renderTrade(); } } catch(e){}
+  try { if(liveDraft()){ renderTeamPage(); renderBlockPage(); renderTrade(); } } catch(e){}
 }
 
 let pushTimer = null, pushSeq = 0;
@@ -1735,7 +2043,7 @@ let pushTimer = null, pushSeq = 0;
    that is no longer the newest request. */
 function pushBlock(){
   BLOCK ||= readBlock();
-  if(!BLOCK_URL || !ME || !PREVIEW) return;
+  if(!BLOCK_URL || !ME || !liveDraft()) return;
   blockSyncState = "saving";
   refreshBlockViews();
   clearTimeout(pushTimer);
@@ -1794,7 +2102,7 @@ const GRADE_WHY = {
 function renderTeamPage(){
   const el = document.getElementById("teamBody");
   if(!el) return;
-  if(!PREVIEW){ el.innerHTML = ""; return; }
+  if(!liveDraft()){ el.innerHTML = ""; return; }
   if(!ROSTERS) loadRosterModel();
   const me = myTeam();
   if(!me){ el.innerHTML = lock("Pick your team","Choose your name at the top."); return; }
@@ -2134,7 +2442,7 @@ function renderSwap(){
 function renderBlockPage(){
   const el = document.getElementById("blockBody");
   if(!el) return;
-  if(!PREVIEW){ el.innerHTML = ""; return; }
+  if(!liveDraft()){ el.innerHTML = ""; return; }
   if(!ROSTERS) loadRosterModel();
   BLOCK ||= readBlock();
 
@@ -2275,7 +2583,7 @@ let binderSort = "week";
 /* Fills the binder with one card per tier so the grid can be judged before
    any real weeks exist. Preview only, and it never overwrites real pulls. */
 function seedBinderSamples(){
-  if(!PREVIEW || !ME) return;
+  if(!PREVIEW || !ME) return;   // fixtures only, never seeded for the league
   if(readBinder().length) return;
   const wk = w => ({ manager: ME, ...w });
   const weeks = [
@@ -2304,7 +2612,7 @@ function seedBinderSamples(){
 function renderBinder(){
   const el = document.getElementById("binderBody");
   if(!el) return;
-  if(!PREVIEW){ el.innerHTML = ""; return; }
+  if(!livePacks()){ el.innerHTML = ""; return; }
   try { seedBinderSamples(); } catch(e){ console.warn("[bromigos] samples:", e && e.message); }
   if(!ME){
     el.innerHTML = `<div class="binderEmpty">Pick your name at the top and your cards will show up here.</div>`;
@@ -2760,6 +3068,7 @@ function buildWeekCards(w, wk){
 }
 
 function maybeAutoPack(){
+  if(!livePacks()) return;
   if(!ME || !WEEKLY || !WEEKLY.week) return;
   let off=false, seen=null;
   try{ off=localStorage.getItem("bromigos.noanim")==="1";
@@ -2773,12 +3082,8 @@ function maybeAutoPack(){
   PACK.open("Week "+WEEKLY.week, cards);
 }
 
-if(new URLSearchParams(location.search).has("pack")){
-  // reveal the preview-only tabs; skip any that no longer exist
-  ["demoTab","binderTab","teamTab"].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.style.display = "";
-  });
+if(PREVIEW){
+  // tab visibility is handled by paintTabs(); this block is just the fixtures
   const base = {manager:"Scotty"};
   const S = {
     "Bronze common: blowout loss": {...base,myScore:96.1,oppScore:138.7,opponent:"Dawson",
@@ -2874,7 +3179,7 @@ document.querySelectorAll("nav button").forEach(b=>{
 });
 applyHash();
 
-const DRAFT=new Date("2026-09-06T21:00:00Z").getTime();
+const DRAFT=DRAFT_AT;
 const DEADLINE=new Date("2026-12-02T17:00:00Z").getTime();
 function tick(){
   const now=Date.now();
@@ -2912,9 +3217,9 @@ try{ pullBlocks(); }catch(e){ console.warn("[bromigos] block sync:", e && e.mess
       return Promise.resolve(null);
     }
   };
-  Promise.all([grab("data/league.json"), grab("data/weekly.json")])
-    .then(([lg, wk]) => {
-      LIVE = lg; WEEKLY = wk;
+  Promise.all([grab("data/league.json"), grab("data/weekly.json"), grab("data/h2h.json")])
+    .then(([lg, wk, hh]) => {
+      LIVE = lg; WEEKLY = wk; H2H = hh;
       const f = document.getElementById("freshness");
       const chip = document.getElementById("freshTop");
       if(lg && lg.fetchedAt){

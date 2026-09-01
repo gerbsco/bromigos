@@ -124,6 +124,61 @@ const WEEK = {
   ok("and puts the score in the big-number slot", () => /futL"><b>78\.4<\/b>/.test(mh));
 }
 
+/* ---------- stale sample fixtures replace themselves ---------- */
+{
+  const { sandbox: S, setVar } =
+    boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
+  setVar("ME", '"Scotty"');
+
+  /* what an older build left behind: fixtures with a thin card and an old seed */
+  S.saveToBinder(S.buildWeekCards({ manager:"Scotty", myScore:78.4, oppScore:139.1,
+    opponent:"Justin", leagueLow:true, awards:[] }, 6), 6, true);
+  const stale = S.readBinder().map(c => ({ ...c, seed: 1 }));
+  S.localStorage.setItem("bromigos.binder.v2.Scotty", JSON.stringify(stale));
+  ok("stale fixtures are present to begin with", () => [S.readBinder().length === 1,
+    S.readBinder().length]);
+
+  S.renderBinder();
+  const after = S.readBinder();
+  ok("stale fixtures are cleared and reseeded", () => [after.length > 1, after.length]);
+  ok("every fixture now carries the current seed", () =>
+    after.filter(c => c.demo).every(c => c.seed === S.SEED_VERSION || c.seed === 2));
+  ok("reseeded result cards carry a full stat line", () => {
+    const m = after.find(c => c.type === "match");
+    const html = S.miniCard(m);
+    return [(html.match(/futCell/g) || []).length === 6 && html.indexOf("RNK") >= 0
+            && !/<b>&mdash;<\/b>/.test(html), (html.match(/futCell/g) || []).length];
+  });
+  ok("and real values, not dashes", () => {
+    const m = after.find(c => c.type === "match");
+    return !/\u2014/.test(S.miniCard(m).split("futStats")[1] || "");
+  });
+}
+
+/* ---------- a real collection is never touched by that cleanup ---------- */
+{
+  const { sandbox: S, setVar } =
+    boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
+  setVar("ME", '"Scotty"');
+
+  S.saveToBinder(S.buildWeekCards(WEEK, 4), 4);          // a real pull, no demo flag
+  const real = S.readBinder();
+  ok("the real pull is stored untagged", () => real.every(c => c.demo === false));
+
+  /* drop a stale fixture in beside it */
+  S.localStorage.setItem("bromigos.binder.v2.Scotty", JSON.stringify(
+    real.concat([{ key:"9:match:old", week:9, type:"match", tier:"bronze",
+                   title:"Scotty", rate:"1.0", demo:true, seed:1, ts:1 }])));
+
+  S.renderBinder();
+  const after = S.readBinder();
+  ok("the stale fixture is gone", () => !after.some(c => c.key === "9:match:old"));
+  ok("every real card survived", () => [real.every(r => after.some(a => a.key === r.key)),
+    after.map(c => c.key).join(",")]);
+  ok("and nothing was reseeded over the top of them", () =>
+    [!after.some(c => c.demo), after.filter(c => c.demo).length]);
+}
+
 /* ---------- the storage key is versioned ---------- */
 {
   const { sandbox: S, setVar } =

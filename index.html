@@ -2537,9 +2537,12 @@ function renderBlockPage(){
    were never saved. Bumped before packs went live, so nothing real is lost. */
 const binderKey = () => "bromigos.binder.v2." + (ME || "anon");
 
-/* Bump when the sample fixtures change shape. Only entries tagged demo are
-   ever rewritten, so a real collection is never touched by this. */
-const SEED_VERSION = 2;
+/* Bump when the sample fixtures change shape. A marker is kept next to the
+   binder rather than inferred from the entries, because entries written before
+   tagging existed carry no flag at all and any "is this stale" test against
+   them silently answers no. Only explicit real pulls survive the sweep. */
+const SEED_VERSION = 3;
+const seedKey = () => "bromigos.binderSeed." + (ME || "anon");
 
 function readBinder(){
   try { return JSON.parse(localStorage.getItem(binderKey()) || "[]"); }
@@ -2620,13 +2623,17 @@ let binderSort = "week";
 function seedBinderSamples(){
   if(!PREVIEW || !ME) return;   // fixtures only, never seeded for the league
 
-  /* Fixtures written by an older build are stale the moment their shape
-     changes, and bailing on a non-empty binder meant they survived forever.
-     Drop the old ones first. Real pulls carry no demo flag, so they stay. */
+  /* Fixtures go stale the moment their shape changes, and bailing on a
+     non-empty binder meant they survived forever. Sweep on the marker, and keep
+     only cards explicitly written as real pulls. Anything else here is a
+     fixture from some earlier build, tagged or not. */
   let have = readBinder();
-  if(have.some(c => c.demo && c.seed !== SEED_VERSION)){
-    have = have.filter(c => !c.demo);
+  let mark = 0;
+  try { mark = Number(localStorage.getItem(seedKey()) || 0); } catch(e){}
+  if(mark !== SEED_VERSION){
+    have = have.filter(c => c.demo === false);
     writeBinder(have);
+    try { localStorage.setItem(seedKey(), String(SEED_VERSION)); } catch(e){}
   }
   if(have.length) return;
   const wk = w => ({ manager: ME, ...w });
@@ -2668,6 +2675,15 @@ function seedBinderSamples(){
   weeks.forEach(([n, w]) => saveToBinder(buildWeekCards(w, n), n, true));
 }
 
+/* Commissioner escape hatch. Clears fixtures and rebuilds them, never touching
+   a card that was pulled for real. */
+function resetBinderSamples(){
+  if(!PREVIEW || !ME) return;
+  writeBinder(readBinder().filter(c => c.demo === false));
+  try { localStorage.removeItem(seedKey()); } catch(e){}
+  renderBinder();
+}
+
 function renderBinder(){
   const el = document.getElementById("binderBody");
   if(!el) return;
@@ -2681,13 +2697,17 @@ function renderBinder(){
   const controls = `<div class="binderCtl">
       <button class="cbtn" aria-pressed="${binderSort==="week"}" data-bs="week">By week</button>
       <button class="cbtn" aria-pressed="${binderSort==="rarity"}" data-bs="rarity">By rarity</button>
+      ${PREVIEW ? `<button class="cbtn" data-bs="reset">Rebuild samples</button>` : ""}
     </div>`;
 
   if(!cards.length){
     el.innerHTML = controls + `<div class="binderEmpty">
       Nothing collected yet. Every card you pull on a Tuesday lands here and stays for the season,
       so you can scroll back through the good weeks and the bad ones.</div>`;
-    el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => { binderSort = b.dataset.bs; renderBinder(); });
+    el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => {
+      if(b.dataset.bs === "reset") return resetBinderSamples();
+      binderSort = b.dataset.bs; renderBinder();
+    });
     return;
   }
 
@@ -2715,7 +2735,10 @@ function renderBinder(){
     order.map(g => `<h2>${esc(g)}</h2><div class="bgrid">` +
       groups[g].map(c => miniCard(c)).join("") + `</div>`).join("");
 
-  el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => { binderSort = b.dataset.bs; renderBinder(); });
+  el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => {
+    if(b.dataset.bs === "reset") return resetBinderSamples();
+    binderSort = b.dataset.bs; renderBinder();
+  });
   sizeMinis(el);
 }
 

@@ -2537,11 +2537,19 @@ function renderBlockPage(){
    were never saved. Bumped before packs went live, so nothing real is lost. */
 const binderKey = () => "bromigos.binder.v2." + (ME || "anon");
 
+/* Bump when the sample fixtures change shape. Only entries tagged demo are
+   ever rewritten, so a real collection is never touched by this. */
+const SEED_VERSION = 2;
+
 function readBinder(){
   try { return JSON.parse(localStorage.getItem(binderKey()) || "[]"); }
   catch(e){ return []; }
 }
-function saveToBinder(cards, week){
+function writeBinder(list){
+  try { localStorage.setItem(binderKey(), JSON.stringify(list)); }
+  catch(e){ /* private browsing, nothing to do */ }
+}
+function saveToBinder(cards, week, demo){
   if(!ME || !week) return;
   try {
     const have = readBinder();
@@ -2561,6 +2569,8 @@ function saveToBinder(cards, week){
         art: c.art || "",
         sub: c.vs || c.desc || "",
         reason: c.reason || "",
+        demo: !!demo,
+        seed: demo ? SEED_VERSION : 0,
         ts: Date.now()
       });
     });
@@ -2609,7 +2619,16 @@ let binderSort = "week";
    any real weeks exist. Preview only, and it never overwrites real pulls. */
 function seedBinderSamples(){
   if(!PREVIEW || !ME) return;   // fixtures only, never seeded for the league
-  if(readBinder().length) return;
+
+  /* Fixtures written by an older build are stale the moment their shape
+     changes, and bailing on a non-empty binder meant they survived forever.
+     Drop the old ones first. Real pulls carry no demo flag, so they stay. */
+  let have = readBinder();
+  if(have.some(c => c.demo && c.seed !== SEED_VERSION)){
+    have = have.filter(c => !c.demo);
+    writeBinder(have);
+  }
+  if(have.length) return;
   const wk = w => ({ manager: ME, ...w });
   /* Full stat lines on purpose. A real week always carries rank, bench, record,
      top starter and projection, so the samples have to as well or the grid
@@ -2646,7 +2665,7 @@ function seedBinderSamples(){
         reason:"Lowest score in the league, 78.4",
         desc:"Lowest score in the league. Not close either."}]})]
   ];
-  weeks.forEach(([n, w]) => saveToBinder(buildWeekCards(w, n), n));
+  weeks.forEach(([n, w]) => saveToBinder(buildWeekCards(w, n), n, true));
 }
 
 function renderBinder(){

@@ -52,7 +52,7 @@ function mkEl(id, tag){
   };
 }
 
-export function boot({ search = "?pack=1", now = null } = {}){
+export function boot({ search = "?pack=1", now = null, storage = false } = {}){
   const REG = new Map();
   const byId = id => {
     if(!REAL_IDS.has(id)) return null;          // the important part
@@ -96,7 +96,12 @@ export function boot({ search = "?pack=1", now = null } = {}){
               matchMedia: () => ({ matches:false, addEventListener(){} }) },
     location: { search, hash: "", href: "https://x/" },
     history: { replaceState(){}, pushState(){} },
-    localStorage: { getItem: () => null, setItem(){}, removeItem(){} },
+    localStorage: storage
+      ? (() => { const m = new Map(); return {
+          getItem: k => (m.has(k) ? m.get(k) : null),
+          setItem: (k, v) => { m.set(k, String(v)); },
+          removeItem: k => { m.delete(k); }, _map: m }; })()
+      : { getItem: () => null, setItem(){}, removeItem(){} },
     navigator: { userAgent: "node" },
     console: { log(){}, warn: (...a) => warnings.push(a.join(" ")),
                error: (...a) => warnings.push(a.join(" ")) },

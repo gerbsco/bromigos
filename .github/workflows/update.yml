@@ -35,14 +35,23 @@ jobs:
         continue-on-error: true
         run: node scripts/h2h.mjs
 
+      # Weekly packs and superlatives for the most recently completed week.
+      # Publishes nothing until every game in a week is final, which lands it
+      # on Tuesday morning. Also allowed to fail on its own.
+      - name: Build weekly packs
+        continue-on-error: true
+        run: node scripts/weekly.mjs
+
       # Warning only, on purpose. A red test should be visible, but it must not
       # block the nightly data. Check the Actions tab if this step goes yellow.
       - name: Run tests
         continue-on-error: true
         run: |
           node test/build.test.mjs
+          node test/weekly.test.mjs
           node test/phases.test.mjs
           node test/h2h.test.mjs
+          node test/binder.test.mjs
           node test/gate.test.mjs
 
       - name: Commit if anything changed
@@ -52,6 +61,9 @@ jobs:
           git add data/league.json
           if [ -f data/h2h.json ]; then
             git add data/h2h.json
+          fi
+          if [ -f data/weekly.json ]; then
+            git add data/weekly.json
           fi
           if git diff --staged --quiet; then
             echo "No changes."

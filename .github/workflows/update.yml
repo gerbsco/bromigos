@@ -27,11 +27,32 @@ jobs:
       - name: Fetch league data from ESPN
         run: node scripts/fetch.js
 
+      # Head-to-head history, every meeting since 2019. Allowed to fail on its
+      # own so a bad ESPN response here can never stop league.json from landing.
+      # The script leaves the existing file alone rather than writing an empty
+      # one, and skips the write entirely when nothing has changed.
+      - name: Build head-to-head history
+        continue-on-error: true
+        run: node scripts/h2h.mjs
+
+      # Warning only, on purpose. A red test should be visible, but it must not
+      # block the nightly data. Check the Actions tab if this step goes yellow.
+      - name: Run tests
+        continue-on-error: true
+        run: |
+          node test/build.test.mjs
+          node test/phases.test.mjs
+          node test/h2h.test.mjs
+          node test/gate.test.mjs
+
       - name: Commit if anything changed
         run: |
           git config user.name "bromigos-bot"
           git config user.email "actions@github.com"
           git add data/league.json
+          if [ -f data/h2h.json ]; then
+            git add data/h2h.json
+          fi
           if git diff --staged --quiet; then
             echo "No changes."
           else

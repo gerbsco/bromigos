@@ -47,6 +47,9 @@ ok("all-time ledger still renders", () => byId("tall").innerHTML.indexOf("Scotty
 ok("owner dossiers still render", () => byId("dossiers").innerHTML.indexOf("Dawson") >= 0);
 ok("champions strip still renders", () => byId("champs").innerHTML.indexOf("2025") >= 0);
 ok("season tables still render", () => byId("seasons").innerHTML.indexOf("Final Standings") >= 0);
+S.renderRecords();
+ok("records stay locked before the draft", () => ["" === byId("recordsBody").innerHTML,
+  byId("recordsBody").innerHTML.slice(0, 40)]);
 
 warnings.length = 0;
 ok("renderAll survives", () => { S.renderAll(); return true; });

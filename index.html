@@ -825,7 +825,11 @@
    that should fire the moment a stat corrects. */
 const PREVIEW  = new URLSearchParams(location.search).has("pack");
 const DRAFT_AT = new Date("2026-09-06T21:00:00Z").getTime();   // Sun Sept 6, 5:00 PM ET
-const PACKS_AT = new Date("2026-09-15T13:00:00Z").getTime();   // Tue Sept 15, 9:00 AM ET
+/* The nightly job runs 11:00 UTC and takes a couple of minutes to build and
+   deploy. Opening the gate at 12:00 UTC means the data is always there by the
+   time the gate lifts, with no window where the recap has updated but the pack
+   refuses to fire. */
+const PACKS_AT = new Date("2026-09-15T12:00:00Z").getTime();   // Tue Sept 15, 8:00 AM ET
 
 function liveDraft(){
   if(PREVIEW) return true;
@@ -968,7 +972,10 @@ sel.onchange = () => { ME = sel.value;
   try { localStorage.setItem("bromigos.me", ME); } catch(e){}
   tradePartner = null; giveSel = new Set(); getSel = new Set(); BLOCK = null;
   h2hA = ""; h2hB = "";
-  renderAll(); };
+  renderAll();
+  /* Someone picking their name for the first time on a Tuesday should get their
+     pack there and then, not on whatever reload happens to come next. */
+  try { maybeAutoPack(); } catch(e){ console.warn("[bromigos] pack:", e && e.message); } };
 
 /* ---------- history ---------- */
 const led = {};
@@ -1252,6 +1259,8 @@ function paintTradeNav(){
 
 function renderTrade(){
   paintTradeNav();
+  const tb = document.getElementById("tradeBody");
+  if(tb && rostersPending()){ tb.innerHTML = pendingCard(); return; }
   if(liveDraft()){ try{ return renderTradePro(); }
     catch(e){ console.warn("[bromigos] trade module:", e && e.message); } }
   document.getElementById("tradeBody").innerHTML = drafted()
@@ -1260,6 +1269,8 @@ function renderTrade(){
         "Drag-and-drop builder that recalculates both lineups as you go, plus ranked surplus-for-need matches across all nine other teams.");
 }
 function renderWire(){
+  const wb = document.getElementById("wireBody");
+  if(wb && rostersPending()){ wb.innerHTML = pendingCard(); return; }
   if(liveDraft()){ try{ return renderWirePro(); }
     catch(e){ console.warn("[bromigos] wire module:", e && e.message); } }
   const n = (LIVE && LIVE.freeAgents && LIVE.freeAgents.length) || 0;
@@ -1724,10 +1735,15 @@ function demoFreeAgents(){
 let ROSTERS = null, FREEAGENTS = null, IS_DEMO = false;
 let tradePartner = null, giveSel = new Set(), getSel = new Set();
 
+/* Demo rosters exist so the trade builder and pack can be exercised before the
+   draft. They must never reach the league: invented players on the public link
+   read as a broken site, and after the draft unlocks there is a window where
+   league.json has not refreshed yet. Outside preview, empty beats invented. */
 function loadRosterModel(){
   const live = normalizeLive();
   if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
-  else { ROSTERS = demoRosters(); IS_DEMO = true; }
+  else if(PREVIEW){ ROSTERS = demoRosters(); IS_DEMO = true; }
+  else { ROSTERS = []; IS_DEMO = false; }
   const faLive = (LIVE && LIVE.freeAgents) || null;
   FREEAGENTS = (faLive && faLive.length) ? faLive.map(p => ({
     id:String(p.id), name:p.player?.fullName || "Unknown",
@@ -1792,6 +1808,14 @@ function rosterBlock(team, sel, side){
       : `<p class="note">Nobody on the bench.</p>`) +
     sectHead("Kicker and defense") + s.tail.map(line).join("");
 }
+
+/* True once the draft has unlocked the tabs but ESPN rosters have not landed in
+   data/league.json yet. Roughly the Sunday night of the draft until the next
+   nightly pull, unless the job is run by hand. */
+const rostersPending = () => liveDraft() && !PREVIEW && !(ROSTERS && ROSTERS.length);
+const pendingCard = () => lock("Rosters are syncing",
+  "The draft is done. Rosters come across on the next pull from ESPN, usually by 7am ET. "
+  + "Lineups, trades and the wire all fill in then.");
 
 const demoBanner = () => IS_DEMO
   ? `<div class="demoban"><b>Demo data.</b> Invented players and made-up projections so the
@@ -2133,6 +2157,7 @@ function renderTeamPage(){
   const el = document.getElementById("teamBody");
   if(!el) return;
   if(!liveDraft()){ el.innerHTML = ""; return; }
+  if(rostersPending()){ el.innerHTML = pendingCard(); return; }
   if(!ROSTERS) loadRosterModel();
   const me = myTeam();
   if(!me){ el.innerHTML = lock("Pick your team","Choose your name at the top."); return; }
@@ -2473,6 +2498,7 @@ function renderBlockPage(){
   const el = document.getElementById("blockBody");
   if(!el) return;
   if(!liveDraft()){ el.innerHTML = ""; return; }
+  if(rostersPending()){ el.innerHTML = pendingCard(); return; }
   if(!ROSTERS) loadRosterModel();
   BLOCK ||= readBlock();
 
@@ -3171,13 +3197,16 @@ function buildWeekCards(w, wk){
 function maybeAutoPack(){
   if(!livePacks()) return;
   if(!ME || !WEEKLY || !WEEKLY.week) return;
+  /* Keyed per manager. A shared phone, or anyone who switches their name,
+     would otherwise have the second person's pack suppressed by the first. */
+  const seenKey = "bromigos.seenWeek." + ME;
   let off=false, seen=null;
   try{ off=localStorage.getItem("bromigos.noanim")==="1";
-       seen=localStorage.getItem("bromigos.seenWeek"); }catch(e){}
+       seen=localStorage.getItem(seenKey); }catch(e){}
   if(off || String(seen)===String(WEEKLY.week)) return;
   const mine=(WEEKLY.packs||{})[ME];
   if(!mine) return;
-  try{ localStorage.setItem("bromigos.seenWeek",String(WEEKLY.week)); }catch(e){}
+  try{ localStorage.setItem(seenKey,String(WEEKLY.week)); }catch(e){}
   const cards = buildWeekCards(mine, WEEKLY.week);
   saveToBinder(cards, WEEKLY.week);
   PACK.open("Week "+WEEKLY.week, cards);

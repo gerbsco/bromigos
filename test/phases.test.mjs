@@ -228,5 +228,57 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
     [order.join(",") === "home,team,trades,league,cards", order.join(",")]);
 }
 
+/* ---------- next opponent card ---------- */
+{
+  const LIVE_JSON = JSON.stringify({
+    settings:{ draftDetail:{ drafted:true } },
+    teams:{ members:[{id:"{A}",firstName:"Scott"},{id:"{B}",firstName:"Andrew"}],
+      teams:[{id:1,owners:["{A}"],name:"Ultimo",logo:""},
+             {id:2,owners:["{B}"],name:"Dawg",logo:"https://x/d.png"}]},
+    matchups:{ schedule:[
+      {matchupPeriodId:1,winner:"HOME",home:{teamId:1},away:{teamId:2}},
+      {matchupPeriodId:2,winner:"UNDECIDED",home:{teamId:2},away:{teamId:1}}]}});
+  const H2H_JSON = JSON.stringify({ seasons:[2019,2024], managers:["Scotty","Dawson"], games:[
+    [2019,1,"Scotty",120.0,"Andrew",100.0,0],
+    [2021,4,"Dawson",140.0,"Scotty",99.0,0],
+    [2024,7,"Scotty",131.0,"Dawson",128.5,0]]});
+
+  const { sandbox: S, byId, setVar } = boot({ search:"", now:"2026-09-16T12:00:00Z" });
+  setVar("ME", '"Scotty"'); setVar("LIVE", LIVE_JSON); setVar("H2H", H2H_JSON);
+  S.renderNextUp();
+  const h = () => byId("nextup").innerHTML;
+
+  ok("next opponent is the unplayed matchup", () => [/Week 2/.test(h()), h().slice(0,60)]);
+  ok("opponent resolves through the alias table", () => /Dawson/.test(h()) && !/Andrew/.test(h()));
+  ok("their badge is shown", () => /x\/d\.png/.test(h()));
+  ok("lifetime record is right", () => [/<b>2-1<\/b>/.test(h()), h().match(/<b>[^<]*<\/b>/)]);
+  ok("the streak reads from the last meeting", () => /Won the last one/.test(h()));
+  ok("recent meetings are listed newest first", () => {
+    const yrs = [...h().matchAll(/<i>(\d{4})<\/i>/g)].map(m => m[1]);
+    return [yrs.join(",") === "2024,2021,2019", yrs.join(",")];
+  });
+  ok("wins and losses are coloured apart", () =>
+    /nxg w/.test(h()) && /nxg l/.test(h()));
+
+  /* a pairing with no history must still render */
+  setVar("H2H", JSON.stringify({ seasons:[2019], managers:["Scotty"], games:[
+    [2019,1,"Scotty",120.0,"Bo",100.0,0]] }));
+  S.renderNextUp();
+  ok("a first meeting is handled", () => /never played Dawson/.test(h()));
+
+  /* nothing left to play */
+  setVar("LIVE", JSON.stringify({ settings:{ draftDetail:{ drafted:true } },
+    teams:{ members:[{id:"{A}",firstName:"Scott"}], teams:[{id:1,owners:["{A}"],name:"U"}]},
+    matchups:{ schedule:[{matchupPeriodId:1,winner:"HOME",home:{teamId:1},away:{teamId:2}}]}}));
+  S.renderNextUp();
+  ok("season over shows nothing rather than a broken card", () => h() === "");
+}
+{
+  const { sandbox: S, byId, setVar } = boot({ search:"", now:"2026-09-01T12:00:00Z" });
+  setVar("ME", '"Scotty"');
+  S.renderNextUp();
+  ok("next opponent stays hidden before the draft", () => byId("nextup").innerHTML === "");
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

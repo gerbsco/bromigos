@@ -2787,16 +2787,38 @@ function renderBinder(){
     binderSort = b.dataset.bs; renderBinder();
   });
   sizeMinis(el);
+  watchMinis(el);
 }
 
 /* Cards are built at full size, so measure the cell and scale to fit. */
+/* A mini is a full 252px card scaled down, so the scale cannot be computed
+   until its container has a width. renderBinder runs from renderAll even while
+   the Binder tab is hidden, and a hidden element measures zero, so the old
+   `|| 126` fallback pinned every card at half size until some later repaint
+   happened to run while the tab was open. Skip zero instead of guessing, and
+   measure again the moment the panel is shown. */
 function sizeMinis(el){
   (el || document).querySelectorAll(".minscale").forEach(box => {
-    const w = box.clientWidth || 126;
+    const w = box.clientWidth;
+    if(!w) return;                     // hidden, or not laid out yet
     box.style.setProperty("--mk", (w / 252).toFixed(4));
   });
 }
 window.addEventListener("resize", () => { try { sizeMinis(); } catch(e){} });
+
+/* Catches a hidden panel becoming visible, and any font or image load that
+   shifts the grid after first paint. */
+const miniRO = (typeof ResizeObserver === "function")
+  ? new ResizeObserver(list => list.forEach(e => {
+      const w = e.contentRect.width;
+      if(w) e.target.style.setProperty("--mk", (w / 252).toFixed(4));
+    }))
+  : null;
+
+function watchMinis(el){
+  if(!miniRO || !el) return;
+  el.querySelectorAll(".minscale").forEach(box => { try { miniRO.observe(box); } catch(e){} });
+}
 
 /* Card markup, shared by the pack and the binder so they can never drift. */
 function matchCardHTML(c){
@@ -3262,6 +3284,8 @@ function showTab(name, push){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
   btn.setAttribute("aria-selected","true");
   panel.classList.add("on");
+  /* now that it has a width, the minis can measure themselves */
+  try { sizeMinis(panel); } catch(e){}
   if(push && location.hash !== "#" + name){
     try { history.replaceState(null, "", "#" + name); } catch(e){}
   }

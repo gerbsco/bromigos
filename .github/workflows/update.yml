@@ -47,6 +47,7 @@ jobs:
       - name: Run tests
         continue-on-error: true
         run: |
+          node test/managers.test.mjs
           node test/build.test.mjs
           node test/weekly.test.mjs
           node test/phases.test.mjs

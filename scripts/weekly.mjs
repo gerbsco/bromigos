@@ -15,6 +15,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { ownerMap as ownersFor, rosterReport } from "./managers.mjs";
 
 const LEAGUE_ID = "24869044";
 const SEASON = "2026";
@@ -22,8 +23,6 @@ const OUT = "data/weekly.json";
 const ESPN = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/${SEASON}` +
              `/segments/0/leagues/${LEAGUE_ID}`;
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; BromigosBot/1.0)", "Accept": "*/*" };
-
-const ALIAS = { "Scott": "Scotty" };
 
 const BENCH_SLOTS = new Set([20, 21]);   // 20 bench, 21 IR
 
@@ -127,18 +126,13 @@ async function getJSON(url, extra = {}) {
   return res.json();
 }
 
+/* Name resolution is shared with h2h.mjs. Packs are keyed by manager name, so
+   if these two ever disagreed a manager would quietly get no pack. */
 function ownerMap(teamDoc) {
-  const names = {};
-  ((teamDoc && teamDoc.members) || []).forEach(m => {
-    const raw = (m.firstName || "").trim() || (m.displayName || "").trim();
-    names[m.id] = ALIAS[m.id] || ALIAS[raw] || raw;
-  });
-  const byTeam = {};
-  ((teamDoc && teamDoc.teams) || []).forEach(t => {
-    const guid = (t.owners || [])[0];
-    if (guid) byTeam[t.id] = names[guid] || "unknown:" + guid;
-  });
-  return byTeam;
+  const full = ownersFor(teamDoc);
+  const flat = {};
+  Object.keys(full).forEach(id => { flat[id] = full[id].name; });
+  return flat;
 }
 
 /* actual and projected points for one side of a matchup */
@@ -425,7 +419,8 @@ async function main() {
   console.log(prose.auto ? "     wrote a placeholder recap, replace it with a real one"
                          : "     kept the written recap");
 
-  console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(packs).length} managers)\n`);
+  console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(packs).length} managers)`);
+  rosterReport(new Map(Object.keys(packs).map(m => [m, packs[m].awards.length])));
   Object.values(packs).forEach(p => {
     console.log(`  ${p.manager.padEnd(10)} ${one(p.myScore).padStart(6)} vs ${
       one(p.oppScore).padStart(6)} ${p.opponent.padEnd(10)} ${p.awards[0].title}`);

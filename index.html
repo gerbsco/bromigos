@@ -144,13 +144,20 @@
   table{width:100%;border-collapse:collapse;margin-bottom:6px}
   th{text-align:left;padding:0 6px 10px;font:600 11px/1.3 system-ui,sans-serif;
     letter-spacing:.02em;color:var(--faint);border-bottom:1px solid rgba(234,226,207,.14)}
-  th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+  th.n,td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* Records like 11-3 were breaking across two lines because a long team name
+     squeezed the column. The name wraps now, the numbers do not. */
+  td:not(.n):not(.fin){overflow-wrap:anywhere}
   td{padding:11px 6px;font-size:14px;font-variant-numeric:tabular-nums;border-bottom:1px solid rgba(234,226,207,.08);color:#CBD6E0}
   td.n{font:600 13.5px/1.3 ui-monospace,Menlo,monospace}
   tr.champ td{background:rgba(217,162,39,.09)}
   tr.champ td:first-child{color:var(--brass);font-weight:700}
   tr.you td{background:rgba(76,175,125,.10)}
-  .pos{color:var(--faint);font:700 12px/1 ui-monospace,Menlo,monospace;width:26px}
+  /* Named .fin, not .pos. The player position badge further down also claims
+     .pos at the same specificity and wins, which turned this table cell into an
+     inline-flex box and knocked the finish column out of alignment. */
+  td.fin{color:var(--faint);font:700 12px/1 ui-monospace,Menlo,monospace;
+    width:30px;text-align:center;padding-left:0;padding-right:0}
   .who{display:block;font-size:11.5px;color:var(--faint);margin-top:2px}
 
   .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:9px}
@@ -717,6 +724,12 @@
   .swapr{text-align:right;font:700 12.5px/1 ui-monospace,Menlo,monospace;color:#C3D2DE;
     font-variant-numeric:tabular-nums}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
+  .pj{display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap}
+  .pj b{font:700 14px/1 ui-monospace,Menlo,monospace;color:var(--chalk)}
+  .pj i{font:600 10px/1 ui-monospace,Menlo,monospace;font-style:normal;color:var(--faint)}
+  .pj.split i{color:var(--brass)}
+  .srcline{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 0;
+    font:600 11px/1.4 ui-monospace,Menlo,monospace;color:var(--faint)}
   .nxcard{margin-top:16px}
   .nxwho{display:flex;align-items:center;gap:11px;margin:2px 0 10px}
   .nxcrest{width:38px;height:38px;flex:none;border-radius:6px;overflow:hidden;
@@ -1118,7 +1131,7 @@ document.getElementById("seasons").innerHTML = YEARS.map(y=>`
   <h2>${y} Final Standings</h2>
   <table><thead><tr><th></th><th>Team</th><th class="n">Rec</th><th class="n">PF</th><th class="n">PA</th></tr></thead>
   <tbody>${SEASONS[y].map((r,i)=>`<tr class="${r[5]===1?"champ":""}">
-    <td class="pos">${r[5]===1?"\u{1F3C6}":i+1}</td>
+    <td class="fin">${r[5]===1?"\u{1F3C6}":i+1}</td>
     <td>${esc(r[0])}<span class="who">${esc(r[1])}</span></td>
     <td class="n">${r[2]}</td><td class="n">${fmt(r[3])}</td><td class="n">${fmt(r[4])}</td>
   </tr>`).join("")}</tbody></table>`).join("");
@@ -1181,7 +1194,36 @@ function renderDraft(){
 }
 
 /* ---------- live state ---------- */
-let LIVE = null, WEEKLY = null;
+let LIVE = null, WEEKLY = null, PROJ = null;
+
+/* ---------- blended projections ----------
+   ESPN's number arrives with the roster. Sleeper's arrives in data/projections.json
+   keyed by ESPN player id. Blending is a plain mean; the spread between them is
+   kept because disagreement is the actually useful signal on a start/sit call.
+   A player only one source knows about still gets a number, marked single. */
+function projOf(p){
+  const espn = (p && typeof p.proj === "number" && p.proj > 0) ? p.proj : null;
+  const alt = (PROJ && PROJ.players && p) ? PROJ.players[String(p.id)] : null;
+  const has = [espn, (typeof alt === "number" && alt > 0) ? alt : null].filter(v => v !== null);
+  if(!has.length) return { blend: 0, spread: 0, n: 0, espn, alt: null };
+  const blend = has.reduce((a, b) => a + b, 0) / has.length;
+  return {
+    blend: Math.round(blend * 10) / 10,
+    spread: Math.round((Math.max(...has) - Math.min(...has)) * 10) / 10,
+    n: has.length, espn, alt: has.length > 1 ? alt : null
+  };
+}
+/* how far apart the sources are, relative to the number itself */
+function projDisagrees(v){ return v.n > 1 && v.spread >= Math.max(3, v.blend * 0.18); }
+
+function projChip(p){
+  const v = projOf(p);
+  if(!v.n) return "";
+  return `<span class="pj${projDisagrees(v) ? " split" : ""}">
+      <b>${v.blend.toFixed(1)}</b>${v.n > 1
+        ? `<i>&plusmn;${v.spread.toFixed(1)}</i>`
+        : `<i>espn only</i>`}</span>`;
+}
 const lock = (t,b) => `<div class="locked"><div class="ic">&#128274;</div><h3>${t}</h3><p>${b}</p></div>`;
 const drafted = () => !!(LIVE && LIVE.settings && LIVE.settings.draftDetail
   && LIVE.settings.draftDetail.drafted);
@@ -1817,8 +1859,12 @@ const SLOTS = [
 
 /* Greedy optimal-ish lineup. Fills the narrowest slots first so a lone TE
    is not wasted in the FLEX while the W/T sits empty. */
+/* Ranks on the blended number rather than ESPN alone, so every total, warning
+   and suggestion downstream inherits the second opinion without knowing about
+   it. Falls back to ESPN cleanly when projections.json has not loaded. */
 function bestLineup(players){
-  const pool = players.filter(p => !p.ir).slice().sort((a,b) => b.proj - a.proj);
+  const pool = players.filter(p => !p.ir).slice()
+    .sort((a,b) => projOf(b).blend - projOf(a).blend);
   const used = new Set();
   const filled = [];
   SLOTS.forEach(slot => {
@@ -1826,7 +1872,7 @@ function bestLineup(players){
     if(pick) used.add(pick.id);
     filled.push({ slot: slot.k, player: pick || null });
   });
-  const total = filled.reduce((s,f) => s + (f.player ? f.player.proj : 0), 0);
+  const total = filled.reduce((s,f) => s + (f.player ? projOf(f.player).blend : 0), 0);
   const bench = pool.filter(p => !used.has(p.id));
   return { filled, total, bench };
 }
@@ -2470,14 +2516,6 @@ function renderTeamPage(){
       ? `${me.players.filter(p=>p.injury).length} players carrying an injury tag right now.`
       : "Nothing hiding in the roster that the grades do not already show.");
 
-  const row = p => `<div class="plr ${onBlock(p.id)?"blocked":""}" data-block="${p.id}">
-      <span class="slot">${onBlock(p.id) ? "\u{1F4E4}" : ""}</span>
-      <span class="pos ${p.pos}">${p.pos}</span>
-      <span class="who2"><b>${esc(p.name)}</b>
-        <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}</span></span>
-      <span class="pts">${p.proj.toFixed(1)}</span>
-      <span class="tick">\u2713</span></div>`;
-
   el.innerHTML = demoBanner() +
     `<div class="teamHero">
       <div><div class="th-name">${esc(me.teamName)}</div>
@@ -2487,6 +2525,9 @@ function renderTeamPage(){
 
     <h2>This week</h2>
     ${renderMatchup(me)}
+
+    <h2>Suggested lineup</h2>
+    ${renderSuggested(me)}
 
     <h2>Start / sit check</h2>
     ${renderStartSit(me)}
@@ -2511,16 +2552,13 @@ function renderTeamPage(){
       <p>${weak.length ? `Watch ${weak.join(" and ")} on the wire before anything else.`
         : "Nothing urgent. Take the best available upside."}</p></div>
 
-    <h2>Trade block</h2>
-    <p class="note" style="margin:0 0 12px">Tap anyone to list them as available.
-      ${esc(blockStatusLine())}</p>
-    ${s.starters.filter(f=>f.player).map(f=>row(f.player)).join("")}
-    ${s.bench.map(row).join("")}
-    ${s.tail.filter(f=>f.player).map(f=>row(f.player)).join("")}`;
+    <div class="card"><h3>Shopping your own</h3>
+      <p>Listing players is handled under Trades, so this page stays about what
+        your team is rather than what you are trying to move.</p>
+      <button type="button" class="cbtn" id="toBlock">Open the trade block</button></div>`;
 
-  el.querySelectorAll("[data-block]").forEach(r => {
-    r.onclick = () => { toggleBlock(r.dataset.block); refreshBlockViews(); pushBlock(); };
-  });
+  const jump = document.getElementById("toBlock");
+  if(jump) jump.onclick = () => { tradeView = "block"; showTab("trade", true); };
 }
 
 /* ================= SEASON MODEL ================= */
@@ -2741,6 +2779,33 @@ function renderMatchup(me){
     </div>`).join("")}`;
 }
 
+function renderSuggested(me){
+  const s = rosterSections(me.players);
+  const src = (PROJ && PROJ.players) ? "ESPN and Sleeper" : "ESPN only";
+  const rows = s.starters.map(f => {
+    if(!f.player) return `<div class="plr"><span class="slot">${esc(f.slot)}</span>
+        <span class="who2"><b>Empty</b><span>nothing eligible</span></span></div>`;
+    const p = f.player, v = projOf(p);
+    return `<div class="plr">
+      <span class="slot">${esc(f.slot)}</span>
+      <span class="pos ${p.pos}">${p.pos}</span>
+      <span class="who2"><b>${esc(p.name)}</b>
+        <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}${
+          projDisagrees(v) ? " &middot; sources disagree" : ""}</span></span>
+      ${projChip(p)}</div>`;
+  }).join("");
+
+  const split = s.starters.filter(f => f.player && projDisagrees(projOf(f.player)));
+  return `${rows}
+    <div class="srcline"><span>${esc(src)}</span>
+      <span>projected ${s.total.toFixed(1)}</span></div>
+    <p class="note">Each number is the average of the sources that have the player,
+      with the gap between them after it. ${split.length
+        ? `${split.length} starter${split.length > 1 ? "s" : ""} the two sources
+           genuinely disagree on, which is where a lineup call is actually worth making.`
+        : "The sources broadly agree on this lineup."}</p>`;
+}
+
 function renderStartSit(me){
   const m = nextMatchup(me.id);
   const warns = lineupWarnings(me, m ? m.week : null);
@@ -2826,10 +2891,28 @@ function renderBlockPage(){
   const order = Object.keys(groups).sort((a,b) =>
     a === ME ? -1 : b === ME ? 1 : a.localeCompare(b));
 
+  /* Listing your own players lives here now, next to everyone else's, rather
+     than on My Team. My Team answers what your roster is; this answers what
+     the league is willing to move. */
+  const mineRow = p => `<div class="plr ${onBlock(p.id)?"blocked":""}" data-block="${p.id}">
+      <span class="slot">${onBlock(p.id) ? "\u{1F4E4}" : ""}</span>
+      <span class="pos ${p.pos}">${p.pos}</span>
+      <span class="who2"><b>${esc(p.name)}</b>
+        <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}</span></span>
+      <span class="pts">${p.proj.toFixed(1)}</span>
+      <span class="tick">\u2713</span></div>`;
+
+  const myList = me
+    ? `<details class="hhmore" id="myBlock"${BLOCK && BLOCK.size ? "" : " open"}>
+        <summary>List your own players${BLOCK && BLOCK.size ? ` &middot; ${BLOCK.size} listed` : ""}</summary>
+        <p class="note" style="margin:2px 0 10px">Tap anyone to make them available.
+          Everyone in the league sees the list.</p>
+        ${me.players.slice().sort((a,b) => b.proj - a.proj).map(mineRow).join("")}
+      </details>`
+    : "";
+
   el.innerHTML = demoBanner() +
-    `<p class="note" style="margin:0 0 14px">${esc(blockStatusLine())}
-      Flag your own players on the My Team tab.${
-      ""}</p>` +
+    `<p class="note" style="margin:0 0 14px">${esc(blockStatusLine())}</p>` + myList +
     (rows.length
       ? order.map(man => {
           const t = groups[man].find(x => !x.stale)?.team || groups[man][0].team;
@@ -2849,8 +2932,11 @@ function renderBlockPage(){
               <span class="tick">${mine ? "" : "\u203a"}</span></div>`).join("");
         }).join("")
       : `<div class="binderEmpty">Nobody has listed a player yet.
-          Go to My Team and tap anyone you would move.</div>`);
+          Open the list above and tap anyone you would move.</div>`);
 
+  el.querySelectorAll("[data-block]").forEach(r => {
+    r.onclick = () => { toggleBlock(r.dataset.block); refreshBlockViews(); pushBlock(); };
+  });
   el.querySelectorAll("[data-goto]").forEach(r => {
     r.onclick = () => {
       tradePartner = Number(r.dataset.team);
@@ -3642,9 +3728,10 @@ try{ pullBlocks(); }catch(e){ console.warn("[bromigos] block sync:", e && e.mess
       return Promise.resolve(null);
     }
   };
-  Promise.all([grab("data/league.json"), grab("data/weekly.json"), grab("data/h2h.json")])
-    .then(([lg, wk, hh]) => {
-      LIVE = lg; WEEKLY = wk; H2H = hh;
+  Promise.all([grab("data/league.json"), grab("data/weekly.json"), grab("data/h2h.json"),
+               grab("data/projections.json")])
+    .then(([lg, wk, hh, pj]) => {
+      LIVE = lg; WEEKLY = wk; H2H = hh; PROJ = pj;
       const f = document.getElementById("freshness");
       const chip = document.getElementById("freshTop");
       if(lg && lg.fetchedAt){

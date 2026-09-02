@@ -14,22 +14,11 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { ownerMap, rosterReport } from "./managers.mjs";
 
 const LEAGUE_ID = "24869044";
 const FIRST_SEASON = 2019;
 const OUT = "data/h2h.json";
-
-/* Managers we expect to see. Anything outside this list gets flagged in the
-   report at the end so a rename never quietly splits someone's record. */
-const KNOWN = ["Scotty", "Bo", "Dawson", "Anthony", "Cody", "Ryan",
-  "Austin", "Andy", "James", "Justin", "Gavin", "Mike"];
-
-/* ESPN's stored name -> the name the league actually uses. Keys can be a member
-   GUID (most precise) or an ESPN first name. Add to this if the report prints
-   a name that is not in KNOWN. */
-const ALIAS = {
-  "Scott": "Scotty"
-};
 
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; BromigosBot/1.0)", "Accept": "*/*" };
 const pause = ms => new Promise(r => setTimeout(r, ms));
@@ -56,22 +45,9 @@ async function grab(season, view) {
   return null;
 }
 
-/* team id -> { name, guid }, valid for one season only */
-export function ownerMap(teamDoc) {
-  const names = {};
-  ((teamDoc && teamDoc.members) || []).forEach(m => {
-    const raw = (m.firstName || "").trim() || (m.displayName || "").trim();
-    names[m.id] = ALIAS[m.id] || ALIAS[raw] || raw;
-  });
-
-  const byTeam = {};
-  ((teamDoc && teamDoc.teams) || []).forEach(t => {
-    const guid = (t.owners || [])[0];
-    if (!guid) return;
-    byTeam[t.id] = { name: names[guid] || "unknown:" + guid, guid };
-  });
-  return byTeam;
-}
+/* ownerMap and name resolution live in managers.mjs, shared with weekly.mjs
+   so the two can never drift apart. */
+export { ownerMap };
 
 export function tierCode(t) {
   if (!t || t === "NONE") return 0;          // regular season
@@ -158,14 +134,7 @@ async function main() {
     console.log(`\nwrote ${OUT} (${games.length} games, ${managers.length} managers)`);
   }
 
-  console.log("\nroster resolved from ESPN:");
-  managers.forEach(m => {
-    const flag = KNOWN.includes(m) ? "" : "   <-- NOT IN KNOWN LIST, add an ALIAS";
-    console.log(`  ${m.padEnd(12)} ${String(seen.get(m)).padStart(3)} games${flag}`);
-  });
-
-  const missing = KNOWN.filter(k => !managers.includes(k));
-  if (missing.length) console.log(`\nexpected but never seen: ${missing.join(", ")}`);
+  rosterReport(seen);
 }
 
 /* only run when invoked directly, so the tests can import the parsers */

@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-02T00:15:09.654Z",
+  "fetchedAt": "2026-09-02T03:26:17.668Z",
   "leagueId": "24869044",
   "season": "2026",
   "sources": {
@@ -3257,7 +3257,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 99,
+                          "rank": 98,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -4789,7 +4789,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 50,
+                          "rank": 51,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -4817,15 +4817,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 46,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 46,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -6974,7 +6974,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 32,
+                          "rank": 30,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -7002,15 +7002,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 31,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 31,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -8068,7 +8068,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 30,
+                          "rank": 29,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -8096,15 +8096,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 40,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 40,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -8387,7 +8387,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 47,
+                          "rank": 100,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -8697,7 +8697,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 31,
+                          "rank": 32,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -8725,15 +8725,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 29,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 29,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -8851,7 +8851,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 54,
+                          "rank": 55,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -8879,15 +8879,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 58,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 58,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -9627,7 +9627,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 75,
+                          "rank": 74,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -12081,7 +12081,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 52,
+                          "rank": 53,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -12109,15 +12109,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 53,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 53,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -15203,7 +15203,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 59,
+                          "rank": 58,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -15570,7 +15570,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 2,
+                          "rank": 1,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -17181,7 +17181,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 29,
+                          "rank": 31,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -17209,15 +17209,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 23,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 23,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -19430,7 +19430,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 56,
+                          "rank": 55,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -20180,7 +20180,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 100,
+                          "rank": 99,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -20971,7 +20971,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 49,
+                          "rank": 50,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 4
@@ -20999,15 +20999,15 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 0,
-                          "rankSourceId": 0,
+                          "rank": 55,
+                          "rankSourceId": 11,
                           "rankType": "PPR",
                           "slotId": 4
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 55,
-                          "rankSourceId": 11,
+                          "rank": 0,
+                          "rankSourceId": 0,
                           "rankType": "PPR",
                           "slotId": 4
                         },
@@ -23946,7 +23946,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 30,
+                          "rank": 31,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -25398,7 +25398,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 1,
+                          "rank": 2,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -26034,7 +26034,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 29,
+                          "rank": 30,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -27474,7 +27474,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 48,
+                          "rank": 47,
                           "rankSourceId": 5,
                           "rankType": "PPR",
                           "slotId": 2
@@ -30666,420 +30666,420 @@
         "pos": "RB",
         "team": "DAL",
         "status": null,
-        "count": 774396
+        "count": 696348
       },
       {
         "name": "Jacob Saylors",
         "pos": "RB",
         "team": "DET",
         "status": null,
-        "count": 451440
+        "count": 442405
       },
       {
         "name": "MarShawn Lloyd",
         "pos": "RB",
         "team": "GB",
         "status": null,
-        "count": 371601
+        "count": 318519
       },
       {
         "name": "Zavion Thomas",
         "pos": "WR",
         "team": "CHI",
         "status": null,
-        "count": 213057
+        "count": 191529
       },
       {
         "name": "Devaughn Vele",
         "pos": "WR",
         "team": "NO",
         "status": null,
-        "count": 193508
+        "count": 177625
       },
       {
         "name": "Dohnte Meyers",
         "pos": "WR",
         "team": "CIN",
         "status": null,
-        "count": 177831
+        "count": 151182
       },
       {
         "name": "Darren Waller",
         "pos": "TE",
         "team": "CAR",
         "status": null,
-        "count": 130752
+        "count": 118692
       },
       {
         "name": "Odell Beckham",
         "pos": "WR",
         "team": "NYG",
         "status": null,
-        "count": 126035
+        "count": 109634
       },
       {
         "name": "Tre Tucker",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 120156
+        "count": 108102
       },
       {
         "name": "Justice Hill",
         "pos": "RB",
         "team": "BAL",
         "status": null,
-        "count": 95706
+        "count": 86832
       },
       {
         "name": "Jacksonville Jaguars",
         "pos": "DEF",
         "team": "JAX",
         "status": null,
-        "count": 94290
-      },
-      {
-        "name": "Jalon Daniels",
-        "pos": "QB",
-        "team": "TB",
-        "status": null,
-        "count": 88484
+        "count": 79014
       },
       {
         "name": "Barion Brown",
         "pos": "WR",
         "team": "NO",
         "status": null,
-        "count": 87723
+        "count": 78642
+      },
+      {
+        "name": "Jalon Daniels",
+        "pos": "QB",
+        "team": "TB",
+        "status": null,
+        "count": 75138
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 70400
-      },
-      {
-        "name": "Tyler Loop",
-        "pos": "K",
-        "team": "BAL",
-        "status": null,
-        "count": 67932
-      },
-      {
-        "name": "Kyle McCord",
-        "pos": "QB",
-        "team": "MIA",
-        "status": null,
-        "count": 67552
+        "count": 66304
       },
       {
         "name": "Kaelon Black",
         "pos": "RB",
         "team": "SF",
         "status": null,
-        "count": 66675
+        "count": 64211
+      },
+      {
+        "name": "Kyle McCord",
+        "pos": "QB",
+        "team": "MIA",
+        "status": null,
+        "count": 60232
       },
       {
         "name": "Tank Dell",
         "pos": "WR",
         "team": "HOU",
         "status": "IR",
-        "count": 63280
+        "count": 60088
       },
       {
-        "name": "Keaton Mitchell",
-        "pos": "RB",
-        "team": "LAC",
-        "status": "Questionable",
-        "count": 61794
-      },
-      {
-        "name": "Las Vegas Raiders",
-        "pos": "DEF",
-        "team": "LV",
+        "name": "Tyler Loop",
+        "pos": "K",
+        "team": "BAL",
         "status": null,
-        "count": 59130
-      },
-      {
-        "name": "Seth McGowan",
-        "pos": "RB",
-        "team": "IND",
-        "status": null,
-        "count": 55056
-      },
-      {
-        "name": "Malik Washington",
-        "pos": "WR",
-        "team": "MIA",
-        "status": null,
-        "count": 54184
+        "count": 58890
       },
       {
         "name": "Emmett Johnson",
         "pos": "RB",
         "team": "KC",
         "status": null,
-        "count": 54054
+        "count": 54153
+      },
+      {
+        "name": "Las Vegas Raiders",
+        "pos": "DEF",
+        "team": "LV",
+        "status": null,
+        "count": 53844
+      },
+      {
+        "name": "Keaton Mitchell",
+        "pos": "RB",
+        "team": "LAC",
+        "status": "Questionable",
+        "count": 53622
+      },
+      {
+        "name": "Seth McGowan",
+        "pos": "RB",
+        "team": "IND",
+        "status": null,
+        "count": 52352
       },
       {
         "name": "Marlin Klein",
         "pos": "TE",
         "team": "HOU",
         "status": null,
-        "count": 54025
+        "count": 48655
+      },
+      {
+        "name": "Malik Washington",
+        "pos": "WR",
+        "team": "MIA",
+        "status": null,
+        "count": 48032
       },
       {
         "name": "Jalen Nailor",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 45279
+        "count": 39726
       },
       {
         "name": "Malik Willis",
         "pos": "QB",
         "team": "MIA",
         "status": null,
-        "count": 43519
+        "count": 38353
       },
       {
         "name": "Dontayvion Wicks",
         "pos": "WR",
         "team": "PHI",
         "status": null,
-        "count": 42000
+        "count": 37929
       },
       {
         "name": "Kirk Cousins",
         "pos": "QB",
         "team": "LV",
         "status": null,
-        "count": 41488
-      },
-      {
-        "name": "Najee Harris",
-        "pos": "RB",
-        "team": "NYG",
-        "status": null,
-        "count": 39505
-      },
-      {
-        "name": "Chase McLaughlin",
-        "pos": "K",
-        "team": "TB",
-        "status": null,
-        "count": 38376
+        "count": 36704
       },
       {
         "name": "Chris Brooks",
         "pos": "RB",
         "team": "GB",
         "status": null,
-        "count": 36299
+        "count": 36456
       },
       {
-        "name": "Chris Rodriguez",
+        "name": "Najee Harris",
         "pos": "RB",
-        "team": "JAX",
+        "team": "NYG",
         "status": null,
-        "count": 35505
-      },
-      {
-        "name": "Kyler Murray",
-        "pos": "QB",
-        "team": "MIN",
-        "status": null,
-        "count": 35408
-      },
-      {
-        "name": "Cooper Kupp",
-        "pos": "WR",
-        "team": "SEA",
-        "status": null,
-        "count": 35184
+        "count": 36100
       },
       {
         "name": "Daniel Bellinger",
         "pos": "TE",
         "team": "TEN",
         "status": null,
-        "count": 34832
-      },
-      {
-        "name": "Tyler Shough",
-        "pos": "QB",
-        "team": "NO",
-        "status": null,
-        "count": 34104
-      },
-      {
-        "name": "Josh Jacobs",
-        "pos": "RB",
-        "team": "GB",
-        "status": "NA",
-        "count": 33920
-      },
-      {
-        "name": "Khalil Shakir",
-        "pos": "WR",
-        "team": "BUF",
-        "status": "Questionable",
-        "count": 33795
-      },
-      {
-        "name": "Detroit Lions",
-        "pos": "DEF",
-        "team": "DET",
-        "status": null,
-        "count": 33435
-      },
-      {
-        "name": "Colbie Young",
-        "pos": "WR",
-        "team": "CIN",
-        "status": null,
-        "count": 32346
-      },
-      {
-        "name": "Tyler Allgeier",
-        "pos": "RB",
-        "team": "ARI",
-        "status": null,
-        "count": 31510
-      },
-      {
-        "name": "Jonnu Smith",
-        "pos": "TE",
-        "team": "GB",
-        "status": null,
-        "count": 31507
-      },
-      {
-        "name": "Juwan Johnson",
-        "pos": "TE",
-        "team": "NO",
-        "status": null,
-        "count": 29678
-      },
-      {
-        "name": "Ryan Flournoy",
-        "pos": "WR",
-        "team": "DAL",
-        "status": null,
-        "count": 27952
-      },
-      {
-        "name": "Malachi Fields",
-        "pos": "WR",
-        "team": "NYG",
-        "status": null,
-        "count": 27310
-      },
-      {
-        "name": "Cairo Santos",
-        "pos": "K",
-        "team": "CHI",
-        "status": null,
-        "count": 27286
-      },
-      {
-        "name": "Mark Andrews",
-        "pos": "TE",
-        "team": "BAL",
-        "status": null,
-        "count": 26532
+        "count": 34783
       },
       {
         "name": "Sione Vaki",
         "pos": "RB",
         "team": "DET",
         "status": null,
-        "count": 26369
+        "count": 34552
+      },
+      {
+        "name": "Chase McLaughlin",
+        "pos": "K",
+        "team": "TB",
+        "status": null,
+        "count": 33448
+      },
+      {
+        "name": "Josh Jacobs",
+        "pos": "RB",
+        "team": "GB",
+        "status": "NA",
+        "count": 32960
+      },
+      {
+        "name": "Tyler Allgeier",
+        "pos": "RB",
+        "team": "ARI",
+        "status": null,
+        "count": 32870
+      },
+      {
+        "name": "Chris Rodriguez",
+        "pos": "RB",
+        "team": "JAX",
+        "status": null,
+        "count": 32040
+      },
+      {
+        "name": "Cooper Kupp",
+        "pos": "WR",
+        "team": "SEA",
+        "status": null,
+        "count": 31968
+      },
+      {
+        "name": "Colbie Young",
+        "pos": "WR",
+        "team": "CIN",
+        "status": null,
+        "count": 31638
+      },
+      {
+        "name": "Kyler Murray",
+        "pos": "QB",
+        "team": "MIN",
+        "status": null,
+        "count": 31496
+      },
+      {
+        "name": "Khalil Shakir",
+        "pos": "WR",
+        "team": "BUF",
+        "status": "Questionable",
+        "count": 29628
+      },
+      {
+        "name": "Tyler Shough",
+        "pos": "QB",
+        "team": "NO",
+        "status": null,
+        "count": 29320
+      },
+      {
+        "name": "Jonnu Smith",
+        "pos": "TE",
+        "team": "GB",
+        "status": null,
+        "count": 28539
+      },
+      {
+        "name": "Detroit Lions",
+        "pos": "DEF",
+        "team": "DET",
+        "status": null,
+        "count": 28035
+      },
+      {
+        "name": "Juwan Johnson",
+        "pos": "TE",
+        "team": "NO",
+        "status": null,
+        "count": 26344
+      },
+      {
+        "name": "Ryan Flournoy",
+        "pos": "WR",
+        "team": "DAL",
+        "status": null,
+        "count": 25576
+      },
+      {
+        "name": "Malachi Fields",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 24405
+      },
+      {
+        "name": "Cairo Santos",
+        "pos": "K",
+        "team": "CHI",
+        "status": null,
+        "count": 24402
       },
       {
         "name": "Jordyn Tyson",
         "pos": "WR",
         "team": "NO",
         "status": "IR",
-        "count": 26320
+        "count": 23872
+      },
+      {
+        "name": "Mark Andrews",
+        "pos": "TE",
+        "team": "BAL",
+        "status": null,
+        "count": 23814
       },
       {
         "name": "Deshaun Watson",
         "pos": "QB",
         "team": "CLE",
         "status": null,
-        "count": 25704
+        "count": 23320
       },
       {
         "name": "Jake Bates",
         "pos": "K",
         "team": "DET",
         "status": null,
-        "count": 24296
+        "count": 22544
       },
       {
         "name": "Tank Bigsby",
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 23828
+        "count": 21203
       },
       {
-        "name": "Tyreek Hill",
-        "pos": "WR",
-        "team": null,
-        "status": "Questionable",
-        "count": 23008
-      },
-      {
-        "name": "Pittsburgh Steelers",
-        "pos": "DEF",
-        "team": "PIT",
-        "status": null,
-        "count": 22179
-      },
-      {
-        "name": "Jayden Reed",
-        "pos": "WR",
-        "team": "GB",
-        "status": null,
-        "count": 21609
+        "name": "Isiah Pacheco",
+        "pos": "RB",
+        "team": "DET",
+        "status": "IR",
+        "count": 20832
       },
       {
         "name": "Keenan Allen",
         "pos": "WR",
         "team": "IND",
         "status": null,
-        "count": 21300
+        "count": 20456
       },
       {
-        "name": "Harrison Mevis",
-        "pos": "K",
-        "team": "LAR",
+        "name": "Pittsburgh Steelers",
+        "pos": "DEF",
+        "team": "PIT",
         "status": null,
-        "count": 21252
+        "count": 19797
       },
       {
         "name": "Cyrus Allen",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 21036
+        "count": 19758
       },
       {
-        "name": "AJ Barner",
-        "pos": "TE",
-        "team": "SEA",
+        "name": "Jayden Reed",
+        "pos": "WR",
+        "team": "GB",
         "status": null,
-        "count": 20754
+        "count": 19098
+      },
+      {
+        "name": "Tyreek Hill",
+        "pos": "WR",
+        "team": null,
+        "status": "Questionable",
+        "count": 19096
       },
       {
         "name": "Xavier Hutchinson",
         "pos": "WR",
         "team": "HOU",
         "status": null,
-        "count": 20734
+        "count": 19026
+      },
+      {
+        "name": "AJ Barner",
+        "pos": "TE",
+        "team": "SEA",
+        "status": null,
+        "count": 18600
       }
     ],
     "drops": [
@@ -31088,280 +31088,280 @@
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 270744
-      },
-      {
-        "name": "Jam Miller",
-        "pos": "RB",
-        "team": null,
-        "status": "Questionable",
-        "count": 91350
+        "count": 239968
       },
       {
         "name": "Isiah Pacheco",
         "pos": "RB",
         "team": "DET",
         "status": "IR",
-        "count": 86832
+        "count": 82912
+      },
+      {
+        "name": "Jam Miller",
+        "pos": "RB",
+        "team": null,
+        "status": "Questionable",
+        "count": 78147
       },
       {
         "name": "Justin Joly",
         "pos": "TE",
         "team": null,
         "status": null,
-        "count": 83110
+        "count": 71045
       },
       {
         "name": "Michael Trigg",
         "pos": "TE",
         "team": "DAL",
         "status": null,
-        "count": 68598
+        "count": 61038
       },
       {
         "name": "Oronde Gadsden",
         "pos": "TE",
         "team": "LAC",
         "status": null,
-        "count": 66370
+        "count": 59115
       },
       {
         "name": "Alvin Kamara",
         "pos": "RB",
         "team": "NO",
         "status": "Questionable",
-        "count": 66144
-      },
-      {
-        "name": "Brenton Strange",
-        "pos": "TE",
-        "team": "JAX",
-        "status": null,
-        "count": 60984
+        "count": 59008
       },
       {
         "name": "Emanuel Wilson",
         "pos": "RB",
         "team": "SEA",
         "status": "Questionable",
-        "count": 60354
+        "count": 56106
       },
       {
-        "name": "Tyreek Hill",
-        "pos": "WR",
-        "team": null,
-        "status": "Questionable",
-        "count": 56792
+        "name": "Brenton Strange",
+        "pos": "TE",
+        "team": "JAX",
+        "status": null,
+        "count": 54810
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 56750
+        "count": 52445
+      },
+      {
+        "name": "Tyreek Hill",
+        "pos": "WR",
+        "team": null,
+        "status": "Questionable",
+        "count": 51408
       },
       {
         "name": "Kenyon Sadiq",
         "pos": "TE",
         "team": "NYJ",
         "status": "Questionable",
-        "count": 56232
+        "count": 49509
       },
       {
-        "name": "Robert Henry",
+        "name": "J'Mari Taylor",
         "pos": "RB",
-        "team": "WAS",
+        "team": "JAX",
         "status": null,
-        "count": 54922
+        "count": 49464
       },
       {
         "name": "Malik Davis",
         "pos": "RB",
         "team": "DAL",
         "status": null,
-        "count": 51903
+        "count": 49311
+      },
+      {
+        "name": "Robert Henry",
+        "pos": "RB",
+        "team": "WAS",
+        "status": null,
+        "count": 48104
       },
       {
         "name": "Cyrus Allen",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 51366
-      },
-      {
-        "name": "J'Mari Taylor",
-        "pos": "RB",
-        "team": null,
-        "status": null,
-        "count": 46116
+        "count": 47244
       },
       {
         "name": "Jordyn Tyson",
         "pos": "WR",
         "team": "NO",
         "status": "IR",
-        "count": 45536
-      },
-      {
-        "name": "Fernando Mendoza",
-        "pos": "QB",
-        "team": "LV",
-        "status": null,
-        "count": 42624
+        "count": 38816
       },
       {
         "name": "Travis Hunter",
         "pos": "WR",
         "team": "JAX",
         "status": null,
-        "count": 42390
+        "count": 37680
       },
       {
         "name": "Chimere Dike",
         "pos": "WR",
         "team": "TEN",
         "status": null,
-        "count": 42120
+        "count": 37656
       },
       {
         "name": "New England Patriots",
         "pos": "DEF",
         "team": "NE",
         "status": null,
-        "count": 41734
+        "count": 37653
       },
       {
-        "name": "Jerry Jeudy",
-        "pos": "WR",
-        "team": "CLE",
-        "status": null,
-        "count": 39798
-      },
-      {
-        "name": "Jalen Nailor",
-        "pos": "WR",
+        "name": "Fernando Mendoza",
+        "pos": "QB",
         "team": "LV",
         "status": null,
-        "count": 39069
+        "count": 37528
       },
       {
         "name": "Omar Cooper",
         "pos": "WR",
         "team": "NYJ",
         "status": null,
-        "count": 38784
+        "count": 36040
+      },
+      {
+        "name": "Jalen Nailor",
+        "pos": "WR",
+        "team": "LV",
+        "status": null,
+        "count": 35964
+      },
+      {
+        "name": "Jerry Jeudy",
+        "pos": "WR",
+        "team": "CLE",
+        "status": null,
+        "count": 35856
       },
       {
         "name": "Sean Tucker",
         "pos": "RB",
         "team": "TB",
         "status": null,
-        "count": 36558
+        "count": 33462
       },
       {
         "name": "Brian Robinson",
         "pos": "RB",
         "team": "ATL",
         "status": null,
-        "count": 36156
+        "count": 32112
       },
       {
         "name": "Keaton Mitchell",
         "pos": "RB",
         "team": "LAC",
         "status": "Questionable",
-        "count": 34974
-      },
-      {
-        "name": "Zach Ertz",
-        "pos": "TE",
-        "team": null,
-        "status": null,
-        "count": 34920
-      },
-      {
-        "name": "Keenan Allen",
-        "pos": "WR",
-        "team": "IND",
-        "status": null,
-        "count": 33708
-      },
-      {
-        "name": "Dohnte Meyers",
-        "pos": "WR",
-        "team": "CIN",
-        "status": null,
-        "count": 33201
-      },
-      {
-        "name": "Detroit Lions",
-        "pos": "DEF",
-        "team": "DET",
-        "status": null,
-        "count": 33093
-      },
-      {
-        "name": "Tank Bigsby",
-        "pos": "RB",
-        "team": "PHI",
-        "status": null,
-        "count": 32445
-      },
-      {
-        "name": "Isaiah Davis",
-        "pos": "RB",
-        "team": "NYJ",
-        "status": "Questionable",
-        "count": 32085
-      },
-      {
-        "name": "Chris Rodriguez",
-        "pos": "RB",
-        "team": "JAX",
-        "status": null,
-        "count": 32049
+        "count": 31932
       },
       {
         "name": "Will Levis",
         "pos": "QB",
         "team": null,
         "status": null,
-        "count": 31992
+        "count": 31288
       },
       {
-        "name": "Darnell Mooney",
-        "pos": "WR",
-        "team": "NYG",
+        "name": "Zach Ertz",
+        "pos": "TE",
+        "team": null,
         "status": null,
-        "count": 31959
+        "count": 31113
+      },
+      {
+        "name": "Dohnte Meyers",
+        "pos": "WR",
+        "team": "CIN",
+        "status": null,
+        "count": 30348
+      },
+      {
+        "name": "Detroit Lions",
+        "pos": "DEF",
+        "team": "DET",
+        "status": null,
+        "count": 29556
+      },
+      {
+        "name": "Isaiah Davis",
+        "pos": "RB",
+        "team": "NYJ",
+        "status": "Questionable",
+        "count": 29502
+      },
+      {
+        "name": "Tank Bigsby",
+        "pos": "RB",
+        "team": "PHI",
+        "status": null,
+        "count": 29316
+      },
+      {
+        "name": "Keenan Allen",
+        "pos": "WR",
+        "team": "IND",
+        "status": null,
+        "count": 29312
+      },
+      {
+        "name": "Chris Rodriguez",
+        "pos": "RB",
+        "team": "JAX",
+        "status": null,
+        "count": 28755
       },
       {
         "name": "Devin Singletary",
         "pos": "RB",
         "team": "NYG",
         "status": null,
-        "count": 31617
+        "count": 28548
       },
       {
-        "name": "Tank Dell",
+        "name": "Darnell Mooney",
         "pos": "WR",
-        "team": "HOU",
-        "status": "IR",
-        "count": 31232
-      },
-      {
-        "name": "Marvin Mims",
-        "pos": "WR",
-        "team": "DEN",
-        "status": "Questionable",
-        "count": 30744
+        "team": "NYG",
+        "status": null,
+        "count": 28476
       },
       {
         "name": "Malik Washington",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 29648
+        "count": 27416
+      },
+      {
+        "name": "Marvin Mims",
+        "pos": "WR",
+        "team": "DEN",
+        "status": "Questionable",
+        "count": 27225
+      },
+      {
+        "name": "Tank Dell",
+        "pos": "WR",
+        "team": "HOU",
+        "status": "IR",
+        "count": 26584
       }
     ]
   },

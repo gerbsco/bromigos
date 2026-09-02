@@ -176,5 +176,57 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   ok(tag + " history subnav visible", () => byId("histNav").style.display === "flex");
 }
 
+/* ---------- no offered tab may open onto nothing ----------
+   The Records tab shipped ungated while its contents were gated, so before the
+   draft it appeared in the League row and led to a blank screen. This walks
+   every destination and sub-tab at each phase and opens it. */
+{
+  const BODY = { team:"teamBody", records:"recordsBody", trade:"tradeBody",
+                 wire:"wireBody", binder:"binderBody", history:"dossiers" };
+
+  [["", "2026-09-01T12:00:00Z", "pre-draft"],
+   ["", "2026-09-08T12:00:00Z", "post-draft"],
+   ["", "2026-09-16T12:00:00Z", "packs live"],
+   ["?pack=1", "2026-09-01T12:00:00Z", "preview"]].forEach(([search, now, label]) => {
+
+    const { sandbox: S, byId, setVar, warnings } = boot({ search, now });
+    setVar("ME", '"Scotty"');
+    setVar("H2H", JSON.stringify({ seasons:[2019], managers:["Scotty","Bo"],
+      games:[[2019,1,"Scotty",120.0,"Bo",100.0,0]] }));
+    setVar("LIVE", JSON.stringify({ settings:{ draftDetail:{ drafted:true } },
+      teams:{ members:[], teams:[] }, rosters:{ teams:[] } }));
+    S.renderAll();
+
+    const shownDests = [...byId("tabbar").innerHTML.matchAll(/data-d="([a-z]+)"/g)].map(m => m[1]);
+
+    ok(label + ": every destination holds a panel", () =>
+      [shownDests.every(d => S.panelsIn(d).length > 0), shownDests.join(",")]);
+
+    shownDests.forEach(d => S.panelsIn(d).forEach(pid => {
+      ok(`${label}: ${d} > ${pid} opens onto content`, () => {
+        S.showTab(pid, false);
+        const bodyId = BODY[pid];
+        if(!bodyId) return true;                    // static markup panel
+        const el = byId(bodyId);
+        return [!!el && el.innerHTML.trim().length > 0,
+                bodyId + " is empty"];
+      });
+    }));
+
+    ok(label + ": walking every tab logged no warnings", () =>
+      [warnings.length === 0, warnings.join(" | ")]);
+  });
+}
+
+/* ---------- bar order ---------- */
+{
+  const { byId } = boot({ search: "?pack=1", now: "2026-09-16T12:00:00Z" });
+  const order = [...byId("tabbar").innerHTML.matchAll(/data-d="([a-z]+)"/g)].map(m => m[1]);
+  ok("Trades sits ahead of League", () =>
+    [order.indexOf("trades") < order.indexOf("league"), order.join(",")]);
+  ok("full order is home, team, trades, league, cards", () =>
+    [order.join(",") === "home,team,trades,league,cards", order.join(",")]);
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

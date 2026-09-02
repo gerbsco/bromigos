@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-01T13:23:53.311Z",
+  "fetchedAt": "2026-09-02T00:15:09.654Z",
   "leagueId": "24869044",
   "season": "2026",
   "sources": {
@@ -2750,7 +2750,7 @@
                     "injuryStatus": "ACTIVE",
                     "lastName": "Jefferson",
                     "lastNewsDate": 1786587454000,
-                    "lastVideoDate": 1787673570000,
+                    "lastVideoDate": 1786121475000,
                     "proTeamId": 16,
                     "rankings": {
                       "0": [
@@ -2844,6 +2844,20 @@
                           "auctionValue": 0,
                           "rank": 6,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -2986,6 +3000,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -3027,7 +3055,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Hurts",
-                    "lastNewsDate": 1786410017000,
+                    "lastNewsDate": 1788280017000,
                     "lastVideoDate": 1787928268000,
                     "proTeamId": 21,
                     "rankings": {
@@ -3115,6 +3143,27 @@
                           "auctionValue": 0,
                           "rank": 2,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -3243,7 +3292,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 47,
+                          "rank": 46,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -3388,6 +3437,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 32,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 32,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -3432,7 +3495,7 @@
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Hall",
                     "lastNewsDate": 1787591488000,
-                    "lastVideoDate": 1788190477000,
+                    "lastVideoDate": 1786028868000,
                     "proTeamId": 20,
                     "rankings": {
                       "0": [
@@ -3526,6 +3589,20 @@
                           "auctionValue": 0,
                           "rank": 11,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -3692,6 +3769,20 @@
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
                           "slotId": 14
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 77,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 77,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -3832,6 +3923,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -3970,6 +4075,20 @@
                           "auctionValue": 0,
                           "rank": 32,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 32,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 32,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -4113,6 +4232,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 41,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 41,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -4250,8 +4383,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 3,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -4391,8 +4538,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 8,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -4532,8 +4693,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 15,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -4580,7 +4755,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Shakir",
-                    "lastNewsDate": 1787868377000,
+                    "lastNewsDate": 1788289915000,
                     "proTeamId": 2,
                     "rankings": {
                       "0": [
@@ -4674,6 +4849,20 @@
                           "auctionValue": 0,
                           "rank": 49,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 49,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 49,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -4896,8 +5085,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 11,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -5064,6 +5267,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -5202,6 +5419,20 @@
                           "auctionValue": 0,
                           "rank": 5,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -5345,6 +5576,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -5388,7 +5633,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Swift",
-                    "lastNewsDate": 1786503214000,
+                    "lastNewsDate": 1788287171000,
                     "lastVideoDate": 1786977918000,
                     "proTeamId": 3,
                     "rankings": {
@@ -5483,6 +5728,20 @@
                           "auctionValue": 0,
                           "rank": 23,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -5625,6 +5884,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 46,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 46,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -5685,6 +5958,20 @@
                           "auctionValue": 0,
                           "rank": 73,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 73,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 73,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -5946,6 +6233,27 @@
                         {
                           "auctionValue": 0,
                           "rank": 12,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 9,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
                           "slotId": 0
@@ -6095,8 +6403,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 8,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -6236,8 +6558,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 23,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -6381,6 +6717,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 55,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 55,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -6509,6 +6859,27 @@
                           "auctionValue": 0,
                           "rank": 15,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 21,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -6665,6 +7036,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 34,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 34,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -6789,6 +7174,20 @@
                           "auctionValue": 0,
                           "rank": 66,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 65,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 65,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -6922,7 +7321,21 @@
                         {
                           "auctionValue": 0,
                           "rank": 29,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 29,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 29,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -6996,7 +7409,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Henry",
-                    "lastNewsDate": 1786495051000,
+                    "lastNewsDate": 1788285131000,
                     "lastVideoDate": 1787074115000,
                     "proTeamId": 33,
                     "rankings": {
@@ -7093,6 +7506,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -7137,7 +7564,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Nabers",
-                    "lastNewsDate": 1788213074000,
+                    "lastNewsDate": 1788292227000,
                     "lastVideoDate": 1786459670000,
                     "proTeamId": 19,
                     "rankings": {
@@ -7234,6 +7661,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 20,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -7277,7 +7718,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Williams",
-                    "lastNewsDate": 1786499368000,
+                    "lastNewsDate": 1788282953000,
                     "lastVideoDate": 1787260036000,
                     "proTeamId": 14,
                     "rankings": {
@@ -7372,6 +7813,20 @@
                           "auctionValue": 0,
                           "rank": 17,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -7512,6 +7967,20 @@
                           "auctionValue": 0,
                           "rank": 1,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         },
@@ -7661,6 +8130,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -7794,6 +8277,27 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 9,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 15,
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
@@ -7845,10 +8349,10 @@
                     "firstName": "Isiah",
                     "fullName": "Isiah Pacheco",
                     "id": 4361529,
-                    "injured": false,
-                    "injuryStatus": "QUESTIONABLE",
+                    "injured": true,
+                    "injuryStatus": "INJURY_RESERVE",
                     "lastName": "Pacheco",
-                    "lastNewsDate": 1787848384000,
+                    "lastNewsDate": 1788294527000,
                     "lastVideoDate": 1788190477000,
                     "proTeamId": 8,
                     "rankings": {
@@ -7925,7 +8429,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 46,
+                          "rank": 52,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -7943,6 +8447,20 @@
                           "auctionValue": 0,
                           "rank": 51,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 51,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 51,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -8086,6 +8604,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -8225,6 +8757,20 @@
                           "auctionValue": 0,
                           "rank": 26,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 23,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 23,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -8367,6 +8913,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 58,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 58,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -8495,6 +9055,27 @@
                           "auctionValue": 0,
                           "rank": 6,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -8643,8 +9224,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 28,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -8787,6 +9382,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 39,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 39,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -8924,6 +9533,20 @@
                           "auctionValue": 0,
                           "rank": 39,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 39,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 39,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -9173,8 +9796,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 19,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -9317,7 +9954,21 @@
                         {
                           "auctionValue": 0,
                           "rank": 3,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -9460,6 +10111,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 37,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 37,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -9527,7 +10192,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Lamb",
-                    "lastNewsDate": 1786561145000,
+                    "lastNewsDate": 1788294491000,
                     "lastVideoDate": 1782882713000,
                     "proTeamId": 6,
                     "rankings": {
@@ -9622,6 +10287,20 @@
                           "auctionValue": 0,
                           "rank": 5,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -9764,6 +10443,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 25,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -9806,9 +10499,9 @@
                     "fullName": "Tee Higgins",
                     "id": 4239993,
                     "injured": false,
-                    "injuryStatus": "ACTIVE",
+                    "injuryStatus": "QUESTIONABLE",
                     "lastName": "Higgins",
-                    "lastNewsDate": 1786675447000,
+                    "lastNewsDate": 1788285470000,
                     "proTeamId": 4,
                     "rankings": {
                       "0": [
@@ -9902,6 +10595,20 @@
                           "auctionValue": 0,
                           "rank": 21,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 21,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 21,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -10043,6 +10750,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 22,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 23,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -10086,7 +10807,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Kittle",
-                    "lastNewsDate": 1788209126000,
+                    "lastNewsDate": 1788279091000,
                     "lastVideoDate": 1786123329000,
                     "proTeamId": 25,
                     "rankings": {
@@ -10181,6 +10902,20 @@
                           "auctionValue": 0,
                           "rank": 17,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         }
@@ -10323,6 +11058,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 25,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 25,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -10462,6 +11211,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 23,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 24,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -10586,6 +11349,20 @@
                           "auctionValue": 0,
                           "rank": 75,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 75,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 75,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -10726,6 +11503,20 @@
                           "auctionValue": 0,
                           "rank": 6,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         },
@@ -10874,8 +11665,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 2,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -11019,6 +11824,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 40,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 40,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -11060,7 +11879,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Jones",
-                    "lastNewsDate": 1786466645000,
+                    "lastNewsDate": 1788280324000,
                     "proTeamId": 11,
                     "rankings": {
                       "0": [
@@ -11147,6 +11966,27 @@
                           "auctionValue": 0,
                           "rank": 19,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 23,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 22,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 22,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -11303,6 +12143,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 61,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 61,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -11440,6 +12294,20 @@
                           "auctionValue": 0,
                           "rank": 31,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 31,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -11581,8 +12449,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 6,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -11719,6 +12601,27 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 18,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 9,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 19,
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
@@ -11772,7 +12675,7 @@
                     "injuryStatus": "ACTIVE",
                     "lastName": "Dart",
                     "lastNewsDate": 1787440147000,
-                    "lastVideoDate": 1787670215000,
+                    "lastVideoDate": 1788275324000,
                     "proTeamId": 19,
                     "rankings": {
                       "0": [
@@ -11859,6 +12762,27 @@
                           "auctionValue": 0,
                           "rank": 7,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -11998,8 +12922,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 28,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -12169,6 +13107,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -12212,7 +13164,7 @@
                     "injured": false,
                     "injuryStatus": "DAY_TO_DAY",
                     "lastName": "Jacobs",
-                    "lastNewsDate": 1788115086000,
+                    "lastNewsDate": 1788273311000,
                     "lastVideoDate": 1787151419000,
                     "proTeamId": 9,
                     "rankings": {
@@ -12433,6 +13385,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 24,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 24,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -12571,6 +13537,20 @@
                           "auctionValue": 0,
                           "rank": 42,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 41,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 41,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -12714,6 +13694,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -12855,6 +13849,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 22,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 22,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -12898,7 +13906,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Tracy Jr.",
-                    "lastNewsDate": 1788132040000,
+                    "lastNewsDate": 1788292457000,
                     "lastVideoDate": 1787962613000,
                     "proTeamId": 19,
                     "rankings": {
@@ -12958,6 +13966,20 @@
                           "auctionValue": 0,
                           "rank": 69,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 69,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 69,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -13089,6 +14111,27 @@
                           "auctionValue": 0,
                           "rank": 16,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -13243,6 +14286,20 @@
                           "auctionValue": 0,
                           "rank": 43,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 43,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 43,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -13430,6 +14487,20 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 7,
                           "rankSourceId": 11,
                           "rankType": "PPR",
@@ -13571,8 +14642,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 4,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -13714,8 +14799,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 13,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -13856,6 +14955,20 @@
                           "auctionValue": 0,
                           "rank": 37,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 37,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 37,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -13999,6 +15112,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 35,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 35,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -14122,6 +15249,20 @@
                           "auctionValue": 0,
                           "rank": 76,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 76,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 76,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -14291,6 +15432,27 @@
                           "auctionValue": 0,
                           "rank": 20,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -14470,6 +15632,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -14611,6 +15787,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -14652,7 +15842,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Jackson",
-                    "lastNewsDate": 1786469719000,
+                    "lastNewsDate": 1788281454000,
                     "lastVideoDate": 1786112597000,
                     "proTeamId": 33,
                     "rankings": {
@@ -14740,6 +15930,27 @@
                           "auctionValue": 0,
                           "rank": 3,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -14896,6 +16107,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -14940,7 +16165,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Flowers",
-                    "lastNewsDate": 1787763455000,
+                    "lastNewsDate": 1788268652000,
                     "lastVideoDate": 1787755677000,
                     "proTeamId": 33,
                     "rankings": {
@@ -15035,6 +16260,20 @@
                           "auctionValue": 0,
                           "rank": 16,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -15178,6 +16417,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -15317,6 +16570,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -15454,8 +16721,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 2,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -15599,6 +16880,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 18,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -15640,7 +16935,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Stafford",
-                    "lastNewsDate": 1786418447000,
+                    "lastNewsDate": 1788282227000,
                     "lastVideoDate": 1786373523000,
                     "proTeamId": 14,
                     "rankings": {
@@ -15728,6 +17023,27 @@
                           "auctionValue": 0,
                           "rank": 14,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -15830,7 +17146,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Evans",
-                    "lastNewsDate": 1787788448000,
+                    "lastNewsDate": 1788278650000,
                     "lastVideoDate": 1783641202000,
                     "proTeamId": 25,
                     "rankings": {
@@ -15925,6 +17241,20 @@
                           "auctionValue": 0,
                           "rank": 36,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 36,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 36,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -16064,6 +17394,20 @@
                           "auctionValue": 0,
                           "rank": 15,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         },
@@ -16212,8 +17556,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 7,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -16358,6 +17716,20 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 15,
                           "rankSourceId": 11,
                           "rankType": "PPR",
@@ -16492,8 +17864,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 24,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 16,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 24,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -16568,7 +17954,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Chase",
-                    "lastNewsDate": 1787760085000,
+                    "lastNewsDate": 1788285036000,
                     "lastVideoDate": 1787236687000,
                     "proTeamId": 4,
                     "rankings": {
@@ -16665,6 +18051,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -16709,7 +18109,7 @@
                     "injuryStatus": "ACTIVE",
                     "lastName": "Brown",
                     "lastNewsDate": 1786675091000,
-                    "lastVideoDate": 1787237260000,
+                    "lastVideoDate": 1788275329000,
                     "proTeamId": 4,
                     "rankings": {
                       "0": [
@@ -16803,6 +18203,20 @@
                           "auctionValue": 0,
                           "rank": 10,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -16946,6 +18360,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -16990,8 +18418,8 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Egbuka",
-                    "lastNewsDate": 1788013456000,
-                    "lastVideoDate": 1787151224000,
+                    "lastNewsDate": 1788275916000,
+                    "lastVideoDate": 1788275337000,
                     "proTeamId": 27,
                     "rankings": {
                       "0": [
@@ -17085,6 +18513,20 @@
                           "auctionValue": 0,
                           "rank": 17,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 18,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -17281,6 +18723,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 44,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 44,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -17420,6 +18876,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 40,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 40,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -17462,7 +18932,7 @@
                     "injuryStatus": "ACTIVE",
                     "lastName": "Herbert",
                     "lastNewsDate": 1787896043000,
-                    "lastVideoDate": 1786120913000,
+                    "lastVideoDate": 1788275366000,
                     "proTeamId": 24,
                     "rankings": {
                       "0": [
@@ -17549,6 +19019,27 @@
                           "auctionValue": 0,
                           "rank": 5,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -17704,8 +19195,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 9,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -17848,6 +19353,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 43,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 43,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -17939,7 +19458,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 52,
+                          "rank": 51,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -17957,6 +19476,20 @@
                           "auctionValue": 0,
                           "rank": 70,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 70,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 70,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -18099,6 +19632,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -18232,6 +19779,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 52,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 52,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -18275,7 +19836,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Monangai",
-                    "lastNewsDate": 1787072001000,
+                    "lastNewsDate": 1788287799000,
                     "lastVideoDate": 1787754824000,
                     "proTeamId": 3,
                     "rankings": {
@@ -18370,6 +19931,20 @@
                           "auctionValue": 0,
                           "rank": 34,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 34,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 34,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -18509,8 +20084,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 5,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -18556,7 +20145,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Robinson Jr.",
-                    "lastNewsDate": 1787970575000,
+                    "lastNewsDate": 1788301974000,
                     "lastVideoDate": 1787972857000,
                     "proTeamId": 1,
                     "rankings": {
@@ -18633,7 +20222,7 @@
                         },
                         {
                           "auctionValue": 0,
-                          "rank": 51,
+                          "rank": 50,
                           "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 2
@@ -18651,6 +20240,20 @@
                           "auctionValue": 0,
                           "rank": 54,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 54,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 54,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -18774,6 +20377,27 @@
                         {
                           "auctionValue": 0,
                           "rank": 30,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
+                          "rankSourceId": 9,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
                           "slotId": 0
@@ -18850,7 +20474,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Jeanty",
-                    "lastNewsDate": 1787937979000,
+                    "lastNewsDate": 1788275572000,
                     "lastVideoDate": 1787583756000,
                     "proTeamId": 13,
                     "rankings": {
@@ -18945,6 +20569,20 @@
                           "auctionValue": 0,
                           "rank": 7,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -19088,6 +20726,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -19225,6 +20877,20 @@
                           "auctionValue": 0,
                           "rank": 12,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -19365,6 +21031,20 @@
                           "auctionValue": 0,
                           "rank": 48,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 48,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 48,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -19508,6 +21188,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 31,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 31,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -19647,6 +21341,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 33,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 33,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -19780,6 +21488,27 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 17,
+                          "rankSourceId": 9,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 13,
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
@@ -19835,8 +21564,8 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Allen",
-                    "lastNewsDate": 1788092036000,
-                    "lastVideoDate": 1787755152000,
+                    "lastNewsDate": 1788276623000,
+                    "lastVideoDate": 1788029259000,
                     "proTeamId": 11,
                     "rankings": {
                       "0": [
@@ -19895,6 +21624,20 @@
                           "auctionValue": 0,
                           "rank": 68,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 69,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 69,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -20036,8 +21779,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 1,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -20177,8 +21934,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 6,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -20323,6 +22094,20 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 11,
                           "rankSourceId": 11,
                           "rankType": "PPR",
@@ -20423,6 +22208,20 @@
                           "auctionValue": 0,
                           "rank": 107,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 107,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 107,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -20563,6 +22362,20 @@
                           "auctionValue": 0,
                           "rank": 10,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         },
@@ -20712,6 +22525,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 58,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 58,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -20846,6 +22673,27 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 22,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 21,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 21,
+                          "rankSourceId": 9,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 21,
                           "rankSourceId": 7,
                           "rankType": "STANDARD",
@@ -20971,7 +22819,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "McCaffrey",
-                    "lastNewsDate": 1787518037000,
+                    "lastNewsDate": 1788292758000,
                     "lastVideoDate": 1787063255000,
                     "proTeamId": 25,
                     "rankings": {
@@ -21066,6 +22914,20 @@
                           "auctionValue": 0,
                           "rank": 3,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -21209,6 +23071,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -21254,7 +23130,7 @@
                     "injuryStatus": "ACTIVE",
                     "lastName": "McConkey",
                     "lastNewsDate": 1787960163000,
-                    "lastVideoDate": 1786457927000,
+                    "lastVideoDate": 1788275357000,
                     "proTeamId": 24,
                     "rankings": {
                       "0": [
@@ -21350,6 +23226,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -21393,7 +23283,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Henderson",
-                    "lastNewsDate": 1787870136000,
+                    "lastNewsDate": 1788286497000,
                     "lastVideoDate": 1786978114000,
                     "proTeamId": 17,
                     "rankings": {
@@ -21488,6 +23378,20 @@
                           "auctionValue": 0,
                           "rank": 36,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 35,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 35,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -21630,6 +23534,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 14,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -21759,6 +23677,27 @@
                           "auctionValue": 0,
                           "rank": 8,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -21916,6 +23855,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -22055,6 +24008,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 24,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 28,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -22184,6 +24151,27 @@
                           "auctionValue": 0,
                           "rank": 1,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 8,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 6,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -22340,6 +24328,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 38,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 38,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -22477,8 +24479,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 21,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 19,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -22620,8 +24636,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 4,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -22752,6 +24782,27 @@
                           "auctionValue": 0,
                           "rank": 9,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 7,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 10,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -22897,6 +24948,27 @@
                           "auctionValue": 0,
                           "rank": 21,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 23,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -23052,8 +25124,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 10,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 11,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -23100,7 +25186,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Burden III",
-                    "lastNewsDate": 1788054273000,
+                    "lastNewsDate": 1788288329000,
                     "lastVideoDate": 1783571346000,
                     "proTeamId": 3,
                     "rankings": {
@@ -23195,6 +25281,20 @@
                           "auctionValue": 0,
                           "rank": 28,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 28,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 28,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 4
                         }
@@ -23360,6 +25460,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -23489,6 +25603,27 @@
                           "auctionValue": 0,
                           "rank": 4,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 1,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 3,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -23646,6 +25781,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 15,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 16,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -23784,6 +25933,20 @@
                           "auctionValue": 0,
                           "rank": 2,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 2,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         },
@@ -23933,6 +26096,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 29,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -24074,6 +26251,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 27,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -24117,7 +26308,7 @@
                     "injured": false,
                     "injuryStatus": "ACTIVE",
                     "lastName": "Williams",
-                    "lastNewsDate": 1786501461000,
+                    "lastNewsDate": 1788285174000,
                     "lastVideoDate": 1767195881000,
                     "proTeamId": 6,
                     "rankings": {
@@ -24212,6 +26403,20 @@
                           "auctionValue": 0,
                           "rank": 14,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 13,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 12,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -24351,8 +26556,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 14,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 4,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -24495,8 +26714,22 @@
                         },
                         {
                           "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
                           "rank": 12,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 17
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 9,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 17
                         }
@@ -24639,6 +26872,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 42,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 4
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 42,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 4
                         }
                       ]
                     },
@@ -24682,7 +26929,7 @@
                     "injured": false,
                     "injuryStatus": "QUESTIONABLE",
                     "lastName": "Hubbard",
-                    "lastNewsDate": 1787588208000,
+                    "lastNewsDate": 1788278174000,
                     "lastVideoDate": 1787618073000,
                     "proTeamId": 29,
                     "rankings": {
@@ -24777,6 +27024,20 @@
                           "auctionValue": 0,
                           "rank": 30,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 31,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 30,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 2
                         }
@@ -24916,6 +27177,20 @@
                           "auctionValue": 0,
                           "rank": 5,
                           "rankSourceId": 7,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 6
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 5,
+                          "rankSourceId": 10,
                           "rankType": "PPR",
                           "slotId": 6
                         },
@@ -25063,7 +27338,21 @@
                         {
                           "auctionValue": 0,
                           "rank": 31,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 31,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 16
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 31,
+                          "rankSourceId": 12,
                           "rankType": "PPR",
                           "slotId": 16
                         }
@@ -25240,6 +27529,20 @@
                           "rankSourceId": 7,
                           "rankType": "PPR",
                           "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 53,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 2
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 53,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 2
                         }
                       ]
                     },
@@ -25327,6 +27630,27 @@
                           "auctionValue": 0,
                           "rank": 27,
                           "rankSourceId": 11,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 10,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 25,
+                          "rankSourceId": 12,
+                          "rankType": "PPR",
+                          "slotId": 0
+                        },
+                        {
+                          "auctionValue": 0,
+                          "rank": 26,
+                          "rankSourceId": 9,
                           "rankType": "PPR",
                           "slotId": 0
                         },
@@ -28342,413 +30666,420 @@
         "pos": "RB",
         "team": "DAL",
         "status": null,
-        "count": 829935
-      },
-      {
-        "name": "MarShawn Lloyd",
-        "pos": "RB",
-        "team": "GB",
-        "status": null,
-        "count": 576360
+        "count": 774396
       },
       {
         "name": "Jacob Saylors",
         "pos": "RB",
         "team": "DET",
         "status": null,
-        "count": 403275
+        "count": 451440
       },
       {
-        "name": "Dohnte Meyers",
-        "pos": "WR",
-        "team": "CIN",
+        "name": "MarShawn Lloyd",
+        "pos": "RB",
+        "team": "GB",
         "status": null,
-        "count": 267237
+        "count": 371601
       },
       {
         "name": "Zavion Thomas",
         "pos": "WR",
         "team": "CHI",
         "status": null,
-        "count": 263727
+        "count": 213057
       },
       {
         "name": "Devaughn Vele",
         "pos": "WR",
         "team": "NO",
         "status": null,
-        "count": 201467
+        "count": 193508
       },
       {
-        "name": "Odell Beckham",
+        "name": "Dohnte Meyers",
         "pos": "WR",
-        "team": "NYG",
+        "team": "CIN",
         "status": null,
-        "count": 144193
+        "count": 177831
       },
       {
         "name": "Darren Waller",
         "pos": "TE",
         "team": "CAR",
         "status": null,
-        "count": 139284
+        "count": 130752
+      },
+      {
+        "name": "Odell Beckham",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 126035
       },
       {
         "name": "Tre Tucker",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 130488
-      },
-      {
-        "name": "Jalon Daniels",
-        "pos": "QB",
-        "team": "TB",
-        "status": null,
-        "count": 123916
-      },
-      {
-        "name": "Jacksonville Jaguars",
-        "pos": "DEF",
-        "team": "JAX",
-        "status": null,
-        "count": 110454
-      },
-      {
-        "name": "Barion Brown",
-        "pos": "WR",
-        "team": "NO",
-        "status": null,
-        "count": 98433
+        "count": 120156
       },
       {
         "name": "Justice Hill",
         "pos": "RB",
         "team": "BAL",
         "status": null,
-        "count": 96732
+        "count": 95706
       },
       {
-        "name": "Tyler Loop",
-        "pos": "K",
-        "team": "BAL",
+        "name": "Jacksonville Jaguars",
+        "pos": "DEF",
+        "team": "JAX",
         "status": null,
-        "count": 76536
+        "count": 94290
       },
       {
-        "name": "Kyle McCord",
+        "name": "Jalon Daniels",
         "pos": "QB",
-        "team": "MIA",
+        "team": "TB",
         "status": null,
-        "count": 76324
+        "count": 88484
+      },
+      {
+        "name": "Barion Brown",
+        "pos": "WR",
+        "team": "NO",
+        "status": null,
+        "count": 87723
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 72776
+        "count": 70400
       },
       {
-        "name": "Keaton Mitchell",
-        "pos": "RB",
-        "team": "LAC",
-        "status": "Questionable",
-        "count": 69687
+        "name": "Tyler Loop",
+        "pos": "K",
+        "team": "BAL",
+        "status": null,
+        "count": 67932
+      },
+      {
+        "name": "Kyle McCord",
+        "pos": "QB",
+        "team": "MIA",
+        "status": null,
+        "count": 67552
       },
       {
         "name": "Kaelon Black",
         "pos": "RB",
         "team": "SF",
         "status": null,
-        "count": 63623
-      },
-      {
-        "name": "Las Vegas Raiders",
-        "pos": "DEF",
-        "team": "LV",
-        "status": null,
-        "count": 62016
-      },
-      {
-        "name": "Malik Washington",
-        "pos": "WR",
-        "team": "MIA",
-        "status": null,
-        "count": 58088
-      },
-      {
-        "name": "Marlin Klein",
-        "pos": "TE",
-        "team": "HOU",
-        "status": null,
-        "count": 57520
+        "count": 66675
       },
       {
         "name": "Tank Dell",
         "pos": "WR",
         "team": "HOU",
         "status": "IR",
-        "count": 57440
+        "count": 63280
+      },
+      {
+        "name": "Keaton Mitchell",
+        "pos": "RB",
+        "team": "LAC",
+        "status": "Questionable",
+        "count": 61794
+      },
+      {
+        "name": "Las Vegas Raiders",
+        "pos": "DEF",
+        "team": "LV",
+        "status": null,
+        "count": 59130
       },
       {
         "name": "Seth McGowan",
         "pos": "RB",
         "team": "IND",
         "status": null,
-        "count": 56608
+        "count": 55056
       },
       {
-        "name": "Jalen Nailor",
+        "name": "Malik Washington",
         "pos": "WR",
-        "team": "LV",
-        "status": null,
-        "count": 49041
-      },
-      {
-        "name": "Malik Willis",
-        "pos": "QB",
         "team": "MIA",
         "status": null,
-        "count": 47999
+        "count": 54184
       },
       {
         "name": "Emmett Johnson",
         "pos": "RB",
         "team": "KC",
         "status": null,
-        "count": 46944
+        "count": 54054
       },
       {
-        "name": "Kirk Cousins",
-        "pos": "QB",
+        "name": "Marlin Klein",
+        "pos": "TE",
+        "team": "HOU",
+        "status": null,
+        "count": 54025
+      },
+      {
+        "name": "Jalen Nailor",
+        "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 46400
+        "count": 45279
+      },
+      {
+        "name": "Malik Willis",
+        "pos": "QB",
+        "team": "MIA",
+        "status": null,
+        "count": 43519
       },
       {
         "name": "Dontayvion Wicks",
         "pos": "WR",
         "team": "PHI",
         "status": null,
-        "count": 45192
+        "count": 42000
+      },
+      {
+        "name": "Kirk Cousins",
+        "pos": "QB",
+        "team": "LV",
+        "status": null,
+        "count": 41488
       },
       {
         "name": "Najee Harris",
         "pos": "RB",
         "team": "NYG",
         "status": null,
-        "count": 43900
+        "count": 39505
       },
       {
         "name": "Chase McLaughlin",
         "pos": "K",
         "team": "TB",
         "status": null,
-        "count": 43168
-      },
-      {
-        "name": "Detroit Lions",
-        "pos": "DEF",
-        "team": "DET",
-        "status": null,
-        "count": 39915
-      },
-      {
-        "name": "Chris Rodriguez",
-        "pos": "RB",
-        "team": "JAX",
-        "status": null,
-        "count": 39438
-      },
-      {
-        "name": "Kyler Murray",
-        "pos": "QB",
-        "team": "MIN",
-        "status": null,
-        "count": 38464
-      },
-      {
-        "name": "Tyler Shough",
-        "pos": "QB",
-        "team": "NO",
-        "status": null,
-        "count": 37584
-      },
-      {
-        "name": "Khalil Shakir",
-        "pos": "WR",
-        "team": "BUF",
-        "status": "Questionable",
-        "count": 36603
+        "count": 38376
       },
       {
         "name": "Chris Brooks",
         "pos": "RB",
         "team": "GB",
         "status": null,
-        "count": 36258
+        "count": 36299
+      },
+      {
+        "name": "Chris Rodriguez",
+        "pos": "RB",
+        "team": "JAX",
+        "status": null,
+        "count": 35505
+      },
+      {
+        "name": "Kyler Murray",
+        "pos": "QB",
+        "team": "MIN",
+        "status": null,
+        "count": 35408
       },
       {
         "name": "Cooper Kupp",
         "pos": "WR",
         "team": "SEA",
         "status": null,
-        "count": 35520
-      },
-      {
-        "name": "Jonnu Smith",
-        "pos": "TE",
-        "team": "GB",
-        "status": null,
-        "count": 34132
-      },
-      {
-        "name": "Juwan Johnson",
-        "pos": "TE",
-        "team": "NO",
-        "status": null,
-        "count": 31908
-      },
-      {
-        "name": "Josh Jacobs",
-        "pos": "RB",
-        "team": "GB",
-        "status": "NA",
-        "count": 31550
-      },
-      {
-        "name": "Malachi Fields",
-        "pos": "WR",
-        "team": "NYG",
-        "status": null,
-        "count": 30410
-      },
-      {
-        "name": "Tyreek Hill",
-        "pos": "WR",
-        "team": null,
-        "status": "Questionable",
-        "count": 29976
+        "count": 35184
       },
       {
         "name": "Daniel Bellinger",
         "pos": "TE",
         "team": "TEN",
         "status": null,
-        "count": 29841
+        "count": 34832
       },
       {
-        "name": "Mark Andrews",
-        "pos": "TE",
-        "team": "BAL",
+        "name": "Tyler Shough",
+        "pos": "QB",
+        "team": "NO",
         "status": null,
-        "count": 29223
+        "count": 34104
       },
       {
-        "name": "Cairo Santos",
-        "pos": "K",
-        "team": "CHI",
-        "status": null,
-        "count": 28973
+        "name": "Josh Jacobs",
+        "pos": "RB",
+        "team": "GB",
+        "status": "NA",
+        "count": 33920
       },
       {
-        "name": "Ryan Flournoy",
+        "name": "Khalil Shakir",
         "pos": "WR",
-        "team": "DAL",
+        "team": "BUF",
+        "status": "Questionable",
+        "count": 33795
+      },
+      {
+        "name": "Detroit Lions",
+        "pos": "DEF",
+        "team": "DET",
         "status": null,
-        "count": 28936
+        "count": 33435
       },
       {
         "name": "Colbie Young",
         "pos": "WR",
         "team": "CIN",
         "status": null,
-        "count": 28746
-      },
-      {
-        "name": "Deshaun Watson",
-        "pos": "QB",
-        "team": "CLE",
-        "status": null,
-        "count": 27568
-      },
-      {
-        "name": "Tank Bigsby",
-        "pos": "RB",
-        "team": "PHI",
-        "status": null,
-        "count": 26719
-      },
-      {
-        "name": "Jordyn Tyson",
-        "pos": "WR",
-        "team": "NO",
-        "status": "IR",
-        "count": 26208
-      },
-      {
-        "name": "Terrance Ferguson",
-        "pos": "TE",
-        "team": "LAR",
-        "status": "Questionable",
-        "count": 25680
-      },
-      {
-        "name": "Jake Bates",
-        "pos": "K",
-        "team": "DET",
-        "status": null,
-        "count": 25616
-      },
-      {
-        "name": "Harrison Mevis",
-        "pos": "K",
-        "team": "LAR",
-        "status": null,
-        "count": 25134
-      },
-      {
-        "name": "Pittsburgh Steelers",
-        "pos": "DEF",
-        "team": "PIT",
-        "status": null,
-        "count": 24699
-      },
-      {
-        "name": "Jayden Reed",
-        "pos": "WR",
-        "team": "GB",
-        "status": null,
-        "count": 24408
+        "count": 32346
       },
       {
         "name": "Tyler Allgeier",
         "pos": "RB",
         "team": "ARI",
         "status": null,
-        "count": 23940
+        "count": 31510
+      },
+      {
+        "name": "Jonnu Smith",
+        "pos": "TE",
+        "team": "GB",
+        "status": null,
+        "count": 31507
+      },
+      {
+        "name": "Juwan Johnson",
+        "pos": "TE",
+        "team": "NO",
+        "status": null,
+        "count": 29678
+      },
+      {
+        "name": "Ryan Flournoy",
+        "pos": "WR",
+        "team": "DAL",
+        "status": null,
+        "count": 27952
+      },
+      {
+        "name": "Malachi Fields",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 27310
+      },
+      {
+        "name": "Cairo Santos",
+        "pos": "K",
+        "team": "CHI",
+        "status": null,
+        "count": 27286
+      },
+      {
+        "name": "Mark Andrews",
+        "pos": "TE",
+        "team": "BAL",
+        "status": null,
+        "count": 26532
+      },
+      {
+        "name": "Sione Vaki",
+        "pos": "RB",
+        "team": "DET",
+        "status": null,
+        "count": 26369
+      },
+      {
+        "name": "Jordyn Tyson",
+        "pos": "WR",
+        "team": "NO",
+        "status": "IR",
+        "count": 26320
+      },
+      {
+        "name": "Deshaun Watson",
+        "pos": "QB",
+        "team": "CLE",
+        "status": null,
+        "count": 25704
+      },
+      {
+        "name": "Jake Bates",
+        "pos": "K",
+        "team": "DET",
+        "status": null,
+        "count": 24296
+      },
+      {
+        "name": "Tank Bigsby",
+        "pos": "RB",
+        "team": "PHI",
+        "status": null,
+        "count": 23828
+      },
+      {
+        "name": "Tyreek Hill",
+        "pos": "WR",
+        "team": null,
+        "status": "Questionable",
+        "count": 23008
+      },
+      {
+        "name": "Pittsburgh Steelers",
+        "pos": "DEF",
+        "team": "PIT",
+        "status": null,
+        "count": 22179
+      },
+      {
+        "name": "Jayden Reed",
+        "pos": "WR",
+        "team": "GB",
+        "status": null,
+        "count": 21609
+      },
+      {
+        "name": "Keenan Allen",
+        "pos": "WR",
+        "team": "IND",
+        "status": null,
+        "count": 21300
+      },
+      {
+        "name": "Harrison Mevis",
+        "pos": "K",
+        "team": "LAR",
+        "status": null,
+        "count": 21252
       },
       {
         "name": "Cyrus Allen",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 22596
+        "count": 21036
       },
       {
         "name": "AJ Barner",
         "pos": "TE",
         "team": "SEA",
         "status": null,
-        "count": 22194
+        "count": 20754
       },
       {
-        "name": "Dylan Sampson",
-        "pos": "RB",
-        "team": "CLE",
+        "name": "Xavier Hutchinson",
+        "pos": "WR",
+        "team": "HOU",
         "status": null,
-        "count": 21105
+        "count": 20734
       }
     ],
     "drops": [
@@ -28757,280 +31088,280 @@
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 340128
+        "count": 270744
       },
       {
         "name": "Jam Miller",
         "pos": "RB",
         "team": null,
         "status": "Questionable",
-        "count": 121617
+        "count": 91350
+      },
+      {
+        "name": "Isiah Pacheco",
+        "pos": "RB",
+        "team": "DET",
+        "status": "IR",
+        "count": 86832
       },
       {
         "name": "Justin Joly",
         "pos": "TE",
         "team": null,
         "status": null,
-        "count": 99210
-      },
-      {
-        "name": "Alvin Kamara",
-        "pos": "RB",
-        "team": "NO",
-        "status": "Questionable",
-        "count": 80000
-      },
-      {
-        "name": "Isiah Pacheco",
-        "pos": "RB",
-        "team": "DET",
-        "status": "Questionable",
-        "count": 78928
-      },
-      {
-        "name": "Oronde Gadsden",
-        "pos": "TE",
-        "team": "LAC",
-        "status": null,
-        "count": 78145
-      },
-      {
-        "name": "Tyreek Hill",
-        "pos": "WR",
-        "team": null,
-        "status": "Questionable",
-        "count": 71624
-      },
-      {
-        "name": "Kenyon Sadiq",
-        "pos": "TE",
-        "team": "NYJ",
-        "status": "Questionable",
-        "count": 71046
+        "count": 83110
       },
       {
         "name": "Michael Trigg",
         "pos": "TE",
         "team": "DAL",
         "status": null,
-        "count": 70101
+        "count": 68598
       },
       {
-        "name": "Emanuel Wilson",
+        "name": "Oronde Gadsden",
+        "pos": "TE",
+        "team": "LAC",
+        "status": null,
+        "count": 66370
+      },
+      {
+        "name": "Alvin Kamara",
         "pos": "RB",
-        "team": "SEA",
+        "team": "NO",
         "status": "Questionable",
-        "count": 70002
+        "count": 66144
       },
       {
         "name": "Brenton Strange",
         "pos": "TE",
         "team": "JAX",
         "status": null,
-        "count": 69030
+        "count": 60984
+      },
+      {
+        "name": "Emanuel Wilson",
+        "pos": "RB",
+        "team": "SEA",
+        "status": "Questionable",
+        "count": 60354
+      },
+      {
+        "name": "Tyreek Hill",
+        "pos": "WR",
+        "team": null,
+        "status": "Questionable",
+        "count": 56792
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 65095
+        "count": 56750
+      },
+      {
+        "name": "Kenyon Sadiq",
+        "pos": "TE",
+        "team": "NYJ",
+        "status": "Questionable",
+        "count": 56232
       },
       {
         "name": "Robert Henry",
         "pos": "RB",
-        "team": null,
+        "team": "WAS",
         "status": null,
-        "count": 62587
-      },
-      {
-        "name": "Tank Dell",
-        "pos": "WR",
-        "team": "HOU",
-        "status": "IR",
-        "count": 60808
-      },
-      {
-        "name": "Cyrus Allen",
-        "pos": "WR",
-        "team": "KC",
-        "status": null,
-        "count": 58884
-      },
-      {
-        "name": "Jordyn Tyson",
-        "pos": "WR",
-        "team": "NO",
-        "status": "IR",
-        "count": 55152
+        "count": 54922
       },
       {
         "name": "Malik Davis",
         "pos": "RB",
         "team": "DAL",
         "status": null,
-        "count": 53874
+        "count": 51903
       },
       {
-        "name": "Chimere Dike",
+        "name": "Cyrus Allen",
         "pos": "WR",
-        "team": "TEN",
+        "team": "KC",
         "status": null,
-        "count": 51912
+        "count": 51366
       },
       {
-        "name": "Keenan Allen",
-        "pos": "WR",
-        "team": "IND",
+        "name": "J'Mari Taylor",
+        "pos": "RB",
+        "team": null,
         "status": null,
-        "count": 50984
+        "count": 46116
       },
       {
-        "name": "Travis Hunter",
+        "name": "Jordyn Tyson",
         "pos": "WR",
-        "team": "JAX",
-        "status": null,
-        "count": 49530
+        "team": "NO",
+        "status": "IR",
+        "count": 45536
       },
       {
         "name": "Fernando Mendoza",
         "pos": "QB",
         "team": "LV",
         "status": null,
-        "count": 49528
+        "count": 42624
       },
       {
-        "name": "Jerry Jeudy",
+        "name": "Travis Hunter",
         "pos": "WR",
-        "team": "CLE",
+        "team": "JAX",
         "status": null,
-        "count": 47295
+        "count": 42390
       },
       {
-        "name": "Omar Cooper",
+        "name": "Chimere Dike",
         "pos": "WR",
-        "team": "NYJ",
+        "team": "TEN",
         "status": null,
-        "count": 47048
+        "count": 42120
       },
       {
         "name": "New England Patriots",
         "pos": "DEF",
         "team": "NE",
         "status": null,
-        "count": 46697
+        "count": 41734
+      },
+      {
+        "name": "Jerry Jeudy",
+        "pos": "WR",
+        "team": "CLE",
+        "status": null,
+        "count": 39798
       },
       {
         "name": "Jalen Nailor",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 46188
+        "count": 39069
       },
       {
-        "name": "Brian Robinson",
-        "pos": "RB",
-        "team": "ATL",
+        "name": "Omar Cooper",
+        "pos": "WR",
+        "team": "NYJ",
         "status": null,
-        "count": 44046
-      },
-      {
-        "name": "Zach Ertz",
-        "pos": "TE",
-        "team": null,
-        "status": null,
-        "count": 43983
+        "count": 38784
       },
       {
         "name": "Sean Tucker",
         "pos": "RB",
         "team": "TB",
         "status": null,
-        "count": 43470
+        "count": 36558
+      },
+      {
+        "name": "Brian Robinson",
+        "pos": "RB",
+        "team": "ATL",
+        "status": null,
+        "count": 36156
       },
       {
         "name": "Keaton Mitchell",
         "pos": "RB",
         "team": "LAC",
         "status": "Questionable",
-        "count": 41967
+        "count": 34974
+      },
+      {
+        "name": "Zach Ertz",
+        "pos": "TE",
+        "team": null,
+        "status": null,
+        "count": 34920
+      },
+      {
+        "name": "Keenan Allen",
+        "pos": "WR",
+        "team": "IND",
+        "status": null,
+        "count": 33708
       },
       {
         "name": "Dohnte Meyers",
         "pos": "WR",
         "team": "CIN",
         "status": null,
-        "count": 41202
-      },
-      {
-        "name": "Chris Rodriguez",
-        "pos": "RB",
-        "team": "JAX",
-        "status": null,
-        "count": 40194
-      },
-      {
-        "name": "Tank Bigsby",
-        "pos": "RB",
-        "team": "PHI",
-        "status": null,
-        "count": 39277
-      },
-      {
-        "name": "Darnell Mooney",
-        "pos": "WR",
-        "team": "NYG",
-        "status": null,
-        "count": 38493
-      },
-      {
-        "name": "Isaiah Davis",
-        "pos": "RB",
-        "team": "NYJ",
-        "status": "Questionable",
-        "count": 37575
-      },
-      {
-        "name": "Marvin Mims",
-        "pos": "WR",
-        "team": "DEN",
-        "status": "Questionable",
-        "count": 37512
+        "count": 33201
       },
       {
         "name": "Detroit Lions",
         "pos": "DEF",
         "team": "DET",
         "status": null,
-        "count": 37233
+        "count": 33093
+      },
+      {
+        "name": "Tank Bigsby",
+        "pos": "RB",
+        "team": "PHI",
+        "status": null,
+        "count": 32445
+      },
+      {
+        "name": "Isaiah Davis",
+        "pos": "RB",
+        "team": "NYJ",
+        "status": "Questionable",
+        "count": 32085
+      },
+      {
+        "name": "Chris Rodriguez",
+        "pos": "RB",
+        "team": "JAX",
+        "status": null,
+        "count": 32049
+      },
+      {
+        "name": "Will Levis",
+        "pos": "QB",
+        "team": null,
+        "status": null,
+        "count": 31992
+      },
+      {
+        "name": "Darnell Mooney",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 31959
       },
       {
         "name": "Devin Singletary",
         "pos": "RB",
         "team": "NYG",
         "status": null,
-        "count": 37179
+        "count": 31617
       },
       {
-        "name": "Zachariah Branch",
+        "name": "Tank Dell",
         "pos": "WR",
-        "team": "ATL",
-        "status": null,
-        "count": 35448
+        "team": "HOU",
+        "status": "IR",
+        "count": 31232
+      },
+      {
+        "name": "Marvin Mims",
+        "pos": "WR",
+        "team": "DEN",
+        "status": "Questionable",
+        "count": 30744
       },
       {
         "name": "Malik Washington",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 35080
-      },
-      {
-        "name": "Quinn Ewers",
-        "pos": "QB",
-        "team": "JAX",
-        "status": null,
-        "count": 34929
+        "count": 29648
       }
     ]
   },

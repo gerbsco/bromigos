@@ -65,15 +65,11 @@ export function boot({ search = "?pack=1", now = null, storage = false } = {}){
     createElement: t => mkEl("", t),
     querySelector(){ return null; },
     querySelectorAll(sel){
-      if(sel.indexOf("nav button") === 0){
-        return ["hq","team","trade","wire","history","rules","binder","demo"].map(p => {
-          const b = mkEl("", "button"); b.dataset.p = p; return b;
-        });
-      }
       if(sel.indexOf(".panel") === 0){
         return ["hq","trade","wire","history","rules","team","binder","demo"]
           .map(p => byId(p) || mkEl(p));
       }
+      if(sel.indexOf(".minscale") === 0) return [];
       return [];
     },
     addEventListener(){}, body: mkEl("", "body"), documentElement: mkEl("", "html")

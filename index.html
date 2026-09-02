@@ -6,23 +6,41 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ultimo Bromigos — League HQ</title>
 <meta name="description" content="Ultimo Bromigos fantasy football league headquarters">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap"
+      rel="stylesheet">
 <style>
   :root{
     --ink:#0E2438; --ink-2:#132C44; --brass:#D9A227; --stamp:#B23A2F; --green:#4CAF7D;
     --chalk:#EAE2CF; --dim:#93A6B8; --faint:#5D7086;
+
+    /* One display face, condensed, for headings and anything scoreboard shaped.
+       Body copy stays on the system stack. If the webfont never loads, the
+       narrow fallbacks keep the same proportions rather than reflowing. */
+    --display:"Oswald","Haettenschweiler","Arial Narrow",system-ui,sans-serif;
+
+    /* Results get their own two colours so a good week and a bad week read
+       differently before you have read a word. Brass is reserved for
+       navigation and "you are here", nothing else. */
+    --win:#7FD4A8; --loss:#E08C82;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
+  /* The stripe used to run at one intensity behind everything, so cards sat in
+     the texture rather than on it. Fading it downward gives the page a top. */
   body{background:var(--ink);
-    background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
+    background-image:
+      linear-gradient(180deg,rgba(255,255,255,.030) 0,rgba(255,255,255,0) 620px),
+      repeating-linear-gradient(0deg,rgba(255,255,255,.016) 0 1px,transparent 1px 3px);
     color:var(--chalk);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
     padding:0 0 calc(84px + env(safe-area-inset-bottom,0px))}
   .wrap{max-width:660px;margin:0 auto;padding:0 14px}
 
   header{padding:28px 0 14px;text-align:center}
   .kicker{font:600 12px/1 system-ui,sans-serif;letter-spacing:.04em;color:var(--brass)}
-  h1{margin:10px 0 5px;font:800 clamp(28px,8.5vw,44px)/.94 system-ui,sans-serif;
-    letter-spacing:-.03em;text-transform:uppercase}
+  h1{margin:10px 0 5px;font:700 clamp(30px,9vw,48px)/.92 var(--display);
+    letter-spacing:.005em;text-transform:uppercase}
   .sub{font-size:13.5px;color:var(--dim);margin:0}
   .freshchip{display:inline-flex;align-items:center;gap:7px;margin-top:11px;padding:6px 11px;
     border-radius:20px;background:rgba(255,255,255,.05);color:var(--faint);
@@ -38,7 +56,7 @@
 
   .count{background:var(--ink-2);border:1px solid rgba(217,162,39,.3);border-radius:4px;
     padding:18px 16px;margin:18px 0 4px;text-align:center}
-  .count .lbl{font:600 13px/1 system-ui,sans-serif;letter-spacing:.02em;color:var(--brass);
+  .count .lbl{font:600 13px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--brass);
     margin-bottom:14px}
   .clock{display:flex;justify-content:center;gap:6px}
   .unit{flex:1;max-width:78px}
@@ -66,7 +84,7 @@
   #tabbar button:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
 
   /* Second level, drawn only when a destination holds more than one panel. */
-  .subtabs{display:flex;gap:6px;margin:16px 0 2px;overflow-x:auto;
+  .subtabs{display:flex;gap:6px;margin:18px 0 4px;overflow-x:auto;
     scrollbar-width:none;padding:2px 0}
   .subtabs::-webkit-scrollbar{display:none}
   .subtabs:empty{display:none}
@@ -77,19 +95,23 @@
     color:#241A05}
   .subtabs button:active{background:rgba(255,255,255,.06)}
 
-  .panel{display:none;padding-top:22px}
+  .panel{display:none;padding-top:26px}
   .panel.on{display:block}
-  h2{display:flex;align-items:center;gap:12px;margin:0 0 13px;
-    font:600 14px/1.2 system-ui,sans-serif;letter-spacing:.01em;color:var(--chalk)}
+  h2{display:flex;align-items:center;gap:13px;margin:0 0 15px;
+    font:600 15px/1.2 var(--display);letter-spacing:.07em;text-transform:uppercase;
+    color:var(--chalk)}
   h2::after{content:"";flex:1;height:1px;background:rgba(234,226,207,.14)}
-  h2:not(:first-child){margin-top:30px}
+  /* Space between sections has to beat space inside them or a long panel reads
+     as one undifferentiated scroll. */
+  h2:not(:first-child){margin-top:42px}
 
-  .card{background:var(--ink-2);border-radius:4px;padding:16px;margin-bottom:11px;
-    border-left:3px solid #2C4257}
+  .card{background:var(--ink-2);border-radius:5px;padding:16px;margin-bottom:11px;
+    border-left:3px solid #2C4257;
+    box-shadow:0 1px 0 rgba(255,255,255,.030) inset, 0 8px 20px rgba(0,0,0,.20)}
   .card.gold{border-left-color:var(--brass)}
   .card.red{border-left-color:var(--stamp)}
   .card.green{border-left-color:var(--green)}
-  .card h3{margin:0 0 7px;font:800 16px/1.25 system-ui,sans-serif}
+  .card h3{margin:0 0 7px;font:600 17px/1.22 var(--display);letter-spacing:.01em}
   .card p{margin:0;font-size:14.5px;color:#BCCBD8;line-height:1.55}
   .card p+p{margin-top:9px}
 
@@ -166,14 +188,14 @@
   .hhbug{background:var(--ink-2);border-radius:4px;padding:18px 12px;margin-bottom:11px;
     border-left:3px solid var(--brass);display:flex;align-items:center;gap:8px}
   .hhs{flex:1;min-width:0;text-align:center}
-  .hhs b{display:block;font:800 15px/1.2 system-ui,sans-serif;color:var(--chalk);
+  .hhs b{display:block;font:600 17px/1.2 var(--display);letter-spacing:.03em;color:var(--chalk);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hhs i{display:block;margin-top:8px;font:800 38px/1 ui-monospace,Menlo,monospace;
     font-style:normal;color:var(--faint);font-variant-numeric:tabular-nums}
   .hhs.lead i{color:var(--brass)}
   .hhres{font:800 12px/1 ui-monospace,Menlo,monospace}
-  .hhres.w{color:#8FD9B4}
-  .hhres.l{color:#E39A92}
+  .hhres.w{color:var(--win)}
+  .hhres.l{color:var(--loss)}
   .hhres.t{color:var(--faint)}
   tr.hhsel td{background:rgba(217,162,39,.09)}
   .hhmore{margin:4px 0 14px}
@@ -191,8 +213,8 @@
   .hhmx .rowh{text-align:left;position:sticky;left:0;background:var(--ink);
     min-width:62px;font:700 12px/1 system-ui,sans-serif;color:var(--chalk)}
   .hhmx td.self{color:var(--faint)}
-  .hhmx td.good{color:#8FD9B4}
-  .hhmx td.bad{color:#E39A92}
+  .hhmx td.good{color:var(--win)}
+  .hhmx td.bad{color:var(--loss)}
 
   .locked{border:1px dashed #354E66;border-radius:4px;padding:26px 18px;text-align:center;
     background:rgba(255,255,255,.02)}
@@ -202,7 +224,7 @@
   .stamp{display:inline-block;padding:4px 9px;border-radius:2px;background:rgba(76,175,125,.14);
     color:var(--green);font:700 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.12em;
     text-transform:uppercase;margin-bottom:12px}
-  .stale{background:rgba(178,58,47,.16);color:#E39A92}
+  .stale{background:rgba(178,58,47,.16);color:var(--loss)}
   /* ================= PACK FX ================= */
   .packwrap{position:fixed;inset:0;z-index:900;display:none;align-items:center;
     justify-content:center;background:radial-gradient(ellipse at 50% 56%,#0B2237 0%,#02060B 78%);
@@ -329,7 +351,7 @@
     letter-spacing:.1em;opacity:.82}
   .futR{flex:1;padding:15px 14px 12px 2px;text-align:right;display:flex;
     flex-direction:column;justify-content:center;background:rgba(0,0,0,.14)}
-  .futR b{display:block;font:800 20px/1.02 system-ui,sans-serif;letter-spacing:-.01em;
+  .futR b{display:block;font:700 21px/1.02 var(--display);letter-spacing:.01em;
     text-transform:uppercase}
   .futR span{display:block;margin-top:5px;font:600 10px/1.3 system-ui,sans-serif;
     letter-spacing:.06em;text-transform:uppercase;opacity:.7}
@@ -376,7 +398,7 @@
   .minscale .fut,.minscale .cons{position:absolute;top:0;left:0;
     transform:scale(var(--mk,.5));transform-origin:top left;opacity:1;animation:none}
   .mcap{margin-top:7px;text-align:center}
-  .mcap b{display:block;font:600 12px/1.25 system-ui,sans-serif;color:var(--chalk);
+  .mcap b{display:block;font:600 13px/1.25 var(--display);letter-spacing:.02em;color:var(--chalk);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mcap span{display:block;margin-top:3px;font:400 10.5px/1.2 system-ui,sans-serif;color:var(--faint)}
   .mini{position:relative;aspect-ratio:5/7;border-radius:6px;overflow:hidden;cursor:pointer;
@@ -423,7 +445,7 @@
   .consArt{height:118px;margin:0 4px;border-radius:2px;display:flex;align-items:center;
     justify-content:center;font-size:58px;background:#0A0C0F;position:relative;z-index:1;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
-  .consName{margin:9px 4px 0;text-align:center;font:800 16px/1.2 system-ui,sans-serif;
+  .consName{margin:9px 4px 0;text-align:center;font:600 17px/1.2 var(--display);
     position:relative;z-index:1}
   .consWhy{margin:5px 7px 0;text-align:center;position:relative;z-index:1;
     font:700 8.5px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.11em;
@@ -695,6 +717,22 @@
   .swapr{text-align:right;font:700 12.5px/1 ui-monospace,Menlo,monospace;color:#C3D2DE;
     font-variant-numeric:tabular-nums}
   .note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:14px 0 0}
+  .nxcard{margin-top:16px}
+  .nxwho{display:flex;align-items:center;gap:11px;margin:2px 0 10px}
+  .nxcrest{width:38px;height:38px;flex:none;border-radius:6px;overflow:hidden;
+    background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+  .nxcrest img{width:100%;height:100%;object-fit:cover;display:block}
+  .nxname{font:700 24px/1 var(--display);letter-spacing:.02em;text-transform:uppercase}
+  .nxlast{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .nxg{display:inline-flex;align-items:baseline;gap:5px;padding:6px 9px;border-radius:4px;
+    background:rgba(0,0,0,.20);font:700 12px/1 ui-monospace,Menlo,monospace}
+  .nxg i{font-style:normal;font-size:10px;opacity:.55}
+  .nxg.w{color:var(--win)}
+  .nxg.l{color:var(--loss)}
+
+  td.mark{font:700 15px/1 var(--display);letter-spacing:.02em}
+  td.mark.good{color:var(--win)}
+  td.mark.bad{color:var(--loss)}
   footer{text-align:center;color:var(--faint);font-size:12px;margin-top:34px;line-height:1.7}
 </style>
 </head>
@@ -725,6 +763,7 @@
   <div class="subtabs" id="subtabs" role="tablist"></div>
 
   <section class="panel on" id="hq">
+    <div id="nextup"></div>
     <div id="recap"></div>
     <div id="draft"></div>
     <div id="awards"></div>
@@ -1494,6 +1533,64 @@ function longestStreak(){
   return best;
 }
 
+/* ---------- next opponent ----------
+   The payoff for the head-to-head file. Before the games, the one thing worth
+   knowing about your opponent is how the two of you have gone historically. */
+function nextOpponent(){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  if(!sch.length || !ME) return null;
+  const idx = teamIndex();
+  const mine = idx[ME];
+  if(!mine) return null;
+  const byId = {};
+  Object.keys(idx).forEach(m => { byId[idx[m].id] = m; });
+
+  const open = sch.filter(m => m.home && m.away
+    && (!m.winner || m.winner === "UNDECIDED")
+    && (m.home.teamId === mine.id || m.away.teamId === mine.id))
+    .sort((a, b) => a.matchupPeriodId - b.matchupPeriodId);
+  const m = open[0];
+  if(!m) return null;
+  const oppId = m.home.teamId === mine.id ? m.away.teamId : m.home.teamId;
+  const opp = byId[oppId];
+  return opp ? { opponent: opp, week: m.matchupPeriodId } : null;
+}
+
+function renderNextUp(){
+  const el = document.getElementById("nextup");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+
+  const nx = nextOpponent();
+  if(!nx){ el.innerHTML = ""; return; }
+
+  normaliseH2H();
+  const s = h2hSeries(ME, nx.opponent);
+  const crest = crestFor(nx.opponent);
+
+  let history;
+  if(!s.games.length){
+    history = `<p>You have never played ${esc(nx.opponent)}. Whatever happens, it is a first.</p>`;
+  } else {
+    const last = s.games.slice(-3).reverse().map(g =>
+      `<span class="nxg ${g.mine > g.theirs ? "w" : "l"}">${g.mine > g.theirs ? "W" : "L"}
+        ${f1(g.mine)}&ndash;${f1(g.theirs)}<i>${g.season}</i></span>`).join("");
+    history = `<p><b>${s.w}-${s.l}${s.t ? "-" + s.t : ""}</b> all time,
+        ${s.games.length} meeting${s.games.length > 1 ? "s" : ""}.
+        ${esc(h2hStreak(s.games))}.</p>
+      <div class="nxlast">${last}</div>`;
+  }
+
+  el.innerHTML = `<div class="card gold nxcard">
+      <h3>Next up &middot; Week ${nx.week}</h3>
+      <div class="nxwho">
+        ${crest ? `<span class="nxcrest"><img src="${esc(crest)}" alt="" loading="lazy"></span>` : ""}
+        <span class="nxname">${esc(nx.opponent)}</span>
+      </div>
+      ${history}
+    </div>`;
+}
+
 function renderRecords(){
   const el = document.getElementById("recordsBody");
   if(!el) return;
@@ -1513,9 +1610,11 @@ function renderRecords(){
   const winners = scores.filter(r => r.pts > r.oppPts);
   const streak = longestStreak();
 
-  const line = (label, r, val, detail) =>
+  /* tone marks the record as something to brag about or something to live
+     down, so the column reads before you have parsed the label */
+  const line = (label, r, val, detail, tone) =>
     `<tr><td>${esc(label)}<span class="who">${esc(detail)}</span></td>
-      <td>${esc(r)}</td><td class="n">${esc(val)}</td></tr>`;
+      <td>${esc(r)}</td><td class="n mark ${tone || ""}">${esc(val)}</td></tr>`;
 
   const top   = by(scores,  (a, b) => b.pts - a.pts);
   const bot   = by(scores,  (a, b) => a.pts - b.pts);
@@ -1530,13 +1629,13 @@ function renderRecords(){
     <p class="note" style="margin:0 0 14px">Every game since ${(H2H.seasons||[])[0] || 2019}.
       ${scores.length / 2} matchups on file.</p>
     <table><thead><tr><th>Record</th><th>Holder</th><th class="n">Mark</th></tr></thead><tbody>
-    ${line("Highest score", top.who, f1(top.pts), when(top) + " vs " + top.opp)}
-    ${line("Lowest score", bot.who, f1(bot.pts), when(bot) + " vs " + bot.opp)}
-    ${line("Biggest blowout", blow.w, "+" + f1(blow.gap), when(blow) + " over " + blow.l)}
+    ${line("Highest score", top.who, f1(top.pts), when(top) + " vs " + top.opp, "good")}
+    ${line("Lowest score", bot.who, f1(bot.pts), when(bot) + " vs " + bot.opp, "bad")}
+    ${line("Biggest blowout", blow.w, "+" + f1(blow.gap), when(blow) + " over " + blow.l, "good")}
     ${line("Narrowest win", thin.w, "+" + f1(thin.gap), when(thin) + " over " + thin.l)}
-    ${line("Most points in a loss", gutted.who, f1(gutted.pts), when(gutted) + " to " + gutted.opp)}
+    ${line("Most points in a loss", gutted.who, f1(gutted.pts), when(gutted) + " to " + gutted.opp, "bad")}
     ${line("Fewest points in a win", stole.who, f1(stole.pts), when(stole) + " over " + stole.opp)}
-    ${streak.n ? line("Longest win streak", streak.who, streak.n + " straight", "across all seasons") : ""}
+    ${streak.n ? line("Longest win streak", streak.who, streak.n + " straight", "across all seasons", "good") : ""}
     </tbody></table>
     <p class="note">Playoff and consolation games count. Records update every Tuesday.</p>`;
 }
@@ -1695,6 +1794,7 @@ function renderAll(){
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
+  try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
   try{ renderBlockPage(); }catch(e){ console.warn("[bromigos] block:", e && e.message); }
   try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }

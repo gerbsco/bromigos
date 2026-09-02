@@ -24,8 +24,21 @@ function ok(name, fn){
   else { fails++; console.log("  FAIL  " + name + (extra ? "  -> " + extra : "")); }
 }
 
-const shown = (byId, id) => byId(id) && byId(id).style.display !== "none";
+/* the tab strip is rendered, so visibility is read from what it contains */
+const dests = byId => [...byId("tabbar").innerHTML.matchAll(/data-d="([a-z]+)"/g)].map(m => m[1]);
+const hasDest = (byId, d) => dests(byId).indexOf(d) >= 0;
 const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
+
+/* the bar itself must never show a dead destination */
+{
+  const { sandbox: S, byId } = boot({ search: "", now: "2026-09-01T12:00:00Z" });
+  ok("every destination shown has at least one open panel", () =>
+    dests(byId).every(d => S.panelsIn(d).length > 0));
+  ok("sub-tabs only appear where there is a choice", () => {
+    const sub = byId("subtabs").innerHTML;
+    return [S.panelsIn("home").length > 1 || sub.indexOf('data-p="hq"') < 0, sub.slice(0,60)];
+  });
+}
 
 /* ============ PHASE 1: before the draft, plain link ============ */
 {
@@ -36,9 +49,9 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   ok(tag + " draft features locked", () => S.liveDraft() === false);
   ok(tag + " packs locked", () => S.livePacks() === false);
 
-  ok(tag + " My Team tab hidden", () => !shown(byId, "teamTab"));
-  ok(tag + " Binder tab hidden", () => !shown(byId, "binderTab"));
-  ok(tag + " Pack tab hidden", () => !shown(byId, "demoTab"));
+  ok(tag + " Team destination hidden", () => [!hasDest(byId,"team"), dests(byId).join(",")]);
+  ok(tag + " Cards destination hidden", () => [!hasDest(byId,"cards"), dests(byId).join(",")]);
+  ok(tag + " pack test bench is locked", () => !S.panelVisible("demo"));
 
   ok(tag + " history subnav hidden", () => byId("histNav").style.display === "none");
   ok(tag + " head to head empty", () => empty(byId, "h2hBody"));
@@ -67,9 +80,9 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   ok(tag + " draft features open", () => S.liveDraft() === true);
   ok(tag + " packs still locked", () => S.livePacks() === false);
 
-  ok(tag + " My Team tab visible", () => shown(byId, "teamTab"));
-  ok(tag + " Binder tab still hidden", () => !shown(byId, "binderTab"));
-  ok(tag + " Pack tab still hidden", () => !shown(byId, "demoTab"));
+  ok(tag + " Team destination visible", () => [hasDest(byId,"team"), dests(byId).join(",")]);
+  ok(tag + " Cards destination still hidden", () => !hasDest(byId,"cards"));
+  ok(tag + " pack test bench still locked", () => !S.panelVisible("demo"));
 
   ok(tag + " history subnav visible", () =>
     [byId("histNav").style.display === "flex", byId("histNav").style.display]);
@@ -87,9 +100,9 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   ok(tag + " draft features open", () => S.liveDraft() === true);
   ok(tag + " packs open", () => S.livePacks() === true);
 
-  ok(tag + " My Team tab visible", () => shown(byId, "teamTab"));
-  ok(tag + " Binder tab visible", () => shown(byId, "binderTab"));
-  ok(tag + " Pack test bench stays hidden", () => !shown(byId, "demoTab"));
+  ok(tag + " Team destination visible", () => [hasDest(byId,"team"), dests(byId).join(",")]);
+  ok(tag + " Cards destination visible", () => [hasDest(byId,"cards"), dests(byId).join(",")]);
+  ok(tag + " pack test bench stays locked", () => !S.panelVisible("demo"));
   ok(tag + " binder renders a prompt, not blank", () =>
     byId("binderBody").innerHTML.indexOf("Pick your name") >= 0);
 }
@@ -139,7 +152,8 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   setVar("LIVE", JSON.stringify({ settings: { draftDetail: { drafted: true } } }));
   ok("ESPN reporting drafted unlocks early", () => S.liveDraft() === true);
   S.renderAll();
-  ok("and the My Team tab appears without a reload", () => shown(byId, "teamTab"));
+  ok("and the Team destination appears without a reload", () =>
+    [hasDest(byId,"team"), dests(byId).join(",")]);
   ok("but packs stay shut, they are date driven", () => S.livePacks() === false);
 }
 
@@ -156,9 +170,9 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   const tag = "preview (Sept 1, ?pack=1)";
   ok(tag + " draft features forced open", () => S.liveDraft() === true);
   ok(tag + " packs forced open", () => S.livePacks() === true);
-  ok(tag + " My Team tab visible", () => shown(byId, "teamTab"));
-  ok(tag + " Binder tab visible", () => shown(byId, "binderTab"));
-  ok(tag + " Pack test bench visible", () => shown(byId, "demoTab"));
+  ok(tag + " Team destination visible", () => [hasDest(byId,"team"), dests(byId).join(",")]);
+  ok(tag + " Cards destination visible", () => [hasDest(byId,"cards"), dests(byId).join(",")]);
+  ok(tag + " pack test bench is reachable", () => S.panelVisible("demo"));
   ok(tag + " history subnav visible", () => byId("histNav").style.display === "flex");
 }
 

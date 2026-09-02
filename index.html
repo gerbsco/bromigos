@@ -1274,6 +1274,26 @@ function renderWire(){
    { seasons:[], managers:[], games:[[season, week, A, aPts, B, bPts, tier]] }
    tier: 0 regular season, 1 playoffs, 2 consolation. */
 
+/* ESPN stores names the league does not use: lowercase "bo", "Andrew" for
+   Dawson. scripts/managers.mjs fixes that when data/h2h.json is built, but the
+   app should not depend on when that file was last rebuilt, and a manager whose
+   spelling changed mid-history would otherwise have their record split across
+   two people. Normalising on load fixes both. test/managers.test.mjs asserts
+   this table agrees with the build script, so the two cannot drift. */
+const NAME_FIX = {
+  "scott":"Scotty", "andrew":"Dawson", "drew":"Dawson", "michael":"Mike",
+  "jim":"James", "jimmy":"James", "rob":"Bo", "robert":"Bo"
+};
+const tcase = n => String(n || "").trim().toLowerCase()
+  .replace(/(^|[\s'-])([a-z])/g, (m, sep, ch) => sep + ch.toUpperCase());
+const fixName = n => NAME_FIX[String(n || "").trim().toLowerCase()] || tcase(n);
+
+function normaliseH2H(){
+  if(!H2H || !Array.isArray(H2H.games)) return;
+  H2H.games.forEach(g => { g[2] = fixName(g[2]); g[4] = fixName(g[4]); });
+  if(Array.isArray(H2H.managers)) H2H.managers = H2H.managers.map(fixName);
+}
+
 let H2H = null;
 let histView = "owners";
 let h2hA = "", h2hB = "", h2hTier = "all";
@@ -1367,6 +1387,7 @@ function renderH2H(){
   if(!el) return;
   if(!liveDraft()){ el.innerHTML = ""; return; }
 
+  normaliseH2H();          // idempotent, so a stale file still reads correctly
   const mgrs = h2hManagers();
   if(!mgrs.length){
     el.innerHTML = `<h2>Head to Head</h2>` + lock("No matchup file yet",

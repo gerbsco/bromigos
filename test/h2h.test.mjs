@@ -168,5 +168,39 @@ ok("switching hides owners", () => byId("ownersBody").style.display === "none");
 ok("switching shows h2h", () =>
   [byId("h2hBody").style.display === "", "'" + byId("h2hBody").style.display + "'"]);
 
+/* ---------- records, derived from the same file ---------- */
+{
+  load({ seasons:[2019,2025], managers:["Scotty","Bo","Cody"], games:[
+    [2019,1,"Scotty",151.8,"bo",88.4,0],
+    [2019,2,"Bo",140.0,"Cody",139.2,0],
+    [2020,3,"Cody",132.0,"Scotty",131.5,0],
+    [2021,4,"Scotty",96.0,"Bo",95.0,0],
+    [2025,5,"Scotty",120.0,"Cody",60.0,1]
+  ]});
+  S.renderRecords();
+  const r = () => byId("recordsBody").innerHTML;
+
+  ok("records render", () => /<h2>Records<\/h2>/.test(r()));
+  ok("highest score is right", () => /Scotty[\s\S]{0,80}151\.8/.test(r()));
+  ok("lowest score is right", () => /Cody[\s\S]{0,80}60\.0/.test(r()));
+  ok("biggest blowout is right", () => /\+63\.4/.test(r()));
+  ok("narrowest win is right", () => /\+0\.5/.test(r()));
+  ok("most points in a loss is right", () => /139\.2/.test(r()));
+  ok("fewest points in a win is right", () => /96\.0/.test(r()));
+  ok("longest streak is counted in order", () => /2 straight/.test(r()));
+  ok("records use fixed-up names, not raw ESPN ones", () =>
+    [!/>bo</.test(r()) && !/vs bo/.test(r()), "lowercase bo leaked"]);
+  ok("the matchup count is the number of games", () => /5 matchups/.test(r()));
+
+  setVar("H2H", "null");
+  S.renderRecords();
+  ok("no data shows a lock, not a crash", () => /Nothing on file yet/.test(r()));
+  ok("empty games array is handled", () => {
+    load({ seasons:[], managers:[], games:[] });
+    S.renderRecords();
+    return /Nothing on file yet/.test(r());
+  });
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

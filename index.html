@@ -16,7 +16,7 @@
   body{background:var(--ink);
     background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
     color:var(--chalk);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
-    padding:0 0 70px}
+    padding:0 0 calc(84px + env(safe-area-inset-bottom,0px))}
   .wrap{max-width:660px;margin:0 auto;padding:0 14px}
 
   header{padding:28px 0 14px;text-align:center}
@@ -48,16 +48,34 @@
     letter-spacing:.02em;color:var(--faint)}
   .when{margin:13px 0 0;font-size:13px;color:var(--dim)}
 
-  nav{display:flex;gap:5px;margin:16px 0 0;overflow-x:auto;scrollbar-width:none;
-    padding:8px 0;position:sticky;top:0;z-index:40;
-    background:linear-gradient(180deg,var(--ink) 72%,rgba(14,36,56,0));
-    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-  nav::-webkit-scrollbar{display:none}
-  nav button{flex:none;padding:10px 15px;border:1px solid #2C4257;border-radius:20px;
+  /* Five destinations along the bottom, where a thumb actually reaches. The old
+     strip held eight pills in a horizontal scroller, so they were never all
+     visible at once and the active one could sit off screen. */
+  #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));
+    background:rgba(11,28,44,.93);border-top:1px solid #1C3348;
+    -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+  #tabbar button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;
+    align-items:center;gap:4px;padding:7px 2px 5px;border:0;border-radius:10px;
+    background:transparent;color:var(--faint);cursor:pointer;
+    font:600 10.5px/1 system-ui,sans-serif;transition:color .14s}
+  #tabbar button svg{width:21px;height:21px;stroke:currentColor;fill:none;
+    stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  #tabbar button[aria-selected="true"]{color:var(--brass)}
+  #tabbar button:active{background:rgba(255,255,255,.05)}
+  #tabbar button:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+
+  /* Second level, drawn only when a destination holds more than one panel. */
+  .subtabs{display:flex;gap:6px;margin:16px 0 2px;overflow-x:auto;
+    scrollbar-width:none;padding:2px 0}
+  .subtabs::-webkit-scrollbar{display:none}
+  .subtabs:empty{display:none}
+  .subtabs button{flex:none;padding:9px 14px;border:1px solid #2C4257;border-radius:18px;
     background:transparent;color:var(--dim);cursor:pointer;white-space:nowrap;
     font:600 13px/1 system-ui,sans-serif;transition:background .12s,color .12s}
-  nav button:active{background:rgba(255,255,255,.06)}
-  nav button[aria-selected=true]{background:var(--brass);border-color:var(--brass);color:#2A1C00}
+  .subtabs button[aria-selected="true"]{background:var(--brass);border-color:var(--brass);
+    color:#241A05}
+  .subtabs button:active{background:rgba(255,255,255,.06)}
 
   .panel{display:none;padding-top:22px}
   .panel.on{display:block}
@@ -325,6 +343,12 @@
     background:rgba(0,0,0,.22);letter-spacing:.02em}
   .rail .tm{font:700 9px/1.1 system-ui,sans-serif;letter-spacing:.04em;opacity:.72;
     text-align:center;padding:0 3px;word-break:break-word}
+  /* The club badge, same slot a FUT card puts the crest. Real ESPN team logos,
+     so a card belongs to a team rather than to a colour. */
+  .rail .crest{width:34px;height:34px;border-radius:5px;overflow:hidden;
+    background:rgba(255,255,255,.10);box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);
+    display:flex;align-items:center;justify-content:center}
+  .rail .crest img{width:100%;height:100%;object-fit:cover;display:block}
   .futMid{position:relative;flex:1;display:flex;align-items:center;justify-content:center;
     font-size:70px;line-height:1;min-width:0}
   .futMid .opp{position:absolute;right:11px;bottom:8px;text-align:right;
@@ -698,16 +722,7 @@
     <p class="when" id="cdwhen">Sunday, September 6 &middot; 5:00 PM ET</p>
   </div>
 
-  <nav role="tablist">
-    <button role="tab" aria-selected="true" data-p="hq">HQ</button>
-    <button role="tab" aria-selected="false" data-p="team" id="teamTab" style="display:none">My Team</button>
-    <button role="tab" aria-selected="false" data-p="trade">Trades</button>
-    <button role="tab" aria-selected="false" data-p="wire">Wire</button>
-    <button role="tab" aria-selected="false" data-p="history">History</button>
-    <button role="tab" aria-selected="false" data-p="rules">Rules</button>
-    <button role="tab" aria-selected="false" data-p="binder" id="binderTab" style="display:none">Binder</button>
-    <button role="tab" aria-selected="false" data-p="demo" id="demoTab" style="display:none">Pack</button>
-  </nav>
+  <div class="subtabs" id="subtabs" role="tablist"></div>
 
   <section class="panel on" id="hq">
     <div id="recap"></div>
@@ -762,6 +777,8 @@
     <div id="h2hBody" style="display:none"></div>
   </section>
 
+  <section class="panel" id="records"><div id="recordsBody"></div></section>
+
   <section class="panel" id="rules">
     <h2>Calendar</h2>
     <div class="rules">
@@ -802,6 +819,8 @@
     <div class="card"><p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p></div>
   </section>
 
+  <nav id="tabbar" aria-label="Sections"></nav>
+
   <footer>
     <span id="freshness">Loading league data&hellip;</span><br>
     Updated daily from ESPN &middot; League ID 24869044
@@ -841,16 +860,76 @@ function liveDraft(){
 }
 function livePacks(){ return PREVIEW || Date.now() >= PACKS_AT; }
 
-/* Tabs follow the gates. Called from renderAll, so the My Team tab can appear
-   the moment live data confirms the draft without a page reload. */
+/* ---------- navigation ----------
+   Five destinations, each holding one or more panels. Panels themselves did not
+   move; only the way you reach them did. A destination appears once any panel
+   inside it is unlocked, so the bar fills out across the season rather than
+   showing dead ends. */
+const ICON = {
+  home:  '<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/>',
+  team:  '<circle cx="12" cy="8" r="3.4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
+  league:'<path d="M6 4h12v5a6 6 0 0 1-12 0z"/><path d="M6 5.5H3.5V8a3 3 0 0 0 3 3"/>'
+        +'<path d="M18 5.5h2.5V8a3 3 0 0 1-3 3"/><path d="M9.5 20h5"/><path d="M12 15v5"/>',
+  trades:'<path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/>',
+  cards: '<rect x="3.5" y="6" width="12" height="14" rx="2"/>'
+        +'<path d="M8 4h9.5a2 2 0 0 1 2 2v11"/>'
+};
+
+const DESTS = [
+  ["home",   "Home",   ["hq"]],
+  ["team",   "Team",   ["team"]],
+  ["league", "League", ["history", "records", "rules"]],
+  ["trades", "Trades", ["trade", "wire"]],
+  ["cards",  "Cards",  ["binder", "demo"]]
+];
+const PANEL_LABEL = { hq:"Home", team:"My team", history:"History", records:"Records", rules:"Rules",
+  trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
+
+/* which panels the gates currently allow */
+function panelVisible(id){
+  if(id === "team")   return liveDraft();
+  if(id === "binder") return livePacks();
+  if(id === "demo")   return PREVIEW;
+  return true;
+}
+function destOf(panel){
+  return (DESTS.find(d => d[2].indexOf(panel) >= 0) || DESTS[0])[0];
+}
+function panelsIn(dest){
+  return ((DESTS.find(d => d[0] === dest) || DESTS[0])[2]).filter(panelVisible);
+}
+function destVisible(dest){ return panelsIn(dest).length > 0; }
+
+let currentPanel = "hq";
+
 function paintTabs(){
-  const show = (id, on) => {
-    const el = document.getElementById(id);
-    if(el) el.style.display = on ? "" : "none";
-  };
-  show("teamTab",   liveDraft());
-  show("binderTab", livePacks());
-  show("demoTab",   PREVIEW);      // the pack test bench stays commissioner-only
+  const bar = document.getElementById("tabbar");
+  const sub = document.getElementById("subtabs");
+  if(!bar || !sub) return;
+
+  /* a locked panel must never stay on screen */
+  if(!panelVisible(currentPanel)) currentPanel = "hq";
+  const dest = destOf(currentPanel);
+
+  bar.innerHTML = DESTS.filter(d => destVisible(d[0])).map(([id, label]) =>
+    `<button type="button" data-d="${id}" aria-selected="${id === dest}">
+       <svg viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg>${esc(label)}
+     </button>`).join("");
+
+  const mates = panelsIn(dest);
+  sub.innerHTML = mates.length > 1
+    ? mates.map(pid => `<button type="button" role="tab" data-p="${pid}"
+        aria-selected="${pid === currentPanel}">${esc(PANEL_LABEL[pid] || pid)}</button>`).join("")
+    : "";
+
+  bar.querySelectorAll("[data-d]").forEach(b => b.onclick = () => {
+    const first = panelsIn(b.dataset.d)[0];
+    if(first) showTab(first, true);
+  });
+  sub.querySelectorAll("[data-p]").forEach(b => b.onclick = () => showTab(b.dataset.p, true));
+
+  document.querySelectorAll(".panel").forEach(pnl =>
+    pnl.classList.toggle("on", pnl.id === currentPanel));
 }
 
 const SEASONS = {
@@ -1378,6 +1457,86 @@ function h2hTopRival(a, mgrs, ix){
   return best || mgrs.find(m => m !== a) || a;
 }
 
+/* ---------- records ----------
+   Every number here is derived from data/h2h.json, so it covers 2019 onward and
+   extends itself as the season plays. Nothing is hand maintained. */
+function recordRows(){
+  const games = (H2H && Array.isArray(H2H.games)) ? H2H.games : [];
+  const scores = [], margins = [];
+  games.forEach(g => {
+    const [season, week, a, ap, b, bp] = g;
+    scores.push({ who:a, pts:ap, opp:b, oppPts:bp, season, week });
+    scores.push({ who:b, pts:bp, opp:a, oppPts:ap, season, week });
+    const hi = ap >= bp ? { w:a, wp:ap, l:b, lp:bp } : { w:b, wp:bp, l:a, lp:ap };
+    margins.push({ ...hi, gap: Math.abs(ap - bp), season, week });
+  });
+  return { scores, margins };
+}
+
+/* longest run of wins any manager has put together, in order */
+function longestStreak(){
+  const games = (H2H && Array.isArray(H2H.games)) ? H2H.games.slice() : [];
+  games.sort((x, y) => (x[0] - y[0]) || (x[1] - y[1]));
+  const run = {}, best = { who:"", n:0 };
+  games.forEach(g => {
+    const [ , , a, ap, b, bp] = g;
+    const w = ap > bp ? a : (bp > ap ? b : null);
+    const l = ap > bp ? b : (bp > ap ? a : null);
+    if(!w) return;
+    run[w] = (run[w] || 0) + 1;
+    run[l] = 0;
+    if(run[w] > best.n){ best.n = run[w]; best.who = w; }
+  });
+  return best;
+}
+
+function renderRecords(){
+  const el = document.getElementById("recordsBody");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+
+  normaliseH2H();
+  const { scores, margins } = recordRows();
+  if(!scores.length){
+    el.innerHTML = `<h2>Records</h2>` + lock("Nothing on file yet",
+      "Records are built from every game since 2019. They appear once data/h2h.json has been generated.");
+    return;
+  }
+
+  const by = (list, cmp) => list.slice().sort(cmp)[0];
+  const wins = margins;
+  const losses = scores.filter(r => r.pts < r.oppPts);
+  const winners = scores.filter(r => r.pts > r.oppPts);
+  const streak = longestStreak();
+
+  const line = (label, r, val, detail) =>
+    `<tr><td>${esc(label)}<span class="who">${esc(detail)}</span></td>
+      <td>${esc(r)}</td><td class="n">${esc(val)}</td></tr>`;
+
+  const top   = by(scores,  (a, b) => b.pts - a.pts);
+  const bot   = by(scores,  (a, b) => a.pts - b.pts);
+  const blow  = by(wins,    (a, b) => b.gap - a.gap);
+  const thin  = by(wins,    (a, b) => a.gap - b.gap);
+  const gutted= by(losses,  (a, b) => b.pts - a.pts);
+  const stole = by(winners, (a, b) => a.pts - b.pts);
+
+  const when = r => r.season + " week " + r.week;
+
+  el.innerHTML = `<h2>Records</h2>
+    <p class="note" style="margin:0 0 14px">Every game since ${(H2H.seasons||[])[0] || 2019}.
+      ${scores.length / 2} matchups on file.</p>
+    <table><thead><tr><th>Record</th><th>Holder</th><th class="n">Mark</th></tr></thead><tbody>
+    ${line("Highest score", top.who, f1(top.pts), when(top) + " vs " + top.opp)}
+    ${line("Lowest score", bot.who, f1(bot.pts), when(bot) + " vs " + bot.opp)}
+    ${line("Biggest blowout", blow.w, "+" + f1(blow.gap), when(blow) + " over " + blow.l)}
+    ${line("Narrowest win", thin.w, "+" + f1(thin.gap), when(thin) + " over " + thin.l)}
+    ${line("Most points in a loss", gutted.who, f1(gutted.pts), when(gutted) + " to " + gutted.opp)}
+    ${line("Fewest points in a win", stole.who, f1(stole.pts), when(stole) + " over " + stole.opp)}
+    ${streak.n ? line("Longest win streak", streak.who, streak.n + " straight", "across all seasons") : ""}
+    </tbody></table>
+    <p class="note">Playoff and consolation games count. Records update every Tuesday.</p>`;
+}
+
 function paintHistoryNav(){
   const nav = document.getElementById("histNav");
   const own = document.getElementById("ownersBody");
@@ -1531,6 +1690,7 @@ function renderAll(){
   renderLedger(); renderDossiers(); renderRecap(); renderDraft();
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
+  try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
   try{ renderBlockPage(); }catch(e){ console.warn("[bromigos] block:", e && e.message); }
   try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }
@@ -1646,6 +1806,27 @@ function findTrades(mine, theirs, limit = 6){
 
 /* ---------- turn the ESPN payload into the model above ---------- */
 const POS_MAP = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
+/* manager -> their team this season, resolved through the ESPN member GUID.
+   The mapping used to match the 2025 team name out of SEASONS, which breaks the
+   moment anyone renames their team, so it would have failed for the whole
+   league the day the 2026 rosters landed. GUIDs survive renames. */
+function teamIndex(){
+  const doc = (LIVE && LIVE.teams) || {};
+  const names = {};
+  (doc.members || []).forEach(m => {
+    names[m.id] = fixName((m.firstName || "").trim() || (m.displayName || "").trim());
+  });
+  const out = {};
+  (doc.teams || []).forEach(t => {
+    const who = names[(t.owners || [])[0]];
+    if(!who) return;
+    out[who] = { id: t.id, name: (t.name || "").trim(),
+                 abbrev: (t.abbrev || "").trim(), logo: t.logo || "" };
+  });
+  return out;
+}
+function crestFor(mgr){ return (teamIndex()[mgr] || {}).logo || ""; }
+
 function normalizeLive(){
   const src = LIVE && LIVE.rosters && LIVE.rosters.teams;
   if(!src || !src.length || !src[0].roster) return null;
@@ -1653,8 +1834,12 @@ function normalizeLive(){
     const t = (LIVE.teams && LIVE.teams.teams || []).find(x => x.id === id);
     return t ? (t.name||"").trim() : "Team " + id;
   };
-  const manOf = tName => {
-    const hit = SEASONS["2025"].find(r => r[0] === tName);
+  const byId = {};
+  const idx = teamIndex();
+  Object.keys(idx).forEach(m => { byId[idx[m].id] = m; });
+  const manOf = (tName, tId) => {
+    if(byId[tId]) return byId[tId];
+    const hit = SEASONS["2025"].find(r => r[0] === tName);   // last resort
     return hit ? hit[1] : tName;
   };
   return src.map(t => {
@@ -1677,7 +1862,7 @@ function normalizeLive(){
       };
     });
     const tn = nameOf(t.id);
-    return { id: t.id, teamName: tn, manager: manOf(tn), players };
+    return { id: t.id, teamName: tn, manager: manOf(tn, t.id), players };
   });
 }
 
@@ -2569,9 +2754,7 @@ function renderBlockPage(){
       getSel = new Set([r.dataset.goto]);
       tradeView = "build";
       renderTrade();
-      const btn = document.querySelector('nav button[data-p="trade"]');
-      if(btn) btn.click();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      showTab("trade", true);
     };
   });
 }
@@ -2617,6 +2800,7 @@ function saveToBinder(cards, week, demo){
         rate: c.mine || c.value || "",
         pos: c.pos || (c.rarity ? "AWARD" : ""),
         art: c.art || "",
+        crest: c.crest || "",
         sub: c.vs || c.desc || "",
         reason: c.reason || "",
         demo: !!demo,
@@ -2648,7 +2832,7 @@ function legacyCard(c){
       art: c.art, title: c.title, desc: c.sub || "", value: c.rate || "",
       reason: c.reason || "" };
   }
-  return { type:"match", tier:c.tier, art:c.art,
+  return { type:"match", tier:c.tier, art:c.art, crest:c.crest || "",
     mine:c.rate || "", pos:c.pos || "PTS", title:c.title,
     vs:c.sub || "", wk:"W" + c.week, club:ME || "Bromigos",
     stats:[] };   // never saved on old entries, so the strip stays empty
@@ -2834,6 +3018,7 @@ function matchCardHTML(c){
     <div class="futBody">
       <div class="rail">
         <span class="chipw">${esc(c.wk || "W1")}</span>
+        ${c.crest ? `<span class="crest"><img src="${esc(c.crest)}" alt="" loading="lazy"></span>` : ""}
         <span class="tm">${esc(c.club || "Bromigos")}</span>
       </div>
       <div class="futMid hexskin">${artHTML(c.art)}
@@ -3196,6 +3381,9 @@ function buildWeekCards(w, wk){
     mine:w.myScore.toFixed(1), theirs:w.oppScore.toFixed(1),
     pos: won ? "WIN" : "LOSS",
     wk: "W" + (wk || 1), club: w.club || (w.manager || ME || ""),
+    /* resolved once and stored on the card, so a binder page keeps the badge
+       that team was flying that week rather than whatever it is today */
+    crest: w.crest || crestFor(w.manager || ME),
     vs:(won?"def. ":"lost to ")+w.opponent,
     oppName: w.opponent, title:w.manager||ME||"You",
     stats, flare:tier });
@@ -3277,13 +3465,11 @@ if(PREVIEW){
 }
 
 function showTab(name, push){
-  const btn = document.querySelector('nav button[data-p="' + name + '"]');
   const panel = document.getElementById(name);
-  if(!btn || !panel || btn.style.display === "none") return false;
-  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected","false"));
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
-  btn.setAttribute("aria-selected","true");
-  panel.classList.add("on");
+  if(!panel || !panelVisible(name)) return false;
+  currentPanel = name;
+  paintTabs();
+  window.scrollTo(0, 0);
   /* now that it has a width, the minis can measure themselves */
   try { sizeMinis(panel); } catch(e){}
   if(push && location.hash !== "#" + name){

@@ -94,10 +94,42 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
     byId("binderBody").innerHTML.indexOf("Pick your name") >= 0);
 }
 
+/* ============ draft night: tabs unlocked, ESPN rosters not in yet ============
+   The gap between the draft unlocking and league.json refreshing. The app used
+   to fall back to invented players here, on the public link. */
+{
+  const { sandbox: S, byId, setVar, warnings } =
+    boot({ search: "", now: "2026-09-07T00:00:00Z" });
+  setVar("LIVE", JSON.stringify({ settings:{ draftDetail:{ drafted:false } }, teams:{ teams:[] } }));
+  setVar("ME", '"Scotty"');
+  S.renderAll();
+  const tag = "draft night (public)";
+
+  ok(tag + " tabs are unlocked", () => S.liveDraft() === true);
+  ok(tag + " no demo players reach the league", () =>
+    ["teamBody","tradeBody","wireBody"].every(id => !/Invented players/.test(byId(id).innerHTML)));
+  ok(tag + " every roster tab says rosters are syncing", () =>
+    ["teamBody","tradeBody","wireBody"].every(id =>
+      byId(id).innerHTML.indexOf("Rosters are syncing") >= 0));
+  ok(tag + " nothing throws", () => [warnings.length === 0, warnings.join(" | ")]);
+  ok(tag + " packs are still shut", () => S.livePacks() === false);
+}
+
+/* ============ preview still gets its fixtures ============ */
+{
+  const { sandbox: S, byId, setVar } =
+    boot({ search: "?pack=1", now: "2026-09-07T00:00:00Z" });
+  setVar("LIVE", JSON.stringify({ settings:{ draftDetail:{ drafted:false } }, teams:{ teams:[] } }));
+  setVar("ME", '"Scotty"');
+  S.renderAll();
+  ok("commissioner still sees demo rosters for testing", () =>
+    byId("wireBody").innerHTML.indexOf("Demo data") >= 0);
+}
+
 /* ============ the morning of, one hour early ============ */
 {
-  const { sandbox: S } = boot({ search: "", now: "2026-09-15T12:00:00Z" });
-  ok("packs still shut at 8am ET on the day", () => S.livePacks() === false);
+  const { sandbox: S } = boot({ search: "", now: "2026-09-15T11:00:00Z" });
+  ok("packs still shut before the job has run", () => S.livePacks() === false);
 }
 
 /* ============ ESPN can unlock early, independently of the clock ============ */

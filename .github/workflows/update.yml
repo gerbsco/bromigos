@@ -35,6 +35,12 @@ jobs:
         continue-on-error: true
         run: node scripts/h2h.mjs
 
+      # Second opinion on every player, keyed onto ESPN ids. Allowed to fail on
+      # its own: without it the app blends nothing and says "ESPN only".
+      - name: Build blended projections
+        continue-on-error: true
+        run: node scripts/projections.mjs
+
       # Weekly packs and superlatives for the most recently completed week.
       # Publishes nothing until every game in a week is final, which lands it
       # on Tuesday morning. Also allowed to fail on its own.
@@ -48,6 +54,7 @@ jobs:
         continue-on-error: true
         run: |
           node test/managers.test.mjs
+          node test/projections.test.mjs
           node test/build.test.mjs
           node test/weekly.test.mjs
           node test/phases.test.mjs
@@ -65,6 +72,9 @@ jobs:
           fi
           if [ -f data/weekly.json ]; then
             git add data/weekly.json
+          fi
+          if [ -f data/projections.json ]; then
+            git add data/projections.json
           fi
           if git diff --staged --quiet; then
             echo "No changes."

@@ -878,18 +878,22 @@ const ICON = {
 const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
-  ["league", "League", ["history", "records", "rules"]],
   ["trades", "Trades", ["trade", "wire"]],
+  ["league", "League", ["history", "records", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
 const PANEL_LABEL = { hq:"Home", team:"My team", history:"History", records:"Records", rules:"Rules",
   trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
 
 /* which panels the gates currently allow */
+/* A panel must not be offered unless it will actually render something. The
+   Records tab used to appear before the draft and open onto nothing, because
+   the tab was ungated while its contents were not. */
 function panelVisible(id){
-  if(id === "team")   return liveDraft();
-  if(id === "binder") return livePacks();
-  if(id === "demo")   return PREVIEW;
+  if(id === "team")    return liveDraft();
+  if(id === "records") return liveDraft();
+  if(id === "binder")  return livePacks();
+  if(id === "demo")    return PREVIEW;
   return true;
 }
 function destOf(panel){

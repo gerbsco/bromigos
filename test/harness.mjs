@@ -89,7 +89,8 @@ export function boot({ search = "?pack=1", now = null, storage = false } = {}){
   const sandbox = {
     document: doc,
     window: { addEventListener(){}, scrollTo(){},
-              matchMedia: () => ({ matches:false, addEventListener(){} }) },
+              matchMedia: () => ({ matches:false, addEventListener(){} }),
+              navigator: { userAgent: "node", standalone: false } },
     location: { search, hash: "", href: "https://x/" },
     history: { replaceState(){}, pushState(){} },
     localStorage: storage

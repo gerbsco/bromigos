@@ -33,19 +33,26 @@ async function getText(url) {
 }
 async function getJSON(url) { return JSON.parse(await getText(url)); }
 
-/* nflverse and friends move their release filenames around, so try a few and
-   report which one answered, the same way fetch.js does. */
-async function firstWorking(label, urls, handler) {
+/* Candidates are tried in order, but a 200 is not success. nflverse publishes
+   several files under similar names and only some carry cross-provider ids, so
+   a candidate that parses to nothing useful counts as a miss and the search
+   continues. Reporting the size is what makes a silent zero visible. */
+async function firstWorking(label, urls, handler, usable = out => !!out) {
   for (const url of urls) {
+    const name = url.split("/").pop().split("?")[0];
     try {
       const out = await handler(url);
-      console.log(`ok   ${label} <- ${url.split("/").pop()}`);
+      if (!usable(out)) {
+        console.log(`     ${label} miss ${name} (fetched, nothing usable in it)`);
+        continue;
+      }
+      console.log(`ok   ${label} <- ${name}`);
       return out;
     } catch (err) {
-      console.log(`     ${label} miss ${url.split("/").pop()} (${err.message})`);
+      console.log(`     ${label} miss ${name} (${err.message})`);
     }
   }
-  throw new Error("no working url");
+  throw new Error(`no working url for ${label}`);
 }
 
 export function parseCSV(text) {
@@ -126,22 +133,36 @@ async function main() {
   const week = currentWeek(league);
   console.log(`ok   week ${week}`);
 
+  /* DynastyProcess db_playerids is the maintained cross-provider table and goes
+     first. nflverse players.csv fetches fine but is a roster file with no ESPN
+     or Sleeper columns at all, which is why it used to win and yield nothing. */
   const ids = await firstWorking("player crosswalk", [
-    "https://github.com/nflverse/nflverse-data/releases/download/players/players.csv",
+    "https://raw.githubusercontent.com/dynastyprocess/data/master/files/db_playerids.csv",
+    "https://github.com/dynastyprocess/data/raw/master/files/db_playerids.csv",
     "https://github.com/nflverse/nflverse-data/releases/download/players_components/ff_playerids.csv",
-    "https://raw.githubusercontent.com/dynastyprocess/data/master/files/db_playerids.csv"
-  ], async url => crosswalk(parseCSV(await getText(url))));
+    "https://github.com/nflverse/nflverse-data/releases/download/players/players.csv"
+  ], async url => crosswalk(parseCSV(await getText(url))),
+     map => Object.keys(map).length > 500);
   console.log(`ok   crosswalk (${Object.keys(ids).length} players)`);
 
   const sleeper = await firstWorking("sleeper projections", [
     `https://api.sleeper.app/projections/nfl/${SEASON}/${week}?season_type=regular`,
     `https://api.sleeper.app/v1/projections/nfl/regular/${SEASON}/${week}`
-  ], async url => readSleeper(await getJSON(url)));
+  ], async url => readSleeper(await getJSON(url)),
+     pts => Object.keys(pts).length > 50);
   console.log(`ok   sleeper (${Object.keys(sleeper).length} projections)`);
 
   const players = keyByEspn(sleeper, ids);
+  const rate = Object.keys(sleeper).length
+    ? Object.keys(players).length / Object.keys(sleeper).length : 0;
+  console.log(`ok   matched ${Object.keys(players).length} of ${Object.keys(sleeper).length}`
+    + ` sleeper projections to an ESPN id (${Math.round(rate * 100)}%)`);
+
   if (!Object.keys(players).length) {
     throw new Error("Nothing matched to an ESPN id - aborting so the last good file survives.");
+  }
+  if (rate < 0.4) {
+    console.log("     low match rate, the crosswalk columns may have moved again");
   }
 
   mkdirSync("data", { recursive: true });

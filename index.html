@@ -6,6 +6,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ultimo Bromigos — League HQ</title>
 <meta name="description" content="Ultimo Bromigos fantasy football league headquarters">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0E2438">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bromigos">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="icon" href="img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap"
@@ -730,6 +738,8 @@
   .pj.split i{color:var(--brass)}
   .srcline{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 0;
     font:600 11px/1.4 ui-monospace,Menlo,monospace;color:var(--faint)}
+  .installTip{border-left-color:var(--brass)}
+  .installTip .cbtn{margin-top:11px}
   .nxcard{margin-top:16px}
   .nxwho{display:flex;align-items:center;gap:11px;margin:2px 0 10px}
   .nxcrest{width:38px;height:38px;flex:none;border-radius:6px;overflow:hidden;
@@ -776,6 +786,7 @@
   <div class="subtabs" id="subtabs" role="tablist"></div>
 
   <section class="panel on" id="hq">
+    <div id="installHint"></div>
     <div id="nextup"></div>
     <div id="recap"></div>
     <div id="draft"></div>
@@ -880,6 +891,45 @@
 </div>
 
 <script>
+/* ---------- installable app ----------
+   The service worker is network first for the page and the league data, so
+   being online always shows current numbers. It only steps in when the phone
+   has no signal, which is the actual reason to have one at a stadium. */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err =>
+      console.warn("[bromigos] offline support unavailable:", err && err.message));
+  });
+}
+
+const standalone = () => {
+  try {
+    if(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+  } catch(e){}
+  return !!(window.navigator && window.navigator.standalone);
+};
+
+/* iOS never prompts to install, so it has to be said out loud. Shown once,
+   dismissed for good, and never on a device that is already installed. */
+function renderInstallHint(){
+  const el = document.getElementById("installHint");
+  if(!el) return;
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  let dismissed = false;
+  try { dismissed = localStorage.getItem("bromigos.installed") === "1"; } catch(e){}
+  if(!iOS || standalone() || dismissed){ el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="card installTip">
+      <h3>Put this on your home screen</h3>
+      <p>Tap the share button, then <b>Add to Home Screen</b>. It opens without the
+        browser bars and still works when the signal does not.</p>
+      <button type="button" class="cbtn" id="installGot">Got it</button></div>`;
+  const b = document.getElementById("installGot");
+  if(b) b.onclick = () => {
+    try { localStorage.setItem("bromigos.installed", "1"); } catch(e){}
+    renderInstallHint();
+  };
+}
+
 /* ---------- visibility gates ----------
    Three phases. ?pack=1 forces everything on so the commissioner can test.
 
@@ -1837,6 +1887,7 @@ function renderAll(){
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
+  try{ renderInstallHint(); }catch(e){ console.warn("[bromigos] install hint:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
   try{ renderBlockPage(); }catch(e){ console.warn("[bromigos] block:", e && e.message); }
   try{ renderBinder(); }catch(e){ console.warn("[bromigos] binder:", e && e.message); }

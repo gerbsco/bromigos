@@ -151,5 +151,20 @@ ok("a missing week falls back to 1", () =>
     /ESPN only/.test(byId("teamBody").innerHTML));
 }
 
+/* ---------- the failure that actually happened ----------
+   nflverse players.csv is a roster file. It fetches with a 200 and parses
+   cleanly, and contains no espn or sleeper columns, so it produced an empty
+   crosswalk and the search stopped there rather than trying the real one. */
+ok("a roster file yields an empty crosswalk rather than a wrong one", () => {
+  const rosterFile = parseCSV("gsis_id,display_name,position,team_abbr\n00-1,Bijan,RB,ATL\n");
+  const m = crosswalk(rosterFile);
+  return [Object.keys(m).length === 0, JSON.stringify(m)];
+});
+ok("the real crosswalk shape still maps", () => {
+  const dp = parseCSV("mfl_id,sleeper_id,espn_id,name,position\n1,4567,123,Bijan,RB\n");
+  const m = crosswalk(dp);
+  return [m["4567"] === "123", JSON.stringify(m)];
+});
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

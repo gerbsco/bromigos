@@ -740,6 +740,24 @@
     font:600 11px/1.4 ui-monospace,Menlo,monospace;color:var(--faint)}
   .installTip{border-left-color:var(--brass)}
   .installTip .cbtn{margin-top:11px}
+  .pkrow{display:flex;align-items:stretch;gap:9px;margin-bottom:9px}
+  .pksides{flex:1;min-width:0;display:flex;align-items:stretch;gap:8px}
+  .pkconf{flex:none;width:62px;display:flex;align-items:center;justify-content:center}
+  .pkconf select{width:100%;text-align:center}
+  .pkpts{font:800 20px/1 ui-monospace,Menlo,monospace;color:var(--faint)}
+  .pkpts.right{color:var(--win)}
+  .pkpts.wrong{color:var(--loss)}
+  .pkside{flex:1;min-width:0;padding:13px 10px;border:1px solid #2C4257;border-radius:5px;
+    background:var(--ink-2);color:var(--dim);cursor:pointer;text-align:left;
+    font:600 14px/1.2 system-ui,sans-serif;transition:border-color .12s,color .12s}
+  .pkside i{display:block;margin-top:4px;font:700 12px/1 ui-monospace,Menlo,monospace;
+    font-style:normal;opacity:.7}
+  .pkside.on{border-color:var(--brass);color:var(--chalk);background:rgba(217,162,39,.10)}
+  .pkside.right{border-color:var(--win);color:var(--win)}
+  .pkside.wrong{border-color:var(--loss);color:var(--loss)}
+  .pkside:disabled{cursor:default}
+  .pkat{align-self:center;font:600 11px/1 system-ui,sans-serif;color:var(--faint)}
+  .pksave{margin-top:6px}
   .nxcard{margin-top:16px}
   .nxwho{display:flex;align-items:center;gap:11px;margin:2px 0 10px}
   .nxcrest{width:38px;height:38px;flex:none;border-radius:6px;overflow:hidden;
@@ -841,6 +859,8 @@
   </section>
 
   <section class="panel" id="records"><div id="recordsBody"></div></section>
+
+  <section class="panel" id="picks"><div id="picksBody"></div></section>
 
   <section class="panel" id="rules">
     <h2>Calendar</h2>
@@ -981,10 +1001,10 @@ const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
   ["trades", "Trades", ["trade", "wire"]],
-  ["league", "League", ["history", "records", "rules"]],
+  ["league", "League", ["history", "records", "picks", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
-const PANEL_LABEL = { hq:"Home", team:"My team", history:"History", records:"Records", rules:"Rules",
+const PANEL_LABEL = { hq:"Home", team:"My team", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
   trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
 
 /* which panels the gates currently allow */
@@ -994,6 +1014,7 @@ const PANEL_LABEL = { hq:"Home", team:"My team", history:"History", records:"Rec
 function panelVisible(id){
   if(id === "team")    return liveDraft();
   if(id === "records") return liveDraft();
+  if(id === "picks")   return liveDraft();
   if(id === "binder")  return livePacks();
   if(id === "demo")    return PREVIEW;
   return true;
@@ -1592,6 +1613,229 @@ function h2hTopRival(a, mgrs, ix){
   return best || mgrs.find(m => m !== a) || a;
 }
 
+/* ---------- pick'em ----------
+   Pick every game each week before the first kickoff. Stored in a sheet behind
+   an Apps Script, separate from the trade block so one cannot break the other.
+   Paste the /exec URL from scripts/picks.gs here to switch it on. */
+const PICKS_URL = "https://script.google.com/macros/s/AKfycby6BWw8M8BBT13W_ekyd2DVZkTUlnYBqb2N0lOOpJSPFFVKLjb1pT-o1Brs4mkn01vRSg/exec";
+
+let PICKS = {};                       // week -> manager -> {matchupId: winner}
+let myPicks = {};                     // this week, unsaved edits included
+let picksState = PICKS_URL ? "loading" : "off";
+
+/* Week 1 locks at the Thursday kickoff and every week after is seven days on.
+   A fixed deadline is the honest way to do this: nobody can pick a game that
+   has already started, and it does not depend on ESPN publishing kickoff times. */
+const WEEK1_LOCK = new Date("2026-09-11T00:15:00Z").getTime();   // Thu Sept 10, 8:15pm ET
+function lockAt(wk){ return WEEK1_LOCK + (Number(wk) - 1) * 7 * 86400000; }
+function picksLocked(wk){ return Date.now() >= lockAt(wk); }
+
+/* the week being picked: the earliest one with games still undecided */
+function pickWeek(){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  const open = sch.filter(m => m.home && m.away && (!m.winner || m.winner === "UNDECIDED"))
+    .map(m => m.matchupPeriodId);
+  if(open.length) return Math.min(...open);
+  const all = sch.map(m => m.matchupPeriodId).filter(Number.isFinite);
+  return all.length ? Math.max(...all) : 1;
+}
+
+function weekGames(wk){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  const idx = teamIndex();
+  const byId = {};
+  Object.keys(idx).forEach(m => { byId[idx[m].id] = m; });
+  return sch.filter(m => m.matchupPeriodId === wk && m.home && m.away)
+    .map(m => ({
+      id: String(m.id != null ? m.id : m.home.teamId + "-" + m.away.teamId),
+      home: byId[m.home.teamId] || "", away: byId[m.away.teamId] || "",
+      homePts: m.home.totalPoints || 0, awayPts: m.away.totalPoints || 0,
+      done: !!m.winner && m.winner !== "UNDECIDED"
+    }))
+    .filter(g => g.home && g.away);
+}
+
+/* One manager's week. A correct pick scores whatever confidence was put on it,
+   so five coin flips stop being five coin flips: the points come from knowing
+   which of them was not a coin flip. Undecided games score nothing either way. */
+function scoreWeek(wk, manager){
+  const picks = (PICKS[String(wk)] || {})[manager] || {};
+  let pts = 0, right = 0, done = 0, max = 0;
+  weekGames(wk).forEach(g => {
+    if(!g.done) return;
+    done++;
+    const entry = picks[g.id] || {};
+    const conf = Number(entry.c) || 0;
+    max += conf;
+    if(entry.w && entry.w === (g.homePts >= g.awayPts ? g.home : g.away)){
+      pts += conf; right++;
+    }
+  });
+  return { pts, right, done, max };
+}
+
+/* Confidence has to be a permutation of 1..n: every game ranked, no number
+   used twice. Anything else and the week is not scoreable. */
+function picksValid(entries, n){
+  const vals = [];
+  for(const k of Object.keys(entries || {})){
+    const e = entries[k];
+    if(!e || !e.w || !Number(e.c)) return false;
+    vals.push(Number(e.c));
+  }
+  if(vals.length !== n) return false;
+  vals.sort((a,b) => a-b);
+  return vals.every((v,i) => v === i+1);
+}
+
+/* which confidence numbers are already spoken for, so the UI can grey them */
+function confTaken(entries, exceptId){
+  const out = {};
+  Object.keys(entries || {}).forEach(k => {
+    if(k === exceptId) return;
+    const c = Number((entries[k] || {}).c);
+    if(c) out[c] = true;
+  });
+  return out;
+}
+
+function picksTable(){
+  const weeks = Object.keys(PICKS).map(Number).filter(Number.isFinite).sort((a,b) => a-b);
+  const totals = {};
+  weeks.forEach(wk => Object.keys(PICKS[String(wk)] || {}).forEach(m => {
+    const s = scoreWeek(wk, m);
+    totals[m] = totals[m] || { pts:0, right:0, done:0 };
+    totals[m].pts += s.pts; totals[m].right += s.right; totals[m].done += s.done;
+  }));
+  return Object.keys(totals).map(m => ({ manager:m, ...totals[m] }))
+    .sort((a,b) => (b.pts - a.pts) || (b.right - a.right) || a.manager.localeCompare(b.manager));
+}
+
+async function pullPicks(){
+  if(!PICKS_URL || !liveDraft()) return;
+  try {
+    const res = await jsonp(PICKS_URL);
+    PICKS = (res && res.picks) || {};
+    picksState = "ok";
+  } catch(err){
+    picksState = "error";
+    console.warn("[bromigos] pick'em offline:", err && err.message);
+  }
+  try { renderPicks(); } catch(e){}
+}
+
+async function savePicks(){
+  if(!PICKS_URL || !ME) return;
+  const wk = pickWeek();
+  picksState = "saving";
+  renderPicks();
+  try {
+    await jsonp(PICKS_URL + "?action=save&week=" + encodeURIComponent(wk)
+      + "&manager=" + encodeURIComponent(ME)
+      + "&picks=" + encodeURIComponent(JSON.stringify(myPicks)));
+    PICKS[String(wk)] = PICKS[String(wk)] || {};
+    PICKS[String(wk)][ME] = { ...myPicks };
+    picksState = "ok";
+  } catch(err){
+    picksState = "error";
+    console.warn("[bromigos] pick save failed:", err && err.message);
+  }
+  renderPicks();
+}
+
+function renderPicks(){
+  const el = document.getElementById("picksBody");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+
+  if(!PICKS_URL){
+    el.innerHTML = `<h2>Pick&rsquo;em</h2>` + lock("Not switched on yet",
+      "Deploy <b>scripts/picks.gs</b> as an Apps Script web app and paste its URL into "
+      + "PICKS_URL. Until then there is nowhere to store anyone's picks.");
+    return;
+  }
+
+  const wk = pickWeek();
+  const games = weekGames(wk);
+  const n = games.length;
+  const locked = picksLocked(wk);
+  const mine = (PICKS[String(wk)] || {})[ME] || {};
+  if(!Object.keys(myPicks).length) myPicks = JSON.parse(JSON.stringify(mine));
+
+  const ready = picksValid(myPicks, n);
+  const status = picksState === "saving" ? "Saving\u2026"
+    : picksState === "error" ? "Offline, your picks are not saved."
+    : locked ? "Locked. Results below."
+    : `Rank all ${n}. Your most confident pick is worth ${n}, your least is worth 1.`;
+
+  const rows = games.map(g => {
+    const e = myPicks[g.id] || {};
+    const winner = g.done ? (g.homePts >= g.awayPts ? g.home : g.away) : null;
+    const hit = winner && e.w === winner;
+    const side = who => {
+      const on = e.w === who;
+      return `<button type="button" class="pkside${on ? " on" : ""}${
+        on && winner ? (hit ? " right" : " wrong") : ""}"
+        ${locked ? "disabled" : ""} data-g="${esc(g.id)}" data-w="${esc(who)}">
+        ${esc(who)}${g.done ? `<i>${f1(who === g.home ? g.homePts : g.awayPts)}</i>` : ""}
+      </button>`;
+    };
+    const taken = confTaken(myPicks, g.id);
+    const opts = [`<option value="">&mdash;</option>`].concat(
+      Array.from({length:n}, (_, i) => n - i).map(v =>
+        `<option value="${v}"${Number(e.c) === v ? " selected" : ""}${
+          taken[v] ? " disabled" : ""}>${v}</option>`)).join("");
+
+    return `<div class="pkrow">
+        <div class="pksides">${side(g.away)}<span class="pkat">at</span>${side(g.home)}</div>
+        <div class="pkconf">
+          ${locked
+            ? `<span class="pkpts${winner ? (hit ? " right" : " wrong") : ""}">${
+                Number(e.c) ? (hit ? "+" + e.c : e.c) : "&mdash;"}</span>`
+            : `<select data-c="${esc(g.id)}" aria-label="Confidence">${opts}</select>`}
+        </div>
+      </div>`;
+  }).join("");
+
+  const board = picksTable();
+  const table = board.length
+    ? `<h2>Season standings</h2>
+       <table><thead><tr><th>Manager</th><th class="n">Points</th>
+         <th class="n">Correct</th></tr></thead>
+       <tbody>${board.map(r => `<tr${r.manager === ME ? ' class="you"' : ""}>
+         <td>${esc(r.manager)}</td><td class="n mark">${r.pts}</td>
+         <td class="n">${r.right}<span class="who">of ${r.done}</span></td></tr>`).join("")}
+       </tbody></table>`
+    : "";
+
+  el.innerHTML = `<h2>Pick&rsquo;em &middot; Week ${wk}</h2>
+    <p class="note" style="margin:0 0 12px">${esc(status)}</p>
+    ${n ? rows : `<div class="binderEmpty">No games scheduled for this week yet.</div>`}
+    ${(!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
+        ${ready ? "" : "disabled"}>${ready ? "Save picks"
+        : "Rank every game to save"}</button>` : ""}
+    ${!ME ? `<p class="note">Pick your name on the Home tab first.</p>` : ""}
+    ${table}`;
+
+  el.querySelectorAll("[data-g]").forEach(b => b.onclick = () => {
+    const cur = myPicks[b.dataset.g] || {};
+    myPicks[b.dataset.g] = { w: b.dataset.w, c: cur.c };
+    renderPicks();
+  });
+  el.querySelectorAll("[data-c]").forEach(sel => sel.onchange = () => {
+    const cur = myPicks[sel.dataset.c] || {};
+    const v = Number(sel.value) || 0;
+    /* taking a number off another game rather than duplicating it */
+    if(v) Object.keys(myPicks).forEach(k => {
+      if(k !== sel.dataset.c && Number((myPicks[k]||{}).c) === v) myPicks[k].c = 0;
+    });
+    myPicks[sel.dataset.c] = { w: cur.w, c: v };
+    renderPicks();
+  });
+  const sv = document.getElementById("pkSave");
+  if(sv) sv.onclick = () => savePicks();
+}
+
 /* ---------- records ----------
    Every number here is derived from data/h2h.json, so it covers 2019 onward and
    extends itself as the season plays. Nothing is hand maintained. */
@@ -1886,6 +2130,7 @@ function renderAll(){
   renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
+  try{ renderPicks(); }catch(e){ console.warn("[bromigos] picks:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
   try{ renderInstallHint(); }catch(e){ console.warn("[bromigos] install hint:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }
@@ -3765,6 +4010,7 @@ tick(); setInterval(tick,1000);
 /* first paint from baked-in history, after every module is defined */
 renderAll();
 try{ pullBlocks(); }catch(e){ console.warn("[bromigos] block sync:", e && e.message); }
+try{ pullPicks(); }catch(e){ console.warn("[bromigos] pick sync:", e && e.message); }
 
 /* Live data last: everything above already rendered from baked-in history,
    so a failed or blocked fetch can never blank the page. */

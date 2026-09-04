@@ -57,6 +57,7 @@ jobs:
           node test/projections.test.mjs
           node test/pwa.test.mjs
           node test/picks.test.mjs
+          node test/power.test.mjs
           node test/build.test.mjs
           node test/weekly.test.mjs
           node test/phases.test.mjs

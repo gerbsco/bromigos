@@ -228,5 +228,37 @@ const at = now => {
     S.teamForm("Nobody") === null);
 }
 
+/* ---------- the prompt on Home ----------
+   Pick'em was three taps deep. This only shows while there is something to do. */
+{
+  const { sandbox: S, byId, setVar } = at("2026-09-16T12:00:00Z");
+  S.renderPicksPrompt();
+  const h = () => byId("picksPrompt").innerHTML;
+  ok("an open week is advertised on Home", () => [/picks are open/.test(h()), h().slice(0,70)]);
+  ok("it links straight to the tab", () => /id="pkGo"/.test(h()));
+  ok("it says how many games and what the top pick is worth", () =>
+    /Rank all 2 games/.test(h()) && /worth 2/.test(h()));
+
+  setVar("PICKS", JSON.stringify({ "2": { Scotty: { "21":{w:"Scotty",c:2}, "22":{w:"Bo",c:1} } } }));
+  S.renderPicksPrompt();
+  ok("a completed entry says so instead of nagging", () =>
+    [/picks are in/.test(h()), h().slice(0,70)]);
+  ok("and still offers a way back in", () => /Review picks/.test(h()));
+}
+{
+  /* every lock has long since passed by December */
+  const { sandbox: S, byId } = at("2026-12-01T12:00:00Z");
+  S.renderPicksPrompt();
+  ok("a locked week is not advertised", () =>
+    [byId("picksPrompt").innerHTML === "", byId("picksPrompt").innerHTML.slice(0,60)]);
+}
+{
+  const { sandbox: S, byId, setVar } = at("2026-09-16T12:00:00Z");
+  setVar("ME", '""');
+  S.renderPicksPrompt();
+  ok("nobody is nagged before they pick a name", () =>
+    byId("picksPrompt").innerHTML === "");
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

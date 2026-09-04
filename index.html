@@ -740,6 +740,18 @@
     font:600 11px/1.4 ui-monospace,Menlo,monospace;color:var(--faint)}
   .installTip{border-left-color:var(--brass)}
   .installTip .cbtn{margin-top:11px}
+  .pwrow{display:flex;align-items:center;gap:11px;padding:12px 13px;margin-bottom:7px;
+    background:var(--ink-2);border-radius:5px;border-left:3px solid #2C4257}
+  .pwrow.me{border-left-color:var(--brass)}
+  .pwn{flex:none;width:22px;text-align:center;font:800 17px/1 var(--display);color:var(--faint)}
+  .mv{flex:none;width:34px;font:700 11px/1 ui-monospace,Menlo,monospace}
+  .mv.up{color:var(--win)} .mv.down{color:var(--loss)}
+  .mv.flat,.mv.new{color:var(--faint)}
+  .pwwho{flex:1;min-width:0}
+  .pwwho b{display:block;font:600 15px/1.2 var(--display);letter-spacing:.02em;color:var(--chalk)}
+  .pwwho span{display:block;margin-top:3px;font:400 11.5px/1.35 system-ui,sans-serif;
+    color:var(--faint)}
+  .pwr{flex:none;font:700 16px/1 ui-monospace,Menlo,monospace;color:var(--brass)}
   .pkrow{display:flex;align-items:stretch;gap:9px;margin-bottom:9px}
   .pksides{flex:1;min-width:0;display:flex;align-items:stretch;gap:8px}
   .pkconf{flex:none;width:62px;display:flex;align-items:center;justify-content:center}
@@ -861,6 +873,8 @@
   <section class="panel" id="records"><div id="recordsBody"></div></section>
 
   <section class="panel" id="picks"><div id="picksBody"></div></section>
+
+  <section class="panel" id="power"><div id="powerBody"></div></section>
 
   <section class="panel" id="rules">
     <h2>Calendar</h2>
@@ -1001,10 +1015,10 @@ const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
   ["trades", "Trades", ["trade", "wire"]],
-  ["league", "League", ["history", "records", "picks", "rules"]],
+  ["league", "League", ["power", "history", "records", "picks", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
-const PANEL_LABEL = { hq:"Home", team:"My team", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
+const PANEL_LABEL = { hq:"Home", team:"My team", power:"Power", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
   trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
 
 /* which panels the gates currently allow */
@@ -1015,6 +1029,7 @@ function panelVisible(id){
   if(id === "team")    return liveDraft();
   if(id === "records") return liveDraft();
   if(id === "picks")   return liveDraft();
+  if(id === "power")   return liveDraft();
   if(id === "binder")  return livePacks();
   if(id === "demo")    return PREVIEW;
   return true;
@@ -1613,6 +1628,120 @@ function h2hTopRival(a, mgrs, ix){
   return best || mgrs.find(m => m !== a) || a;
 }
 
+/* ---------- power rankings ----------
+   Standings lie early. A 3-0 team that won three games by a point is not the
+   best team in the league, and the record cannot tell you that. These rank on
+   what a team actually does rather than who it happened to draw. */
+
+/* every completed result, by manager, straight off the real ESPN schedule */
+function weeklyResults(throughWeek){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  const weeks = [...new Set(sch.map(m => m.matchupPeriodId))]
+    .filter(Number.isFinite).sort((a,b) => a-b);
+  const out = {};
+  weeks.forEach(wk => {
+    if(throughWeek && wk > throughWeek) return;
+    weekGames(wk).forEach(g => {
+      if(!g.done) return;
+      (out[g.home] = out[g.home] || []).push({ wk, pts:g.homePts, opp:g.away, oppPts:g.awayPts });
+      (out[g.away] = out[g.away] || []).push({ wk, pts:g.awayPts, opp:g.home, oppPts:g.homePts });
+    });
+  });
+  return out;
+}
+
+/* All-play is the honest core: how you would have done against every other team
+   every week. It removes schedule luck entirely, which is the single biggest
+   distortion in a ten team league playing fourteen games. */
+function powerRanks(throughWeek){
+  const res = weeklyResults(throughWeek);
+  const names = Object.keys(res).filter(m => res[m].length);
+  if(names.length < 2) return [];
+
+  const byWeek = {};
+  names.forEach(m => res[m].forEach(r => {
+    (byWeek[r.wk] = byWeek[r.wk] || []).push({ m, pts:r.pts });
+  }));
+
+  const ap = {};
+  names.forEach(m => { ap[m] = { w:0, n:0 }; });
+  Object.keys(byWeek).forEach(wk => {
+    const list = byWeek[wk];
+    list.forEach(a => list.forEach(b => {
+      if(a.m === b.m) return;
+      ap[a.m].n++;
+      if(a.pts > b.pts) ap[a.m].w++;
+    }));
+  });
+
+  const all = names.reduce((acc, m) => acc.concat(res[m].map(r => r.pts)), []);
+  const leagueMean = mean(all);
+
+  return names.map(m => {
+    const pts = res[m].map(r => r.pts);
+    const avg = mean(pts);
+    const recent = mean(pts.slice(-3));
+    const share = ap[m].n ? ap[m].w / ap[m].n : 0;
+    const w = res[m].filter(r => r.pts > r.oppPts).length;
+    return {
+      manager: m, games: pts.length, w, l: pts.length - w,
+      avg, recent, allPlay: share,
+      /* season scoring, current form, and schedule-free strength. Weighted so
+         one hot week cannot vault a team, but a cold month will sink one. */
+      rating: avg * 0.50 + recent * 0.30 + share * leagueMean * 0.20
+    };
+  }).sort((a,b) => b.rating - a.rating);
+}
+
+/* rank now against rank a week ago, which is the whole point of the arrow */
+function powerMovement(){
+  const now = powerRanks();
+  if(!now.length) return [];
+  const res = weeklyResults();
+  const played = Math.max(0, ...Object.keys(res)
+    .map(m => res[m].length ? Math.max(...res[m].map(r => r.wk)) : 0));
+  const before = played > 1 ? powerRanks(played - 1) : [];
+  const prev = {};
+  before.forEach((r, i) => { prev[r.manager] = i + 1; });
+  return now.map((r, i) => ({
+    ...r, rank: i + 1,
+    move: prev[r.manager] ? prev[r.manager] - (i + 1) : null
+  }));
+}
+
+function renderPower(){
+  const el = document.getElementById("powerBody");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+
+  const rows = powerMovement();
+  if(!rows.length){
+    el.innerHTML = `<h2>Power rankings</h2>` + lock("Nothing to rank yet",
+      "These need at least one completed week. They appear the first Tuesday of the season.");
+    return;
+  }
+
+  const arrow = m => m === null ? `<span class="mv new">new</span>`
+    : m > 0 ? `<span class="mv up">&#9650;${m}</span>`
+    : m < 0 ? `<span class="mv down">&#9660;${-m}</span>`
+    : `<span class="mv flat">&mdash;</span>`;
+
+  el.innerHTML = `<h2>Power rankings</h2>
+    <p class="note" style="margin:0 0 14px">Season scoring, the last three weeks,
+      and all-play record. Movement is against last week.</p>
+    ${rows.map(r => `<div class="pwrow${r.manager === ME ? " me" : ""}">
+      <span class="pwn">${r.rank}</span>
+      ${arrow(r.move)}
+      <span class="pwwho"><b>${esc(r.manager)}</b>
+        <span>${r.w}-${r.l} &middot; ${f1(r.avg)} a week &middot;
+          all-play ${Math.round(r.allPlay * 100)}%</span></span>
+      <span class="pwr">${f1(r.rating)}</span>
+    </div>`).join("")}
+    <p class="note">All-play is how you would have done against every team every
+      week, so it ignores who you were scheduled against. A record well ahead of
+      it is luck; well behind it is the opposite.</p>`;
+}
+
 /* ---------- pick'em ----------
    Pick every game each week before the first kickoff. Stored in a sheet behind
    an Apps Script, separate from the trade block so one cannot break the other.
@@ -2155,6 +2284,7 @@ function renderAll(){
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
   try{ renderPicks(); }catch(e){ console.warn("[bromigos] picks:", e && e.message); }
+  try{ renderPower(); }catch(e){ console.warn("[bromigos] power:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
   try{ renderInstallHint(); }catch(e){ console.warn("[bromigos] install hint:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }

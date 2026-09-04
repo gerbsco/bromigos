@@ -750,8 +750,8 @@
   .pkside{flex:1;min-width:0;padding:13px 10px;border:1px solid #2C4257;border-radius:5px;
     background:var(--ink-2);color:var(--dim);cursor:pointer;text-align:left;
     font:600 14px/1.2 system-ui,sans-serif;transition:border-color .12s,color .12s}
-  .pkside i{display:block;margin-top:4px;font:700 12px/1 ui-monospace,Menlo,monospace;
-    font-style:normal;opacity:.7}
+  .pkside i{display:block;margin-top:5px;font:600 11px/1 ui-monospace,Menlo,monospace;
+    font-style:normal;opacity:.62}
   .pkside.on{border-color:var(--brass);color:var(--chalk);background:rgba(217,162,39,.10)}
   .pkside.right{border-color:var(--win);color:var(--win)}
   .pkside.wrong{border-color:var(--loss);color:var(--loss)}
@@ -1699,6 +1699,22 @@ function confTaken(entries, exceptId){
   return out;
 }
 
+/* Record and projected total for a manager, so a ranking is an opinion about
+   two teams rather than a guess between two names. */
+function teamForm(name){
+  if(!ROSTERS) { try { loadRosterModel(); } catch(e){ return null; } }
+  const t = (ROSTERS || []).find(x => x.manager === name);
+  if(!t) return null;
+  let rec = "";
+  try {
+    const r = seasonTable()[t.id];
+    if(r && (r.w + r.l)) rec = r.w + "-" + r.l;
+  } catch(e){}
+  let proj = 0;
+  try { proj = bestLineup(t.players).total; } catch(e){}
+  return { rec, proj };
+}
+
 function picksTable(){
   const weeks = Object.keys(PICKS).map(Number).filter(Number.isFinite).sort((a,b) => a-b);
   const totals = {};
@@ -1763,10 +1779,12 @@ function renderPicks(){
   if(!Object.keys(myPicks).length) myPicks = JSON.parse(JSON.stringify(mine));
 
   const ready = picksValid(myPicks, n);
+  const noWinner = games.filter(g => !(myPicks[g.id] || {}).w).length;
   const status = picksState === "saving" ? "Saving\u2026"
     : picksState === "error" ? "Offline, your picks are not saved."
     : locked ? "Locked. Results below."
-    : `Rank all ${n}. Your most confident pick is worth ${n}, your least is worth 1.`;
+    : `Tap the winner of each game, then rank them. Your most confident pick is `
+      + `worth ${n}, your least is worth 1.`;
 
   const rows = games.map(g => {
     const e = myPicks[g.id] || {};
@@ -1774,10 +1792,14 @@ function renderPicks(){
     const hit = winner && e.w === winner;
     const side = who => {
       const on = e.w === who;
+      const f = teamForm(who);
+      const sub = g.done
+        ? f1(who === g.home ? g.homePts : g.awayPts)
+        : (f ? [f.rec, f.proj ? "proj " + f1(f.proj) : ""].filter(Boolean).join(" \u00b7 ") : "");
       return `<button type="button" class="pkside${on ? " on" : ""}${
         on && winner ? (hit ? " right" : " wrong") : ""}"
         ${locked ? "disabled" : ""} data-g="${esc(g.id)}" data-w="${esc(who)}">
-        ${esc(who)}${g.done ? `<i>${f1(who === g.home ? g.homePts : g.awayPts)}</i>` : ""}
+        ${esc(who)}${sub ? `<i>${esc(sub)}</i>` : ""}
       </button>`;
     };
     const taken = confTaken(myPicks, g.id);
@@ -1812,8 +1834,10 @@ function renderPicks(){
     <p class="note" style="margin:0 0 12px">${esc(status)}</p>
     ${n ? rows : `<div class="binderEmpty">No games scheduled for this week yet.</div>`}
     ${(!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
-        ${ready ? "" : "disabled"}>${ready ? "Save picks"
-        : "Rank every game to save"}</button>` : ""}
+        ${ready ? "" : "disabled"}>${
+          ready ? "Save picks"
+          : noWinner ? `Pick a winner in ${noWinner} more game${noWinner > 1 ? "s" : ""}`
+          : "Give every game a different rank"}</button>` : ""}
     ${!ME ? `<p class="note">Pick your name on the Home tab first.</p>` : ""}
     ${table}`;
 

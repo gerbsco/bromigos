@@ -162,7 +162,8 @@ const at = now => {
     const sels = (h.match(/data-c="/g) || []).length;
     return [sels === S.weekGames(S.pickWeek()).length, sels + " controls"];
   });
-  ok("save is refused until every game is ranked", () => /disabled>Rank every game/.test(h));
+  ok("save is refused until the entry is complete", () =>
+    [/id="pkSave"[^>]*disabled/.test(h), "save button is enabled too early"]);
 }
 {
   const { sandbox: S, byId, setVar } = boot({ search:"", now:"2026-09-01T12:00:00Z" });
@@ -170,6 +171,61 @@ const at = now => {
   S.renderPicks();
   ok("stays locked with everything else before the draft", () =>
     byId("picksBody").innerHTML === "");
+}
+
+/* ---------- the button has to name the step that is missing ----------
+   Setting all five confidence numbers without tapping a winner left the button
+   disabled reading "Rank every game to save", which is the one thing that had
+   been done. */
+{
+  const { sandbox: S, byId, setVar } = at("2026-09-16T12:00:00Z");
+  const label = () => (byId("picksBody").innerHTML
+    .match(/id="pkSave"[^>]*>([^<]*)</) || [])[1].trim();
+
+  S.renderPicks();
+  ok("with nothing picked it asks for winners", () =>
+    [/Pick a winner in 2 more games/.test(label()), label()]);
+
+  setVar("myPicks", JSON.stringify({ "21":{w:"Scotty"}, "22":{w:"Bo"} }));
+  S.renderPicks();
+  ok("with winners but no ranks it asks for ranks", () =>
+    [/different rank/.test(label()), label()]);
+
+  setVar("myPicks", JSON.stringify({ "21":{w:"Scotty",c:2}, "22":{w:"Bo",c:2} }));
+  S.renderPicks();
+  ok("a duplicate rank still blocks the save", () =>
+    [/different rank/.test(label()), label()]);
+
+  setVar("myPicks", JSON.stringify({ "21":{w:"Scotty",c:2}, "22":{w:"Bo",c:1} }));
+  S.renderPicks();
+  ok("only a complete entry offers the save", () => [label() === "Save picks", label()]);
+  ok("and the button is no longer disabled", () =>
+    !/id="pkSave"[^>]*disabled/.test(byId("picksBody").innerHTML));
+
+  ok("the instruction names both steps, not just ranking", () => {
+    const h = byId("picksBody").innerHTML;
+    return /Tap the winner of each game, then rank them/.test(h);
+  });
+}
+
+/* ---------- something to rank on ---------- */
+{
+  /* demo rosters are preview only, so the public link legitimately has no
+     roster to read a projection from until real ones land */
+  const pub = at("2026-09-16T12:00:00Z");
+  pub.sandbox.loadRosterModel();
+  ok("no invented form data reaches the league", () =>
+    pub.sandbox.teamForm("Scotty") === null);
+
+  const h = boot({ search:"?pack=1", now:"2026-09-16T12:00:00Z" });
+  h.setVar("ME", '"Scotty"');
+  const S = h.sandbox;
+  S.loadRosterModel();
+  const f = S.teamForm("Scotty");
+  ok("a manager has a record and a projection", () =>
+    [f && typeof f.proj === "number" && f.proj > 0, JSON.stringify(f)]);
+  ok("an unknown name returns nothing rather than throwing", () =>
+    S.teamForm("Nobody") === null);
 }
 
 console.log(`\n  ${passes} passed, ${fails} failed\n`);

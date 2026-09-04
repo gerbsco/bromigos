@@ -162,5 +162,47 @@ const at = (schedule, now = "2026-10-20T12:00:00Z") => {
     byId("powerBody").innerHTML === "");
 }
 
+/* ---------- the class collision that broke the recap ----------
+   .mv belongs to the weekly recap's up/down movers. An unprefixed rule added
+   for the power arrows set width:34px on it and crushed every recap row. */
+{
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const { dirname, join } = await import("node:path");
+  const html = readFileSync(
+    join(dirname(fileURLToPath(import.meta.url)), "..", "index.html"), "utf8");
+  const css = html.slice(html.indexOf("<style>"), html.indexOf("</style>"));
+
+  ok("the power arrow is namespaced", () => /\.pwmv\{/.test(css));
+  ok("no bare .mv rule sets a width", () =>
+    [!/(^|[^w])\.mv\{[^}]*width/m.test(css), "an unprefixed .mv width is back"]);
+  ok("the recap still uses .mv for its movers", () => /class="mv \$\{dir\}"/.test(html));
+  ok("power rows use the namespaced class", () => /class="pwmv/.test(html));
+}
+
+/* ---------- the Home summary ---------- */
+{
+  const { sandbox: S, byId } = at(SCHEDULE);
+  S.renderPowerMini();
+  const h = byId("powerMini").innerHTML;
+  ok("a cut of the table reaches Home", () => /Power rankings/.test(h));
+  ok("it is capped rather than repeating the whole league", () =>
+    [(h.match(/pwrow/g) || []).length <= 6, (h.match(/pwrow/g) || []).length + " rows"]);
+  ok("there is a way through to the full table", () => /id="pwMore"/.test(h));
+  ok("your own row is marked", () => /pwrow tight me/.test(h));
+}
+{
+  const { sandbox: S, byId } = at([]);
+  S.renderPowerMini();
+  ok("nothing to rank means nothing on Home, not an empty card", () =>
+    byId("powerMini").innerHTML === "");
+}
+{
+  const { sandbox: S, byId, setVar } = boot({ search:"", now:"2026-09-01T12:00:00Z" });
+  setVar("ME", '"Scotty"');
+  S.renderPowerMini();
+  ok("stays off Home before the draft", () => byId("powerMini").innerHTML === "");
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

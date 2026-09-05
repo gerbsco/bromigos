@@ -54,7 +54,10 @@
   html,body{margin:0;padding:0}
   body{background:#04080E;color:var(--chalk);
     font:400 15px/1.5 -apple-system,system-ui,"Segoe UI",sans-serif;
-    padding:0 0 calc(92px + env(safe-area-inset-bottom,0px))}
+    /* Installed to the home screen the page runs under the status bar, so the
+       top inset has to be reserved here or the wordmark hides behind the
+       island. In a browser tab the inset is 0 and nothing moves. */
+    padding:env(safe-area-inset-top,0px) 0 calc(92px + env(safe-area-inset-bottom,0px))}
 
   /* Five gradients stacked and cross faded, because a gradient itself
      cannot be transitioned. Only the top of the page carries the hue;
@@ -74,12 +77,14 @@
   body[data-s=league]{--accent:#B4C4D6}
   body[data-s=cards] {--accent:#F0C75E}
 
-  .wrap{max-width:620px;margin:0 auto;padding:0 14px}
+  .wrap{max-width:620px;margin:0 auto;
+    padding:0 calc(14px + env(safe-area-inset-left,0px))
+            0 calc(14px + env(safe-area-inset-right,0px))}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
     white-space:nowrap}
 
   /* ---------- header ---------- */
-  header{padding:22px 4px 4px}
+  header{padding:14px 4px 4px}
   .hdr{display:flex;align-items:center;justify-content:space-between;gap:12px}
   #wordmark{font:700 25px/1 var(--display);letter-spacing:-.028em;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -557,7 +562,8 @@
   .dot.act{background:var(--brass)}
   .tapon{font:600 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;
     text-transform:uppercase;color:#5D7086}
-  .skipb{position:absolute;top:16px;right:16px;padding:9px 14px;border-radius:3px;
+  .skipb{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));
+    right:16px;padding:9px 14px;border-radius:3px;
     border:1px solid #2C4257;background:rgba(6,14,22,.72);color:#93A6B8;
     font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
     text-transform:uppercase;cursor:pointer;z-index:7}

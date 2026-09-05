@@ -744,14 +744,18 @@
     background:var(--ink-2);border-radius:5px;border-left:3px solid #2C4257}
   .pwrow.me{border-left-color:var(--brass)}
   .pwn{flex:none;width:22px;text-align:center;font:800 17px/1 var(--display);color:var(--faint)}
-  .mv{flex:none;width:34px;font:700 11px/1 ui-monospace,Menlo,monospace}
-  .mv.up{color:var(--win)} .mv.down{color:var(--loss)}
-  .mv.flat,.mv.new{color:var(--faint)}
+  /* Namespaced. The weekly recap already owns .mv for its up/down movers, and
+     an unprefixed rule here squashed every one of those rows to 34px wide. */
+  .pwmv{flex:none;width:34px;font:700 11px/1 ui-monospace,Menlo,monospace}
+  .pwmv.up{color:var(--win)} .pwmv.down{color:var(--loss)}
+  .pwmv.flat,.pwmv.new{color:var(--faint)}
   .pwwho{flex:1;min-width:0}
   .pwwho b{display:block;font:600 15px/1.2 var(--display);letter-spacing:.02em;color:var(--chalk)}
   .pwwho span{display:block;margin-top:3px;font:400 11.5px/1.35 system-ui,sans-serif;
     color:var(--faint)}
   .pwr{flex:none;font:700 16px/1 ui-monospace,Menlo,monospace;color:var(--brass)}
+  .pwrow.tight{padding:10px 12px;margin-bottom:5px}
+  .pwgap{text-align:center;color:var(--faint);letter-spacing:.3em;margin:2px 0 6px}
   .pkrow{display:flex;align-items:stretch;gap:9px;margin-bottom:9px}
   .pksides{flex:1;min-width:0;display:flex;align-items:stretch;gap:8px}
   .pkconf{flex:none;width:62px;display:flex;align-items:center;justify-content:center}
@@ -818,11 +822,11 @@
   <section class="panel on" id="hq">
     <div id="installHint"></div>
     <div id="nextup"></div>
+    <div id="picksPrompt"></div>
+    <div id="powerMini"></div>
     <div id="recap"></div>
     <div id="draft"></div>
     <div id="awards"></div>
-    <div id="snapshot"></div>
-    <div id="leagueBody"></div>
   </section>
 
   <section class="panel" id="trade">
@@ -874,7 +878,11 @@
 
   <section class="panel" id="picks"><div id="picksBody"></div></section>
 
-  <section class="panel" id="power"><div id="powerBody"></div></section>
+  <section class="panel" id="power">
+    <div id="powerBody"></div>
+    <div id="leagueBody"></div>
+    <div id="snapshot"></div>
+  </section>
 
   <section class="panel" id="rules">
     <h2>Calendar</h2>
@@ -1015,7 +1023,7 @@ const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
   ["trades", "Trades", ["trade", "wire"]],
-  ["league", "League", ["power", "history", "records", "picks", "rules"]],
+  ["league", "League", ["power", "picks", "history", "records", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
 const PANEL_LABEL = { hq:"Home", team:"My team", power:"Power", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
@@ -1709,6 +1717,65 @@ function powerMovement(){
   }));
 }
 
+/* Home carries a five-row cut of the table plus your own line if you are not in
+   it. The full thing, the standings and the odds all live under League. */
+function renderPowerMini(){
+  const el = document.getElementById("powerMini");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+
+  const rows = powerMovement();
+  if(!rows.length){ el.innerHTML = ""; return; }
+
+  const top = rows.slice(0, 5);
+  const me = rows.find(r => r.manager === ME);
+  const show = (me && !top.includes(me)) ? top.concat([me]) : top;
+
+  el.innerHTML = `<h2>Power rankings</h2>
+    ${show.map((r, i) => `${(i === 5) ? `<div class="pwgap">&middot;&middot;&middot;</div>` : ""}
+      <div class="pwrow tight${r.manager === ME ? " me" : ""}">
+        <span class="pwn">${r.rank}</span>
+        ${r.move === null ? `<span class="pwmv new">new</span>`
+          : r.move > 0 ? `<span class="pwmv up">&#9650;${r.move}</span>`
+          : r.move < 0 ? `<span class="pwmv down">&#9660;${-r.move}</span>`
+          : `<span class="pwmv flat">&mdash;</span>`}
+        <span class="pwwho"><b>${esc(r.manager)}</b>
+          <span>${r.w}-${r.l} &middot; ${f1(r.avg)} a week</span></span>
+        <span class="pwr">${f1(r.rating)}</span>
+      </div>`).join("")}
+    <button type="button" class="cbtn" id="pwMore">Full table and odds</button>`;
+
+  const b = document.getElementById("pwMore");
+  if(b) b.onclick = () => showTab("power", true);
+}
+
+/* Picks were buried three taps deep under League. This is the nudge, and it
+   only appears while there is something to do about it. */
+function renderPicksPrompt(){
+  const el = document.getElementById("picksPrompt");
+  if(!el) return;
+  if(!liveDraft() || !PICKS_URL || !ME){ el.innerHTML = ""; return; }
+
+  const wk = pickWeek();
+  const games = weekGames(wk);
+  if(!games.length || picksLocked(wk)){ el.innerHTML = ""; return; }
+
+  const saved = (PICKS[String(wk)] || {})[ME] || {};
+  const done = picksValid(saved, games.length);
+  if(done){
+    el.innerHTML = `<div class="card"><h3>Week ${wk} picks are in</h3>
+      <p>All ${games.length} ranked. You can still change them until Thursday.</p>
+      <button type="button" class="cbtn" id="pkGo">Review picks</button></div>`;
+  } else {
+    el.innerHTML = `<div class="card gold"><h3>Week ${wk} picks are open</h3>
+      <p>Rank all ${games.length} games before Thursday kickoff. Your most confident
+        pick is worth ${games.length}.</p>
+      <button type="button" class="cbtn" id="pkGo">Make your picks</button></div>`;
+  }
+  const b = document.getElementById("pkGo");
+  if(b) b.onclick = () => showTab("picks", true);
+}
+
 function renderPower(){
   const el = document.getElementById("powerBody");
   if(!el) return;
@@ -1721,10 +1788,10 @@ function renderPower(){
     return;
   }
 
-  const arrow = m => m === null ? `<span class="mv new">new</span>`
-    : m > 0 ? `<span class="mv up">&#9650;${m}</span>`
-    : m < 0 ? `<span class="mv down">&#9660;${-m}</span>`
-    : `<span class="mv flat">&mdash;</span>`;
+  const arrow = m => m === null ? `<span class="pwmv new">new</span>`
+    : m > 0 ? `<span class="pwmv up">&#9650;${m}</span>`
+    : m < 0 ? `<span class="pwmv down">&#9660;${-m}</span>`
+    : `<span class="pwmv flat">&mdash;</span>`;
 
   el.innerHTML = `<h2>Power rankings</h2>
     <p class="note" style="margin:0 0 14px">Season scoring, the last three weeks,
@@ -1866,7 +1933,7 @@ async function pullPicks(){
     picksState = "error";
     console.warn("[bromigos] pick'em offline:", err && err.message);
   }
-  try { renderPicks(); } catch(e){}
+  try { renderPicks(); renderPicksPrompt(); } catch(e){}
 }
 
 async function savePicks(){
@@ -1886,6 +1953,7 @@ async function savePicks(){
     console.warn("[bromigos] pick save failed:", err && err.message);
   }
   renderPicks();
+  try { renderPicksPrompt(); } catch(e){}
 }
 
 function renderPicks(){
@@ -2285,6 +2353,8 @@ function renderAll(){
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
   try{ renderPicks(); }catch(e){ console.warn("[bromigos] picks:", e && e.message); }
   try{ renderPower(); }catch(e){ console.warn("[bromigos] power:", e && e.message); }
+  try{ renderPowerMini(); }catch(e){ console.warn("[bromigos] power mini:", e && e.message); }
+  try{ renderPicksPrompt(); }catch(e){ console.warn("[bromigos] picks prompt:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
   try{ renderInstallHint(); }catch(e){ console.warn("[bromigos] install hint:", e && e.message); }
   try{ renderTeamPage(); }catch(e){ console.warn("[bromigos] team:", e && e.message); }

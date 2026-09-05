@@ -786,6 +786,10 @@
   .gpos.RB{background:rgba(95,217,160,.16);color:#79E3B5}
   .gpos.WR{background:rgba(107,182,255,.16);color:#8CC6FF}
   .gpos.TE{background:rgba(255,197,92,.16);color:#FFD07C}
+  .gdot{display:inline-block;width:9px;height:9px;border-radius:50%;
+    margin-right:10px;vertical-align:1px;background:var(--faint)}
+  .gdot.s{background:var(--win)}
+  .gdot.w{background:var(--loss)}
   .gbody b{display:block;font:400 15.5px/1.25 var(--display);color:var(--chalk)}
   .gbody span{display:block;margin-top:4px;font:400 12.5px/1.45 var(--display);
     color:var(--faint)}
@@ -2605,10 +2609,13 @@ function bestLineupWith(players, val, wk){
   return { filled, total, bench: pool.filter(x => !used.has(x.p.id)).map(x => x.p) };
 }
 
-/* This week, on the blended weekly projection. Unchanged behaviour: the team
-   page, the matchup card and the start/sit check all still answer "Sunday". */
+/* This week, on the blended weekly projection. Now scoped to the week actually
+   being played, which it should always have been: the builder was ignoring
+   byes, so it would put a player on bye into your RB slot and the start/sit
+   check would then warn you he was in your RB slot. He was not. The app had
+   put him there and was complaining about its own suggestion. */
 function bestLineup(players){
-  return bestLineupWith(players, p => projOf(p).blend, null);
+  return bestLineupWith(players, p => projOf(p).blend, weeksLeft()[0] || null);
 }
 
 /* Depth score per position: starters plus a discounted first backup. */
@@ -3525,7 +3532,12 @@ const blockStatusLine = () => {
 };
 
 /* ================= TEAM PAGE ================= */
-const GRADE_DOT = { strong:"\u{1F7E2}", ok:"\u{1F7E1}", weak:"\u{1F534}" };
+/* Drawn, not typed. The emoji rendered at whatever size and weight the system
+   felt like and sat badly next to everything else on the page. Green and red
+   still mean what they mean everywhere else, and average is deliberately grey
+   rather than amber so only the two states worth acting on carry a colour. */
+const GRADE_DOT = { strong:`<span class="gdot s"></span>`,
+  ok:`<span class="gdot o"></span>`, weak:`<span class="gdot w"></span>` };
 const GRADE_WHY = {
   QB: { strong:"Set every week, no thinking required.",
         ok:"Fine. Not a problem, not an edge.",
@@ -3795,11 +3807,12 @@ function lineupWarnings(team, week){
   const out = [];
   s.starters.concat(s.tail).forEach(f => {
     const p = f.player;
-    if(!p) { out.push({ level:"bad", text:`No one in your ${f.slot} slot.` }); return; }
-    if(week && p.bye === week)
-      out.push({ level:"bad", text:`${p.name} is on bye this week and still in your ${f.slot} slot.` });
+    /* An empty slot is the honest way to say a bye is not covered: the builder
+       will not start someone who is not playing, so if nobody is eligible the
+       slot stays open and that is the thing worth telling you about. */
+    if(!p) { out.push({ level:"bad", text:`Nobody available for your ${f.slot} slot this week.` }); return; }
     if(p.injury && /OUT|IR|DOUBTFUL/i.test(p.injury))
-      out.push({ level:"bad", text:`${p.name} is listed ${p.injury.toLowerCase()} and is still starting.` });
+      out.push({ level:"bad", text:`${p.name} is listed ${p.injury.toLowerCase()} and is still the best option in your ${f.slot}.` });
     else if(p.injury)
       out.push({ level:"warn", text:`${p.name} is ${p.injury.toLowerCase()}. Have a backup ready.` });
   });
@@ -3825,11 +3838,9 @@ function renderMatchup(me){
   if(!m) return "";
   const mine = bestLineup(me.players), theirs = bestLineup(m.opp.players);
   const diff = mine.total - theirs.total;
-  const bySlot = mine.filled.map((f,i) => ({ slot:f.slot, a:f.player, b:theirs.filled[i] && theirs.filled[i].player }))
-    .filter(x => DISPLAY_ORDER.includes(x.slot));
-  const swing = bySlot.map(x => ({ ...x, d:(x.a?x.a.proj:0) - (x.b?x.b.proj:0) }))
-    .sort((p,q) => Math.abs(q.d) - Math.abs(p.d)).slice(0,3);
 
+  /* No slot by slot comparison against the opponent. It looked like analysis
+     and there is nothing to do with it: you cannot bench their running back. */
   return `<div class="vs">
       <div class="vsSide"><span class="vsName">${esc(me.manager)}</span>
         <span class="vsScore">${mine.total.toFixed(1)}</span></div>
@@ -3841,13 +3852,7 @@ function renderMatchup(me){
     <p class="note" style="margin:0 0 14px">${
       Math.abs(diff) < 6 ? "Projects as a coin flip. Every start/sit call matters."
       : diff > 0 ? `You project ${diff.toFixed(1)} ahead. Comfortable, not safe.`
-      : `You project ${Math.abs(diff).toFixed(1)} behind. You need a swing somewhere.`}</p>
-    ${swing.map(x => `<div class="slotrow">
-      <span class="slotk">${x.slot}</span>
-      <span class="slotp">${x.a ? esc(x.a.name) : "empty"}</span>
-      <span class="slotd ${x.d>0?"up":"down"}">${x.d>0?"+":""}${x.d.toFixed(1)}</span>
-      <span class="slotp right">${x.b ? esc(x.b.name) : "empty"}</span>
-    </div>`).join("")}`;
+      : `You project ${Math.abs(diff).toFixed(1)} behind. You need a swing somewhere.`}</p>`;
 }
 
 /* The whole roster, in lineup order, then the bench, then the two slots nobody

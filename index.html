@@ -317,8 +317,11 @@
      off as they are, and brass lives on in here. Nothing above should
      reach into this block and nothing in here should leak out.
      ============================================================ */
+  /* The stage is the Cards screen, not the old navy. Gold belongs in here and
+     nowhere else, which is why the pack is the one place brass survived. */
   .packwrap{position:fixed;inset:0;z-index:900;display:none;align-items:center;
-    justify-content:center;background:radial-gradient(ellipse at 50% 56%,#0B2237 0%,#02060B 78%);
+    justify-content:center;
+    background:radial-gradient(ellipse at 50% 54%,#1E1810 0%,#0A0906 46%,#04080E 82%);
     padding:18px;overflow:hidden}
   .packwrap.on{display:flex}
   .packstage{position:relative;width:100%;max-width:360px;display:flex;flex-direction:column;
@@ -361,15 +364,15 @@
     12%{opacity:1}
     100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.15)}}
 
-  .thepack{position:relative;z-index:4;width:184px;height:258px;margin:0 auto;border-radius:8px;
-    cursor:pointer;background:linear-gradient(160deg,#1E4162 0%,#0A1E33 55%,#17364F 100%);
-    border:1px solid rgba(217,162,39,.45);
-    box-shadow:0 14px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-  .thepack .pl{font:700 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.26em;
-    text-transform:uppercase;color:var(--brass)}
-  .thepack .pw{font:800 24px/1.05 system-ui,sans-serif;color:#EAE2CF;letter-spacing:-.02em;padding:0 14px}
-  .thepack .pt{font-size:11px;color:#5D7086;margin-top:4px;letter-spacing:.05em}
+  .thepack{position:relative;z-index:4;width:184px;height:258px;margin:0 auto;border-radius:16px;
+    cursor:pointer;background:linear-gradient(160deg,#3A2E12 0%,#12100B 58%,#2C240F 100%);
+    border:1px solid rgba(240,199,94,.42);
+    box-shadow:0 18px 40px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.07);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px}
+  .thepack .pl{font:400 10.5px/1 var(--display);letter-spacing:.2em;
+    text-transform:uppercase;color:#F0C75E}
+  .thepack .pw{font:600 23px/1.1 var(--display);color:#fff;letter-spacing:-.025em;padding:0 14px}
+  .thepack .pt{margin-top:4px;font:400 12.5px/1 var(--display);color:rgba(235,242,250,.4)}
   @media (prefers-reduced-motion:no-preference){
     .thepack{animation:breathe 2.6s ease-in-out infinite}
     .thepack.rip{animation:rip .3s cubic-bezier(.36,.07,.19,.97) forwards}}
@@ -558,15 +561,15 @@
   .packbar{position:relative;z-index:6;margin-top:16px;display:flex;align-items:center;
     justify-content:center;gap:12px}
   .dots{display:flex;gap:5px}
-  .dot{width:6px;height:6px;border-radius:50%;background:rgba(234,226,207,.22)}
-  .dot.act{background:var(--brass)}
-  .tapon{font:600 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;
-    text-transform:uppercase;color:#5D7086}
+  .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.22)}
+  .dot.act{background:#F0C75E}
+  .tapon{font:400 12.5px/1 var(--display);color:rgba(235,242,250,.45)}
   .skipb{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));
-    right:16px;padding:9px 14px;border-radius:3px;
-    border:1px solid #2C4257;background:rgba(6,14,22,.72);color:#93A6B8;
-    font:700 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
-    text-transform:uppercase;cursor:pointer;z-index:7}
+    right:16px;padding:10px 16px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.09);
+    color:#fff;font:600 13px/1 var(--display);cursor:pointer;z-index:7;
+    -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+  .skipb:active{background:rgba(255,255,255,.16)}
   /* ================= end of the untouched block ================= */
 
   /* ---------- draft order ---------- */
@@ -596,6 +599,26 @@
   .sect .rule{flex:1;height:0;background:none;padding:0;border:0}
   .sect .tot{flex:none;font:400 15px/1 var(--display);color:var(--dim);
     font-variant-numeric:tabular-nums}
+
+  /* The deal used to live at the top of a long panel, so testing an idea meant
+     scrolling down to tap and back up to read the verdict. This rides along. */
+  .tsum{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
+    display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:12px 14px;
+    border-radius:16px;border:1px solid var(--line);
+    background:rgba(4,8,14,.88);
+    -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .tsd{flex:1;min-width:0;text-align:center}
+  .tsd b{display:block;font:600 20px/1 var(--display);letter-spacing:-.03em;
+    font-variant-numeric:tabular-nums;color:var(--dim)}
+  .tsd.up b{color:var(--win)}
+  .tsd.down b{color:var(--loss)}
+  .tsd i{display:block;margin-top:5px;font-style:normal;
+    font:400 12px/1 var(--display);color:var(--faint);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tsx{flex:none;padding:9px 13px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(255,255,255,.06);color:var(--dim);cursor:pointer;
+    font:600 12.5px/1 var(--display)}
+  .tsx:active{background:rgba(255,255,255,.12)}
 
   .picker{margin-bottom:16px}
   .picker select{width:100%;max-width:none;padding:14px 12px;font-size:15px;
@@ -678,6 +701,9 @@
     border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
   .plr.blocked .tick{background:var(--accent);border-color:var(--accent);color:#0A1220}
   .plr.mute{opacity:.45;cursor:default}
+  /* My Team lists the roster to be read, not tapped. Same row, no affordance. */
+  .plr.view{cursor:default}
+  .plr.view:active{background:var(--ink-2)}
   .plr.tappable{cursor:pointer}
   .plr.tappable .tick{border:0;color:var(--faint);font-size:18px}
   .blockTag{display:inline-block;margin-left:7px;padding:3px 8px;border-radius:999px;
@@ -2609,6 +2635,24 @@ function gradeTeam(team, med){
    looking at only if that number rises for BOTH teams. */
 const rosterValue = players => bestLineup(players).total;
 
+/* Which starting slots actually change hands. The delta on its own is a number
+   you are asked to trust; this is the arithmetic behind it, slot by slot. The
+   two lineups are compared by index, which is safe because SLOTS is fixed. */
+function lineupDiff(before, after){
+  const A = bestLineup(before).filled, B = bestLineup(after).filled;
+  const out = [];
+  A.forEach((f, i) => {
+    const g = B[i];
+    if(!g) return;
+    const from = f.player, to = g.player;
+    if((from && to && from.id === to.id) || (!from && !to)) return;
+    out.push({ slot: f.slot,
+      from: from ? from.name : "empty", to: to ? to.name : "empty",
+      d: (to ? projOf(to).blend : 0) - (from ? projOf(from).blend : 0) });
+  });
+  return out;
+}
+
 function applyTrade(players, out, inc){
   const gone = new Set(out.map(p => p.id));
   return players.filter(p => !gone.has(p.id)).concat(inc);
@@ -2762,6 +2806,10 @@ function demoFreeAgents(){
 /* ---------- shared state ---------- */
 let ROSTERS = null, FREEAGENTS = null, IS_DEMO = false;
 let tradePartner = null, giveSel = new Set(), getSel = new Set();
+/* Every tap rebuilds the panel. Without this the page jumps back to wherever
+   the browser felt like, which is the whole reason building a deal was painful.
+   Set it to a number to force a position, leave it null to stay put. */
+let tradeScroll = null;
 
 /* Demo rosters exist so the trade builder and pack can be exercised before the
    draft. They must never reach the league: invented players on the public link
@@ -2863,12 +2911,18 @@ function renderTradePro(){
   if(!tradePartner || !others.find(t => t.id === tradePartner)) tradePartner = others[0].id;
   const them = ROSTERS.find(t => t.id === tradePartner);
 
+  const back = (tradeScroll === null) ? window.scrollY : tradeScroll;
+  tradeScroll = null;
+
   const gMe = gradeTeam(me, leagueMedians(ROSTERS));
   const give = me.players.filter(p => giveSel.has(p.id));
   const get  = them.players.filter(p => getSel.has(p.id));
   const live = give.length || get.length;
-  const dA = rosterValue(applyTrade(me.players, give, get)) - rosterValue(me.players);
-  const dB = rosterValue(applyTrade(them.players, get, give)) - rosterValue(them.players);
+  const afterMe = applyTrade(me.players, give, get);
+  const afterThem = applyTrade(them.players, get, give);
+  const beforeA = rosterValue(me.players),   nowA = rosterValue(afterMe);
+  const beforeB = rosterValue(them.players), nowB = rosterValue(afterThem);
+  const dA = nowA - beforeA, dB = nowB - beforeB;
 
   const byeClash = () => {
     const w = {}; applyTrade(me.players, give, get).forEach(p => { if(p.bye) w[p.bye]=(w[p.bye]||0)+1; });
@@ -2879,7 +2933,13 @@ function renderTradePro(){
     <b>${esc(p.name)}</b><i>${p.proj.toFixed(1)}</i><span class="x">\u00d7</span></span>`;
   const sign = n => (n > 0 ? "+" : "") + n.toFixed(1);
 
-  el.innerHTML = demoBanner() + needPills(gMe) +
+  const tsd = (d, who) => `<span class="tsd ${live ? (d > 0 ? "up" : d < 0 ? "down" : "") : ""}">
+      <b>${live ? sign(d) : "&mdash;"}</b><i>${esc(who)}</i></span>`;
+
+  el.innerHTML = demoBanner() +
+    `<div class="tsum">${tsd(dA, me.manager)}${tsd(dB, them.manager)}
+      ${live ? `<button type="button" class="tsx" id="clrTop">Clear</button>` : ""}</div>` +
+    needPills(gMe) +
     `<div class="picker"><select id="tp">${others.map(t =>
       `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>Trade with ${esc(t.manager)} \u2014 ${esc(t.teamName)}</option>`
       ).join("")}</select></div>
@@ -2902,7 +2962,34 @@ function renderTradePro(){
         dA>0&&dB>0 ? "Both starting lineups get better. Send it."
         : dA>0||dB>0 ? "Only one lineup improves, so the other side needs a reason the projections cannot see."
         : "Neither lineup improves on projection."} ${byeClash()}</div>
-    </div>` : "") +
+    </div>
+    <details class="hhmore"><summary>How this is scored</summary>
+      <p class="note" style="margin:2px 0 12px">Both numbers are the same
+        calculation: the best legal lineup the whole roster can put out, before
+        the deal and after it. Nothing is weighted and nobody is graded. Depth
+        only counts when it changes who actually starts, which is why a good
+        bench player can be worth nothing here.</p>
+      <table><thead><tr><th></th><th class="n">Before</th><th class="n">After</th>
+        <th class="n">Change</th></tr></thead><tbody>
+        <tr><td>${esc(me.manager)}</td><td class="n">${beforeA.toFixed(1)}</td>
+          <td class="n">${nowA.toFixed(1)}</td>
+          <td class="n mark ${dA>0?"good":dA<0?"bad":""}">${sign(dA)}</td></tr>
+        <tr><td>${esc(them.manager)}</td><td class="n">${beforeB.toFixed(1)}</td>
+          <td class="n">${nowB.toFixed(1)}</td>
+          <td class="n mark ${dB>0?"good":dB<0?"bad":""}">${sign(dB)}</td></tr>
+      </tbody></table>
+      ${[[me.manager, lineupDiff(me.players, afterMe)],
+         [them.manager, lineupDiff(them.players, afterThem)]].map(([who, rows]) =>
+        `<div class="sect"><h3>${esc(who)}'s lineup changes</h3><span class="rule"></span></div>` +
+        (rows.length ? rows.map(r => `<div class="slotrow">
+            <span class="slotk">${esc(r.slot)}</span>
+            <span class="slotp">${esc(r.from)}</span>
+            <span class="slotd ${r.d>0?"up":r.d<0?"down":""}">${sign(r.d)}</span>
+            <span class="slotp right">${esc(r.to)}</span>
+          </div>`).join("")
+          : `<p class="note" style="margin:0 0 6px">Starting lineup is unchanged.
+             Everything moving is bench depth.</p>`)).join("")}
+    </details>` : "") +
     rosterBlock(me, giveSel, "give") +
     rosterBlock(them, getSel, "get") +
     sectHead(`Ideas with ${esc(them.manager)}`) + `<div id="ideas"></div>`;
@@ -2917,10 +3004,14 @@ function renderTradePro(){
     : `<p class="note">Nothing with ${esc(them.manager)} improves both lineups right now. Try someone else.</p>`;
 
   document.getElementById("tp").onchange = e => {
-    tradePartner = Number(e.target.value); giveSel.clear(); getSel.clear(); renderTradePro();
+    tradePartner = Number(e.target.value); giveSel.clear(); getSel.clear();
+    tradeScroll = 0; renderTradePro();
   };
+  const wipe = () => { giveSel.clear(); getSel.clear(); renderTradePro(); };
   const clr = document.getElementById("clr");
-  if(clr) clr.onclick = () => { giveSel.clear(); getSel.clear(); renderTradePro(); };
+  if(clr) clr.onclick = wipe;
+  const clrTop = document.getElementById("clrTop");
+  if(clrTop) clrTop.onclick = wipe;
   el.querySelectorAll(".plr[data-pid]").forEach(row => {
     row.onclick = () => {
       const set = row.dataset.side === "give" ? giveSel : getSel;
@@ -2937,9 +3028,12 @@ function renderTradePro(){
     card.onclick = () => {
       const i = ideas[Number(card.dataset.idea)];
       giveSel = new Set(i.give.map(p=>p.id)); getSel = new Set(i.get.map(p=>p.id));
-      renderTradePro(); window.scrollTo({top:0,behavior:"smooth"});
+      tradeScroll = 0; renderTradePro();
     };
   });
+
+  /* Last thing, after every handler is attached and the panel has its height. */
+  try { window.scrollTo(0, back); } catch(e){}
 }
 
 /* ---------- Waiver Wire ---------- */
@@ -3218,12 +3312,10 @@ function renderTeamPage(){
 
     <h2>This week</h2>
     ${renderMatchup(me)}
-
-    <h2>Suggested lineup</h2>
-    ${renderSuggested(me)}
-
-    <h2>Start / sit check</h2>
     ${renderStartSit(me)}
+
+    <h2>Roster</h2>
+    ${renderSuggested(me)}
 
     <h2>Position grades</h2>
     ${Object.entries(g).map(([pos,v]) => `<div class="grade">
@@ -3233,22 +3325,21 @@ function renderTeamPage(){
         <span>${GRADE_WHY[pos][v.label]}</span></span>
       <span class="gnum">${v.avg.toFixed(1)}</span></div>`).join("")}
 
-    <h2>What to do about it</h2>
-    <div class="card"><h3>Biggest strength</h3>
-      <p>${strong.length ? `${strong.join(" and ")}. Deep enough to trade from without breaking the lineup.`
-        : "No position clears the league by much. Balanced, which also means no leverage in a trade."}</p></div>
-    <div class="card red"><h3>Biggest weakness</h3>
-      <p>${weak.length ? `${weak.join(" and ")}. This is where a win gets left on the table.`
-        : "Nothing is genuinely weak. Keep an eye on injuries rather than chasing upgrades."}</p></div>
-    <div class="card"><h3>Hidden problem</h3><p>${esc(hidden)}</p></div>
-    <div class="card"><h3>Waiver priority</h3>
-      <p>${weak.length ? `Watch ${weak.join(" and ")} on the wire before anything else.`
-        : "Nothing urgent. Take the best available upside."}</p></div>
-
-    <div class="card"><h3>Shopping your own</h3>
-      <p>Listing players is handled under Trades, so this page stays about what
-        your team is rather than what you are trying to move.</p>
-      <button type="button" class="cbtn" id="toBlock">Open the trade block</button></div>`;
+    <h2>Outlook</h2>
+    <div class="card">
+      <p><b>Strength.</b> ${strong.length
+        ? `${strong.join(" and ")}. Deep enough to trade from without breaking the lineup.`
+        : "No position clears the league by much. Balanced, which also means no leverage in a trade."}</p>
+      <p><b>Weakness.</b> ${weak.length
+        ? `${weak.join(" and ")}. This is where a win gets left on the table.`
+        : "Nothing is genuinely weak. Keep an eye on injuries rather than chasing upgrades."}</p>
+      <p><b>Hidden.</b> ${esc(hidden)}</p>
+      <p><b>Waivers.</b> ${weak.length
+        ? `Watch ${weak.join(" and ")} before anything else.`
+        : "Nothing urgent. Take the best available upside."}</p>
+    </div>
+    <button type="button" class="cbtn" id="toBlock"
+      style="margin-top:4px">Open the trade block</button>`;
 
   const jump = document.getElementById("toBlock");
   if(jump) jump.onclick = () => { tradeView = "block"; showTab("trade", true); };
@@ -3493,26 +3584,40 @@ function renderMatchup(me){
     </div>`).join("")}`;
 }
 
+/* The whole roster, in lineup order, then the bench, then the two slots nobody
+   thinks about. Read only: My Team answers what you have, and every tappable
+   version of this row lives under Trades. */
 function renderSuggested(me){
   const s = rosterSections(me.players);
   const src = (PROJ && PROJ.players) ? "ESPN and Sleeper" : "ESPN only";
-  const rows = s.starters.map(f => {
-    if(!f.player) return `<div class="plr"><span class="slot">${esc(f.slot)}</span>
+
+  const row = (p, slot) => {
+    if(!p) return `<div class="plr view"><span class="slot">${esc(slot||"")}</span>
+        <span class="pos mt">&mdash;</span>
         <span class="who2"><b>Empty</b><span>nothing eligible</span></span></div>`;
-    const p = f.player, v = projOf(p);
-    return `<div class="plr">
-      <span class="slot">${esc(f.slot)}</span>
+    const v = projOf(p);
+    return `<div class="plr view">
+      <span class="slot">${esc(slot||"")}</span>
       <span class="pos ${p.pos}">${p.pos}</span>
       <span class="who2"><b>${esc(p.name)}</b>
         <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}${
           projDisagrees(v) ? " &middot; sources disagree" : ""}</span></span>
       ${projChip(p)}</div>`;
-  }).join("");
+  };
 
+  const benchTotal = s.bench.reduce((n,p) => n + projOf(p).blend, 0);
   const split = s.starters.filter(f => f.player && projDisagrees(projOf(f.player)));
-  return `${rows}
-    <div class="srcline"><span>${esc(src)}</span>
-      <span>projected ${s.total.toFixed(1)}</span></div>
+
+  return sectHead("Starting", s.total) +
+    s.starters.map(f => row(f.player, f.slot)).join("") +
+    sectHead("Kicker and defense") +
+    s.tail.map(f => row(f.player, f.slot)).join("") +
+    sectHead("Bench", s.bench.length ? benchTotal : null) +
+    (s.bench.length
+      ? s.bench.map(p => row(p, "")).join("")
+      : `<p class="note">Nobody on the bench.</p>`) +
+    `<div class="srcline"><span>${esc(src)}</span>
+      <span>starters project ${s.total.toFixed(1)}</span></div>
     <p class="note">Each number is the average of the sources that have the player,
       with the gap between them after it. ${split.length
         ? `${split.length} starter${split.length > 1 ? "s" : ""} the two sources

@@ -11,9 +11,11 @@
  * That means being online always shows current data, and being offline shows
  * the last thing you saw rather than a browser error. The cache name carries a
  * version; bumping it drops everything from the previous one on activate.
+ *
+ * v2: the UI overhaul. Bumped so nobody keeps the old page out of cache.
  */
 
-const VERSION = "bromigos-v1";
+const VERSION = "bromigos-v2";
 const SHELL = [
   "./",
   "./index.html",

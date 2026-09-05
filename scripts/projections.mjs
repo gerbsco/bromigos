@@ -15,7 +15,24 @@
 // maintained crosswalk is worth more than three through a guess.
 //
 // FantasyPros ECR is deliberately absent. Their consensus is the number most
-// people mean, and using it would breach their API terms.
+// people mean, and using it would breach their API terms. DynastyProcess
+// republishes ECR columns in its own files; those are skipped for the same
+// reason. Only their own computed value columns are read.
+//
+// Three things come out of this now, not one:
+//
+//   players  this week, per ESPN id. What the start/sit call uses.
+//   ros      the same projection summed across every week still to be played,
+//            which is what a trade should be judged on. A player is a season,
+//            not a Sunday.
+//   market   DynastyProcess trade values. A different unit and a different
+//            question, kept separate on purpose so nothing adds points to
+//            rankings. Dynasty values weight age heavily, so in a redraft
+//            league this is a sanity check and not a verdict.
+//
+// Every one of the three is optional. Any of them failing leaves the others
+// intact, because a missing second opinion should degrade the app rather than
+// take the nightly job down with it.
 
 import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -23,6 +40,11 @@ import { pathToFileURL } from "node:url";
 const SEASON = "2026";
 const OUT = "data/projections.json";
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; BromigosBot/1.0)", "Accept": "*/*" };
+
+/* Last regular season week. Playoff weeks are left out of the rest of season
+   sum on purpose: who is playing in them is not decided, so counting them
+   would be guessing twice. */
+const LAST_WEEK = 14;
 
 const WANT = new Set(["QB", "RB", "WR", "TE", "K", "DEF"]);
 
@@ -126,6 +148,73 @@ export function currentWeek(league) {
   return Number.isFinite(n) && n > 0 ? n : 1;
 }
 
+/* ---------- rest of season ---------- */
+
+/* Every regular season week still to be played, off the real schedule rather
+   than counted forward from today, so a postponement or a bye week structure
+   nobody told us about cannot put the sum out by a week. Falls back to
+   counting forward when league.json has no schedule yet. */
+export function weeksAhead(league, week) {
+  const sch = (league && league.matchups && league.matchups.schedule) || [];
+  const open = [...new Set(sch
+    .filter(m => m && m.home && m.away
+      && (!m.playoffTierType || m.playoffTierType === "NONE")
+      && (!m.winner || m.winner === "UNDECIDED")
+      && Number(m.matchupPeriodId) <= LAST_WEEK)
+    .map(m => Number(m.matchupPeriodId)))]
+    .filter(Number.isFinite).sort((a, b) => a - b);
+  if (open.length) return open;
+
+  const out = [];
+  for (let w = Math.max(1, Number(week) || 1); w <= LAST_WEEK; w++) out.push(w);
+  return out;
+}
+
+/* Add up per week maps into one total per player. A player missing from a week
+   contributes nothing for that week rather than breaking the sum, which is the
+   right answer for a bye and an acceptable one for a player the provider has
+   simply not published yet. */
+export function sumWeeks(maps) {
+  const out = {};
+  (maps || []).forEach(m => {
+    Object.keys(m || {}).forEach(id => {
+      out[id] = Math.round(((out[id] || 0) + m[id]) * 10) / 10;
+    });
+  });
+  return out;
+}
+
+/* One call per remaining week. Sleeper generates these ahead of time, so
+   future weeks normally return the same shape as the current one, but that is
+   not a documented promise and it is not worth failing the job over. A week
+   that does not answer is logged and skipped, and the weeks that did answer
+   are reported so a partial sum is never mistaken for a full one. */
+async function sleeperWeek(week) {
+  return firstWorking(`sleeper week ${week}`, [
+    `https://api.sleeper.app/projections/nfl/${SEASON}/${week}?season_type=regular`,
+    `https://api.sleeper.app/v1/projections/nfl/regular/${SEASON}/${week}`
+  ], async url => readSleeper(await getJSON(url)),
+     pts => Object.keys(pts).length > 50);
+}
+
+/* ---------- market values ---------- */
+
+/* DynastyProcess publishes its own computed trade values alongside the id
+   table this script already uses. Only the value columns are read. The ecr
+   columns in the same file are FantasyPros consensus and are left alone. */
+export function marketValues(rows) {
+  const out = {};
+  (rows || []).forEach(r => {
+    const sleeper = r.sleeper_id || r.sleeper || r.sleeperid;
+    if (!sleeper) return;
+    const raw = r.value_1qb ?? r.value ?? r.value_2qb;
+    const v = Number(raw);
+    if (!Number.isFinite(v) || v <= 0) return;
+    out[String(sleeper)] = Math.round(v);
+  });
+  return out;
+}
+
 async function main() {
   let league = null;
   try { league = JSON.parse(readFileSync("data/league.json", "utf8")); }
@@ -165,12 +254,58 @@ async function main() {
     console.log("     low match rate, the crosswalk columns may have moved again");
   }
 
+  /* ---------- rest of season ---------- */
+  const ahead = weeksAhead(league, week);
+  const got = [], maps = [];
+  console.log(`ok   ${ahead.length} week${ahead.length === 1 ? "" : "s"} left`
+    + (ahead.length ? ` (${ahead[0]} to ${ahead[ahead.length - 1]})` : ""));
+
+  for (const w of ahead) {
+    /* the current week is already in hand, no reason to ask twice */
+    if (w === week) { maps.push(sleeper); got.push(w); continue; }
+    try {
+      maps.push(await sleeperWeek(w));
+      got.push(w);
+    } catch (err) {
+      console.log(`     week ${w} unavailable, left out of the sum`);
+    }
+  }
+
+  const ros = keyByEspn(sumWeeks(maps), ids);
+  const complete = got.length === ahead.length;
+  console.log(`ok   rest of season: ${Object.keys(ros).length} players across`
+    + ` ${got.length} of ${ahead.length} remaining weeks`
+    + (complete ? "" : " (partial, see misses above)"));
+
+  /* ---------- market ---------- */
+  let market = {};
+  try {
+    const values = await firstWorking("market values", [
+      "https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-players.csv",
+      "https://github.com/dynastyprocess/data/raw/master/files/values-players.csv",
+      "https://raw.githubusercontent.com/dynastyprocess/data/master/files/values.csv"
+    ], async url => marketValues(parseCSV(await getText(url))),
+       v => Object.keys(v).length > 100);
+    market = keyByEspn(values, ids);
+    console.log(`ok   market values (${Object.keys(market).length} players)`);
+  } catch (err) {
+    console.log(`     no market values this run (${err.message})`);
+  }
+
   mkdirSync("data", { recursive: true });
   writeFileSync(OUT, JSON.stringify({
     generatedAt: new Date().toISOString(),
-    season: SEASON, week, source: "sleeper", players
+    season: SEASON, week, source: "sleeper",
+    players,
+    ros,
+    rosWeeks: got,
+    rosComplete: complete,
+    market,
+    marketSource: Object.keys(market).length ? "dynastyprocess" : null
   }));
-  console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(players).length} players matched)\n`);
+  console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(players).length} players matched,`
+    + ` ${Object.keys(ros).length} with a rest of season number,`
+    + ` ${Object.keys(market).length} with a market value)\n`);
 }
 
 const invokedDirectly = process.argv[1]

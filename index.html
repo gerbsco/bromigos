@@ -615,6 +615,7 @@
   .tsd i{display:block;margin-top:5px;font-style:normal;
     font:400 12px/1 var(--display);color:var(--faint);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tsn{flex:none;font:400 10.5px/1.3 var(--display);color:var(--faint);text-align:right}
   .tsx{flex:none;padding:9px 13px;border-radius:999px;border:1px solid var(--line);
     background:rgba(255,255,255,.06);color:var(--dim);cursor:pointer;
     font:600 12.5px/1 var(--display)}
@@ -2581,19 +2582,33 @@ function syncLeagueSettings(){
 /* Ranks on the blended number rather than ESPN alone, so every total, warning
    and suggestion downstream inherits the second opinion without knowing about
    it. Falls back to ESPN cleanly when projections.json has not loaded. */
-function bestLineup(players){
-  const pool = players.filter(p => !p.ir).slice()
-    .sort((a,b) => projOf(b).blend - projOf(a).blend);
+/* Same greedy fill, but the number each player is ranked on is now an argument,
+   and a week can be named so anyone on bye that week is left out of the pool.
+   Values are computed once per player rather than inside the sort comparator,
+   which matters because the trade finder runs this a few thousand times. */
+function bestLineupWith(players, val, wk){
+  const pool = [];
+  players.forEach(p => {
+    if(p.ir) return;
+    if(wk && !availableIn(p, wk)) return;
+    pool.push({ p, v: val(p) });
+  });
+  pool.sort((a,b) => b.v - a.v);
   const used = new Set();
   const filled = [];
+  let total = 0;
   SLOTS.forEach(slot => {
-    const pick = pool.find(p => !used.has(p.id) && slot.elig.includes(p.pos));
-    if(pick) used.add(pick.id);
-    filled.push({ slot: slot.k, player: pick || null });
+    const hit = pool.find(x => !used.has(x.p.id) && slot.elig.includes(x.p.pos));
+    if(hit){ used.add(hit.p.id); total += hit.v; }
+    filled.push({ slot: slot.k, player: hit ? hit.p : null });
   });
-  const total = filled.reduce((s,f) => s + (f.player ? projOf(f.player).blend : 0), 0);
-  const bench = pool.filter(p => !used.has(p.id));
-  return { filled, total, bench };
+  return { filled, total, bench: pool.filter(x => !used.has(x.p.id)).map(x => x.p) };
+}
+
+/* This week, on the blended weekly projection. Unchanged behaviour: the team
+   page, the matchup card and the start/sit check all still answer "Sunday". */
+function bestLineup(players){
+  return bestLineupWith(players, p => projOf(p).blend, null);
 }
 
 /* Depth score per position: starters plus a discounted first backup. */
@@ -2631,15 +2646,165 @@ function gradeTeam(team, med){
   return g;
 }
 
-/* Value of a roster = optimal starting lineup projection. A trade is worth
-   looking at only if that number rises for BOTH teams. */
-const rosterValue = players => bestLineup(players).total;
+/* ---------- rest of season ----------
+   A trade is a player for the rest of the year, so rating it on one Sunday is
+   the wrong question. Nothing here invents a ranking: there is no rest of
+   season projection in either feed, so the expectation is built from the two
+   numbers we do have.
+
+     per game  = this week's blended projection, and the player's own scoring
+                 average so far, mixed together
+     the mix   = all projection in September, tilting to actual results as the
+                 sample grows, because by November what a player has done is a
+                 better guide than what a preseason model said he would do
+     season    = that per game number played out across every week still on the
+                 real schedule, with bye weeks removed
+
+   Removing byes is the part a single week number cannot do. A fourth running
+   back is worth nothing on a Sunday when your first three are healthy and
+   worth a start in week 9 when two of them are off. */
+
+/* Both of these walk the whole schedule and both get called inside the trade
+   finder's inner loop, so the answer is cached against the data it came from
+   and thrown away the moment a new pull lands. */
+let WKS = null, WKS_KEY = "";
+function weeks(){
+  const key = ((LIVE && LIVE.fetchedAt) || "none") + "|" + REG_WEEKS;
+  if(WKS && WKS_KEY === key) return WKS;
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  const done = sch.filter(m => m.winner && m.winner !== "UNDECIDED")
+    .map(m => m.matchupPeriodId).filter(Number.isFinite);
+  const played = done.length ? Math.max(...done) : 0;
+
+  let left = [...new Set(sch
+    .filter(m => m.home && m.away
+      && (!m.playoffTierType || m.playoffTierType === "NONE")
+      && (!m.winner || m.winner === "UNDECIDED")
+      && m.matchupPeriodId <= REG_WEEKS)
+    .map(m => m.matchupPeriodId))].filter(Number.isFinite).sort((a,b) => a-b);
+  if(!left.length){
+    left = [];
+    for(let w = played + 1; w <= REG_WEEKS; w++) left.push(w);
+  }
+  WKS_KEY = key; WKS = { played, left };
+  return WKS;
+}
+
+/* how far into the year we are, straight off completed games */
+function weeksDone(){ return weeks().played; }
+
+/* every regular season week still to be played. Playoff weeks are deliberately
+   left out: who is playing in them is not decided, so counting them would be
+   guessing twice. */
+function weeksLeft(){ return weeks().left; }
+
+/* how many of those a player is actually available for. Byes only. An injury
+   is handled week by week when the lineup is built, and taking it off the
+   denominator here would quietly inflate his per game number. */
+function gamesLeftFor(p){
+  const bye = Number(p && p.bye) || 0;
+  const left = weeksLeft();
+  return Math.max(1, bye ? left.filter(w => w !== bye).length : left.length);
+}
+
+/* ---------- imported rest of season ----------
+   Two independent sources, averaged when both are present:
+
+     sleeper  data/projections.json, its weekly projection summed across every
+              week still on the schedule
+     espn     the season projection it already sends, minus what the player has
+              actually banked so far
+
+   They fail differently, which is the point of having both. ESPN's season
+   number goes stale after an injury and keeps projecting a player who is not
+   playing. Sleeper's sum is only as complete as the weeks that answered. When
+   neither is there the model falls back to the weekly projection and nothing
+   about the app changes. */
+function rosOf(p){
+  if(!p) return null;
+  const have = [];
+  const imported = (PROJ && PROJ.ros) ? PROJ.ros[String(p.id)] : null;
+  if(typeof imported === "number" && imported > 0) have.push(imported);
+  if(typeof p.sproj === "number" && p.sproj > 0){
+    const banked = typeof p.spts === "number" ? p.spts : 0;
+    /* Season projection minus what is banked is only meaningful if the banked
+       figure is real. A player showing exactly zero six weeks in is almost
+       always a missing stat entry rather than someone who has genuinely scored
+       nothing, and subtracting a missing number hands him his whole preseason
+       projection as though the year had not started. Treat it as absent and
+       let the other source answer. */
+    const trust = banked > 0 || weeksDone() <= 1;
+    const rest = p.sproj - banked;
+    if(trust && rest > 0) have.push(rest);
+  }
+  if(!have.length) return null;
+  return { pts: have.reduce((a,b) => a+b, 0) / have.length, n: have.length };
+}
+
+/* what the market thinks, in a unit that is not points and never gets added
+   to any of them */
+function marketOf(p){
+  const v = (p && PROJ && PROJ.market) ? PROJ.market[String(p.id)] : null;
+  return (typeof v === "number" && v > 0) ? v : 0;
+}
+
+/* Expected points a game from here. The weight is games played over games
+   played plus four, so week 1 is entirely projection, week 4 is an even split
+   and by week 12 it is three quarters what actually happened. Four is a
+   judgement call, not a derived constant, and it is the only tuned number in
+   the whole model. */
+function ppgOf(p){
+  if(!p) return 0;
+  const avg = (typeof p.avg === "number" && p.avg > 0) ? p.avg : null;
+  const g = weeksDone();
+  const ros = rosOf(p);
+
+  /* A real rest of season number divided by the weeks he can play beats
+     anything derived from one Sunday, so it goes first. */
+  let base = ros ? ros.pts / gamesLeftFor(p) : projOf(p).blend;
+
+  /* Then his own results, weighted in as the sample grows. Half weight when
+     the base is imported, because a provider's projection has already had this
+     season's form baked into it and counting it twice would chase hot streaks.
+     Four is a judgement call and it is the only tuned number in the model. */
+  let w = g > 0 ? g / (g + 4) : 0;
+  if(ros) w = w / 2;
+  if(avg === null || w <= 0) return base;
+  return base * (1 - w) + avg * w;
+}
+
+/* On bye is out. Anyone ruled out is out of the next week only, because a
+   longer absence is a guess and this model does not guess. */
+function availableIn(p, wk){
+  if(!p || p.ir) return false;
+  if(p.bye && Number(p.bye) === Number(wk)) return false;
+  if(p.injury && /OUT|IR/i.test(p.injury) && wk === weeksLeft()[0]) return false;
+  return true;
+}
+
+/* A typical week from here, ignoring byes. Cheap, so the trade finder can use
+   it to sift thousands of combinations before anything is scored properly. */
+const weekValue = players => bestLineupWith(players, ppgOf, null).total;
+
+/* What the roster is actually worth: the best lineup it can field in every
+   week still on the schedule, added up. */
+function seasonValue(players){
+  const weeks = weeksLeft();
+  if(!weeks.length) return weekValue(players);
+  let total = 0;
+  weeks.forEach(wk => { total += bestLineupWith(players, ppgOf, wk).total; });
+  return total;
+}
+
+/* Value of a roster, and therefore the verdict on any trade. */
+const rosterValue = players => seasonValue(players);
 
 /* Which starting slots actually change hands. The delta on its own is a number
    you are asked to trust; this is the arithmetic behind it, slot by slot. The
    two lineups are compared by index, which is safe because SLOTS is fixed. */
 function lineupDiff(before, after){
-  const A = bestLineup(before).filled, B = bestLineup(after).filled;
+  const A = bestLineupWith(before, ppgOf, null).filled;
+  const B = bestLineupWith(after, ppgOf, null).filled;
   const out = [];
   A.forEach((f, i) => {
     const g = B[i];
@@ -2648,7 +2813,7 @@ function lineupDiff(before, after){
     if((from && to && from.id === to.id) || (!from && !to)) return;
     out.push({ slot: f.slot,
       from: from ? from.name : "empty", to: to ? to.name : "empty",
-      d: (to ? projOf(to).blend : 0) - (from ? projOf(from).blend : 0) });
+      d: (to ? ppgOf(to) : 0) - (from ? ppgOf(from) : 0) });
   });
   return out;
 }
@@ -2658,14 +2823,17 @@ function applyTrade(players, out, inc){
   return players.filter(p => !gone.has(p.id)).concat(inc);
 }
 
-/* Scan a partner for swaps that help both sides. 1-for-1 and 2-for-1. */
+/* Scan a partner for swaps that help both sides. 1-for-1 and 2-for-1.
+   Two passes on purpose. Scoring every combination against the full remaining
+   schedule would be thousands of lineups deep and lock the phone up, so the
+   sift runs on a typical week and only the survivors get rated for real. */
 function findTrades(mine, theirs, limit = 6){
-  const baseA = rosterValue(mine.players), baseB = rosterValue(theirs.players);
+  const baseA = weekValue(mine.players), baseB = weekValue(theirs.players);
   const ideas = [];
   const push = (give, get) => {
-    const a = rosterValue(applyTrade(mine.players, give, get)) - baseA;
-    const b = rosterValue(applyTrade(theirs.players, get, give)) - baseB;
-    if(a > 0.4 && b > 0.4) ideas.push({ give, get, a, b, score: Math.min(a,b) });
+    const a = weekValue(applyTrade(mine.players, give, get)) - baseA;
+    const b = weekValue(applyTrade(theirs.players, get, give)) - baseB;
+    if(a > 0.15 && b > 0.15) ideas.push({ give, get, a, b, score: Math.min(a,b) });
   };
   // Value is always computed against the FULL roster. Only the pool of players
   // considered for a swap is narrowed, since nobody trades kickers or defenses.
@@ -2684,11 +2852,21 @@ function findTrades(mine, theirs, limit = 6){
     A.forEach(g => { if(g.proj > r1.proj) push([g],[r1,r2]); });
   }));
   const seen = new Set();
-  return ideas.sort((x,y) => y.score - x.score).filter(i => {
+  const shortlist = ideas.sort((x,y) => y.score - x.score).filter(i => {
     const key = i.give.map(p=>p.id).sort()+"|"+i.get.map(p=>p.id).sort();
     if(seen.has(key)) return false;
     seen.add(key); return true;
-  }).slice(0, limit);
+  }).slice(0, 24);
+
+  /* now the number that actually gets shown */
+  const seasonA = seasonValue(mine.players), seasonB = seasonValue(theirs.players);
+  return shortlist.map(i => {
+    const a = seasonValue(applyTrade(mine.players, i.give, i.get)) - seasonA;
+    const b = seasonValue(applyTrade(theirs.players, i.get, i.give)) - seasonB;
+    return { ...i, a, b, score: Math.min(a, b) };
+  }).filter(i => i.a > 1 && i.b > 1)
+    .sort((x,y) => y.score - x.score)
+    .slice(0, limit);
 }
 
 /* ---------- turn the ESPN payload into the model above ---------- */
@@ -2733,8 +2911,18 @@ function normalizeLive(){
     const entries = (t.roster && t.roster.entries) || [];
     const players = entries.map(e => {
       const p = (e.playerPoolEntry && e.playerPoolEntry.player) || {};
-      const projStat = (p.stats || []).find(s => s.statSourceId === 1) || {};
-      const realStat = (p.stats || []).find(s => s.statSourceId === 0) || {};
+      /* ESPN sends several stat entries per player and they are not ordered.
+         Taking the first projection was picking a number at random between
+         this week and the whole year. scoringPeriodId 0 is the season, any
+         other value is that week. The loose find stays as a fallback for a
+         payload shaped differently to the one this was written against. */
+      const wkNow = Number(LIVE && LIVE.scoringPeriodId) || 0;
+      const pickStat = (src, period) => (p.stats || []).find(st =>
+        st.statSourceId === src && Number(st.scoringPeriodId) === period);
+      const looseStat = src => (p.stats || []).find(st => st.statSourceId === src) || {};
+      const projStat = (wkNow ? pickStat(1, wkNow) : null) || looseStat(1);
+      const realStat = pickStat(0, 0) || looseStat(0);
+      const seasonProj = pickStat(1, 0);
       return {
         id: String(p.id || e.playerId),
         name: p.fullName || "Unknown",
@@ -2742,6 +2930,10 @@ function normalizeLive(){
         team: p.proTeamId || "",
         proj: Math.round((projStat.appliedTotal || 0) * 10) / 10,
         avg:  Math.round((realStat.appliedAverage || 0) * 10) / 10,
+        /* the whole year as ESPN sees it, and what has actually been banked.
+           The difference is a rest of season number nobody had to import. */
+        sproj: Math.round(((seasonProj && seasonProj.appliedTotal) || 0) * 10) / 10,
+        spts:  Math.round(((realStat && realStat.appliedTotal) || 0) * 10) / 10,
         bye:  p.byeWeek || null,
         own:  p.ownership ? Math.round(p.ownership.percentOwned) : null,
         ir:   e.lineupSlotId === 21,
@@ -2773,6 +2965,7 @@ function demoRosters(){
               : `${first[Math.floor(rnd(i,3)*20)]} ${last[Math.floor(rnd(i,4)*20)]}`,
         pos, team: nfl[Math.floor(rnd(i,5)*10)],
         proj, avg: Math.round((proj * (0.85 + rnd(i,6)*0.3)) * 10)/10,
+        sproj: Math.round(proj * 14 * 10)/10, spts: 0,
         bye: 5 + Math.floor(rnd(i,7)*9),
         own: Math.round(30 + rnd(i,8)*70),
         ir: false,
@@ -2914,6 +3107,10 @@ function renderTradePro(){
   const back = (tradeScroll === null) ? window.scrollY : tradeScroll;
   tradeScroll = null;
 
+  const wksN = weeksLeft().length, wDone = weeksDone();
+  const rosOn = !!(PROJ && PROJ.ros && Object.keys(PROJ.ros).length);
+  const rosWk = (PROJ && Array.isArray(PROJ.rosWeeks)) ? PROJ.rosWeeks.length : wksN;
+
   const gMe = gradeTeam(me, leagueMedians(ROSTERS));
   const give = me.players.filter(p => giveSel.has(p.id));
   const get  = them.players.filter(p => getSel.has(p.id));
@@ -2933,11 +3130,31 @@ function renderTradePro(){
     <b>${esc(p.name)}</b><i>${p.proj.toFixed(1)}</i><span class="x">\u00d7</span></span>`;
   const sign = n => (n > 0 ? "+" : "") + n.toFixed(1);
 
+  /* A different unit answering a different question, so it sits on its own and
+     is never added to anything. Dynasty values lean towards youth, which means
+     they will disagree with a sensible win now deal on purpose. Worth knowing,
+     not worth obeying. */
+  const mkt = list => list.reduce((n, p) => n + marketOf(p), 0);
+  const outV = mkt(give), inV = mkt(get);
+  const mktNote = (!live || !(outV || inV)) ? "" :
+    `<div class="sect"><h3>Dynasty market</h3><span class="rule"></span></div>
+     <p class="note" style="margin:0 0 10px">DynastyProcess prices what you send
+       at <b>${fmt(outV)}</b> and what you get back at <b>${fmt(inV)}</b>.
+       ${Math.abs(outV - inV) < Math.max(outV, inV) * 0.1
+         ? "Close enough that the market has no opinion either way."
+         : (inV > outV
+            ? "The market thinks you are getting the better end."
+            : "The market thinks you are giving up more than you get.")}
+       These are dynasty values, so they weight youth heavily and will argue
+       with a win now trade on principle. They are here as a second opinion on
+       a deal the projections call even, not as a verdict.</p>`;
+
   const tsd = (d, who) => `<span class="tsd ${live ? (d > 0 ? "up" : d < 0 ? "down" : "") : ""}">
       <b>${live ? sign(d) : "&mdash;"}</b><i>${esc(who)}</i></span>`;
+  const tsHint = `<span class="tsn">pts over<br>${wksN} week${wksN === 1 ? "" : "s"}</span>`;
 
   el.innerHTML = demoBanner() +
-    `<div class="tsum">${tsd(dA, me.manager)}${tsd(dB, them.manager)}
+    `<div class="tsum">${tsHint}${tsd(dA, me.manager)}${tsd(dB, them.manager)}
       ${live ? `<button type="button" class="tsx" id="clrTop">Clear</button>` : ""}</div>` +
     needPills(gMe) +
     `<div class="picker"><select id="tp">${others.map(t =>
@@ -2959,18 +3176,35 @@ function renderTradePro(){
       <div class="vcell"><div class="name">${esc(them.manager)}</div>
         <div class="delta ${dB>0?"up":dB<0?"down":""}">${sign(dB)}</div></div>
       <div class="vnote ${dA>0&&dB>0?"good":(dA<=0&&dB<=0?"bad":"")}">${
-        dA>0&&dB>0 ? "Both starting lineups get better. Send it."
-        : dA>0||dB>0 ? "Only one lineup improves, so the other side needs a reason the projections cannot see."
-        : "Neither lineup improves on projection."} ${byeClash()}</div>
+        dA>0&&dB>0 ? "Both teams score more between now and week " + REG_WEEKS + ". Send it."
+        : dA>0||dB>0 ? "Only one side gains, so the other needs a reason the numbers cannot see."
+        : "Neither side scores more for the rest of the year."}
+        ${wksN ? `Worth about ${sign(dA / wksN)} a week to you.` : ""} ${byeClash()}</div>
     </div>
     <details class="hhmore"><summary>How this is scored</summary>
-      <p class="note" style="margin:2px 0 12px">Both numbers are the same
-        calculation: the best legal lineup the whole roster can put out, before
-        the deal and after it. Nothing is weighted and nobody is graded. Depth
-        only counts when it changes who actually starts, which is why a good
-        bench player can be worth nothing here.</p>
-      <table><thead><tr><th></th><th class="n">Before</th><th class="n">After</th>
-        <th class="n">Change</th></tr></thead><tbody>
+      <p class="note" style="margin:2px 0 12px">The number is points scored over
+        the <b>${wksN} week${wksN === 1 ? "" : "s"} still on the schedule</b>, not
+        one Sunday. For every one of those weeks the best legal lineup the roster
+        can field is worked out and added up, with anyone on bye that week left
+        out. That is why cover for a bye is worth something here and a fourth
+        running back who never starts is worth nothing.</p>
+      <p class="note" style="margin:0 0 12px">${rosOn
+        ? `Each player's per game number starts from a real rest of season
+           projection, divided by the weeks he can actually play. Sleeper's
+           weekly projection is summed across ${rosWk} remaining
+           week${rosWk === 1 ? "" : "s"} and averaged with ESPN's own season
+           projection minus what he has already banked. His results so far are
+           then mixed in at half weight, because a provider has already
+           accounted for this season and counting it twice chases hot streaks.`
+        : `No rest of season projection has loaded, so this falls back to the
+           weekly projection mixed with each player's own average
+           ${wDone ? `at ${Math.round(100 * (wDone/(wDone+4)))}% results after
+             ${wDone} completed week${wDone === 1 ? "" : "s"}`
+             : "which is pure projection this early"}. It still handles byes and
+           lineup shape, it is just working off a thinner input.`}</p>
+      ${mktNote}
+      <table><thead><tr><th>Rest of season</th><th class="n">Before</th>
+        <th class="n">After</th><th class="n">Change</th></tr></thead><tbody>
         <tr><td>${esc(me.manager)}</td><td class="n">${beforeA.toFixed(1)}</td>
           <td class="n">${nowA.toFixed(1)}</td>
           <td class="n mark ${dA>0?"good":dA<0?"bad":""}">${sign(dA)}</td></tr>
@@ -2980,7 +3214,7 @@ function renderTradePro(){
       </tbody></table>
       ${[[me.manager, lineupDiff(me.players, afterMe)],
          [them.manager, lineupDiff(them.players, afterThem)]].map(([who, rows]) =>
-        `<div class="sect"><h3>${esc(who)}'s lineup changes</h3><span class="rule"></span></div>` +
+        `<div class="sect"><h3>${esc(who)}, a typical week</h3><span class="rule"></span></div>` +
         (rows.length ? rows.map(r => `<div class="slotrow">
             <span class="slotk">${esc(r.slot)}</span>
             <span class="slotp">${esc(r.from)}</span>
@@ -3307,7 +3541,7 @@ function renderTeamPage(){
     `<div class="teamHero">
       <div><div class="th-name">${esc(me.teamName)}</div>
         <div class="th-man">${esc(me.manager)}</div></div>
-      <div class="th-seed"><b>${seed}</b><span>of ${ROSTERS.length} on projection</span></div>
+      <div class="th-seed"><b>${seed}</b><span>of ${ROSTERS.length} rest of season</span></div>
     </div>
 
     <h2>This week</h2>

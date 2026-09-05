@@ -2860,11 +2860,14 @@ function findTrades(mine, theirs, limit = 6){
 
   /* now the number that actually gets shown */
   const seasonA = seasonValue(mine.players), seasonB = seasonValue(theirs.players);
+  /* A quarter of a point a week each way. Anything under that is noise dressed
+     up as a suggestion, and a long list of those is worse than a short list. */
+  const floor = 0.25 * Math.max(1, weeksLeft().length);
   return shortlist.map(i => {
     const a = seasonValue(applyTrade(mine.players, i.give, i.get)) - seasonA;
     const b = seasonValue(applyTrade(theirs.players, i.get, i.give)) - seasonB;
     return { ...i, a, b, score: Math.min(a, b) };
-  }).filter(i => i.a > 1 && i.b > 1)
+  }).filter(i => i.a > floor && i.b > floor)
     .sort((x,y) => y.score - x.score)
     .slice(0, limit);
 }
@@ -3108,6 +3111,10 @@ function renderTradePro(){
   tradeScroll = null;
 
   const wksN = weeksLeft().length, wDone = weeksDone();
+  /* Everything on screen is a per week number. The season total is real and it
+     is what the model computes, but "+31.3" reads like a landslide and "+2.2 a
+     week" is the thing anyone can actually judge. */
+  const per = n => n / Math.max(1, wksN);
   const rosOn = !!(PROJ && PROJ.ros && Object.keys(PROJ.ros).length);
   const rosWk = (PROJ && Array.isArray(PROJ.rosWeeks)) ? PROJ.rosWeeks.length : wksN;
 
@@ -3121,10 +3128,25 @@ function renderTradePro(){
   const beforeB = rosterValue(them.players), nowB = rosterValue(afterThem);
   const dA = nowA - beforeA, dB = nowB - beforeB;
 
+  /* Counting how many players are off in a week says nothing about whether it
+     hurts. Four backs on bye is fine if the bench covers three of them, and one
+     tight end on bye is a hole if he is the only one. So this asks the lineup
+     instead: build the actual best team for every remaining week and find the
+     one that comes out worst against a normal week. Only worth mentioning when
+     the gap is big enough to swing a game. */
+  const thinnestWeek = players => {
+    const wks = weeksLeft();
+    if(wks.length < 2) return null;
+    const tot = wks.map(w => ({ w, t: bestLineupWith(players, ppgOf, w).total }));
+    const avg = tot.reduce((n,x) => n + x.t, 0) / tot.length;
+    const low = tot.reduce((a,b) => b.t < a.t ? b : a);
+    return { week: low.w, drop: avg - low.t, avg };
+  };
   const byeClash = () => {
-    const w = {}; applyTrade(me.players, give, get).forEach(p => { if(p.bye) w[p.bye]=(w[p.bye]||0)+1; });
-    const bad = Object.entries(w).filter(([,n]) => n >= 5);
-    return bad.length ? `Watch week ${bad[0][0]}, you would have ${bad[0][1]} players on bye.` : "";
+    const t = thinnestWeek(applyTrade(me.players, give, get));
+    if(!t || t.drop < Math.max(6, t.avg * 0.06)) return "";
+    return `Week ${t.week} comes out about ${t.drop.toFixed(1)} light even after`
+      + ` your bench covers, which is the thinnest week you would have.`;
   };
   const chip = (p, cls) => `<span class="chip ${cls}" data-drop="${p.id}" data-side="${cls}">
     <b>${esc(p.name)}</b><i>${p.proj.toFixed(1)}</i><span class="x">\u00d7</span></span>`;
@@ -3150,8 +3172,8 @@ function renderTradePro(){
        a deal the projections call even, not as a verdict.</p>`;
 
   const tsd = (d, who) => `<span class="tsd ${live ? (d > 0 ? "up" : d < 0 ? "down" : "") : ""}">
-      <b>${live ? sign(d) : "&mdash;"}</b><i>${esc(who)}</i></span>`;
-  const tsHint = `<span class="tsn">pts over<br>${wksN} week${wksN === 1 ? "" : "s"}</span>`;
+      <b>${live ? sign(per(d)) : "&mdash;"}</b><i>${esc(who)}</i></span>`;
+  const tsHint = `<span class="tsn">pts a week<br>for ${wksN} more</span>`;
 
   el.innerHTML = demoBanner() +
     `<div class="tsum">${tsHint}${tsd(dA, me.manager)}${tsd(dB, them.manager)}
@@ -3172,22 +3194,27 @@ function renderTradePro(){
     </div>` +
     (live ? `<div class="verdict">
       <div class="vcell"><div class="name">${esc(me.manager)}</div>
-        <div class="delta ${dA>0?"up":dA<0?"down":""}">${sign(dA)}</div></div>
+        <div class="delta ${dA>0?"up":dA<0?"down":""}">${sign(per(dA))}</div>
+        <div class="name" style="margin:8px 0 0">a week</div></div>
       <div class="vcell"><div class="name">${esc(them.manager)}</div>
-        <div class="delta ${dB>0?"up":dB<0?"down":""}">${sign(dB)}</div></div>
+        <div class="delta ${dB>0?"up":dB<0?"down":""}">${sign(per(dB))}</div>
+        <div class="name" style="margin:8px 0 0">a week</div></div>
       <div class="vnote ${dA>0&&dB>0?"good":(dA<=0&&dB<=0?"bad":"")}">${
         dA>0&&dB>0 ? "Both teams score more between now and week " + REG_WEEKS + ". Send it."
         : dA>0||dB>0 ? "Only one side gains, so the other needs a reason the numbers cannot see."
         : "Neither side scores more for the rest of the year."}
-        ${wksN ? `Worth about ${sign(dA / wksN)} a week to you.` : ""} ${byeClash()}</div>
+        ${wksN ? `That is ${sign(dA)} to you across the ${wksN} week${wksN === 1 ? "" : "s"}
+          still to play.` : ""} ${byeClash()}</div>
     </div>
     <details class="hhmore"><summary>How this is scored</summary>
-      <p class="note" style="margin:2px 0 12px">The number is points scored over
-        the <b>${wksN} week${wksN === 1 ? "" : "s"} still on the schedule</b>, not
-        one Sunday. For every one of those weeks the best legal lineup the roster
-        can field is worked out and added up, with anyone on bye that week left
-        out. That is why cover for a bye is worth something here and a fourth
-        running back who never starts is worth nothing.</p>
+      <p class="note" style="margin:2px 0 12px">The headline is <b>points a
+        week</b>, averaged over the ${wksN} week${wksN === 1 ? "" : "s"} still on
+        the schedule. Underneath, every one of those weeks is built separately:
+        the best legal lineup the roster can field that week, with anyone on bye
+        left out and whoever is next on the bench starting in their place. A bye
+        therefore costs only the gap between the starter and his cover, not the
+        starter's whole week, and a fourth running back who never gets on the
+        field is worth nothing at all.</p>
       <p class="note" style="margin:0 0 12px">${rosOn
         ? `Each player's per game number starts from a real rest of season
            projection, divided by the weeks he can actually play. Sleeper's
@@ -3203,14 +3230,18 @@ function renderTradePro(){
              : "which is pure projection this early"}. It still handles byes and
            lineup shape, it is just working off a thinner input.`}</p>
       ${mktNote}
-      <table><thead><tr><th>Rest of season</th><th class="n">Before</th>
+      <table><thead><tr><th>A week from here</th><th class="n">Before</th>
         <th class="n">After</th><th class="n">Change</th></tr></thead><tbody>
-        <tr><td>${esc(me.manager)}</td><td class="n">${beforeA.toFixed(1)}</td>
-          <td class="n">${nowA.toFixed(1)}</td>
-          <td class="n mark ${dA>0?"good":dA<0?"bad":""}">${sign(dA)}</td></tr>
-        <tr><td>${esc(them.manager)}</td><td class="n">${beforeB.toFixed(1)}</td>
-          <td class="n">${nowB.toFixed(1)}</td>
-          <td class="n mark ${dB>0?"good":dB<0?"bad":""}">${sign(dB)}</td></tr>
+        <tr><td>${esc(me.manager)}<span class="who">${beforeA.toFixed(0)} to
+          ${nowA.toFixed(0)} over ${wksN} week${wksN === 1 ? "" : "s"}</span></td>
+          <td class="n">${per(beforeA).toFixed(1)}</td>
+          <td class="n">${per(nowA).toFixed(1)}</td>
+          <td class="n mark ${dA>0?"good":dA<0?"bad":""}">${sign(per(dA))}</td></tr>
+        <tr><td>${esc(them.manager)}<span class="who">${beforeB.toFixed(0)} to
+          ${nowB.toFixed(0)} over ${wksN} week${wksN === 1 ? "" : "s"}</span></td>
+          <td class="n">${per(beforeB).toFixed(1)}</td>
+          <td class="n">${per(nowB).toFixed(1)}</td>
+          <td class="n mark ${dB>0?"good":dB<0?"bad":""}">${sign(per(dB))}</td></tr>
       </tbody></table>
       ${[[me.manager, lineupDiff(me.players, afterMe)],
          [them.manager, lineupDiff(them.players, afterThem)]].map(([who, rows]) =>
@@ -3233,7 +3264,8 @@ function renderTradePro(){
     `<div class="idea" data-idea="${n}"><div class="sw">
       <i>You send</i> ${i.give.map(p=>esc(p.name)).join(" and ")}
       <i>for</i> ${i.get.map(p=>esc(p.name)).join(" and ")}</div>
-      <p class="why">Your lineup <b>+${i.a.toFixed(1)}</b>, theirs <b>+${i.b.toFixed(1)}</b>. Tap to load it.</p>
+      <p class="why">You <b>+${per(i.a).toFixed(1)}</b> a week, them
+        <b>+${per(i.b).toFixed(1)}</b>. Tap to load it.</p>
     </div>`).join("")
     : `<p class="note">Nothing with ${esc(them.manager)} improves both lineups right now. Try someone else.</p>`;
 

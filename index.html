@@ -4456,17 +4456,45 @@ const PACK = (function(){
     back.style.background = "none"; back.style.opacity = "0";
   }
 
-  function packFace(label){
+  /* A bronze pack should look bronze. The card back behind the flares has been
+     tier coloured since the beginning, so a permanently gold wrapper was the
+     one thing in the sequence not saying what it held. It takes the best card
+     inside, which is how FUT does it: the pack tells you the ceiling, the
+     walkout still decides which card. */
+  const PACK_NAME = { bronzeC:"Bronze", bronze:"Bronze", silverC:"Silver",
+    silver:"Silver", goldC:"Gold", gold:"Gold", totw:"Team of the week",
+    blue:"Milestone", orange:"Milestone", purple:"Milestone" };
+
+  const tierKey = c => c.flare || c.tier || (c.rarity === "rare" ? "gold" : "silverC");
+  function topTier(list){
+    let best = "silverC", rank = -1;
+    (list || []).forEach(c => {
+      const k = tierKey(c);
+      const r = TIER_RANK[k] || 0;
+      if(r > rank && TIER[k]){ rank = r; best = k; }
+    });
+    return best;
+  }
+
+  function packFace(label, key){
+    const t = TIER[key] || TIER.silverC;
     let sh="";
     for(let i=0;i<6;i++){
       const a=(i/6)*Math.PI*2 + 0.5;
       sh+=`<span class="shard" style="--x:${Math.cos(a)*150}px;--y:${Math.sin(a)*190}px;
-        --r:${Math.round(Math.cos(a)*260)}deg;animation-delay:${i*10}ms"></span>`;
+        --r:${Math.round(Math.cos(a)*260)}deg;animation-delay:${i*10}ms;
+        background:linear-gradient(150deg,${t.col},${t.back} 55%,${t.col})"></span>`;
     }
     return `<div class="shards" id="pkShards">${sh}</div>
-      <div class="thepack" id="pkPack">
-        <span class="pl">Ultimo Bromigos</span><span class="pw">${esc(label)}</span>
-        <span class="pt">Tap to open</span></div>`;
+      <div class="thepack" id="pkPack" style="
+        background:linear-gradient(160deg,${t.back} 0%,#08070A 58%,${t.back} 100%);
+        border-color:${t.col};
+        box-shadow:0 18px 40px rgba(0,0,0,.55), 0 0 50px -14px ${t.col},
+                   inset 0 1px 0 rgba(255,255,255,.07)">
+        <span class="pl" style="color:${t.col}">Ultimo Bromigos</span>
+        <span class="pw">${esc(label)}</span>
+        <span class="pt" style="color:${t.col};opacity:.72">${
+          esc(PACK_NAME[key] || "Pack")}</span></div>`;
   }
 
   function fireSparks(){
@@ -4578,7 +4606,7 @@ const PACK = (function(){
   return { open(label,list){
     cards=list; idx=-1; busy=false;
     clearFx(); sparks.classList.remove("go"); sparks.innerHTML="";
-    slot.innerHTML=packFace(label); dots.innerHTML="";
+    slot.innerHTML=packFace(label, topTier(list)); dots.innerHTML="";
     tap.textContent="Tap to open";
     wrap.classList.add("on"); document.body.style.overflow="hidden";
     return new Promise(r=>{ done=r; });

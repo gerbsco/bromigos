@@ -2851,24 +2851,74 @@ function marketOf(p){
    and by week 12 it is three quarters what actually happened. Four is a
    judgement call, not a derived constant, and it is the only tuned number in
    the whole model. */
-function ppgOf(p){
-  if(!p) return 0;
-  const avg = (typeof p.avg === "number" && p.avg > 0) ? p.avg : null;
+/* His own results, mixed into a projection as the sample grows. Week 1 is all
+   projection, week 4 an even split, by week 12 it is three quarters what has
+   actually happened. Half weight when the base came from a provider, because
+   their number has already had this season's form baked into it and counting
+   it twice chases hot streaks. Four is a judgement call and it is the only
+   tuned number in the model. One copy, because two would drift. */
+function withResults(p, base, imported){
+  const avg = (p && typeof p.avg === "number" && p.avg > 0) ? p.avg : null;
   const g = weeksDone();
-  const ros = rosOf(p);
-
-  /* A real rest of season number divided by the weeks he can play beats
-     anything derived from one Sunday, so it goes first. */
-  let base = ros ? ros.pts / gamesLeftFor(p) : projOf(p).blend;
-
-  /* Then his own results, weighted in as the sample grows. Half weight when
-     the base is imported, because a provider's projection has already had this
-     season's form baked into it and counting it twice would chase hot streaks.
-     Four is a judgement call and it is the only tuned number in the model. */
   let w = g > 0 ? g / (g + 4) : 0;
-  if(ros) w = w / 2;
+  if(imported) w = w / 2;
   if(avg === null || w <= 0) return base;
   return base * (1 - w) + avg * w;
+}
+
+function ppgOf(p){
+  if(!p) return 0;
+  const ros = rosOf(p);
+  /* A real rest of season number divided by the weeks he can play beats
+     anything derived from one Sunday, so it goes first. */
+  const base = ros ? ros.pts / gamesLeftFor(p) : projOf(p).blend;
+  return withResults(p, base, !!ros);
+}
+
+/* ESPN's half of a future week: the season projection it already sends, minus
+   what has been banked, spread across the games the player can still play. It
+   is the only forward number ESPN has, because the weekly one it publishes is
+   for the current scoring period and nothing else. */
+function espnPerGame(p){
+  if(!p || typeof p.sproj !== "number" || p.sproj <= 0) return null;
+  const banked = typeof p.spts === "number" ? p.spts : 0;
+  const trust = banked > 0 || weeksDone() <= 1;
+  const rest = p.sproj - banked;
+  if(!trust || rest <= 0) return null;
+  const v = rest / gamesLeftFor(p);
+  return v > 0 ? v : null;
+}
+
+/* What a player is worth in one named week.
+
+   This week both providers publish a real weekly number, so it is the same
+   blend the matchup card uses and the two always agree.
+
+   Later weeks used to be one flat rest of season average repeated across the
+   whole table, which meant a week against a team missing three starters read
+   exactly like a week against a full one. Sleeper publishes a projection for
+   every remaining week and data/projections.json now keeps them, so each week
+   is rated on its own number, paired with ESPN's per game figure as the second
+   opinion the way everything else in the model is.
+
+   A week Sleeper has not published, or a player it has never heard of, falls
+   back to the rest of season average rather than to zero. A missing number
+   must never look like a bad one, or the lineup builder benches somebody over
+   an absent row. */
+function weekProjOf(p, wk){
+  if(!p) return 0;
+  if(!wk || wk === weeksLeft()[0]) return projOf(p).blend;
+  const table = (PROJ && PROJ.weeks) ? PROJ.weeks[String(wk)] : null;
+  const sleeper = table ? table[String(p.id)] : null;
+  if(!(typeof sleeper === "number" && sleeper > 0)) return ppgOf(p);
+  const espn = espnPerGame(p);
+  const base = espn === null ? sleeper : (sleeper + espn) / 2;
+  return withResults(p, base, true);
+}
+
+/* whether the per week table actually arrived, for the copy that explains it */
+function weeklyProjOn(){
+  return !!(PROJ && PROJ.weeks && Object.keys(PROJ.weeks).length);
 }
 
 /* On bye is out. Anyone ruled out is out of the next week only, because a
@@ -2890,7 +2940,9 @@ function seasonValue(players){
   const weeks = weeksLeft();
   if(!weeks.length) return weekValue(players);
   let total = 0;
-  weeks.forEach(wk => { total += bestLineupWith(players, ppgOf, wk).total; });
+  weeks.forEach(wk => {
+    total += bestLineupWith(players, p => weekProjOf(p, wk), wk).total;
+  });
   return total;
 }
 
@@ -3447,13 +3499,23 @@ function renderTradePro(){
         starter's whole week, and a fourth running back who never gets on the
         field is worth nothing at all.</p>
       <p class="note" style="margin:0 0 12px">${rosOn
-        ? `Each player's per game number starts from a real rest of season
-           projection, divided by the weeks he can actually play. Sleeper's
-           weekly projection is summed across ${rosWk} remaining
-           week${rosWk === 1 ? "" : "s"} and averaged with ESPN's own season
-           projection minus what he has already banked. His results so far are
-           then mixed in at half weight, because a provider has already
-           accounted for this season and counting it twice chases hot streaks.`
+        ? (weeklyProjOn()
+          ? `Every remaining week is rated on its own projection rather than on
+             one flat average. Sleeper publishes a number for each of the
+             ${rosWk} week${rosWk === 1 ? "" : "s"} left and each is paired with
+             ESPN's season projection minus what the player has banked, spread
+             across the games he can still play. His results so far are then
+             mixed in at half weight, because a provider has already accounted
+             for this season and counting it twice chases hot streaks. A week
+             Sleeper has not published falls back to his season average rather
+             than to zero.`
+          : `Each player's per game number starts from a real rest of season
+             projection, divided by the weeks he can actually play. Sleeper's
+             weekly projection is summed across ${rosWk} remaining
+             week${rosWk === 1 ? "" : "s"} and averaged with ESPN's own season
+             projection minus what he has already banked. His results so far are
+             then mixed in at half weight, because a provider has already
+             accounted for this season and counting it twice chases hot streaks.`)
         : `No rest of season projection has loaded, so this falls back to the
            weekly projection mixed with each player's own average
            ${wDone ? `at ${Math.round(100 * (wDone/(wDone+4)))}% results after
@@ -4097,13 +4159,15 @@ function scheduleFor(meId, wk){
 
 function seasonOutlook(me){
   const out = [];
+  const now = weeksLeft()[0];
   weeksLeft().forEach(wk => {
     const oppId = scheduleFor(me.id, wk);
     const opp = (ROSTERS || []).find(t => t.id === oppId);
     if(!opp) return;
-    const mine = bestLineupWith(me.players, ppgOf, wk).total;
-    const theirs = bestLineupWith(opp.players, ppgOf, wk).total;
-    out.push({ wk, opp, mine, theirs, d: mine - theirs });
+    const f = p => weekProjOf(p, wk);
+    const mine = bestLineupWith(me.players, f, wk).total;
+    const theirs = bestLineupWith(opp.players, f, wk).total;
+    out.push({ wk, opp, mine, theirs, d: mine - theirs, live: wk === now });
   });
   return out;
 }
@@ -4130,7 +4194,9 @@ function renderOutlookTable(me){
      not been published, so the weeks left are counted forward and can overlap
      games already played; showing a nineteen game season would be worse than
      showing nothing. */
-  const fits = (haveW + haveL + rows.length) <= REG_WEEKS;
+  /* And only worth a second cell once some of the season is behind you. Before
+     Week 1 the projected finish is the rest of the way, printed twice. */
+  const fits = (haveW + haveL + rows.length) <= REG_WEEKS && (haveW + haveL) > 0;
 
   return `<h2>Season at a glance</h2>
     <div class="verdict"${fits ? "" : ' style="grid-template-columns:1fr"'}>
@@ -4155,9 +4221,16 @@ function renderOutlookTable(me){
     </tr>`).join("") +
     `</tbody></table>
     <p class="note">Both lineups are the best each roster could field that week,
-      with byes taken out on either side. It assumes nobody trades, nobody picks
-      anyone up and nobody gets hurt, none of which will hold, so treat a one
-      point margin as a coin flip rather than a win.</p>`;
+      with byes taken out on either side.${weeklyProjOn()
+        ? ` Every row is that week's own projection for both rosters, so a week
+          against a team with three players off reads differently to a week
+          against a full one.`
+        : ` The per week projections have not loaded, so every week after this
+          one is running off each player's rest of season average and the
+          margins will look flatter than they should.`}
+      It assumes nobody trades, nobody picks anyone up and nobody gets hurt,
+      none of which will hold, so treat a one point margin as a coin flip
+      rather than a win.</p>`;
 }
 
 /* ---------- lineup problems worth catching before kickoff ---------- */

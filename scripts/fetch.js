@@ -12,8 +12,8 @@ import { writeFile, mkdir } from "node:fs/promises";
 
 const LEAGUE_ID = "24869044";
 const SEASON = "2026";
-const ESPN = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/${SEASON}` +
-             `/segments/0/leagues/${LEAGUE_ID}`;
+const HOST = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl";
+const ESPN = `${HOST}/seasons/${SEASON}/segments/0/leagues/${LEAGUE_ID}`;
 
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; BromigosBot/1.0)", "Accept": "*/*" };
 
@@ -73,6 +73,71 @@ async function firstWorking(label, urls, handler) {
   throw new Error("no working url");
 }
 
+/* ---------- bye weeks ----------
+   The roster view does not carry them. Every player object in mRoster has a
+   proTeamId and no byeWeek, so the app was running its whole bye-aware model
+   with nothing to be aware of: the lineup builder never sat anybody, the trade
+   rating never saw a thin week, and the season table printed the same number
+   fourteen times.
+
+   Byes belong to the pro team, not the player, so one small lookup covers
+   every roster and every free agent. ESPN publishes it under
+   proTeamSchedules_wl, at the season level and again on the league. Sleeper's
+   player dump carries the same thing and is already being downloaded for
+   trending, so it stands in if ESPN's view moves.
+
+   The map is written into the file as well as stamped onto the players, so a
+   miss is visible rather than silent. */
+function byesFromProTeams(doc) {
+  const teams = (doc && doc.settings && doc.settings.proTeams) || [];
+  const out = {};
+  teams.forEach(t => {
+    if (!t || t.id == null) return;
+    const bye = Number(t.byeWeek);
+    if (bye > 0) out[t.id] = bye;
+  });
+  return out;
+}
+
+/* Sleeper keys byes to the team abbreviation, ESPN to a numeric id. */
+const ESPN_PRO_TEAM = { 1:"ATL", 2:"BUF", 3:"CHI", 4:"CIN", 5:"CLE", 6:"DAL",
+  7:"DEN", 8:"DET", 9:"GB", 10:"TEN", 11:"IND", 12:"KC", 13:"LV", 14:"LAR",
+  15:"MIA", 16:"MIN", 17:"NE", 18:"NO", 19:"NYG", 20:"NYJ", 21:"PHI", 22:"ARI",
+  23:"PIT", 24:"LAC", 25:"SF", 26:"SEA", 27:"TB", 28:"WSH", 29:"CAR", 30:"JAX",
+  33:"BAL", 34:"HOU" };
+
+function byesFromSleeper(all) {
+  const byAbbrev = {};
+  Object.values(all || {}).forEach(p => {
+    if (!p || !p.team) return;
+    const bye = Number(p.bye_week);
+    if (bye > 0) byAbbrev[p.team] = bye;
+  });
+  const out = {};
+  Object.entries(ESPN_PRO_TEAM).forEach(([id, abbrev]) => {
+    if (byAbbrev[abbrev]) out[id] = byAbbrev[abbrev];
+  });
+  return out;
+}
+
+/* Write the bye onto every player the app will read, so index.html keeps
+   reading p.byeWeek and does not need to know where it came from. */
+function stampByes(snap, byes) {
+  const n = { filled: 0, missing: 0 };
+  if (!byes || !Object.keys(byes).length) return n;
+  const put = p => {
+    if (!p) return;
+    if (Number(p.byeWeek) > 0) { n.filled++; return; }
+    const bye = byes[p.proTeamId];
+    if (bye) { p.byeWeek = bye; n.filled++; } else { n.missing++; }
+  };
+  ((snap.rosters && snap.rosters.teams) || []).forEach(t =>
+    (((t.roster && t.roster.entries) || [])).forEach(e =>
+      put(e && e.playerPoolEntry && e.playerPoolEntry.player)));
+  (snap.freeAgents || []).forEach(e => put(e && e.player));
+  return n;
+}
+
 async function main() {
   const snap = {
     fetchedAt: new Date().toISOString(),
@@ -105,7 +170,35 @@ async function main() {
 
   const drafted = snap.settings?.draftDetail?.drafted;
 
-  /* ---------- 2. ESPN free agents (needs the filter header) ---------- */
+  /* The site reads its whole schedule off this. Worth saying out loud how many
+     games came back, because an empty one is not an error and looks identical
+     to a good pull until the season table turns up blank. */
+  const games = snap.matchups?.schedule?.length || 0;
+  console.log(games
+    ? `ok   espn schedule (${games} matchups)`
+    : "WARN espn schedule is empty - the season table stays hidden until it fills");
+
+  /* ---------- 2. pro team bye weeks ---------- */
+  let byes = {};
+  for (const url of [
+    `${HOST}/seasons/${SEASON}?view=proTeamSchedules_wl`,
+    `${ESPN}?view=proTeamSchedules_wl`,
+    `${HOST}/seasons/${SEASON}?view=mProTeamSchedules_wl`
+  ]) {
+    try {
+      byes = byesFromProTeams(await getJSON(url));
+      if (Object.keys(byes).length) {
+        console.log(`ok   espn byes (${Object.keys(byes).length} teams) <- ${url.split("?").pop()}`);
+        break;
+      }
+      console.log(`     byes empty from ${url.split("?").pop()}`);
+    } catch (err) {
+      console.log(`     byes miss ${url.split("?").pop()} (${err.message})`);
+    }
+    await pause(300);
+  }
+
+  /* ---------- 3. ESPN free agents (needs the filter header) ---------- */
   if (drafted) {
     try {
       const filter = { players: {
@@ -128,7 +221,7 @@ async function main() {
     console.log("skip free agents - league has not drafted");
   }
 
-  /* ---------- 3. Sleeper trending (waiver signal) ---------- */
+  /* ---------- 4. Sleeper trending (waiver signal) ---------- */
   try {
     const [adds, drops] = await Promise.all([
       getJSON("https://api.sleeper.app/v1/players/nfl/trending/add?lookback_hours=48&limit=60"),
@@ -151,13 +244,31 @@ async function main() {
     snap.trending = { adds: shape(adds), drops: shape(drops) };
     snap.sources.sleeper = true;
     console.log(`ok   sleeper trending (${snap.trending.adds.length} adds, ${snap.trending.drops.length} drops)`);
+
+    /* Same dump carries bye weeks, so it costs nothing to use as a backstop. */
+    if (!Object.keys(byes).length) {
+      byes = byesFromSleeper(all);
+      if (Object.keys(byes).length)
+        console.log(`ok   byes from sleeper (${Object.keys(byes).length} teams)`);
+    }
   } catch (err) {
     snap.sources.sleeper = false;
     snap.errors.push(`sleeper: ${err.message}`);
     console.error(`FAIL sleeper: ${err.message}`);
   }
 
-  /* ---------- 4. nflverse usage data ---------- */
+  /* ---------- 5. stamp the byes on ---------- */
+  snap.byes = byes;
+  const stamped = stampByes(snap, byes);
+  snap.sources.byes = Object.keys(byes).length > 0;
+  if (!snap.sources.byes) {
+    snap.errors.push("byes: no source answered, players carry no bye week");
+    console.error("FAIL byes - nothing answered. Lineups will not be bye aware.");
+  } else {
+    console.log(`ok   byes stamped (${stamped.filled} players, ${stamped.missing} without a pro team)`);
+  }
+
+  /* ---------- 6. nflverse usage data ---------- */
   const base = "https://github.com/nflverse/nflverse-data/releases/download";
   try {
     snap.weeklyStats = await firstWorking("nflverse weekly stats", [

@@ -1509,6 +1509,11 @@ const drafted = () => !!(LIVE && LIVE.settings && LIVE.settings.draftDetail
   && LIVE.settings.draftDetail.drafted);
 const teamList = () => (LIVE && LIVE.teams && LIVE.teams.teams) ? LIVE.teams.teams : [];
 const tname = t => (t.name||"").trim();
+/* ESPN sends record with the mTeam view, but a partial payload without it used
+   to throw inside renderAwards, which runs before every guarded renderer in
+   renderAll, so one missing field took the whole page down. Zeros instead. */
+const ZERO_REC = { wins:0, losses:0, ties:0, pointsFor:0, pointsAgainst:0 };
+const recOf = t => (t && t.record && t.record.overall) || ZERO_REC;
 
 /* played games only */
 function playedGames(){
@@ -1559,8 +1564,8 @@ function renderAwards(){
   const byId = {};
   teams.forEach(t => byId[t.id] = {
     id:t.id, name:tname(t), scores:[], margins:[], oppPts:[],
-    w:t.record.overall.wins, l:t.record.overall.losses,
-    pf:t.record.overall.pointsFor, pa:t.record.overall.pointsAgainst,
+    w:recOf(t).wins, l:recOf(t).losses,
+    pf:recOf(t).pointsFor, pa:recOf(t).pointsAgainst,
     close:0, blowouts:0
   });
 
@@ -1640,7 +1645,7 @@ function standingsTable(limit){
   const teams = teamList();
   if(!teams.length) return "";
   const rows = teams.slice().sort((a,b)=>{
-    const A=a.record.overall,B=b.record.overall;
+    const A=recOf(a),B=recOf(b);
     return (B.wins-A.wins)||(B.pointsFor-A.pointsFor);
   }).slice(0, limit||99);
   /* Manager under the team name, because team names change every August and
@@ -1656,7 +1661,7 @@ function standingsTable(limit){
      specificity and turns this cell into an inline-flex box. */
   return `<table><thead><tr><th></th><th>Team</th><th class="n">Rec</th>
     <th class="n">PF</th><th class="n">PA</th></tr></thead><tbody>` +
-    rows.map((t,i)=>{const o=t.record.overall;
+    rows.map((t,i)=>{const o=recOf(t);
       const cut = (i === PLAYOFF_SPOTS && rows.length > PLAYOFF_SPOTS) ? " cut" : "";
       return `<tr class="${t.id === mineId ? "you" : ""}${cut}">
         <td class="fin">${i+1}</td>
@@ -2577,8 +2582,15 @@ function renderH2H(){
 function renderAll(){
   try{ syncLeagueSettings(); }catch(e){ console.warn("[bromigos] settings:", e && e.message); }
   paintTabs();
-  renderLedger(); renderDossiers(); renderRecap(); renderDraft();
-  renderAwards(); renderSnapshot(); renderLeague(); renderTrade(); renderWire();
+  /* Every renderer is isolated. A field ESPN stopped sending should cost one
+     card, not the whole page, and the page has to keep rendering from baked-in
+     history no matter what the feed does. */
+  const safe = (what, fn) => { try { fn(); }
+    catch(e){ console.warn("[bromigos] " + what + ":", e && e.message); } };
+  safe("ledger", renderLedger); safe("dossiers", renderDossiers);
+  safe("recap", renderRecap); safe("draft", renderDraft);
+  safe("awards", renderAwards); safe("snapshot", renderSnapshot);
+  safe("league", renderLeague); safe("trade", renderTrade); safe("wire", renderWire);
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
   try{ renderPicks(); }catch(e){ console.warn("[bromigos] picks:", e && e.message); }
@@ -2701,7 +2713,16 @@ function posProfile(players){
   return out;
 }
 
+/* Recomputed a full positional profile for all ten rosters every time it was
+   asked, and the trade panel asks twice per tap. */
+let MEDS = null, MEDS_KEY = "";
 function leagueMedians(teams){
+  const key = rosterKey() + "|" + (teams ? teams.length : 0);
+  if(MEDS && MEDS_KEY === key) return MEDS;
+  MEDS = buildMedians(teams); MEDS_KEY = key;
+  return MEDS;
+}
+function buildMedians(teams){
   const med = {};
   ["QB","RB","WR","TE"].forEach(pos => {
     const vals = teams.map(t => posProfile(t.players)[pos].avg).sort((a,b)=>a-b);
@@ -2967,7 +2988,19 @@ const POS_MAP = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
    The mapping used to match the 2025 team name out of SEASONS, which breaks the
    moment anyone renames their team, so it would have failed for the whole
    league the day the 2026 rosters landed. GUIDs survive renames. */
+/* Walked once per call and called from weekGames, which powerRanks calls for
+   every week, twice, for the table and again for the movement arrows. That was
+   seventy-odd rebuilds of the same object per paint. It only changes when the
+   pull does. */
+let TIDX = null, TIDX_KEY = "";
 function teamIndex(){
+  const key = (LIVE && LIVE.fetchedAt) || "none";
+  if(TIDX && TIDX_KEY === key) return TIDX;
+  const out = buildTeamIndex();
+  TIDX = out; TIDX_KEY = key;
+  return out;
+}
+function buildTeamIndex(){
   const doc = (LIVE && LIVE.teams) || {};
   const names = {};
   (doc.members || []).forEach(m => {
@@ -3129,6 +3162,7 @@ function ensureRosters(){
 
 function loadRosterModel(){
   ROSTER_KEY = rosterKey();
+  MEDS = null; TIDX = null; TRADE_CACHE = { key:null, val:[] };
   const live = normalizeLive();
   if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
   else if(PREVIEW){ ROSTERS = demoRosters(); IS_DEMO = true; }
@@ -4198,7 +4232,20 @@ function renderStartSit(me){
   return warns.map(w => `<div class="warn ${w.level}">${esc(w.text)}</div>`).join("");
 }
 
+/* Four thousand simulations is two hundred milliseconds of the phone's time,
+   and it was being paid on every paint: first load, again when the data lands,
+   again when somebody picks their name. It only changes when the pull does.
+   Caching it also stops the percentages wobbling by a point every repaint,
+   which they did, because the simulation is random. */
+let ODDS_CACHE = { key:null, html:"" };
 function renderOdds(){
+  const key = [(LIVE && LIVE.fetchedAt) || "none", PLAYOFF_SPOTS, REG_WEEKS, ME].join("|");
+  if(ODDS_CACHE.key === key) return ODDS_CACHE.html;
+  const html = buildOdds();
+  ODDS_CACHE = { key, html };
+  return html;
+}
+function buildOdds(){
   const odds = playoffOdds(4000);
   if(!odds) return "";
   return `<h2>Playoff odds</h2>

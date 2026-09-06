@@ -747,9 +747,11 @@
   .wirerow .meta{min-width:0}
   .wirerow .meta b{display:block;font:400 16px/1.25 var(--display);letter-spacing:-.012em;
     color:var(--chalk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .wstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:7px;
-    max-width:300px}
-  .wstat{min-width:0}
+  /* Was a four column grid at a fixed width. Once the trending chip took its
+     share of the row the columns collapsed and the labels ran into each other,
+     which is where "projectedrostered" came from. Wraps now. */
+  .wstats{display:flex;flex-wrap:wrap;gap:7px 15px;margin-top:7px;max-width:300px}
+  .wstat{min-width:46px}
   .wstat b{display:block;font:400 13.5px/1 var(--display);color:var(--dim);
     font-variant-numeric:tabular-nums}
   .wstat span{display:block;margin-top:3px;font:400 10.5px/1 var(--display);color:var(--faint)}
@@ -2672,7 +2674,7 @@ function syncLeagueSettings(){
    and a week can be named so anyone on bye that week is left out of the pool.
    Values are computed once per player rather than inside the sort comparator,
    which matters because the trade finder runs this a few thousand times. */
-function bestLineupWith(players, val, wk){
+function bestLineupWith(players, val, wk, repl){
   const pool = [];
   players.forEach(p => {
     if(p.ir) return;
@@ -2686,9 +2688,51 @@ function bestLineupWith(players, val, wk){
   SLOTS.forEach(slot => {
     const hit = pool.find(x => !used.has(x.p.id) && slot.elig.includes(x.p.pos));
     if(hit){ used.add(hit.p.id); total += hit.v; }
-    filled.push({ slot: slot.k, player: hit ? hit.p : null });
+    /* Nobody on the roster can fill this slot. For a week that has not
+       happened yet that is not a zero, it is a waiver pickup: every manager in
+       this league streams a kicker and a defense on their bye and always has.
+       Scoring it as nothing was docking a full kicker and a full defense from
+       any week those two were off, which is most of a two touchdown swing on a
+       week where nothing is actually wrong. The current week is left alone, so
+       an empty slot today still reads as the problem it is. */
+    else if(repl) total += repl(slot);
+    filled.push({ slot: slot.k, player: hit ? hit.p : null, streamed: !hit && !!repl });
   });
   return { filled, total, bench: pool.filter(x => !used.has(x.p.id)).map(x => x.p) };
+}
+
+/* What you get off waivers, priced from the league rather than guessed at.
+   Sort everyone rostered at a position and step past the ones the league
+   starts every week: the next name down is what is actually available, which
+   is the textbook definition and needs no data we do not already have. */
+let REPL = null, REPL_KEY = "";
+function replacementLevel(){
+  const key = rosterKey() + "|" + SLOTS.length;
+  if(REPL && REPL_KEY === key) return REPL;
+  const teams = (ROSTERS || []).filter(t => t.players && t.players.length);
+  const byPos = {};
+  teams.forEach(t => t.players.forEach(p => {
+    (byPos[p.pos] = byPos[p.pos] || []).push(ppgOf(p));
+  }));
+  const starts = {};
+  SLOTS.forEach(sl => sl.elig.forEach(pos => { starts[pos] = (starts[pos] || 0) + 1; }));
+  const out = {};
+  Object.keys(byPos).forEach(pos => {
+    const list = byPos[pos].sort((a, b) => b - a);
+    const past = (starts[pos] || 1) * Math.max(1, teams.length);
+    out[pos] = list[Math.min(past, list.length - 1)] || 0;
+  });
+  REPL = out; REPL_KEY = key;
+  return out;
+}
+
+/* The best of the positions a slot accepts, since you would stream whichever
+   is easiest to find. */
+function replFor(slot){
+  const lvl = replacementLevel();
+  let best = 0;
+  (slot.elig || []).forEach(pos => { if((lvl[pos] || 0) > best) best = lvl[pos]; });
+  return best;
 }
 
 /* This week, on the blended weekly projection. Now scoped to the week actually
@@ -2796,9 +2840,14 @@ function weeksDone(){ return weeks().played; }
    guessing twice. */
 function weeksLeft(){ return weeks().left; }
 
-/* how many of those a player is actually available for. Byes only. An injury
-   is handled week by week when the lineup is built, and taking it off the
-   denominator here would quietly inflate his per game number. */
+/* How many of our remaining weeks a player is available for. Byes only. An
+   injury is handled week by week when the lineup is built, and taking it off
+   the denominator here would quietly inflate his per game number.
+
+   Nothing divides an imported projection by this any more, because the two
+   providers count different calendars: Sleeper publishes against our weeks and
+   ESPN against the NFL's. Each is now divided by its own. This is kept because
+   it is the honest answer to "how many more times does he play for me". */
 function gamesLeftFor(p){
   const bye = Number(p && p.bye) || 0;
   const left = weeksLeft();
@@ -2806,35 +2855,55 @@ function gamesLeftFor(p){
 }
 
 /* ---------- imported rest of season ----------
-   Two independent sources, averaged when both are present:
+   Two independent sources, averaged when both are present, and both expressed
+   as points a game rather than as a total waiting to be divided later. That
+   distinction is the whole of the fix below: the totals came from different
+   calendars and were being divided by the same one.
 
-     sleeper  data/projections.json, its weekly projection summed across every
-              week still on the schedule
-     espn     the season projection it already sends, minus what the player has
-              actually banked so far
+     sleeper  a projection for each week still on our schedule
+     espn     the season projection it already sends, minus what has been
+              banked, which covers the NFL season and not ours
 
    They fail differently, which is the point of having both. ESPN's season
    number goes stale after an injury and keeps projecting a player who is not
-   playing. Sleeper's sum is only as complete as the weeks that answered. When
+   playing. Sleeper's is only as complete as the weeks that answered. When
    neither is there the model falls back to the weekly projection and nothing
    about the app changes. */
+
+/* Sleeper, per game. Averaged over the weeks that actually carry a number for
+   this player, which is not the same as the number of weeks on our schedule.
+   Dividing a partial sum by a full schedule quietly marked every player down
+   by whatever fraction of weeks failed to answer, and the nightly log was the
+   only place that said so. */
+function sleeperPerGame(p){
+  const tbl = (PROJ && PROJ.weeks) || null;
+  if(tbl){
+    let sum = 0, n = 0;
+    weeksLeft().forEach(wk => {
+      const t = tbl[String(wk)];
+      if(!t) return;
+      const v = t[String(p.id)];
+      if(typeof v === "number" && v > 0){ sum += v; n++; }
+    });
+    if(n) return sum / n;
+  }
+  const total = (PROJ && PROJ.ros) ? PROJ.ros[String(p.id)] : null;
+  if(!(typeof total === "number" && total > 0)) return null;
+  const list = (PROJ && Array.isArray(PROJ.rosWeeks) && PROJ.rosWeeks.length)
+    ? PROJ.rosWeeks : weeksLeft();
+  const bye = Number(p.bye) || 0;
+  const n = Math.max(1, list.filter(w => w !== bye).length);
+  return total / n;
+}
+
+/* Both halves at once, per game. */
 function rosOf(p){
   if(!p) return null;
   const have = [];
-  const imported = (PROJ && PROJ.ros) ? PROJ.ros[String(p.id)] : null;
-  if(typeof imported === "number" && imported > 0) have.push(imported);
-  if(typeof p.sproj === "number" && p.sproj > 0){
-    const banked = typeof p.spts === "number" ? p.spts : 0;
-    /* Season projection minus what is banked is only meaningful if the banked
-       figure is real. A player showing exactly zero six weeks in is almost
-       always a missing stat entry rather than someone who has genuinely scored
-       nothing, and subtracting a missing number hands him his whole preseason
-       projection as though the year had not started. Treat it as absent and
-       let the other source answer. */
-    const trust = banked > 0 || weeksDone() <= 1;
-    const rest = p.sproj - banked;
-    if(trust && rest > 0) have.push(rest);
-  }
+  const sl = sleeperPerGame(p);
+  if(sl > 0) have.push(sl);
+  const es = espnPerGame(p);
+  if(es > 0) have.push(es);
   if(!have.length) return null;
   return { pts: have.reduce((a,b) => a+b, 0) / have.length, n: have.length };
 }
@@ -2869,23 +2938,43 @@ function withResults(p, base, imported){
 function ppgOf(p){
   if(!p) return 0;
   const ros = rosOf(p);
-  /* A real rest of season number divided by the weeks he can play beats
-     anything derived from one Sunday, so it goes first. */
-  const base = ros ? ros.pts / gamesLeftFor(p) : projOf(p).blend;
+  /* A real rest of season number beats anything derived from one Sunday, so
+     it goes first. It is already per game. */
+  const base = ros ? ros.pts : projOf(p).blend;
   return withResults(p, base, !!ros);
 }
 
-/* ESPN's half of a future week: the season projection it already sends, minus
-   what has been banked, spread across the games the player can still play. It
-   is the only forward number ESPN has, because the weekly one it publishes is
-   for the current scoring period and nothing else. */
+/* ESPN's season projection covers the NFL season, all eighteen weeks of it.
+   Our regular season stops at fourteen. Dividing his whole year by the weeks
+   left on our schedule was handing every player about a third more than he is
+   worth: a 255 point quarterback came out at 19.6 a game instead of 15.0,
+   because 255 was divided by our thirteen rather than his seventeen. The games
+   he has left is a question about his calendar, not ours. */
+const NFL_WEEKS = 18;
+function nflGamesLeft(p){
+  const done = weeksDone();
+  const bye = Number(p && p.bye) || 0;
+  let g = NFL_WEEKS - done;
+  if(bye && bye > done) g -= 1;
+  return Math.max(1, g);
+}
+
+/* ESPN's half of any week: the season projection it already sends, minus what
+   has been banked, over the games he can still play. It is the only forward
+   number ESPN has, because the weekly one it publishes is for the current
+   scoring period and nothing else. */
 function espnPerGame(p){
   if(!p || typeof p.sproj !== "number" || p.sproj <= 0) return null;
   const banked = typeof p.spts === "number" ? p.spts : 0;
+  /* Season projection minus what is banked is only meaningful if the banked
+     figure is real. A player showing exactly zero six weeks in is almost
+     always a missing stat entry rather than someone who has genuinely scored
+     nothing, and subtracting a missing number hands him his whole preseason
+     projection as though the year had not started. */
   const trust = banked > 0 || weeksDone() <= 1;
   const rest = p.sproj - banked;
   if(!trust || rest <= 0) return null;
-  const v = rest / gamesLeftFor(p);
+  const v = rest / nflGamesLeft(p);
   return v > 0 ? v : null;
 }
 
@@ -2940,8 +3029,10 @@ function seasonValue(players){
   const weeks = weeksLeft();
   if(!weeks.length) return weekValue(players);
   let total = 0;
+  const now = weeks[0];
   weeks.forEach(wk => {
-    total += bestLineupWith(players, p => weekProjOf(p, wk), wk).total;
+    total += bestLineupWith(players, p => weekProjOf(p, wk), wk,
+      wk === now ? null : replFor).total;
   });
   return total;
 }
@@ -3036,6 +3127,22 @@ function findTrades(mine, theirs, limit = 6){
 
 /* ---------- turn the ESPN payload into the model above ---------- */
 const POS_MAP = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
+
+/* ESPN sends several stat entries per player and they are not ordered.
+   scoringPeriodId 0 is the whole season, any other value is that week. Taking
+   the first entry that happens to be a projection is picking at random between
+   this Sunday and the entire year, and on the waiver board it picked the year:
+   Tyreek Hill sat at the top of a list of weekly numbers with 220.9 next to
+   him. The roster path already did this properly, the free agent path did not,
+   so both now go through the same three helpers. */
+const statOf = (p, src, period) => (p && p.stats || []).find(st =>
+  st.statSourceId === src && Number(st.scoringPeriodId) === period);
+const anyStat = (p, src) => (p && p.stats || []).find(st => st.statSourceId === src) || null;
+const seasonStat = (p, src) => statOf(p, src, 0);
+const weekStat = (p, src) => {
+  const wk = Number(LIVE && LIVE.scoringPeriodId) || 0;
+  return wk ? statOf(p, src, wk) : null;
+};
 /* ESPN sends the pro team as a number, and the roster row was printing it raw,
    so every player read "Jaxson Dart, 19" where 19 is the Giants. The ids are
    fixed and have not moved in years. Anything unmapped prints nothing rather
@@ -3103,13 +3210,12 @@ function normalizeLive(){
          this week and the whole year. scoringPeriodId 0 is the season, any
          other value is that week. The loose find stays as a fallback for a
          payload shaped differently to the one this was written against. */
-      const wkNow = Number(LIVE && LIVE.scoringPeriodId) || 0;
-      const pickStat = (src, period) => (p.stats || []).find(st =>
-        st.statSourceId === src && Number(st.scoringPeriodId) === period);
-      const looseStat = src => (p.stats || []).find(st => st.statSourceId === src) || {};
-      const projStat = (wkNow ? pickStat(1, wkNow) : null) || looseStat(1);
-      const realStat = pickStat(0, 0) || looseStat(0);
-      const seasonProj = pickStat(1, 0);
+      /* Empty object, never null: a player ESPN has sent no stats for at all
+         is normal in the hours after a draft, and reading a field off nothing
+         took the whole roster build down with it. */
+      const projStat = weekStat(p, 1) || anyStat(p, 1) || {};
+      const realStat = seasonStat(p, 0) || anyStat(p, 0) || {};
+      const seasonProj = seasonStat(p, 1);
       return {
         id: String(p.id || e.playerId),
         name: p.fullName || "Unknown",
@@ -3224,25 +3330,39 @@ function ensureRosters(){
 
 function loadRosterModel(){
   ROSTER_KEY = rosterKey();
-  MEDS = null; TIDX = null; TRADE_CACHE = { key:null, val:[] };
+  MEDS = null; TIDX = null; REPL = null; TRADE_CACHE = { key:null, val:[] };
   const live = normalizeLive();
   if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
   else if(PREVIEW){ ROSTERS = demoRosters(); IS_DEMO = true; }
   else { ROSTERS = []; IS_DEMO = false; }
   const faLive = (LIVE && LIVE.freeAgents) || null;
-  FREEAGENTS = (faLive && faLive.length) ? faLive.map(p => ({
-    id:String(p.id), name:p.player?.fullName || "Unknown",
-    pos: POS_MAP[p.player?.defaultPositionId] || "WR",
-    team: proTeam(p.player?.proTeamId) || "FA",
-    proj: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===1)?.appliedTotal||0)*10)/10,
-    avg: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===0)?.appliedAverage||0)*10)/10,
-    own: p.player?.ownership ? Math.round(p.player.ownership.percentOwned) : null,
-    trend: null, snapPct:null, tgtShare:null, injury:null, bye:p.player?.byeWeek||null, ir:false
+  FREEAGENTS = (faLive && faLive.length) ? faLive
+    /* Nobody without an NFL team. ESPN keeps unsigned and retired players in
+       the pool carrying last year's season projection, which is how Nick Chubb
+       and Kareem Hunt turned up on a waiver board at 0% rostered. A player on
+       no team cannot score, so he is not a pickup. */
+    .filter(p => Number(p.player && p.player.proTeamId) > 0)
+    .map(p => {
+      const pl = p.player || {};
+      const projStat = weekStat(pl, 1) || anyStat(pl, 1) || {};
+      const realStat = seasonStat(pl, 0) || anyStat(pl, 0) || {};
+      return {
+        id:String(p.id), name: pl.fullName || "Unknown",
+        pos: POS_MAP[pl.defaultPositionId] || "WR",
+        team: proTeam(pl.proTeamId) || "FA",
+        proj: Math.round((projStat.appliedTotal || 0) * 10) / 10,
+        avg: Math.round((realStat.appliedAverage || 0) * 10) / 10,
+        own: pl.ownership ? Math.round(pl.ownership.percentOwned) : null,
+        trend: null, snapPct:null, tgtShare:null,
+        injury: pl.injuryStatus && pl.injuryStatus !== "ACTIVE" ? pl.injuryStatus : null,
+        bye: pl.byeWeek || null, ir:false
+      };
+    })
   /* Invented free agents were the one fixture still ungated. If a pull ever
      lands without a pool, the league would have seen Quinn Whitcomb and a
      Titans defense with no demo banner on the screen, because the banner keys
      off the rosters. Outside preview, empty beats invented. */
-  })) : (PREVIEW ? demoFreeAgents() : []);
+    : (PREVIEW ? demoFreeAgents() : []);
   // fold Sleeper trending onto free agents when both are live
   const tr = (LIVE && LIVE.trending && LIVE.trending.adds) || [];
   if(tr.length && faLive){
@@ -3408,7 +3528,9 @@ function renderTradePro(){
   const thinnestWeek = players => {
     const wks = weeksLeft();
     if(wks.length < 2) return null;
-    const tot = wks.map(w => ({ w, t: bestLineupWith(players, ppgOf, w).total }));
+    const tot = wks.map(w => ({ w,
+      t: bestLineupWith(players, p => weekProjOf(p, w), w,
+           w === wks[0] ? null : replFor).total }));
     const avg = tot.reduce((n,x) => n + x.t, 0) / tot.length;
     const low = tot.reduce((a,b) => b.t < a.t ? b : a);
     return { week: low.w, drop: avg - low.t, avg };
@@ -3497,14 +3619,18 @@ function renderTradePro(){
         left out and whoever is next on the bench starting in their place. A bye
         therefore costs only the gap between the starter and his cover, not the
         starter's whole week, and a fourth running back who never gets on the
-        field is worth nothing at all.</p>
+        field is worth nothing at all. When nobody on the roster can fill a slot
+        at all, which in practice means a kicker or a defense on their bye, it
+        is credited at what the same position is worth on waivers rather than
+        scored as a zero nobody would ever actually take.</p>
       <p class="note" style="margin:0 0 12px">${rosOn
         ? (weeklyProjOn()
           ? `Every remaining week is rated on its own projection rather than on
              one flat average. Sleeper publishes a number for each of the
              ${rosWk} week${rosWk === 1 ? "" : "s"} left and each is paired with
-             ESPN's season projection minus what the player has banked, spread
-             across the games he can still play. His results so far are then
+             ESPN's season projection minus what the player has banked, over
+             the NFL games he has left rather than the weeks we have left,
+             which are not the same count. His results so far are then
              mixed in at half weight, because a provider has already accounted
              for this season and counting it twice chases hot streaks. A week
              Sleeper has not published falls back to his season average rather
@@ -3636,6 +3762,9 @@ function renderWirePro(){
   const SORTS = [["fit","Best fit"],["proj","Projection"],["trend","Trending"],
                  ["own","Least rostered"],["snaps","Snap share"]];
   const stat = (v, l) => v == null ? "" : `<span class="wstat"><b>${v}</b><span>${l}</span></span>`;
+  /* Name the week. The column is this week's projection, not a season total,
+     and "projected" on its own was the only thing saying which. */
+  const wk = weeksLeft()[0] || pickWeek();
 
   el.innerHTML = demoBanner() + needPills(g) +
     `<div class="ctrls">
@@ -3650,12 +3779,15 @@ function renderWirePro(){
       <span class="rank">${i+1}</span>
       <span class="pos ${p.pos}">${p.pos}</span>
       <span class="meta"><b>${esc(p.name)}</b><span class="wstats">
-        ${stat(p.proj.toFixed(1),"projected")}${stat(p.own!=null?p.own+"%":null,"rostered")}
+        ${stat(p.proj.toFixed(1), wk ? "week " + wk : "projected")}${stat(p.own!=null?p.own+"%":null,"rostered")}
         ${stat(p.snapPct!=null?p.snapPct+"%":null,"snaps")}${stat(p.tgtShare!=null?p.tgtShare+"%":null,"targets")}
       </span></span>
       ${p.trend ? `<span class="hot">+${p.trend>999?(p.trend/1000).toFixed(1)+"k":p.trend}</span>` : ""}
     </div>`).join("") : `<p class="note">Nobody available there. Try another position.</p>`) +
-    `<p class="note">Trending counts how many Sleeper leagues added a player in the last 48 hours.</p>`;
+    `<p class="note">Numbers are this week's projection, blended the same way as
+      everywhere else. Anyone not currently on an NFL team is left out, because
+      he cannot score. Trending counts how many Sleeper leagues added a player
+      in the last 48 hours.</p>`;
 
   el.querySelectorAll("[data-pos]").forEach(b => b.onclick = () => { wireFilter=b.dataset.pos; renderWirePro(); });
   el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort=b.dataset.sort; renderWirePro(); });
@@ -4165,8 +4297,9 @@ function seasonOutlook(me){
     const opp = (ROSTERS || []).find(t => t.id === oppId);
     if(!opp) return;
     const f = p => weekProjOf(p, wk);
-    const mine = bestLineupWith(me.players, f, wk).total;
-    const theirs = bestLineupWith(opp.players, f, wk).total;
+    const r = wk === now ? null : replFor;
+    const mine = bestLineupWith(me.players, f, wk, r).total;
+    const theirs = bestLineupWith(opp.players, f, wk, r).total;
     out.push({ wk, opp, mine, theirs, d: mine - theirs, live: wk === now });
   });
   return out;
@@ -4228,9 +4361,11 @@ function renderOutlookTable(me){
         : ` The per week projections have not loaded, so every week after this
           one is running off each player's rest of season average and the
           margins will look flatter than they should.`}
-      It assumes nobody trades, nobody picks anyone up and nobody gets hurt,
-      none of which will hold, so treat a one point margin as a coin flip
-      rather than a win.</p>`;
+      A slot nobody on the roster can fill in a later week is credited at
+      waiver level rather than scored as nothing, because a kicker on bye gets
+      streamed and always has. It still assumes nobody trades and nobody gets
+      hurt, neither of which will hold, so treat a one point margin as a coin
+      flip rather than a win.</p>`;
 }
 
 /* ---------- lineup problems worth catching before kickoff ---------- */

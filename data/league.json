@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-05T19:45:59.863Z",
+  "fetchedAt": "2026-09-06T11:11:11.865Z",
   "leagueId": "24869044",
   "season": "2026",
   "sources": {
@@ -53,18 +53,18 @@
         "keeperCountFuture": 0,
         "keeperOrderType": "TRADITIONAL",
         "leagueSubType": "NONE",
-        "orderType": "DRAFT_START",
+        "orderType": "MANUAL",
         "pickOrder": [
-          4,
-          10,
-          9,
-          5,
-          3,
-          8,
           6,
           7,
+          9,
+          3,
+          4,
           2,
-          1
+          10,
+          8,
+          1,
+          5
         ],
         "timePerSelection": 90,
         "type": "SNAKE"
@@ -715,7 +715,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1788591808181,
+      "waiverLastExecutionDate": 1788678137549,
       "waiverProcessStatus": {}
     }
   },
@@ -1737,7 +1737,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1788591808181,
+      "waiverLastExecutionDate": 1788678137549,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -2619,7 +2619,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1788591808181,
+      "waiverLastExecutionDate": 1788678137549,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -36391,7 +36391,7 @@
       ],
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1788591808181,
+      "waiverLastExecutionDate": 1788678137549,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -37406,7 +37406,7 @@
       "requestedMatchupPeriodId": 1,
       "teamsJoined": 10,
       "transactionScoringPeriod": 0,
-      "waiverLastExecutionDate": 1788591808181,
+      "waiverLastExecutionDate": 1788678137549,
       "waiverProcessStatus": {}
     },
     "teams": [
@@ -37449,420 +37449,420 @@
         "pos": "RB",
         "team": "CHI",
         "status": null,
-        "count": 851664
+        "count": 456872
       },
       {
         "name": "Devaughn Vele",
         "pos": "WR",
         "team": "NO",
         "status": null,
-        "count": 120694
-      },
-      {
-        "name": "Jacob Saylors",
-        "pos": "RB",
-        "team": "DET",
-        "status": null,
-        "count": 79080
-      },
-      {
-        "name": "Las Vegas Raiders",
-        "pos": "DEF",
-        "team": "LV",
-        "status": null,
-        "count": 74574
-      },
-      {
-        "name": "Malik Davis",
-        "pos": "RB",
-        "team": "DAL",
-        "status": null,
-        "count": 74088
+        "count": 135086
       },
       {
         "name": "Tank Dell",
         "pos": "WR",
         "team": "HOU",
         "status": "IR",
-        "count": 70680
+        "count": 92288
+      },
+      {
+        "name": "Las Vegas Raiders",
+        "pos": "DEF",
+        "team": "LV",
+        "status": null,
+        "count": 80928
       },
       {
         "name": "MarShawn Lloyd",
         "pos": "RB",
         "team": "GB",
         "status": null,
-        "count": 69768
+        "count": 71046
+      },
+      {
+        "name": "Malik Davis",
+        "pos": "RB",
+        "team": "DAL",
+        "status": null,
+        "count": 67077
       },
       {
         "name": "Darren Waller",
         "pos": "TE",
         "team": "CAR",
         "status": null,
-        "count": 60795
+        "count": 56727
       },
       {
         "name": "Jacksonville Jaguars",
         "pos": "DEF",
         "team": "JAX",
         "status": null,
-        "count": 51972
+        "count": 55902
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 50128
+        "count": 49856
       },
       {
-        "name": "Tre Tucker",
-        "pos": "WR",
-        "team": "LV",
-        "status": null,
-        "count": 48564
-      },
-      {
-        "name": "Kaelon Black",
+        "name": "Jacob Saylors",
         "pos": "RB",
-        "team": "SF",
+        "team": "DET",
         "status": null,
-        "count": 37597
+        "count": 48545
       },
       {
         "name": "Tyler Loop",
         "pos": "K",
         "team": "BAL",
         "status": null,
-        "count": 37278
-      },
-      {
-        "name": "Sione Vaki",
-        "pos": "RB",
-        "team": "DET",
-        "status": null,
-        "count": 34867
-      },
-      {
-        "name": "Justice Hill",
-        "pos": "RB",
-        "team": "BAL",
-        "status": null,
-        "count": 34470
-      },
-      {
-        "name": "Dohnte Meyers",
-        "pos": "WR",
-        "team": "CIN",
-        "status": null,
-        "count": 32247
-      },
-      {
-        "name": "Isiah Pacheco",
-        "pos": "RB",
-        "team": "DET",
-        "status": "IR",
-        "count": 30704
-      },
-      {
-        "name": "Emmett Johnson",
-        "pos": "RB",
-        "team": "KC",
-        "status": null,
-        "count": 29547
-      },
-      {
-        "name": "Zavion Thomas",
-        "pos": "WR",
-        "team": "CHI",
-        "status": null,
-        "count": 28899
+        "count": 43350
       },
       {
         "name": "Chris Bell",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 28707
+        "count": 39662
+      },
+      {
+        "name": "Tre Tucker",
+        "pos": "WR",
+        "team": "LV",
+        "status": null,
+        "count": 38646
+      },
+      {
+        "name": "Kaelon Black",
+        "pos": "RB",
+        "team": "SF",
+        "status": null,
+        "count": 36428
+      },
+      {
+        "name": "Isiah Pacheco",
+        "pos": "RB",
+        "team": "DET",
+        "status": "IR",
+        "count": 36352
+      },
+      {
+        "name": "Justice Hill",
+        "pos": "RB",
+        "team": "BAL",
+        "status": null,
+        "count": 32742
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 27480
+        "count": 29020
       },
       {
         "name": "Malik Willis",
         "pos": "QB",
         "team": "MIA",
         "status": null,
-        "count": 26635
+        "count": 28987
       },
       {
-        "name": "Kirk Cousins",
-        "pos": "QB",
-        "team": "LV",
+        "name": "Sione Vaki",
+        "pos": "RB",
+        "team": "DET",
         "status": null,
-        "count": 25440
+        "count": 28644
       },
       {
-        "name": "Malik Washington",
+        "name": "Dohnte Meyers",
         "pos": "WR",
-        "team": "MIA",
+        "team": "CIN",
         "status": null,
-        "count": 24536
+        "count": 27603
       },
       {
         "name": "Jalen Nailor",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 24210
+        "count": 26082
+      },
+      {
+        "name": "Malik Washington",
+        "pos": "WR",
+        "team": "MIA",
+        "status": null,
+        "count": 25584
       },
       {
         "name": "Keaton Mitchell",
         "pos": "RB",
         "team": "LAC",
         "status": "Questionable",
-        "count": 24138
-      },
-      {
-        "name": "Spencer Shrader",
-        "pos": "K",
-        "team": "IND",
-        "status": null,
-        "count": 24062
-      },
-      {
-        "name": "Odell Beckham",
-        "pos": "WR",
-        "team": "NYG",
-        "status": null,
-        "count": 23149
+        "count": 25020
       },
       {
         "name": "Detroit Lions",
         "pos": "DEF",
         "team": "DET",
         "status": null,
-        "count": 21843
+        "count": 24525
       },
       {
-        "name": "Barion Brown",
+        "name": "Zavion Thomas",
         "pos": "WR",
-        "team": "NO",
+        "team": "CHI",
         "status": null,
-        "count": 21726
+        "count": 24435
       },
       {
-        "name": "Tyler Shough",
-        "pos": "QB",
-        "team": "NO",
-        "status": null,
-        "count": 21280
-      },
-      {
-        "name": "Khalil Shakir",
-        "pos": "WR",
-        "team": "BUF",
-        "status": "Questionable",
-        "count": 21132
-      },
-      {
-        "name": "Seth McGowan",
+        "name": "Emmett Johnson",
         "pos": "RB",
-        "team": "IND",
+        "team": "KC",
         "status": null,
-        "count": 21120
-      },
-      {
-        "name": "Kyler Murray",
-        "pos": "QB",
-        "team": "MIN",
-        "status": null,
-        "count": 20336
-      },
-      {
-        "name": "AJ Barner",
-        "pos": "TE",
-        "team": "SEA",
-        "status": null,
-        "count": 19866
-      },
-      {
-        "name": "Dontayvion Wicks",
-        "pos": "WR",
-        "team": "PHI",
-        "status": null,
-        "count": 19344
-      },
-      {
-        "name": "Juwan Johnson",
-        "pos": "TE",
-        "team": "NO",
-        "status": null,
-        "count": 17444
-      },
-      {
-        "name": "Tank Bigsby",
-        "pos": "RB",
-        "team": "PHI",
-        "status": null,
-        "count": 17185
-      },
-      {
-        "name": "Cooper Kupp",
-        "pos": "WR",
-        "team": "SEA",
-        "status": null,
-        "count": 17136
-      },
-      {
-        "name": "Chris Rodriguez",
-        "pos": "RB",
-        "team": "JAX",
-        "status": null,
-        "count": 17037
-      },
-      {
-        "name": "Daniel Bellinger",
-        "pos": "TE",
-        "team": "TEN",
-        "status": null,
-        "count": 16548
-      },
-      {
-        "name": "Terrance Ferguson",
-        "pos": "TE",
-        "team": "LAR",
-        "status": "Questionable",
-        "count": 16368
-      },
-      {
-        "name": "Jordyn Tyson",
-        "pos": "WR",
-        "team": "NO",
-        "status": "IR",
-        "count": 16040
-      },
-      {
-        "name": "Pittsburgh Steelers",
-        "pos": "DEF",
-        "team": "PIT",
-        "status": null,
-        "count": 15648
-      },
-      {
-        "name": "Najee Harris",
-        "pos": "RB",
-        "team": "NYG",
-        "status": null,
-        "count": 15425
-      },
-      {
-        "name": "Mark Andrews",
-        "pos": "TE",
-        "team": "BAL",
-        "status": null,
-        "count": 14787
-      },
-      {
-        "name": "Dylan Sampson",
-        "pos": "RB",
-        "team": "CLE",
-        "status": null,
-        "count": 13675
-      },
-      {
-        "name": "Jake Bates",
-        "pos": "K",
-        "team": "DET",
-        "status": null,
-        "count": 13640
-      },
-      {
-        "name": "Keenan Allen",
-        "pos": "WR",
-        "team": "IND",
-        "status": null,
-        "count": 13432
-      },
-      {
-        "name": "Samaje Perine",
-        "pos": "RB",
-        "team": "CIN",
-        "status": null,
-        "count": 13408
-      },
-      {
-        "name": "Jacory Croskey-Merritt",
-        "pos": "RB",
-        "team": "WAS",
-        "status": "Questionable",
-        "count": 13374
-      },
-      {
-        "name": "Jayden Reed",
-        "pos": "WR",
-        "team": "GB",
-        "status": null,
-        "count": 12969
-      },
-      {
-        "name": "Marlin Klein",
-        "pos": "TE",
-        "team": "HOU",
-        "status": null,
-        "count": 12665
-      },
-      {
-        "name": "Tyler Allgeier",
-        "pos": "RB",
-        "team": "ARI",
-        "status": null,
-        "count": 12595
-      },
-      {
-        "name": "Ryan Flournoy",
-        "pos": "WR",
-        "team": "DAL",
-        "status": null,
-        "count": 12584
+        "count": 24120
       },
       {
         "name": "Matt Gay",
         "pos": "K",
         "team": "LV",
         "status": null,
-        "count": 12325
+        "count": 23895
       },
       {
-        "name": "Colbie Young",
+        "name": "Tyler Shough",
+        "pos": "QB",
+        "team": "NO",
+        "status": null,
+        "count": 23752
+      },
+      {
+        "name": "Kirk Cousins",
+        "pos": "QB",
+        "team": "LV",
+        "status": null,
+        "count": 23480
+      },
+      {
+        "name": "AJ Barner",
+        "pos": "TE",
+        "team": "SEA",
+        "status": null,
+        "count": 22458
+      },
+      {
+        "name": "Khalil Shakir",
         "pos": "WR",
+        "team": "BUF",
+        "status": "Questionable",
+        "count": 22032
+      },
+      {
+        "name": "Kyler Murray",
+        "pos": "QB",
+        "team": "MIN",
+        "status": null,
+        "count": 21120
+      },
+      {
+        "name": "Odell Beckham",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 21098
+      },
+      {
+        "name": "Barion Brown",
+        "pos": "WR",
+        "team": "NO",
+        "status": null,
+        "count": 19692
+      },
+      {
+        "name": "Spencer Shrader",
+        "pos": "K",
+        "team": "IND",
+        "status": null,
+        "count": 18746
+      },
+      {
+        "name": "Dontayvion Wicks",
+        "pos": "WR",
+        "team": "PHI",
+        "status": null,
+        "count": 18690
+      },
+      {
+        "name": "Seth McGowan",
+        "pos": "RB",
+        "team": "IND",
+        "status": null,
+        "count": 18624
+      },
+      {
+        "name": "Juwan Johnson",
+        "pos": "TE",
+        "team": "NO",
+        "status": null,
+        "count": 18450
+      },
+      {
+        "name": "Cooper Kupp",
+        "pos": "WR",
+        "team": "SEA",
+        "status": null,
+        "count": 18138
+      },
+      {
+        "name": "Tank Bigsby",
+        "pos": "RB",
+        "team": "PHI",
+        "status": null,
+        "count": 17451
+      },
+      {
+        "name": "Terrance Ferguson",
+        "pos": "TE",
+        "team": "LAR",
+        "status": "Questionable",
+        "count": 17272
+      },
+      {
+        "name": "Najee Harris",
+        "pos": "RB",
+        "team": "NYG",
+        "status": null,
+        "count": 17060
+      },
+      {
+        "name": "Mark Andrews",
+        "pos": "TE",
+        "team": "BAL",
+        "status": null,
+        "count": 16947
+      },
+      {
+        "name": "Jacory Croskey-Merritt",
+        "pos": "RB",
+        "team": "WAS",
+        "status": "Questionable",
+        "count": 16245
+      },
+      {
+        "name": "Jordyn Tyson",
+        "pos": "WR",
+        "team": "NO",
+        "status": "IR",
+        "count": 16104
+      },
+      {
+        "name": "Pittsburgh Steelers",
+        "pos": "DEF",
+        "team": "PIT",
+        "status": null,
+        "count": 15912
+      },
+      {
+        "name": "Chris Rodriguez",
+        "pos": "RB",
+        "team": "JAX",
+        "status": null,
+        "count": 15876
+      },
+      {
+        "name": "Jake Bates",
+        "pos": "K",
+        "team": "DET",
+        "status": null,
+        "count": 15600
+      },
+      {
+        "name": "Samaje Perine",
+        "pos": "RB",
         "team": "CIN",
         "status": null,
-        "count": 11952
+        "count": 14524
+      },
+      {
+        "name": "Jayden Reed",
+        "pos": "WR",
+        "team": "GB",
+        "status": null,
+        "count": 14364
+      },
+      {
+        "name": "Dylan Sampson",
+        "pos": "RB",
+        "team": "CLE",
+        "status": null,
+        "count": 14000
+      },
+      {
+        "name": "Daniel Bellinger",
+        "pos": "TE",
+        "team": "TEN",
+        "status": null,
+        "count": 13692
+      },
+      {
+        "name": "Keenan Allen",
+        "pos": "WR",
+        "team": "IND",
+        "status": null,
+        "count": 12360
+      },
+      {
+        "name": "Tyler Allgeier",
+        "pos": "RB",
+        "team": "ARI",
+        "status": null,
+        "count": 12290
       },
       {
         "name": "Jauan Jennings",
         "pos": "WR",
         "team": "MIN",
         "status": null,
-        "count": 11452
+        "count": 11830
       },
       {
-        "name": "Chase McLaughlin",
-        "pos": "K",
-        "team": "TB",
+        "name": "Ryan Flournoy",
+        "pos": "WR",
+        "team": "DAL",
         "status": null,
-        "count": 11432
+        "count": 11736
       },
       {
         "name": "Trey Smack",
         "pos": "K",
         "team": "GB",
         "status": null,
-        "count": 11288
+        "count": 11476
+      },
+      {
+        "name": "Malachi Fields",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 11295
+      },
+      {
+        "name": "Deshaun Watson",
+        "pos": "QB",
+        "team": "CLE",
+        "status": null,
+        "count": 11200
+      },
+      {
+        "name": "Adonai Mitchell",
+        "pos": "WR",
+        "team": "NYJ",
+        "status": null,
+        "count": 10784
       }
     ],
     "drops": [
@@ -37871,273 +37871,273 @@
         "pos": "RB",
         "team": "CHI",
         "status": null,
-        "count": 75560
+        "count": 70848
       },
       {
         "name": "Jaydon Blue",
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 56024
+        "count": 46888
       },
       {
         "name": "Alvin Kamara",
         "pos": "RB",
         "team": "NO",
         "status": "Questionable",
-        "count": 38968
-      },
-      {
-        "name": "Malik Davis",
-        "pos": "RB",
-        "team": "DAL",
-        "status": null,
-        "count": 35919
-      },
-      {
-        "name": "Brenton Strange",
-        "pos": "TE",
-        "team": "JAX",
-        "status": null,
-        "count": 35739
-      },
-      {
-        "name": "Oronde Gadsden",
-        "pos": "TE",
-        "team": "LAC",
-        "status": null,
-        "count": 35270
+        "count": 36664
       },
       {
         "name": "New England Patriots",
         "pos": "DEF",
         "team": "NE",
         "status": null,
-        "count": 35147
+        "count": 36225
       },
       {
-        "name": "Emanuel Wilson",
-        "pos": "RB",
-        "team": "SEA",
-        "status": "Questionable",
-        "count": 31059
+        "name": "Brenton Strange",
+        "pos": "TE",
+        "team": "JAX",
+        "status": null,
+        "count": 34344
+      },
+      {
+        "name": "Oronde Gadsden",
+        "pos": "TE",
+        "team": "LAC",
+        "status": null,
+        "count": 34195
       },
       {
         "name": "Kenyon Sadiq",
         "pos": "TE",
         "team": "NYJ",
         "status": "Questionable",
-        "count": 30969
+        "count": 29979
       },
       {
         "name": "Tyreek Hill",
         "pos": "WR",
         "team": null,
         "status": "Questionable",
-        "count": 30480
+        "count": 28256
+      },
+      {
+        "name": "Malik Davis",
+        "pos": "RB",
+        "team": "DAL",
+        "status": null,
+        "count": 25848
+      },
+      {
+        "name": "Emanuel Wilson",
+        "pos": "RB",
+        "team": "SEA",
+        "status": "Questionable",
+        "count": 25470
       },
       {
         "name": "Keaton Mitchell",
         "pos": "RB",
         "team": "LAC",
         "status": "Questionable",
-        "count": 29610
+        "count": 25146
       },
       {
         "name": "Cyrus Allen",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 26364
-      },
-      {
-        "name": "Jalen Nailor",
-        "pos": "WR",
-        "team": "LV",
-        "status": null,
-        "count": 25182
-      },
-      {
-        "name": "Isiah Pacheco",
-        "pos": "RB",
-        "team": "DET",
-        "status": "IR",
-        "count": 24576
-      },
-      {
-        "name": "Jam Miller",
-        "pos": "RB",
-        "team": null,
-        "status": "Questionable",
-        "count": 24057
+        "count": 25110
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 23580
+        "count": 23485
       },
       {
         "name": "Fernando Mendoza",
         "pos": "QB",
         "team": "LV",
         "status": null,
-        "count": 23008
+        "count": 23416
       },
       {
-        "name": "Jordyn Tyson",
+        "name": "Jalen Nailor",
         "pos": "WR",
-        "team": "NO",
-        "status": "IR",
-        "count": 22776
+        "team": "LV",
+        "status": null,
+        "count": 22401
       },
       {
         "name": "Omar Cooper",
         "pos": "WR",
         "team": "NYJ",
         "status": null,
-        "count": 22576
-      },
-      {
-        "name": "Jerry Jeudy",
-        "pos": "WR",
-        "team": "CLE",
-        "status": null,
-        "count": 22563
-      },
-      {
-        "name": "Malik Washington",
-        "pos": "WR",
-        "team": "MIA",
-        "status": null,
-        "count": 22520
-      },
-      {
-        "name": "Brian Robinson",
-        "pos": "RB",
-        "team": "ATL",
-        "status": null,
-        "count": 21402
+        "count": 22128
       },
       {
         "name": "Detroit Lions",
         "pos": "DEF",
         "team": "DET",
         "status": null,
-        "count": 21339
+        "count": 21546
       },
       {
-        "name": "Chimere Dike",
+        "name": "Jordyn Tyson",
         "pos": "WR",
-        "team": "TEN",
-        "status": null,
-        "count": 20394
+        "team": "NO",
+        "status": "IR",
+        "count": 21504
       },
       {
-        "name": "Tank Bigsby",
-        "pos": "RB",
-        "team": "PHI",
+        "name": "Jerry Jeudy",
+        "pos": "WR",
+        "team": "CLE",
         "status": null,
-        "count": 20356
+        "count": 21420
+      },
+      {
+        "name": "Malik Washington",
+        "pos": "WR",
+        "team": "MIA",
+        "status": null,
+        "count": 21392
+      },
+      {
+        "name": "Isiah Pacheco",
+        "pos": "RB",
+        "team": "DET",
+        "status": "IR",
+        "count": 20840
+      },
+      {
+        "name": "Brian Robinson",
+        "pos": "RB",
+        "team": "ATL",
+        "status": null,
+        "count": 20316
       },
       {
         "name": "Chris Rodriguez",
         "pos": "RB",
         "team": "JAX",
         "status": null,
-        "count": 19602
+        "count": 20115
       },
       {
-        "name": "Kaelon Black",
+        "name": "Jam Miller",
         "pos": "RB",
-        "team": "SF",
+        "team": null,
+        "status": "Questionable",
+        "count": 19773
+      },
+      {
+        "name": "Chimere Dike",
+        "pos": "WR",
+        "team": "TEN",
         "status": null,
-        "count": 19243
+        "count": 19287
+      },
+      {
+        "name": "Tank Bigsby",
+        "pos": "RB",
+        "team": "PHI",
+        "status": null,
+        "count": 18025
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 19016
+        "count": 17856
       },
       {
         "name": "Zach Ertz",
         "pos": "TE",
         "team": null,
         "status": null,
-        "count": 18918
+        "count": 17838
       },
       {
-        "name": "J'Mari Taylor",
+        "name": "Kaelon Black",
         "pos": "RB",
-        "team": "JAX",
+        "team": "SF",
         "status": null,
-        "count": 18639
-      },
-      {
-        "name": "Sean Tucker",
-        "pos": "RB",
-        "team": "TB",
-        "status": "Questionable",
-        "count": 18621
-      },
-      {
-        "name": "Darren Waller",
-        "pos": "TE",
-        "team": "CAR",
-        "status": null,
-        "count": 18513
-      },
-      {
-        "name": "Dohnte Meyers",
-        "pos": "WR",
-        "team": "CIN",
-        "status": null,
-        "count": 18396
+        "count": 17143
       },
       {
         "name": "Terrance Ferguson",
         "pos": "TE",
         "team": "LAR",
         "status": "Questionable",
-        "count": 18352
+        "count": 16888
       },
       {
-        "name": "Jacob Saylors",
-        "pos": "RB",
-        "team": "DET",
+        "name": "Darren Waller",
+        "pos": "TE",
+        "team": "CAR",
         "status": null,
-        "count": 18145
-      },
-      {
-        "name": "Emmett Johnson",
-        "pos": "RB",
-        "team": "KC",
-        "status": null,
-        "count": 17919
+        "count": 16749
       },
       {
         "name": "Devin Singletary",
         "pos": "RB",
         "team": "NYG",
         "status": null,
-        "count": 17784
+        "count": 16371
       },
       {
-        "name": "Darnell Mooney",
-        "pos": "WR",
-        "team": "NYG",
+        "name": "Sean Tucker",
+        "pos": "RB",
+        "team": "TB",
+        "status": "Questionable",
+        "count": 15777
+      },
+      {
+        "name": "Emmett Johnson",
+        "pos": "RB",
+        "team": "KC",
         "status": null,
-        "count": 16857
+        "count": 15732
       },
       {
         "name": "Zachariah Branch",
         "pos": "WR",
         "team": "ATL",
         "status": null,
-        "count": 16656
+        "count": 15472
+      },
+      {
+        "name": "Darnell Mooney",
+        "pos": "WR",
+        "team": "NYG",
+        "status": null,
+        "count": 14985
+      },
+      {
+        "name": "J'Mari Taylor",
+        "pos": "RB",
+        "team": "JAX",
+        "status": null,
+        "count": 14859
+      },
+      {
+        "name": "Xavier Worthy",
+        "pos": "WR",
+        "team": "KC",
+        "status": null,
+        "count": 14859
+      },
+      {
+        "name": "Tank Dell",
+        "pos": "WR",
+        "team": "HOU",
+        "status": "IR",
+        "count": 14576
       }
     ]
   },

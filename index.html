@@ -2986,7 +2986,7 @@ function crestFor(mgr){ return (teamIndex()[mgr] || {}).logo || ""; }
 
 function normalizeLive(){
   const src = LIVE && LIVE.rosters && LIVE.rosters.teams;
-  if(!src || !src.length || !src[0].roster) return null;
+  if(!src || !src.length) return null;
   const nameOf = id => {
     const t = (LIVE.teams && LIVE.teams.teams || []).find(x => x.id === id);
     return t ? (t.name||"").trim() : "Team " + id;
@@ -2999,7 +2999,7 @@ function normalizeLive(){
     const hit = SEASONS["2025"].find(r => r[0] === tName);   // last resort
     return hit ? hit[1] : tName;
   };
-  return src.map(t => {
+  const out = src.map(t => {
     const entries = (t.roster && t.roster.entries) || [];
     const players = entries.map(e => {
       const p = (e.playerPoolEntry && e.playerPoolEntry.player) || {};
@@ -3035,6 +3035,20 @@ function normalizeLive(){
     const tn = nameOf(t.id);
     return { id: t.id, teamName: tn, manager: manOf(tn, t.id), players };
   });
+  /* An undrafted league still sends all ten teams, each with an empty roster,
+     and the nightly file keeps saying that until the first pull after the
+     draft. Ten teams with nobody on them is not roster data. Counting it as
+     roster data made rostersPending() read false, so instead of "Rosters are
+     syncing" the Team page reported that nobody was available for any slot,
+     graded every position thin and projected 0.0 against a real opponent.
+
+     Every team, not just one. A pull that caught some teams and not others is
+     worse than no pull at all: your own page looks right while an opponent
+     projects 0.0 for the season, and there is nothing on screen to say the
+     number is missing rather than bad. The draft fills all ten inside the
+     first round, so this only ever holds for a payload that is genuinely
+     half written. */
+  return out.every(t => t.players.length) ? out : null;
 }
 
 /* ---------- demo fixture (clearly fake players) ---------- */
@@ -3209,16 +3223,19 @@ function rosterBlock(team, sel, side, foldBench){
   const bench = s.bench.length
     ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side, team.manager)).join("")
     : `<p class="note">Nobody on the bench.</p>`;
-  /* Your own bench stays open, because you know who is on it and you are
-     picking from it. Theirs folds away: it is thirty rows between the two
-     lineups and the ideas, and it is opened maybe one deal in five. */
+  /* Both benches fold. Theirs starts closed, since it is thirty rows between
+     the two lineups and you open it maybe one deal in five. Yours starts open,
+     because you are usually picking out of it. Either one springs open on its
+     own if somebody from it is already in the deal, so a chip can never point
+     at a row that is hidden. */
   const picked = s.bench.some(p => sel.has(p.id));
+  const open = picked || !foldBench;
   return sectHead(`${team.manager}'s lineup`, s.total) +
     s.starters.map(line).join("") +
-    (foldBench && !picked
-      ? `<details class="hhmore"><summary>${esc(team.manager)}'s bench`
-        + `${s.bench.length ? " &middot; " + s.bench.length : ""}</summary>${bench}</details>`
-      : sectHead("Bench") + bench);
+    `<details class="hhmore"${open ? " open" : ""}>
+      <summary>${esc(team.manager)}'s bench${
+        s.bench.length ? " &middot; " + s.bench.length : ""}</summary>
+      ${bench}</details>`;
 }
 
 /* True once the draft has unlocked the tabs but ESPN rosters have not landed in
@@ -3226,7 +3243,11 @@ function rosterBlock(team, sel, side, foldBench){
    nightly pull, unless the job is run by hand. */
 const rostersPending = () => {
   try { ensureRosters(); } catch(e){}
-  return liveDraft() && !PREVIEW && !(ROSTERS && ROSTERS.length);
+  if(PREVIEW || !liveDraft()) return false;
+  if(!(ROSTERS && ROSTERS.length)) return true;
+  /* Second line of defence behind normalizeLive. Whatever shape ESPN sends,
+     a roster anybody is missing from means the pull has not landed yet. */
+  return !ROSTERS.every(t => t.players && t.players.length);
 };
 const pendingCard = () => lock("Rosters are syncing",
   "The draft is done. Rosters come across on the next pull from ESPN, usually by 7am ET. "

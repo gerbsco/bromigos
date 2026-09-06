@@ -1682,7 +1682,7 @@ function renderSnapshot(){
   let html = "";
   try { html += renderOdds(); } catch(e){ console.warn("[bromigos] odds:", e && e.message); }
   try { html += renderSwap(); } catch(e){ console.warn("[bromigos] swap:", e && e.message); }
-  el.innerHTML = html ? (SEASON.demo ? demoBanner() : "") + html : "";
+  el.innerHTML = html ? (SEASON.demo ? seasonBanner() : "") + html : "";
 }
 
 function renderLeague(){
@@ -2984,6 +2984,16 @@ function findTrades(mine, theirs, limit = 6){
 
 /* ---------- turn the ESPN payload into the model above ---------- */
 const POS_MAP = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
+/* ESPN sends the pro team as a number, and the roster row was printing it raw,
+   so every player read "Jaxson Dart, 19" where 19 is the Giants. The ids are
+   fixed and have not moved in years. Anything unmapped prints nothing rather
+   than a number nobody can read. */
+const PRO_TEAM = { 0:"", 1:"ATL", 2:"BUF", 3:"CHI", 4:"CIN", 5:"CLE", 6:"DAL",
+  7:"DEN", 8:"DET", 9:"GB", 10:"TEN", 11:"IND", 12:"KC", 13:"LV", 14:"LAR",
+  15:"MIA", 16:"MIN", 17:"NE", 18:"NO", 19:"NYG", 20:"NYJ", 21:"PHI", 22:"ARI",
+  23:"PIT", 24:"LAC", 25:"SF", 26:"SEA", 27:"TB", 28:"WSH", 29:"CAR", 30:"JAX",
+  33:"BAL", 34:"HOU" };
+const proTeam = id => PRO_TEAM[Number(id)] || "";
 /* manager -> their team this season, resolved through the ESPN member GUID.
    The mapping used to match the 2025 team name out of SEASONS, which breaks the
    moment anyone renames their team, so it would have failed for the whole
@@ -3052,7 +3062,7 @@ function normalizeLive(){
         id: String(p.id || e.playerId),
         name: p.fullName || "Unknown",
         pos: POS_MAP[p.defaultPositionId] || "WR",
-        team: p.proTeamId || "",
+        team: proTeam(p.proTeamId),
         proj: Math.round((projStat.appliedTotal || 0) * 10) / 10,
         avg:  Math.round((realStat.appliedAverage || 0) * 10) / 10,
         /* the whole year as ESPN sees it, and what has actually been banked.
@@ -3170,7 +3180,8 @@ function loadRosterModel(){
   const faLive = (LIVE && LIVE.freeAgents) || null;
   FREEAGENTS = (faLive && faLive.length) ? faLive.map(p => ({
     id:String(p.id), name:p.player?.fullName || "Unknown",
-    pos: POS_MAP[p.player?.defaultPositionId] || "WR", team:"FA",
+    pos: POS_MAP[p.player?.defaultPositionId] || "WR",
+    team: proTeam(p.player?.proTeamId) || "FA",
     proj: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===1)?.appliedTotal||0)*10)/10,
     avg: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===0)?.appliedAverage||0)*10)/10,
     own: p.player?.ownership ? Math.round(p.player.ownership.percentOwned) : null,
@@ -3227,7 +3238,13 @@ function rosterSections(players){
   const bench = players.filter(p => !used.has(p.id) && !TAIL(p)).sort((a,b) => b.proj - a.proj);
   const tail = lu.filled.filter(f => order.indexOf(f.slot) < 0)
     .concat(players.filter(p => !used.has(p.id) && TAIL(p)).map(p => ({ slot:"BE", player:p })));
-  return { starters, bench, tail, total: lu.total };
+  /* The header over the starters was printing the whole lineup, kicker and
+     defense included, so it read 114.0 above seven rows that add to 100.1.
+     Each section now totals what is actually under it. */
+  const sum = list => list.reduce((n, f) =>
+    n + (f.player ? projOf(f.player).blend : 0), 0);
+  return { starters, bench, tail, total: lu.total,
+           startTotal: sum(starters), tailTotal: sum(tail) };
 }
 
 const plrRow = (p, slot, picked, side, owner) => `<div class="plr ${picked?"picked":""} ${side==="get"?"get":""}"
@@ -3264,7 +3281,7 @@ function rosterBlock(team, sel, side, foldBench){
      at a row that is hidden. */
   const picked = s.bench.some(p => sel.has(p.id));
   const open = picked || !foldBench;
-  return sectHead(`${team.manager}'s lineup`, s.total) +
+  return sectHead(`${team.manager}'s lineup`, s.startTotal) +
     s.starters.map(line).join("") +
     `<details class="hhmore"${open ? " open" : ""}>
       <summary>${esc(team.manager)}'s bench${
@@ -3290,6 +3307,9 @@ const pendingCard = () => lock("Rosters are syncing",
 const demoBanner = () => IS_DEMO
   ? `<div class="demoban"><b>Demo data.</b> Invented players and made-up projections so the
      layout can be tested before the draft. Switches to real rosters automatically.</div>` : "";
+/* Says what is fake rather than inferring it from the rosters. */
+const seasonBanner = () => `<div class="demoban"><b>Invented results.</b> Nothing has been
+  played, so these are made-up scores standing in until Week 1. Preview only.</div>`;
 
 const needPills = g => `<div class="needs">` + Object.entries(g).map(([pos,v]) =>
   `<span class="need ${v.label==="strong"?"strong":v.label==="weak"?"weak":""}">${pos} ${
@@ -3372,7 +3392,9 @@ function renderTradePro(){
 
   const tsd = (d, who) => `<span class="tsd ${live ? (d > 0 ? "up" : d < 0 ? "down" : "") : ""}">
       <b>${live ? sign(per(d)) : "&mdash;"}</b><i>${esc(who)}</i></span>`;
-  const tsHint = `<span class="tsn">pts a week<br>for ${wksN} more</span>`;
+  const tsHint = wksN
+    ? `<span class="tsn">pts a week<br>for ${wksN} more</span>`
+    : `<span class="tsn">regular season<br>is over</span>`;
 
   /* Your own gaps were on screen and theirs were not, which is backwards: a
      deal gets accepted because it fixes something for them. */
@@ -3779,6 +3801,14 @@ function renderTeamPage(){
   const med = leagueMedians(ROSTERS);
   const g = gradeTeam(me, med);
   const s = rosterSections(me.players);
+  /* Weeks 15 to 17. Every regular season game is decided, so there is no rest
+     of season to be ranked on and no next opponent to project against, and
+     the page was printing a "This week" heading over nothing. */
+  const over = !weeksLeft().length;
+  /* Nothing to play, or nothing published yet. Two different empty states, and
+     the page used to print a "This week" heading over neither. */
+  let nx = null;
+  try { nx = nextMatchup(me.id); } catch(e){}
   const ranked = ROSTERS.map(t => ({ t, v: rosterValue(t.players) })).sort((a,b) => b.v - a.v);
   const seed = ranked.findIndex(r => r.t.id === me.id) + 1;
 
@@ -3788,7 +3818,14 @@ function renderTeamPage(){
   const byes = {};
   me.players.forEach(p => { if(p.bye) byes[p.bye] = (byes[p.bye]||0)+1; });
   const worstBye = Object.entries(byes).sort((a,b) => b[1]-a[1])[0];
-  const hidden = worstBye && worstBye[1] >= 4
+  /* Byes drive the lineup, the trade rating and the thinnest-week warning. If
+     the feed is not carrying them, every one of those is quietly running blind
+     and the season table shows the same number fourteen weeks in a row, so say
+     so rather than looking confident. */
+  const noByes = !Object.keys(byes).length;
+  const hidden = noByes
+    ? "ESPN has not sent bye weeks with the rosters yet, so nothing here is bye aware until the next pull."
+    : worstBye && worstBye[1] >= 4
     ? `Week ${worstBye[0]} is going to hurt. You have ${worstBye[1]} players on bye at once.`
     : (me.players.filter(p => p.injury).length >= 3
       ? `${me.players.filter(p=>p.injury).length} players carrying an injury tag right now.`
@@ -3802,11 +3839,22 @@ function renderTeamPage(){
                 return (r && (r.w + r.l)) ? ` &middot; ${r.w}-${r.l}` : ""; }
           catch(e){ return ""; }
         })()}</div></div>
-      <div class="th-seed"><b>${ordinal(seed)}</b><span>of ${ROSTERS.length} on rest of season</span></div>
+      <div class="th-seed"><b>${ordinal(seed)}</b><span>of ${ROSTERS.length} on ${
+        over ? "roster strength" : "rest of season"}</span></div>
     </div>
 
     <h2>This week</h2>
-    ${renderMatchup(me)}
+    ${over
+      ? `<div class="card"><h3>Regular season is done</h3>
+          <p>Weeks 15 to 17 are the bracket and this site does not carry it, so
+            those matchups and scores are on ESPN. Your roster and grades below
+            still update every morning.</p></div>`
+      : !nx
+      ? `<div class="card"><h3>Waiting on the schedule</h3>
+          <p>ESPN has not published the matchups yet. Your opponent, the weekly
+            projection and the season table all fill in on the next pull. The
+            lineup check below works either way.</p></div>`
+      : renderMatchup(me)}
     ${renderStartSit(me)}
 
     ${renderOutlookTable(me)}
@@ -3860,7 +3908,11 @@ function buildSeason(){
   /* Invented results must never reach the league. In week one there are no
      played games yet, and without this the standings, records and pick'em form
      lines would all quietly show a fabricated season. */
-  if(!PREVIEW) return { demo:false, weeks:{}, teams };
+  /* Fixtures travel together. Inventing a season on top of real drafted
+     rosters put made-up records on the Team hero and made-up playoff odds in
+     the snapshot with nothing on screen saying so, because the demo banner
+     keys off the rosters. */
+  if(!PREVIEW || !IS_DEMO) return { demo:false, weeks:{}, teams };
   // demo: 14 weeks of round-robin with plausible scoring
   const rnd = (i,s) => { const x = Math.sin(i*57.3 + s*91.7) * 43758.5453; return x - Math.floor(x); };
   const ids = teams.map(t => t.id);
@@ -4019,21 +4071,7 @@ function nextMatchup(meId){
     return opp ? { week: g.matchupPeriodId, opp } : null;
   }
 
-  if(!PREVIEW) return null;
-  if(!SEASON) SEASON = buildSeason();
-  const week = Object.keys(SEASON.weeks).length + 1;
-  const ids = (ROSTERS||[]).map(t => t.id);
-  if(ids.length < 2) return null;
-  const rot = ids.slice(1), shift = (week - 1) % rot.length;
-  const ordered = [ids[0], ...rot.slice(shift), ...rot.slice(0, shift)];
-  let oppId = null;
-  for(let k = 0; k < ordered.length / 2; k++){
-    const a = ordered[k], b = ordered[ordered.length - 1 - k];
-    if(a === meId) oppId = b;
-    if(b === meId) oppId = a;
-  }
-  const opp = (ROSTERS||[]).find(t => t.id === oppId);
-  return opp ? { week, opp } : null;
+  return null;
 }
 
 /* ---------- season at a glance ----------
@@ -4049,18 +4087,11 @@ function scheduleFor(meId, wk){
     && (m.home.teamId === meId || m.away.teamId === meId));
   if(g) return g.home.teamId === meId ? g.away.teamId : g.home.teamId;
 
-  /* No schedule means preseason. Rotating a round robin here is invented, so
-     it is fixtures only and never reaches the league. */
-  if(!PREVIEW) return null;
-  const ids = (ROSTERS || []).map(t => t.id);
-  if(ids.length < 2) return null;
-  const rot = ids.slice(1), shift = (wk - 1) % rot.length;
-  const ordered = [ids[0], ...rot.slice(shift), ...rot.slice(0, shift)];
-  for(let k = 0; k < ordered.length / 2; k++){
-    const a = ordered[k], b = ordered[ordered.length - 1 - k];
-    if(a === meId) return b;
-    if(b === meId) return a;
-  }
+  /* No fixture, no answer. This used to rotate a round robin when ESPN had not
+     published the schedule, which produced a full fourteen week table with the
+     same nine opponents cycling and every margin repeating. It was gated to
+     preview, but preview is where the commissioner checks what the league is
+     about to see, so an invented table there is still an invented table. */
   return null;
 }
 
@@ -4207,16 +4238,16 @@ function renderSuggested(me){
   const benchTotal = s.bench.reduce((n,p) => n + projOf(p).blend, 0);
   const split = s.starters.filter(f => f.player && projDisagrees(projOf(f.player)));
 
-  return sectHead("Starting", s.total) +
+  return sectHead("Starting", s.startTotal) +
     s.starters.map(f => row(f.player, f.slot)).join("") +
-    sectHead("Kicker and defense") +
+    sectHead("Kicker and defense", s.tailTotal) +
     s.tail.map(f => row(f.player, f.slot)).join("") +
     sectHead("Bench", s.bench.length ? benchTotal : null) +
     (s.bench.length
       ? s.bench.map(p => row(p, "")).join("")
       : `<p class="note">Nobody on the bench.</p>`) +
     `<div class="srcline"><span>${esc(src)}</span>
-      <span>starters project ${s.total.toFixed(1)}</span></div>` +
+      <span>full lineup projects ${s.total.toFixed(1)}</span></div>` +
     (split.length
       ? `<p class="note">${split.length} starter${split.length > 1 ? "s" : ""} the two
          sources disagree on, marked above. That is where a lineup call is worth

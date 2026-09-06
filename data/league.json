@@ -1,10 +1,11 @@
 {
-  "fetchedAt": "2026-09-06T22:35:43.774Z",
+  "fetchedAt": "2026-09-06T23:04:40.240Z",
   "leagueId": "24869044",
   "season": "2026",
   "sources": {
     "espn": true,
     "sleeper": true,
+    "byes": true,
     "nflverseStats": true,
     "nflverseSnaps": false
   },
@@ -1853,7 +1854,7 @@
           "drops": 0,
           "matchupAcquisitionTotals": {},
           "misc": 0,
-          "moveToActive": 0,
+          "moveToActive": 1,
           "moveToIR": 0,
           "paid": 0,
           "teamCharges": 0,
@@ -1993,7 +1994,7 @@
           "drops": 0,
           "matchupAcquisitionTotals": {},
           "misc": 0,
-          "moveToActive": 0,
+          "moveToActive": 2,
           "moveToIR": 0,
           "paid": 0,
           "teamCharges": 0,
@@ -2833,7 +2834,7 @@
           "drops": 0,
           "matchupAcquisitionTotals": {},
           "misc": 0,
-          "moveToActive": 0,
+          "moveToActive": 1,
           "moveToIR": 0,
           "paid": 0,
           "teamCharges": 0,
@@ -3764,7 +3765,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -4282,7 +4284,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -4852,7 +4855,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -5427,7 +5431,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -5908,7 +5913,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -5920,7 +5926,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 23,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": 4685278,
               "playerPoolEntry": {
@@ -6455,7 +6461,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -7044,7 +7051,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -7056,7 +7064,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 23,
               "pendingTransactionIds": null,
               "playerId": 4569987,
               "playerPoolEntry": {
@@ -7622,7 +7630,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -8095,7 +8104,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -8653,7 +8663,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -9212,7 +9223,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -9805,7 +9817,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -10351,7 +10364,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -10822,7 +10836,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -10835,7 +10850,9 @@
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
               "lineupSlotId": 20,
-              "pendingTransactionIds": null,
+              "pendingTransactionIds": [
+                "30506ed5-b633-4df4-bab7-e1b4577c1130"
+              ],
               "playerId": 4430802,
               "playerPoolEntry": {
                 "appliedStatTotal": 0,
@@ -11256,7 +11273,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -11886,7 +11904,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -12466,7 +12485,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -13038,7 +13058,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -13526,7 +13547,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -13538,7 +13560,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": 4595348,
               "playerPoolEntry": {
@@ -14060,7 +14082,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -14613,7 +14636,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -15105,7 +15129,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -15699,7 +15724,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -15711,7 +15737,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 4,
               "pendingTransactionIds": null,
               "playerId": 4360761,
               "playerPoolEntry": {
@@ -16175,7 +16201,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -16629,7 +16656,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -17189,7 +17217,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -17745,7 +17774,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -18127,7 +18157,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -18708,7 +18739,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -18720,7 +18752,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": -16005,
               "playerPoolEntry": {
@@ -19333,7 +19365,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -19802,7 +19835,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -19814,7 +19848,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 16,
               "pendingTransactionIds": null,
               "playerId": -16030,
               "playerPoolEntry": {
@@ -20428,7 +20462,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -21009,7 +21044,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -21572,7 +21608,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -22103,7 +22140,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -22665,7 +22703,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -23237,7 +23276,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -23784,7 +23824,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -24324,7 +24365,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -24932,7 +24974,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -25507,7 +25550,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -25998,7 +26042,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -26525,7 +26570,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -27154,7 +27200,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -27618,7 +27665,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -28209,7 +28257,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -28619,7 +28668,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -29111,7 +29161,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -29686,7 +29737,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -30256,7 +30308,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -30851,7 +30904,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -31409,7 +31463,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -31885,7 +31940,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -32461,7 +32517,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -33004,7 +33061,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -33576,7 +33634,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -34053,7 +34112,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -34597,7 +34657,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -35187,7 +35248,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -35748,7 +35810,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -36373,7 +36436,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -36916,7 +36980,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -37348,7 +37413,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -37812,7 +37878,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -38362,7 +38429,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -38934,7 +39002,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -39407,7 +39476,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -39976,7 +40046,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -40540,7 +40611,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -40969,7 +41041,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -41545,7 +41618,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -41928,7 +42002,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -42525,7 +42600,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -42995,7 +43071,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -43620,7 +43697,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -44173,7 +44251,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -44713,7 +44792,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -45183,7 +45263,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -45658,7 +45739,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -46241,7 +46323,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -46831,7 +46914,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -47314,7 +47398,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -47864,7 +47949,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -48457,7 +48543,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -49026,7 +49113,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -49578,7 +49666,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -50054,7 +50143,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -50568,7 +50658,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -51117,7 +51208,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -51533,7 +51625,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -52045,7 +52138,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -52670,7 +52764,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -53071,7 +53166,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -53543,7 +53639,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -54014,7 +54111,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -54590,7 +54688,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -55178,7 +55277,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -55653,7 +55753,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -56084,7 +56185,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -56566,7 +56668,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -57169,7 +57272,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -57752,7 +57856,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -58225,7 +58330,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -58719,7 +58825,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -59196,7 +59303,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -59856,7 +59964,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -60441,7 +60550,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -61011,7 +61121,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -61442,7 +61553,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -61850,7 +61962,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -62473,7 +62586,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -63025,7 +63139,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -63588,7 +63703,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -64158,7 +64274,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -64700,7 +64817,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -65236,7 +65354,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -65802,7 +65921,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -66371,7 +66491,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -66942,7 +67063,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -67429,7 +67551,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -67969,7 +68092,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -68497,7 +68621,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -69020,7 +69145,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -69032,7 +69158,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": -16014,
               "playerPoolEntry": {
@@ -69645,7 +69771,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -69657,7 +69784,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 16,
               "pendingTransactionIds": null,
               "playerId": -16023,
               "playerPoolEntry": {
@@ -70270,7 +70397,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -70707,7 +70835,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -71188,7 +71317,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -71757,7 +71887,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -72315,7 +72446,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -72895,7 +73027,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -73476,7 +73609,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -74029,7 +74163,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -74514,7 +74649,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -75104,7 +75240,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -75671,7 +75808,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -76149,7 +76287,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -76693,7 +76832,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 9
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -77270,7 +77410,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -77867,7 +78008,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 5
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -78395,7 +78537,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -78799,7 +78942,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -79319,7 +79463,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -79944,7 +80089,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -80415,7 +80561,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 6
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -81003,7 +81150,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 13
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -81576,7 +81724,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -82076,7 +82225,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -82550,7 +82700,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -83026,7 +83177,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -83519,7 +83671,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -83990,7 +84143,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 14
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -84470,7 +84624,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -85035,7 +85190,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -85612,7 +85768,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -86171,7 +86328,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 10
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -86750,7 +86908,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -87215,7 +87374,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -87685,7 +87845,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 7
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -88314,7 +88475,8 @@
                       }
                     }
                   ],
-                  "universeId": 1
+                  "universeId": 1,
+                  "byeWeek": 11
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -88786,7 +88948,8 @@
                       }
                     }
                   ],
-                  "universeId": 2
+                  "universeId": 2,
+                  "byeWeek": 8
                 },
                 "rosterLocked": false,
                 "status": "ONTEAM",
@@ -91357,7 +91520,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 16,
+                "lineupSlotId": 20,
                 "pendingTransactionIds": null,
                 "playerId": -16014,
                 "playerPoolEntry": {
@@ -91554,7 +91717,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 20,
+                "lineupSlotId": 16,
                 "pendingTransactionIds": null,
                 "playerId": -16023,
                 "playerPoolEntry": {
@@ -118019,7 +118182,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 4,
+                "lineupSlotId": 20,
                 "pendingTransactionIds": null,
                 "playerId": 4595348,
                 "playerPoolEntry": {
@@ -118830,7 +118993,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 20,
+                "lineupSlotId": 4,
                 "pendingTransactionIds": null,
                 "playerId": 4360761,
                 "playerPoolEntry": {
@@ -120047,7 +120210,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 16,
+                "lineupSlotId": 20,
                 "pendingTransactionIds": null,
                 "playerId": -16005,
                 "playerPoolEntry": {
@@ -120443,7 +120606,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 20,
+                "lineupSlotId": 16,
                 "pendingTransactionIds": null,
                 "playerId": -16030,
                 "playerPoolEntry": {
@@ -121986,7 +122149,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 23,
+                "lineupSlotId": 20,
                 "pendingTransactionIds": null,
                 "playerId": 4685278,
                 "playerPoolEntry": {
@@ -122390,7 +122553,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 20,
+                "lineupSlotId": 23,
                 "pendingTransactionIds": null,
                 "playerId": 4569987,
                 "playerPoolEntry": {
@@ -127131,7 +127294,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 23,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": 4685278,
               "playerPoolEntry": {
@@ -127535,7 +127698,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 23,
               "pendingTransactionIds": null,
               "playerId": 4569987,
               "playerPoolEntry": {
@@ -128950,7 +129113,9 @@
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
               "lineupSlotId": 20,
-              "pendingTransactionIds": null,
+              "pendingTransactionIds": [
+                "30506ed5-b633-4df4-bab7-e1b4577c1130"
+              ],
               "playerId": 4430802,
               "playerPoolEntry": {
                 "appliedStatTotal": 0,
@@ -129937,7 +130102,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": 4595348,
               "playerPoolEntry": {
@@ -130748,7 +130913,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 4,
               "pendingTransactionIds": null,
               "playerId": 4360761,
               "playerPoolEntry": {
@@ -131965,7 +132130,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": -16005,
               "playerPoolEntry": {
@@ -132361,7 +132526,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 16,
               "pendingTransactionIds": null,
               "playerId": -16030,
               "playerPoolEntry": {
@@ -150845,7 +151010,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "pendingTransactionIds": null,
               "playerId": -16014,
               "playerPoolEntry": {
@@ -151042,7 +151207,7 @@
               "acquisitionDate": 1788734014388,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 20,
+              "lineupSlotId": 16,
               "pendingTransactionIds": null,
               "playerId": -16023,
               "playerPoolEntry": {
@@ -159863,7 +160028,8 @@
               "213": 34.34774888
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -160354,7 +160520,8 @@
               "213": 31.95159349
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -160787,7 +160954,8 @@
               "213": 33.42117545
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -161306,7 +161474,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -161736,7 +161905,8 @@
               "213": 35.47334713
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -162264,7 +162434,8 @@
               "212": 17.30896098
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -162696,7 +162867,8 @@
               "213": 31.04090582
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -163213,7 +163385,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -163651,7 +163824,8 @@
               "216": 1370.741377
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -164184,7 +164358,8 @@
               "213": 27.86768549
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -164523,7 +164698,8 @@
               "213": 31.3225971
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -165051,7 +165227,8 @@
               "212": 13.0403494
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -165242,7 +165419,8 @@
               "213": 21.89268781
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -165647,7 +165825,8 @@
               "213": 3.088925704
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -166164,7 +166343,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -166693,7 +166873,8 @@
               "212": 21.26152345
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -166906,7 +167087,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -167342,7 +167524,8 @@
               "216": 1372.006762
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -167780,7 +167963,8 @@
               "216": 1373.272148
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -168261,7 +168445,8 @@
               "213": 0.7715419
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -168648,7 +168833,8 @@
               "213": 27.31029755
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -169082,7 +169268,8 @@
               "213": 31.67157945
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -169556,7 +169743,8 @@
               "213": 2.592595618
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -170074,7 +170262,8 @@
               "212": 9.623434877
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -170578,7 +170767,8 @@
               "213": 29.05907355
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -170901,7 +171091,8 @@
               "213": 6.636999207
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -171330,7 +171521,8 @@
               "213": 27.49396909
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -171685,7 +171877,8 @@
               "213": 31.800982
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -172153,7 +172346,8 @@
               "213": 28.78472318
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -172679,7 +172873,8 @@
               "212": 14.72418038
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -173108,7 +173303,8 @@
               "213": 30.46754281
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -173614,7 +173810,8 @@
               "213": 8.063059037
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -174128,7 +174325,8 @@
               "212": 29.52518593
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -174567,7 +174765,8 @@
               "216": 1290.693312
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -175042,7 +175241,8 @@
               "213": 0.52554179
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -175536,7 +175736,8 @@
               "213": 11.88338751
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -176023,7 +176224,8 @@
               "213": 18.12245915
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -176455,7 +176657,8 @@
               "213": 28.86312488
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -176714,7 +176917,8 @@
               "213": 22.86012863
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -177230,7 +177434,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -177671,7 +177876,8 @@
               "216": 1372.006762
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -178132,7 +178338,8 @@
               "213": 27.08338534
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -178391,7 +178598,8 @@
               "213": 25.61679955
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -178823,7 +179031,8 @@
               "213": 30.27660121
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -179241,7 +179450,8 @@
               "213": 30.35210886
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -179573,7 +179783,8 @@
               "216": 1408.28663
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -180076,7 +180287,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -180541,7 +180753,8 @@
               "213": 26.93108728
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -180993,7 +181206,8 @@
               "213": 4.429890479
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -181271,7 +181485,8 @@
               "213": 2.573446962
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -181653,7 +181868,8 @@
               "213": 3.871138565
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -182058,7 +182274,8 @@
               "213": 26.4566536
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -182590,7 +182807,8 @@
               "212": 16.38057202
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -183046,7 +183264,8 @@
               "213": 2.431031818
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -183415,7 +183634,8 @@
               "213": 23.43556033
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -183928,7 +184148,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -184368,7 +184589,8 @@
               "213": 0.231095324
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -184861,7 +185083,8 @@
               "213": 7.277647314
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -185358,7 +185581,8 @@
               "212": 13.1930221
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -185753,7 +185977,8 @@
               "213": 25.96285907
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -186056,7 +186281,8 @@
               "212": 14.30048874
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -186395,7 +186621,8 @@
               "213": 24.27924813
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -186816,7 +187043,8 @@
               "213": 26.88303602
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -187289,7 +187517,8 @@
               "213": 27.61133235
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -187727,7 +187956,8 @@
               "216": 1293.224083
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -188217,7 +188447,8 @@
               "213": 22.63646376
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -188661,7 +188892,8 @@
               "213": 4.114590023
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -189163,7 +189395,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -189637,7 +189870,8 @@
               "213": 7.260686207
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -190117,7 +190351,8 @@
               "212": 7.807284436
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -190561,7 +190796,8 @@
               "213": 22.45505841
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -190855,7 +191091,8 @@
               "213": 23.09525294
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -191190,7 +191427,8 @@
               "213": 18.19651289
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -191486,7 +191724,8 @@
               "213": 2.557151905
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -191887,7 +192126,8 @@
               "216": 1313.756755
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -192392,7 +192632,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -192822,7 +193063,8 @@
               "213": 27.11946047
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -193039,7 +193281,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -193406,7 +193649,8 @@
               "216": 1217.722742
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -193733,7 +193977,8 @@
               "213": 21.00257539
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -194214,7 +194459,8 @@
               "212": 12.98765147
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -194718,7 +194964,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -194966,7 +195213,8 @@
               "213": 18.45083125
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -195228,7 +195476,8 @@
               "213": 17.31080524
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -195654,7 +195903,8 @@
               "216": 1370.741377
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -195891,7 +196141,8 @@
               "213": 10.65104517
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -196119,7 +196370,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -196529,7 +196781,8 @@
               "213": 19.0486477
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -196721,7 +196974,8 @@
               "213": 4.307012598
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -197153,7 +197407,8 @@
               "213": 18.2069748
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -197642,7 +197897,8 @@
               "212": 13.81787081
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -198096,7 +198352,8 @@
               "213": 3.251667668
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -198619,7 +198876,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -199122,7 +199380,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -199370,7 +199629,8 @@
               "213": 19.68852236
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -199756,7 +200016,8 @@
               "213": 27.30610676
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -200161,7 +200422,8 @@
               "213": 2.526921682
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -200511,7 +200773,8 @@
               "213": 23.31654608
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -200893,7 +201156,8 @@
               "213": 15.6479424
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -201288,7 +201552,8 @@
               "213": 13.89698208
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -201698,7 +201963,8 @@
               "213": 23.31617214
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -202153,7 +202419,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -202563,7 +202830,8 @@
               "213": 2.49820276
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -203019,7 +203287,8 @@
               "212": 2.978753319
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -203418,7 +203687,8 @@
               "213": 0.703960208
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -203836,7 +204106,8 @@
               "216": 1218.988128
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -204270,7 +204541,8 @@
               "216": 1370.741377
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -204736,7 +205008,8 @@
               "213": 2.1711322
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -205220,7 +205493,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -205615,7 +205889,8 @@
               "213": 22.06683404
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -206117,7 +206392,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -206600,7 +206876,8 @@
               "212": 10.86270575
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -207096,7 +207373,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -207387,7 +207665,8 @@
               "213": 15.14776655
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -207766,7 +208045,8 @@
               "213": 1.832143887
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -208176,7 +208456,8 @@
               "213": 14.89574333
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -208568,7 +208849,8 @@
               "212": 8.491353686
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -209015,7 +209297,8 @@
               "213": 19.54748159
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -209408,7 +209691,8 @@
               "213": 15.01233549
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -209682,7 +209966,8 @@
               "216": 1372.006762
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -210101,7 +210386,8 @@
               "213": 12.92574632
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -210413,7 +210699,8 @@
               "213": 3.278036308
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -210890,7 +211177,8 @@
               "213": 10.04980781
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -211172,7 +211460,8 @@
               "213": 0.72260022
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -211671,7 +211960,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -212155,7 +212445,8 @@
               "212": 4.719634262
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -212573,7 +212864,8 @@
               "216": 1369.475991
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -213064,7 +213356,8 @@
               "213": 9.884349933
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -213522,7 +213815,8 @@
               "213": 0.560427358
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -213914,7 +214208,8 @@
               "213": 18.53531242
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -214301,7 +214596,8 @@
               "216": 1434.10368
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -214553,7 +214849,8 @@
               "213": 6.46638121
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -214735,7 +215032,8 @@
               "213": 4.829354568
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -215144,7 +215442,8 @@
               "213": 9.40736649
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -215942,7 +216241,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -216384,7 +216684,8 @@
               "213": 16.97680041
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -216846,7 +217147,8 @@
               "213": 4.686158297
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -217122,7 +217424,8 @@
               "213": 0.657727415
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -217520,7 +217823,8 @@
               "213": 14.53261185
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -217912,7 +218216,8 @@
               "213": 20.00907284
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -218405,7 +218710,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -218889,7 +219195,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -219285,7 +219592,8 @@
               "213": 17.85621885
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -219691,7 +219999,8 @@
               "212": 6.499253568
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -219838,7 +220147,8 @@
               "213": 24.79579932
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -220283,7 +220593,8 @@
               "213": 16.64931604
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -220682,7 +220993,8 @@
               "213": 19.80269542
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -221073,7 +221385,8 @@
               "213": 14.33751832
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -221329,7 +221642,8 @@
               "213": 13.03561021
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -221731,7 +222045,8 @@
               "213": 15.38392416
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -222216,7 +222531,8 @@
               "213": 12.53119844
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -222609,7 +222925,8 @@
               "213": 12.97916377
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -223024,7 +223341,8 @@
               "216": 1289.427926
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -223417,7 +223735,8 @@
               "213": 10.58691354
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -223887,7 +224206,8 @@
               "213": -0.267359443
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -224164,7 +224484,8 @@
               "213": 2.572429236
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -224344,7 +224665,8 @@
               "212": 1.84857314
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -224808,7 +225130,8 @@
               "213": 4.624607332
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -225284,7 +225607,8 @@
               "212": 2.435918802
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -225764,7 +226088,8 @@
               "213": 6.315412549
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -226168,7 +226493,8 @@
               "216": 1291.958698
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -226443,7 +226769,8 @@
               "213": 0.763399851
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -226625,7 +226952,8 @@
               "213": 6.501974963
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -227035,7 +227363,8 @@
               "213": 12.96501767
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -227485,7 +227814,8 @@
               "213": 0.606976604
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -227979,7 +228309,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -228377,7 +228708,8 @@
               "213": 19.42579195
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -228646,7 +228978,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -229121,7 +229454,8 @@
               "213": 1.174149859
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -229242,7 +229576,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -229706,7 +230041,8 @@
               "213": 3.889399303
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -230130,7 +230466,8 @@
               "213": 7.768397645
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -230510,7 +230847,8 @@
               "216": 1289.427926
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -230748,7 +231086,8 @@
               "216": 1370.741377
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -231136,7 +231475,8 @@
               "213": 6.452603888
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -231559,7 +231899,8 @@
               "213": 12.90957226
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -231768,7 +232109,8 @@
               "213": 4.563861136
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -232224,7 +232566,8 @@
               "213": 0.207355126
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -232615,7 +232958,8 @@
               "213": 12.67225718
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -232982,7 +233326,8 @@
               "213": 14.91033906
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -233723,7 +234068,8 @@
               "213": 0.670322057
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -234022,7 +234368,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -234415,7 +234762,8 @@
               "213": 12.32758028
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -234898,7 +235246,8 @@
               "212": 2.872602255
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -235302,7 +235651,8 @@
               "216": 1289.427926
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -235631,7 +235981,8 @@
               "216": 1361.13311
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -236025,7 +236376,8 @@
               "212": 2.347608743
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -236282,7 +236634,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -236598,7 +236951,8 @@
               "213": 7.096438857
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -237083,7 +237437,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -237485,7 +237840,8 @@
               "216": 1363.663882
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -237920,7 +238276,8 @@
               "213": 8.308507616
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -238227,7 +238584,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -238880,7 +239238,8 @@
               "213": 9.368095868
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -239223,7 +239582,8 @@
               "213": 2.787126117
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -239582,7 +239942,8 @@
               "213": 5.27167727
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -240022,7 +240383,8 @@
               "212": 2.148887403
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -240421,7 +240783,8 @@
               "213": 11.51009125
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -240559,7 +240922,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -241042,7 +241406,8 @@
               "212": 2.38146902
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -241396,7 +241761,8 @@
               "212": 2.22657453
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -241779,7 +242145,8 @@
               "213": 12.61082884
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -242188,7 +242555,8 @@
               "212": 8.938419146
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -242562,7 +242930,8 @@
               "213": 6.707570064
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -242731,7 +243100,8 @@
               "213": 4.468566122
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -243043,7 +243413,8 @@
               "212": 2.214312092
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -243364,7 +243735,8 @@
               "213": 0.192029702
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -243659,7 +244031,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -243757,7 +244130,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -243986,7 +244360,8 @@
               "213": 9.05256511
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -244326,7 +244701,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -244710,7 +245086,8 @@
               "213": 8.25507999
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -244977,7 +245354,8 @@
               "213": 14.22351906
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -245598,7 +245976,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -245973,7 +246352,8 @@
               "213": 4.942506754
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -246627,7 +247007,8 @@
               "213": 0.500358655
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -246983,7 +247364,8 @@
               "213": 10.10540988
             }
           }
-        ]
+        ],
+        "byeWeek": 7
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -247221,7 +247603,8 @@
               "213": 8.789116746
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -247575,7 +247958,8 @@
               "213": 7.505120172
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -247879,7 +248263,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -248126,7 +248511,8 @@
               "213": 15.07974659
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -248440,7 +248826,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -248730,7 +249117,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -249184,7 +249572,8 @@
               "213": 8.798249046
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -249362,7 +249751,8 @@
               "212": 2.657457374
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -249558,7 +249948,8 @@
               "212": 9.224490884
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -249888,7 +250279,8 @@
               "213": 5.514459198
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -250057,7 +250449,8 @@
               "213": 1.020070469
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -250294,7 +250687,8 @@
               "213": 3.19266786
             }
           }
-        ]
+        ],
+        "byeWeek": 8
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -250434,7 +250828,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -250720,7 +251115,8 @@
               "213": 2.750081695
             }
           }
-        ]
+        ],
+        "byeWeek": 10
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -250976,7 +251372,8 @@
               "213": 0.949561575
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -251211,7 +251608,8 @@
               "213": 4.84236692
             }
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -251585,7 +251983,8 @@
               "213": 6.005010238
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -251886,7 +252285,8 @@
               "212": 2.556085272
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -252194,7 +252594,8 @@
               "210": 17
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -252375,7 +252776,8 @@
               "213": 5.287188406
             }
           }
-        ]
+        ],
+        "byeWeek": 6
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -252701,7 +253103,8 @@
               "213": 4.298739789
             }
           }
-        ]
+        ],
+        "byeWeek": 9
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -252939,7 +253342,8 @@
               "213": 12.30368786
             }
           }
-        ]
+        ],
+        "byeWeek": 13
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -253105,7 +253509,8 @@
               "213": 0.964699017
             }
           }
-        ]
+        ],
+        "byeWeek": 11
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -253195,7 +253600,8 @@
             "statSplitTypeId": 0,
             "stats": {}
           }
-        ]
+        ],
+        "byeWeek": 14
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -253577,7 +253983,8 @@
               "213": 8.42411537
             }
           }
-        ]
+        ],
+        "byeWeek": 5
       },
       "rosterLocked": false,
       "status": "WAIVERS",
@@ -253592,420 +253999,420 @@
         "pos": "RB",
         "team": "CHI",
         "status": null,
-        "count": 369256
+        "count": 373808
       },
       {
         "name": "Devaughn Vele",
         "pos": "WR",
         "team": "NO",
         "status": null,
-        "count": 155596
+        "count": 157941
       },
       {
         "name": "Tank Dell",
         "pos": "WR",
         "team": "HOU",
         "status": "IR",
-        "count": 114792
+        "count": 116928
       },
       {
         "name": "Las Vegas Raiders",
         "pos": "DEF",
         "team": "LV",
         "status": null,
-        "count": 96090
+        "count": 97866
       },
       {
         "name": "MarShawn Lloyd",
         "pos": "RB",
         "team": "GB",
         "status": null,
-        "count": 80577
+        "count": 81999
       },
       {
         "name": "Malik Davis",
         "pos": "RB",
         "team": "DAL",
         "status": null,
-        "count": 77877
+        "count": 78840
       },
       {
         "name": "Jacksonville Jaguars",
         "pos": "DEF",
         "team": "JAX",
         "status": null,
-        "count": 67698
+        "count": 69024
       },
       {
         "name": "Darren Waller",
         "pos": "TE",
         "team": "CAR",
         "status": null,
-        "count": 62973
+        "count": 64116
       },
       {
         "name": "Tyler Loop",
         "pos": "K",
         "team": "BAL",
         "status": null,
-        "count": 54624
+        "count": 55638
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 53664
+        "count": 54408
       },
       {
         "name": "Isiah Pacheco",
         "pos": "RB",
         "team": "DET",
         "status": "IR",
-        "count": 48032
+        "count": 48912
       },
       {
         "name": "Chris Bell",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 44807
+        "count": 45423
       },
       {
         "name": "Tre Tucker",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 42036
-      },
-      {
-        "name": "Jacob Saylors",
-        "pos": "RB",
-        "team": "DET",
-        "status": null,
-        "count": 40060
+        "count": 42594
       },
       {
         "name": "Kaelon Black",
         "pos": "RB",
         "team": "SF",
         "status": null,
-        "count": 39991
+        "count": 40502
+      },
+      {
+        "name": "Jacob Saylors",
+        "pos": "RB",
+        "team": "DET",
+        "status": null,
+        "count": 40400
       },
       {
         "name": "Matt Gay",
         "pos": "K",
         "team": "LV",
         "status": null,
-        "count": 36315
+        "count": 37005
       },
       {
         "name": "Justice Hill",
         "pos": "RB",
         "team": "BAL",
         "status": null,
-        "count": 35514
+        "count": 36126
       },
       {
         "name": "Malik Willis",
         "pos": "QB",
         "team": "MIA",
         "status": null,
-        "count": 34454
+        "count": 34909
       },
       {
         "name": "Detroit Lions",
         "pos": "DEF",
         "team": "DET",
         "status": null,
-        "count": 30663
+        "count": 31302
       },
       {
         "name": "Jalen Nailor",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 30456
+        "count": 30915
       },
       {
         "name": "Malik Washington",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 30152
+        "count": 30576
       },
       {
         "name": "Keaton Mitchell",
         "pos": "RB",
         "team": "LAC",
         "status": "Questionable",
-        "count": 29043
+        "count": 29421
       },
       {
         "name": "Tyler Shough",
         "pos": "QB",
         "team": "NO",
         "status": null,
-        "count": 28288
+        "count": 28816
       },
       {
         "name": "AJ Barner",
         "pos": "TE",
         "team": "SEA",
         "status": null,
-        "count": 27972
+        "count": 28452
       },
       {
         "name": "Khalil Shakir",
         "pos": "WR",
         "team": "BUF",
         "status": "Questionable",
-        "count": 26865
-      },
-      {
-        "name": "Sione Vaki",
-        "pos": "RB",
-        "team": "DET",
-        "status": null,
-        "count": 26544
+        "count": 27378
       },
       {
         "name": "Dohnte Meyers",
         "pos": "WR",
         "team": "CIN",
         "status": null,
-        "count": 26307
+        "count": 26712
+      },
+      {
+        "name": "Sione Vaki",
+        "pos": "RB",
+        "team": "DET",
+        "status": null,
+        "count": 26663
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 25945
+        "count": 26275
       },
       {
         "name": "Emmett Johnson",
         "pos": "RB",
         "team": "KC",
         "status": null,
-        "count": 25029
+        "count": 25380
       },
       {
         "name": "Kyler Murray",
         "pos": "QB",
         "team": "MIN",
         "status": null,
-        "count": 24584
-      },
-      {
-        "name": "Kirk Cousins",
-        "pos": "QB",
-        "team": "LV",
-        "status": null,
-        "count": 24584
+        "count": 25048
       },
       {
         "name": "Zavion Thomas",
         "pos": "WR",
         "team": "CHI",
         "status": null,
-        "count": 24561
+        "count": 24885
+      },
+      {
+        "name": "Kirk Cousins",
+        "pos": "QB",
+        "team": "LV",
+        "status": null,
+        "count": 24832
       },
       {
         "name": "Cooper Kupp",
         "pos": "WR",
         "team": "SEA",
         "status": null,
-        "count": 22062
+        "count": 22512
       },
       {
         "name": "Seth McGowan",
         "pos": "RB",
         "team": "IND",
         "status": null,
-        "count": 21920
+        "count": 22336
       },
       {
         "name": "Barion Brown",
         "pos": "WR",
         "team": "NO",
         "status": null,
-        "count": 21861
+        "count": 22149
       },
       {
         "name": "Odell Beckham",
         "pos": "WR",
         "team": "NYG",
         "status": null,
-        "count": 21812
+        "count": 22050
       },
       {
         "name": "Juwan Johnson",
         "pos": "TE",
         "team": "NO",
         "status": null,
-        "count": 21166
+        "count": 21562
       },
       {
         "name": "Najee Harris",
         "pos": "RB",
         "team": "NYG",
         "status": null,
-        "count": 20220
+        "count": 20535
       },
       {
         "name": "Dontayvion Wicks",
         "pos": "WR",
         "team": "PHI",
         "status": null,
-        "count": 20184
+        "count": 20496
       },
       {
         "name": "Mark Andrews",
         "pos": "TE",
         "team": "BAL",
         "status": null,
-        "count": 19998
-      },
-      {
-        "name": "Tank Bigsby",
-        "pos": "RB",
-        "team": "PHI",
-        "status": null,
-        "count": 18837
+        "count": 20322
       },
       {
         "name": "Jacory Croskey-Merritt",
         "pos": "RB",
         "team": "WAS",
         "status": "Questionable",
-        "count": 18801
+        "count": 19089
       },
       {
         "name": "Jake Bates",
         "pos": "K",
         "team": "DET",
         "status": null,
-        "count": 18792
+        "count": 19080
+      },
+      {
+        "name": "Tank Bigsby",
+        "pos": "RB",
+        "team": "PHI",
+        "status": null,
+        "count": 19061
       },
       {
         "name": "Pittsburgh Steelers",
         "pos": "DEF",
         "team": "PIT",
         "status": null,
-        "count": 18516
+        "count": 18804
       },
       {
         "name": "Spencer Shrader",
         "pos": "K",
         "team": "IND",
         "status": null,
-        "count": 17990
-      },
-      {
-        "name": "Terrance Ferguson",
-        "pos": "TE",
-        "team": "LAR",
-        "status": "Questionable",
-        "count": 17872
+        "count": 18232
       },
       {
         "name": "Jordyn Tyson",
         "pos": "WR",
         "team": "NO",
         "status": "IR",
-        "count": 17784
+        "count": 18160
+      },
+      {
+        "name": "Terrance Ferguson",
+        "pos": "TE",
+        "team": "LAR",
+        "status": "Questionable",
+        "count": 18056
       },
       {
         "name": "Samaje Perine",
         "pos": "RB",
         "team": "CIN",
         "status": null,
-        "count": 17416
+        "count": 17612
       },
       {
         "name": "Chris Rodriguez",
         "pos": "RB",
         "team": "JAX",
         "status": null,
-        "count": 17064
+        "count": 17370
       },
       {
         "name": "Jayden Reed",
         "pos": "WR",
         "team": "GB",
         "status": null,
-        "count": 16992
+        "count": 17271
       },
       {
         "name": "Dylan Sampson",
         "pos": "RB",
         "team": "CLE",
         "status": null,
-        "count": 16355
+        "count": 16615
       },
       {
         "name": "Jauan Jennings",
         "pos": "WR",
         "team": "MIN",
         "status": null,
-        "count": 13797
+        "count": 14091
       },
       {
         "name": "Tyler Allgeier",
         "pos": "RB",
         "team": "ARI",
         "status": null,
-        "count": 13575
+        "count": 13775
       },
       {
         "name": "Malachi Fields",
         "pos": "WR",
         "team": "NYG",
         "status": null,
-        "count": 13365
+        "count": 13565
       },
       {
         "name": "Trey Smack",
         "pos": "K",
         "team": "GB",
         "status": null,
-        "count": 13280
+        "count": 13516
       },
       {
         "name": "Keenan Allen",
         "pos": "WR",
         "team": "IND",
         "status": null,
-        "count": 12984
+        "count": 13188
       },
       {
         "name": "Deshaun Watson",
         "pos": "QB",
         "team": "CLE",
         "status": null,
-        "count": 12976
+        "count": 13136
       },
       {
         "name": "Daniel Bellinger",
         "pos": "TE",
         "team": "TEN",
         "status": null,
-        "count": 12684
+        "count": 12852
       },
       {
         "name": "Ryan Flournoy",
         "pos": "WR",
         "team": "DAL",
         "status": null,
-        "count": 12544
+        "count": 12696
       },
       {
         "name": "Adonai Mitchell",
         "pos": "WR",
         "team": "NYJ",
         "status": null,
-        "count": 12264
+        "count": 12432
       }
     ],
     "drops": [
@@ -254014,275 +254421,309 @@
         "pos": "RB",
         "team": "CHI",
         "status": null,
-        "count": 71680
+        "count": 72872
       },
       {
         "name": "Jaydon Blue",
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 48336
+        "count": 49088
       },
       {
         "name": "New England Patriots",
         "pos": "DEF",
         "team": "NE",
         "status": null,
-        "count": 42077
+        "count": 42973
       },
       {
         "name": "Alvin Kamara",
         "pos": "RB",
         "team": "NO",
         "status": "Questionable",
-        "count": 41352
+        "count": 42192
       },
       {
         "name": "Brenton Strange",
         "pos": "TE",
         "team": "JAX",
         "status": null,
-        "count": 39618
+        "count": 40518
       },
       {
         "name": "Oronde Gadsden",
         "pos": "TE",
         "team": "LAC",
         "status": null,
-        "count": 38770
+        "count": 39805
       },
       {
         "name": "Kenyon Sadiq",
         "pos": "TE",
         "team": "NYJ",
         "status": "Questionable",
-        "count": 33714
+        "count": 34524
       },
       {
         "name": "Tyreek Hill",
         "pos": "WR",
         "team": null,
         "status": "Questionable",
-        "count": 31584
+        "count": 32280
       },
       {
         "name": "Cyrus Allen",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 28326
+        "count": 28998
       },
       {
         "name": "Emanuel Wilson",
         "pos": "RB",
         "team": "SEA",
         "status": "Questionable",
-        "count": 26865
-      },
-      {
-        "name": "Keaton Mitchell",
-        "pos": "RB",
-        "team": "LAC",
-        "status": "Questionable",
-        "count": 26001
+        "count": 27261
       },
       {
         "name": "Fernando Mendoza",
         "pos": "QB",
         "team": "LV",
         "status": null,
-        "count": 25976
+        "count": 26616
+      },
+      {
+        "name": "Keaton Mitchell",
+        "pos": "RB",
+        "team": "LAC",
+        "status": "Questionable",
+        "count": 26478
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 25525
+        "count": 26115
       },
       {
         "name": "Detroit Lions",
         "pos": "DEF",
         "team": "DET",
         "status": null,
-        "count": 25497
+        "count": 25884
       },
       {
         "name": "Omar Cooper",
         "pos": "WR",
         "team": "NYJ",
         "status": null,
-        "count": 25048
+        "count": 25608
       },
       {
         "name": "Jerry Jeudy",
         "pos": "WR",
         "team": "CLE",
         "status": null,
-        "count": 24588
-      },
-      {
-        "name": "Jalen Nailor",
-        "pos": "WR",
-        "team": "LV",
-        "status": null,
-        "count": 23922
-      },
-      {
-        "name": "Malik Davis",
-        "pos": "RB",
-        "team": "DAL",
-        "status": null,
-        "count": 23868
+        "count": 25092
       },
       {
         "name": "Jordyn Tyson",
         "pos": "WR",
         "team": "NO",
         "status": "IR",
-        "count": 23848
+        "count": 24496
+      },
+      {
+        "name": "Jalen Nailor",
+        "pos": "WR",
+        "team": "LV",
+        "status": null,
+        "count": 24408
+      },
+      {
+        "name": "Malik Davis",
+        "pos": "RB",
+        "team": "DAL",
+        "status": null,
+        "count": 24300
       },
       {
         "name": "Brian Robinson",
         "pos": "RB",
         "team": "ATL",
         "status": null,
-        "count": 23322
+        "count": 23784
       },
       {
         "name": "Chris Rodriguez",
         "pos": "RB",
         "team": "JAX",
         "status": null,
-        "count": 22896
+        "count": 23490
       },
       {
         "name": "Malik Washington",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 22504
+        "count": 22904
       },
       {
         "name": "Isiah Pacheco",
         "pos": "RB",
         "team": "DET",
         "status": "IR",
-        "count": 21952
+        "count": 22416
       },
       {
         "name": "Zach Ertz",
         "pos": "TE",
         "team": null,
         "status": null,
-        "count": 21546
+        "count": 21978
       },
       {
         "name": "Chimere Dike",
         "pos": "WR",
         "team": "TEN",
         "status": null,
-        "count": 21492
+        "count": 21879
       },
       {
         "name": "Tank Bigsby",
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 20468
+        "count": 20937
       },
       {
         "name": "Jam Miller",
         "pos": "RB",
         "team": null,
         "status": "Questionable",
-        "count": 19656
+        "count": 19980
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 19208
+        "count": 19504
       },
       {
         "name": "Kaelon Black",
         "pos": "RB",
         "team": "SF",
         "status": null,
-        "count": 19026
+        "count": 19481
       },
       {
         "name": "Terrance Ferguson",
         "pos": "TE",
         "team": "LAR",
         "status": "Questionable",
-        "count": 18968
+        "count": 19424
       },
       {
         "name": "Devin Singletary",
         "pos": "RB",
         "team": "NYG",
         "status": null,
-        "count": 18837
+        "count": 19143
       },
       {
         "name": "Emmett Johnson",
         "pos": "RB",
         "team": "KC",
         "status": null,
-        "count": 18468
+        "count": 18855
       },
       {
         "name": "Darren Waller",
         "pos": "TE",
         "team": "CAR",
         "status": null,
-        "count": 17847
+        "count": 18234
       },
       {
         "name": "Xavier Worthy",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 17226
+        "count": 17667
       },
       {
         "name": "Darnell Mooney",
         "pos": "WR",
         "team": "NYG",
         "status": null,
-        "count": 17190
+        "count": 17568
       },
       {
         "name": "Sean Tucker",
         "pos": "RB",
         "team": "TB",
         "status": "Questionable",
-        "count": 17091
+        "count": 17415
       },
       {
         "name": "Zachariah Branch",
         "pos": "WR",
         "team": "ATL",
         "status": null,
-        "count": 16992
+        "count": 17384
       },
       {
         "name": "Tank Dell",
         "pos": "WR",
         "team": "HOU",
         "status": "IR",
-        "count": 16952
+        "count": 17336
       },
       {
         "name": "Kyle Monangai",
         "pos": "RB",
         "team": "CHI",
         "status": "Questionable",
-        "count": 16932
+        "count": 17334
       }
     ]
+  },
+  "byes": {
+    "1": 11,
+    "2": 7,
+    "3": 10,
+    "4": 6,
+    "5": 11,
+    "6": 14,
+    "7": 10,
+    "8": 6,
+    "9": 11,
+    "10": 9,
+    "11": 13,
+    "12": 5,
+    "13": 13,
+    "14": 11,
+    "15": 6,
+    "16": 6,
+    "17": 11,
+    "18": 8,
+    "19": 8,
+    "20": 13,
+    "21": 10,
+    "22": 14,
+    "23": 9,
+    "24": 7,
+    "25": 8,
+    "26": 11,
+    "27": 10,
+    "28": 7,
+    "29": 5,
+    "30": 7,
+    "33": 13,
+    "34": 8
   },
   "weeklyStats": [
     {

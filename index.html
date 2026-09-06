@@ -1008,8 +1008,8 @@
   <section class="panel" id="picks"><div id="picksBody"></div></section>
 
   <section class="panel" id="power">
-    <div id="powerBody"></div>
     <div id="leagueBody"></div>
+    <div id="powerBody"></div>
     <div id="snapshot"></div>
   </section>
 
@@ -1353,7 +1353,11 @@ const NOTES = {
 const CURRENT = ["Scotty","Bo","Dawson","Anthony","Cody",
   "Ryan","Austin","Andy","James","Justin"];
 
-const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+/* Quotes as well as angle brackets. This lands inside title=, data-w= and
+   option value=, and team names in this league are typed by ten people who
+   treat the field as a dare. */
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ordinal = n => n + (["th","st","nd","rd"][(n % 100 - 20) % 10]
   || ["th","st","nd","rd"][n % 100] || "th");
 const fmt = n => Math.round(n).toLocaleString();
@@ -1372,6 +1376,7 @@ sel.onchange = () => { ME = sel.value;
   try { localStorage.setItem("bromigos.me", ME); } catch(e){}
   tradePartner = null; giveSel = new Set(); getSel = new Set(); BLOCK = null;
   h2hA = ""; h2hB = "";
+  myPicks = {}; myPicksWeek = null;
   renderAll();
   /* Someone picking their name for the first time on a Tuesday should get their
      pack there and then, not on whatever reload happens to come next. */
@@ -1667,7 +1672,7 @@ function standingsTable(limit){
 function renderSnapshot(){
   const el = document.getElementById("snapshot");
   if(!liveDraft()){ el.innerHTML = ""; return; }
-  if(!ROSTERS) loadRosterModel();
+  ensureRosters();
   SEASON = buildSeason();
   let html = "";
   try { html += renderOdds(); } catch(e){ console.warn("[bromigos] odds:", e && e.message); }
@@ -2009,13 +2014,29 @@ const PICKS_URL = "https://script.google.com/macros/s/AKfycby6BWw8M8BBT13W_ekyd2
 
 let PICKS = {};                       // week -> manager -> {matchupId: winner}
 let myPicks = {};                     // this week, unsaved edits included
+/* Which week myPicks belongs to. Without it the week 1 entries were still
+   sitting there on week 2, keyed to game ids that no longer exist, so the
+   ranking never validated and a save posted last week's picks into this
+   week's row. */
+let myPicksWeek = null;
 let picksState = PICKS_URL ? "loading" : "off";
 
 /* Week 1 locks at the Thursday kickoff and every week after is seven days on.
    A fixed deadline is the honest way to do this: nobody can pick a game that
    has already started, and it does not depend on ESPN publishing kickoff times. */
-const WEEK1_LOCK = new Date("2026-09-11T00:15:00Z").getTime();   // Thu Sept 10, 8:15pm ET
-function lockAt(wk){ return WEEK1_LOCK + (Number(wk) - 1) * 7 * 86400000; }
+/* Adding seven days to a UTC stamp fourteen times walks straight through the
+   first Sunday in November, so from week 9 the lock was landing at 7:15pm ET
+   instead of 8:15 and anyone picking on Thursday evening would have found the
+   week already closed. Build each Thursday first, then apply the offset that
+   is actually in force that day. */
+const WEEK1_THU = Date.UTC(2026, 8, 10);      // Thu Sept 10 2026
+const DST_ENDS  = Date.UTC(2026, 10, 1);      // Sun Nov 1 2026, EDT to EST
+function lockAt(wk){
+  const day = WEEK1_THU + (Number(wk) - 1) * 7 * 86400000;
+  const offset = day < DST_ENDS ? 4 : 5;      // hours behind UTC
+  return day + ((20 * 60 + 15) + offset * 60) * 60000;   // 8:15pm ET
+}
+const WEEK1_LOCK = lockAt(1);
 function picksLocked(wk){ return Date.now() >= lockAt(wk); }
 
 /* the week being picked: the earliest one with games still undecided */
@@ -2090,7 +2111,7 @@ function confTaken(entries, exceptId){
 /* Record and projected total for a manager, so a ranking is an opinion about
    two teams rather than a guess between two names. */
 function teamForm(name){
-  if(!ROSTERS) { try { loadRosterModel(); } catch(e){ return null; } }
+  try { ensureRosters(); } catch(e){ return null; }
   const t = (ROSTERS || []).find(x => x.manager === name);
   if(!t) return null;
   let rec = "";
@@ -2165,7 +2186,12 @@ function renderPicks(){
   const n = games.length;
   const locked = picksLocked(wk);
   const mine = (PICKS[String(wk)] || {})[ME] || {};
-  if(!Object.keys(myPicks).length) myPicks = JSON.parse(JSON.stringify(mine));
+  if(myPicksWeek !== wk){
+    myPicks = JSON.parse(JSON.stringify(mine));
+    myPicksWeek = wk;
+  } else if(!Object.keys(myPicks).length){
+    myPicks = JSON.parse(JSON.stringify(mine));
+  }
 
   const ready = picksValid(myPicks, n);
   const noWinner = games.filter(g => !(myPicks[g.id] || {}).w).length;
@@ -2878,6 +2904,18 @@ function applyTrade(players, out, inc){
    Two passes on purpose. Scoring every combination against the full remaining
    schedule would be thousands of lineups deep and lock the phone up, so the
    sift runs on a typical week and only the survivors get rated for real. */
+/* findTrades walks a few thousand lineups. renderTradePro runs on every single
+   tap, so without this the phone re-ran the whole search to redraw a chip. The
+   answer only changes when the pull or the pairing does. */
+let TRADE_CACHE = { key:null, val:[] };
+function tradeIdeas(mine, theirs){
+  const key = [rosterKey(), mine.id, theirs.id, weeksLeft().length].join("|");
+  if(TRADE_CACHE.key === key) return TRADE_CACHE.val;
+  const val = findTrades(mine, theirs);
+  TRADE_CACHE = { key, val };
+  return val;
+}
+
 function findTrades(mine, theirs, limit = 6){
   const baseA = weekValue(mine.players), baseB = weekValue(theirs.players);
   const ideas = [];
@@ -3051,7 +3089,7 @@ function demoFreeAgents(){
 }
 
 /* ---------- shared state ---------- */
-let ROSTERS = null, FREEAGENTS = null, IS_DEMO = false;
+let ROSTERS = null, FREEAGENTS = null, IS_DEMO = false, ROSTER_KEY = null;
 let tradePartner = null, giveSel = new Set(), getSel = new Set();
 /* Every tap rebuilds the panel. Without this the page jumps back to wherever
    the browser felt like, which is the whole reason building a deal was painful.
@@ -3062,7 +3100,21 @@ let tradeScroll = null;
    draft. They must never reach the league: invented players on the public link
    read as a broken site, and after the draft unlocks there is a window where
    league.json has not refreshed yet. Outside preview, empty beats invented. */
+/* Which pull the current model was built from. An empty roster is a legitimate
+   answer before the data lands, and it is truthy, so "if(!ROSTERS)" stopped
+   asking again forever: the first render of the evening built [] and the real
+   rosters that arrived a second later were never picked up. Key the model to
+   the fetch instead and it rebuilds exactly once per pull. */
+function rosterKey(){
+  return ((LIVE && LIVE.fetchedAt) || "none") + "|" + (PREVIEW ? "preview" : "live");
+}
+function ensureRosters(){
+  if(ROSTERS && ROSTER_KEY === rosterKey()) return;
+  loadRosterModel();
+}
+
 function loadRosterModel(){
+  ROSTER_KEY = rosterKey();
   const live = normalizeLive();
   if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
   else if(PREVIEW){ ROSTERS = demoRosters(); IS_DEMO = true; }
@@ -3075,7 +3127,11 @@ function loadRosterModel(){
     avg: Math.round(((p.player?.stats||[]).find(s=>s.statSourceId===0)?.appliedAverage||0)*10)/10,
     own: p.player?.ownership ? Math.round(p.player.ownership.percentOwned) : null,
     trend: null, snapPct:null, tgtShare:null, injury:null, bye:p.player?.byeWeek||null, ir:false
-  })) : demoFreeAgents();
+  /* Invented free agents were the one fixture still ungated. If a pull ever
+     lands without a pool, the league would have seen Quinn Whitcomb and a
+     Titans defense with no demo banner on the screen, because the banner keys
+     off the rosters. Outside preview, empty beats invented. */
+  })) : (PREVIEW ? demoFreeAgents() : []);
   // fold Sleeper trending onto free agents when both are live
   const tr = (LIVE && LIVE.trending && LIVE.trending.adds) || [];
   if(tr.length && faLive){
@@ -3084,21 +3140,44 @@ function loadRosterModel(){
   }
 }
 
-const myTeam = () => (ROSTERS || []).find(t => t.manager === ME) || (ROSTERS || [])[0];
+/* Falling back to the first roster meant that if ESPN ever spelled somebody's
+   name in a way the alias table did not catch, that person silently opened
+   James's team, saw it labelled as their own, and could build trades out of
+   it. Say so instead. */
+const myTeam = () => (ROSTERS || []).find(t => t.manager === ME) || null;
+const noTeamCard = () => ME
+  ? lock("Cannot find your team",
+      "Nothing in the ESPN pull is owned by " + esc(ME) + ". If you changed your "
+      + "team owner or your name on ESPN, tell Scotty and it gets mapped back.")
+  : lock("Pick your team", "Choose your name at the top and this fills in.");
 
 /* Split a roster into lineup slots then bench, so it reads like ESPN does. */
 /* Roster reads in lineup order, then bench, with kicker and defense last. */
+/* Fallback only. The real order is read off SLOTS, which comes from ESPN, so
+   a vote that adds a dedicated tight end or a superflex does not quietly file
+   that starter under "Kicker and defense". */
 const DISPLAY_ORDER = ["QB","RB","WR","W/T","FLEX"];
+const TAIL_SLOTS = ["D/ST","K"];
 const TAIL = p => p.pos === "K" || p.pos === "DST";
 
+function displayOrder(){
+  const out = [];
+  SLOTS.forEach(sl => {
+    if(TAIL_SLOTS.indexOf(sl.k) >= 0) return;
+    if(out.indexOf(sl.k) < 0) out.push(sl.k);
+  });
+  return out.length ? out : DISPLAY_ORDER;
+}
+
 function rosterSections(players){
+  const order = displayOrder();
   const lu = bestLineup(players);
   const used = new Set(lu.filled.filter(f => f.player).map(f => f.player.id));
   const starters = lu.filled
-    .filter(f => DISPLAY_ORDER.includes(f.slot))
-    .sort((a,b) => DISPLAY_ORDER.indexOf(a.slot) - DISPLAY_ORDER.indexOf(b.slot));
+    .filter(f => order.indexOf(f.slot) >= 0)
+    .sort((a,b) => order.indexOf(a.slot) - order.indexOf(b.slot));
   const bench = players.filter(p => !used.has(p.id) && !TAIL(p)).sort((a,b) => b.proj - a.proj);
-  const tail = lu.filled.filter(f => !DISPLAY_ORDER.includes(f.slot))
+  const tail = lu.filled.filter(f => order.indexOf(f.slot) < 0)
     .concat(players.filter(p => !used.has(p.id) && TAIL(p)).map(p => ({ slot:"BE", player:p })));
   return { starters, bench, tail, total: lu.total };
 }
@@ -3120,24 +3199,35 @@ const emptyRow = slot => `<div class="plr mute"><span class="slot">${slot}</span
 const sectHead = (title, tot) => `<div class="sect"><h3>${title}</h3><span class="rule"></span>${
   tot!=null ? `<span class="tot">${tot.toFixed(1)}</span>` : ""}</div>`;
 
-function rosterBlock(team, sel, side){
+function rosterBlock(team, sel, side, foldBench){
   const s = rosterSections(team.players);
   const line = f => f.player
     ? plrRow(f.player, f.slot, sel.has(f.player.id), side, team.manager) : emptyRow(f.slot);
   /* Kickers and defences are left out here. Nobody has ever traded one, the
      finder already refuses to suggest them, and they were eight rows of noise
      between you and the players you might actually move. */
+  const bench = s.bench.length
+    ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side, team.manager)).join("")
+    : `<p class="note">Nobody on the bench.</p>`;
+  /* Your own bench stays open, because you know who is on it and you are
+     picking from it. Theirs folds away: it is thirty rows between the two
+     lineups and the ideas, and it is opened maybe one deal in five. */
+  const picked = s.bench.some(p => sel.has(p.id));
   return sectHead(`${team.manager}'s lineup`, s.total) +
     s.starters.map(line).join("") +
-    sectHead("Bench") + (s.bench.length
-      ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side, team.manager)).join("")
-      : `<p class="note">Nobody on the bench.</p>`);
+    (foldBench && !picked
+      ? `<details class="hhmore"><summary>${esc(team.manager)}'s bench`
+        + `${s.bench.length ? " &middot; " + s.bench.length : ""}</summary>${bench}</details>`
+      : sectHead("Bench") + bench);
 }
 
 /* True once the draft has unlocked the tabs but ESPN rosters have not landed in
    data/league.json yet. Roughly the Sunday night of the draft until the next
    nightly pull, unless the job is run by hand. */
-const rostersPending = () => liveDraft() && !PREVIEW && !(ROSTERS && ROSTERS.length);
+const rostersPending = () => {
+  try { ensureRosters(); } catch(e){}
+  return liveDraft() && !PREVIEW && !(ROSTERS && ROSTERS.length);
+};
 const pendingCard = () => lock("Rosters are syncing",
   "The draft is done. Rosters come across on the next pull from ESPN, usually by 7am ET. "
   + "Lineups, trades and the wire all fill in then.");
@@ -3153,10 +3243,11 @@ const needPills = g => `<div class="needs">` + Object.entries(g).map(([pos,v]) =
 /* ---------- Trade Center ---------- */
 function renderTradePro(){
   const el = document.getElementById("tradeBody");
-  if(!ROSTERS) loadRosterModel();
+  ensureRosters();
   const me = myTeam();
-  if(!me){ el.innerHTML = lock("Pick your team","Choose your name up top to use the trade builder."); return; }
+  if(!me){ el.innerHTML = noTeamCard(); return; }
   const others = ROSTERS.filter(t => t.id !== me.id);
+  if(!others.length){ el.innerHTML = pendingCard(); return; }
   if(!tradePartner || !others.find(t => t.id === tradePartner)) tradePartner = others[0].id;
   const them = ROSTERS.find(t => t.id === tradePartner);
 
@@ -3323,9 +3414,9 @@ function renderTradePro(){
        route to a deal, so they go where a deal starts. */
     sectHead(`Ideas with ${esc(them.manager)}`) + `<div id="ideas"></div>` +
     rosterBlock(me, giveSel, "give") +
-    rosterBlock(them, getSel, "get");
+    rosterBlock(them, getSel, "get", true);
 
-  const ideas = findTrades(me, them);
+  const ideas = tradeIdeas(me, them);
   document.getElementById("ideas").innerHTML = ideas.length ? ideas.map((i,n) =>
     `<div class="idea" data-idea="${n}"><div class="sw">
       <i>You send</i> ${i.give.map(p=>esc(p.name)).join(" and ")}
@@ -3373,12 +3464,21 @@ let wireFilter = "ALL", wireSort = "fit";
 const FLEXPOS = ["RB","WR","TE"];
 function renderWirePro(){
   const el = document.getElementById("wireBody");
-  if(!ROSTERS) loadRosterModel();
+  ensureRosters();
   const me = myTeam();
-  if(!me){ el.innerHTML = lock("Pick your team","Choose your name up top to see your board."); return; }
+  if(!me){ el.innerHTML = noTeamCard(); return; }
 
   const g = gradeTeam(me, leagueMedians(ROSTERS));
   const weak = Object.entries(g).filter(([,v]) => v.label === "weak").map(([p]) => p);
+
+  /* No pool at all is a different thing to no pool at this position, and the
+     old copy told you to try another position when there were none anywhere. */
+  if(!FREEAGENTS || !FREEAGENTS.length){
+    el.innerHTML = lock("Waiver pool has not come across yet",
+      "ESPN sends the free agents with the nightly pull. Your board fills in on "
+      + "the next one, filtered to the holes on your roster.");
+    return;
+  }
 
   let rows = FREEAGENTS.map(p => ({ ...p, fit: weak.includes(p.pos),
     score: p.proj + (p.trend ? Math.min(p.trend/900, 8) : 0) + (weak.includes(p.pos) ? 4 : 0) }));
@@ -3616,9 +3716,9 @@ function renderTeamPage(){
   if(!el) return;
   if(!liveDraft()){ el.innerHTML = ""; return; }
   if(rostersPending()){ el.innerHTML = pendingCard(); return; }
-  if(!ROSTERS) loadRosterModel();
+  ensureRosters();
   const me = myTeam();
-  if(!me){ el.innerHTML = lock("Pick your team","Choose your name at the top."); return; }
+  if(!me){ el.innerHTML = noTeamCard(); return; }
   BLOCK ||= readBlock();
 
   const med = leagueMedians(ROSTERS);
@@ -3844,12 +3944,29 @@ function scheduleSwap(meId){
   }).sort((a,b) => b.w - a.w);
 }
 
-/* ---------- this week's matchup ---------- */
+/* ---------- this week's matchup ----------
+   Off the real schedule, the same way nextOpponent and scheduleFor already
+   read it. This used to rotate a round robin over the roster list, so the
+   card at the top of My Team named an opponent nobody was playing, and the
+   season table three inches below it named a different one. The rotation
+   survives as a preseason fixture only, gated like every other fixture. */
 function nextMatchup(meId){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  const open = sch.filter(m => m.home && m.away
+      && (!m.playoffTierType || m.playoffTierType === "NONE")
+      && (!m.winner || m.winner === "UNDECIDED")
+      && (m.home.teamId === meId || m.away.teamId === meId))
+    .sort((a, b) => a.matchupPeriodId - b.matchupPeriodId);
+  const g = open[0];
+  if(g){
+    const oppId = g.home.teamId === meId ? g.away.teamId : g.home.teamId;
+    const opp = (ROSTERS || []).find(t => t.id === oppId);
+    return opp ? { week: g.matchupPeriodId, opp } : null;
+  }
+
+  if(!PREVIEW) return null;
   if(!SEASON) SEASON = buildSeason();
-  const wks = Object.keys(SEASON.weeks).map(Number).sort((a,b)=>a-b);
-  const played = wks.length;
-  const week = played + 1;
+  const week = Object.keys(SEASON.weeks).length + 1;
   const ids = (ROSTERS||[]).map(t => t.id);
   if(ids.length < 2) return null;
   const rot = ids.slice(1), shift = (week - 1) % rot.length;
@@ -4099,7 +4216,7 @@ function renderBlockPage(){
   if(!el) return;
   if(!liveDraft()){ el.innerHTML = ""; return; }
   if(rostersPending()){ el.innerHTML = pendingCard(); return; }
-  if(!ROSTERS) loadRosterModel();
+  ensureRosters();
   BLOCK ||= readBlock();
 
   const byId = {};

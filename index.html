@@ -202,6 +202,7 @@
   tr.champ td{background:rgba(255,255,255,.06);
     background:color-mix(in srgb,var(--accent) 8%,transparent)}
   tr.champ td:first-child{color:var(--accent)}
+  tr.cut td{border-top:1px solid rgba(255,255,255,.28)}
   tr.you td{background:rgba(255,255,255,.05)}
   tr.you td:first-child{font-weight:600}
   td.fin{color:var(--faint);font:400 15px/1 var(--display);width:32px;
@@ -616,6 +617,7 @@
     font:400 12px/1 var(--display);color:var(--faint);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .tsn{flex:none;font:400 10.5px/1.3 var(--display);color:var(--faint);text-align:right}
+  .tsq{flex:1;font:400 13px/1.45 var(--display);color:var(--faint);text-align:center}
   .tsx{flex:none;padding:9px 13px;border-radius:999px;border:1px solid var(--line);
     background:rgba(255,255,255,.06);color:var(--dim);cursor:pointer;
     font:600 12.5px/1 var(--display)}
@@ -786,11 +788,9 @@
   .gpos.RB{background:rgba(95,217,160,.16);color:#79E3B5}
   .gpos.WR{background:rgba(107,182,255,.16);color:#8CC6FF}
   .gpos.TE{background:rgba(255,197,92,.16);color:#FFD07C}
-  .gdot{display:inline-block;width:9px;height:9px;border-radius:50%;
-    margin-right:10px;vertical-align:1px;background:var(--faint)}
-  .gdot.s{background:var(--win)}
-  .gdot.w{background:var(--loss)}
-  .gbody b{display:block;font:400 15.5px/1.25 var(--display);color:var(--chalk)}
+  .gbody b{display:block;font:600 15.5px/1.25 var(--display);color:var(--dim)}
+  .gbody b.g-strong{color:var(--win)}
+  .gbody b.g-weak{color:var(--loss)}
   .gbody span{display:block;margin-top:4px;font:400 12.5px/1.45 var(--display);
     color:var(--faint)}
   .gnum{font:400 16px/1 var(--display);color:var(--dim);font-variant-numeric:tabular-nums}
@@ -938,7 +938,7 @@
       <label class="sr" for="me">Team selection</label>
       <select id="me"><option value="">Who are you?</option></select>
     </div>
-    <div class="freshchip" id="freshTop"></div>
+    <div class="freshchip stale" id="freshTop"></div>
   </header>
 
   <div class="count" id="countdown">
@@ -958,8 +958,8 @@
     <div id="installHint"></div>
     <div id="nextup"></div>
     <div id="picksPrompt"></div>
-    <div id="powerMini"></div>
     <div id="recap"></div>
+    <div id="powerMini"></div>
     <div id="draft"></div>
     <div id="awards"></div>
   </section>
@@ -984,13 +984,6 @@
     <div id="ownersBody">
     <h2>Owners</h2>
     <div id="dossiers"></div>
-    <div class="card">
-      <p><b>Best season:</b> Austin, 1,803 pts, 2021 (finished 4th)<br>
-      <b>Worst season:</b> James, 1,221 pts, 2019<br>
-      <b>Most wins:</b> Scotty, 52<br>
-      <b>Most titles:</b> Scotty and Bo, 2 each<br>
-      <b>Still waiting:</b> Cody, Ryan, Austin, Andy, James, Justin</p>
-    </div>
     <div class="card red">
       <h3>The 51&ndash;45 Club</h3>
       <p>Cody, Ryan and Austin have each played seven seasons and finished with the exact same record. None has ever won. Bo is 42&ndash;41 with two rings.</p>
@@ -1129,6 +1122,23 @@ const DRAFT_AT = new Date("2026-09-06T21:00:00Z").getTime();   // Sun Sept 6, 5:
    time the gate lifts, with no window where the recap has updated but the pack
    refuses to fire. */
 const PACKS_AT = new Date("2026-09-15T12:00:00Z").getTime();   // Tue Sept 15, 8:00 AM ET
+const DEADLINE_AT = new Date("2026-12-02T17:00:00Z").getTime();// Wed Dec 2, noon ET
+const WEEK_MS = 7 * 864e5;
+
+/* The clock lives above the panels, so it was sitting on top of the binder and
+   the waiver wire as well as Home. It belongs to Home, and only while it is
+   counting to something: the draft, or the last week before the deadline. */
+function countdownWanted(){
+  const now = Date.now();
+  if(destOf(currentPanel) !== "home") return false;
+  if(now >= DEADLINE_AT) return false;
+  if(now >= DRAFT_AT && (DEADLINE_AT - now) > WEEK_MS) return false;
+  return true;
+}
+function paintCountdown(){
+  const box = document.getElementById("countdown");
+  if(box) box.style.display = countdownWanted() ? "" : "none";
+}
 
 function liveDraft(){
   if(PREVIEW) return true;
@@ -1162,7 +1172,7 @@ const DESTS = [
   ["league", "League", ["power", "picks", "history", "records", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
-const PANEL_LABEL = { hq:"Home", team:"My team", power:"Power", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
+const PANEL_LABEL = { hq:"Home", team:"My team", power:"Standings", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
   trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
 
 /* The wordmark is the only place the destination is named in words. Naming it
@@ -1205,6 +1215,7 @@ function paintChrome(dest){
     document.querySelectorAll(".sky").forEach(el => {
       if(el.classList) el.classList.toggle("on", el.getAttribute("data-sky") === dest);
     });
+    paintCountdown();
   } catch(e){ /* chrome is decoration, never let it take the page down */ }
 }
 
@@ -1343,6 +1354,8 @@ const CURRENT = ["Scotty","Bo","Dawson","Anthony","Cody",
   "Ryan","Austin","Andy","James","Justin"];
 
 const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const ordinal = n => n + (["th","st","nd","rd"][(n % 100 - 20) % 10]
+  || ["th","st","nd","rd"][n % 100] || "th");
 const fmt = n => Math.round(n).toLocaleString();
 const f1  = n => (Math.round(n*10)/10).toLocaleString(undefined,{minimumFractionDigits:1});
 const YEARS = Object.keys(SEASONS).sort().reverse();
@@ -1379,14 +1392,16 @@ document.getElementById("champs").innerHTML = YEARS.map(y=>{
     <span class="tm">${esc(c[0])} &middot; ${c[2]}</span></div>`;
 }).join("");
 
-document.getElementById("seasons").innerHTML = YEARS.map(y=>`
-  <h2>${y} Final Standings</h2>
+document.getElementById("seasons").innerHTML =
+  `<details class="hhmore"><summary>Final Standings, ${YEARS[YEARS.length-1]} to ${YEARS[0]}</summary>` +
+  YEARS.map(y=>`
+  <div class="sect"><h3>${y}</h3><span class="rule"></span></div>
   <table><thead><tr><th></th><th>Team</th><th class="n">Rec</th><th class="n">PF</th><th class="n">PA</th></tr></thead>
   <tbody>${SEASONS[y].map((r,i)=>`<tr class="${r[5]===1?"champ":""}">
     <td class="fin">${r[5]===1?"\u{1F3C6}":i+1}</td>
     <td>${esc(r[0])}<span class="who">${esc(r[1])}</span></td>
     <td class="n">${r[2]}</td><td class="n">${fmt(r[3])}</td><td class="n">${fmt(r[4])}</td>
-  </tr>`).join("")}</tbody></table>`).join("");
+  </tr>`).join("")}</tbody></table>`).join("") + `</details>`;
 
 function renderLedger(){
   document.getElementById("tall").innerHTML = Object.entries(led)
@@ -1430,8 +1445,13 @@ const DRAFT_ORDER = [
 
 function renderDraft(){
   const n = DRAFT_ORDER.length;
+  /* Front and centre until we draft, then folded away. It is worth checking
+     forty times in the week before and never again after, but throwing it out
+     entirely means the one person who wants it in November cannot find it. */
+  const done = liveDraft();
   document.getElementById("draft").innerHTML =
-    `<h2>Draft Order</h2><div class="picks">` +
+    (done ? `<details class="hhmore"><summary>Draft order</summary>`
+          : `<h2>Draft Order</h2>`) + `<div class="picks">` +
     DRAFT_ORDER.map(([team, man], i) => {
       const p = i + 1;
       const r2 = (n * 2) + 1 - p;   // snake: round 2
@@ -1442,7 +1462,8 @@ function renderDraft(){
           <span>${esc(team)} &middot; R2 #${r2} &middot; R3 #${r3}</span></span>
       </div>`;
     }).join("") +
-    `</div><p class="note">Snake format, 90 seconds a pick. Sunday Sept 6, 5:00 PM ET.</p>`;
+    `</div>` + (done ? `</details>`
+      : `<p class="note">Snake format, 90 seconds a pick. Sunday Sept 6, 5:00 PM ET.</p>`);
 }
 
 /* ---------- live state ---------- */
@@ -1471,10 +1492,12 @@ function projDisagrees(v){ return v.n > 1 && v.spread >= Math.max(3, v.blend * 0
 function projChip(p){
   const v = projOf(p);
   if(!v.n) return "";
+  /* The gap between sources is worth printing. "espn only" is not, fifteen
+     times down one screen. The line under the roster already names the
+     sources once, which is the right number of times. */
   return `<span class="pj${projDisagrees(v) ? " split" : ""}">
       <b>${v.blend.toFixed(1)}</b>${v.n > 1
-        ? `<i>&plusmn;${v.spread.toFixed(1)}</i>`
-        : `<i>espn only</i>`}</span>`;
+        ? `<i>&plusmn;${v.spread.toFixed(1)}</i>` : ""}</span>`;
 }
 const lock = (t,b) => `<div class="locked"><div class="ic">&#128274;</div><h3>${t}</h3><p>${b}</p></div>`;
 const drafted = () => !!(LIVE && LIVE.settings && LIVE.settings.draftDetail
@@ -1524,11 +1547,9 @@ function renderAwards(){
   const el = document.getElementById("awards");
   const teams = teamList();
   const games = playedGames();
-  if(!teams.length || !games.length){
-    el.innerHTML = `<h2>Superlatives</h2>` + lock("Awards start after Week 1",
-      "Every award here is calculated from real results \u2014 no opinions, no voting.");
-    return;
-  }
+  /* The recap card directly above already says nothing has happened yet.
+     Saying it twice on the same screen is how a page starts to feel empty. */
+  if(!teams.length || !games.length){ el.innerHTML = ""; return; }
 
   const byId = {};
   teams.forEach(t => byId[t.id] = {
@@ -1617,15 +1638,30 @@ function standingsTable(limit){
     const A=a.record.overall,B=b.record.overall;
     return (B.wins-A.wins)||(B.pointsFor-A.pointsFor);
   }).slice(0, limit||99);
+  /* Manager under the team name, because team names change every August and
+     nobody remembers who Waddlin my white @$$ to victory is. Your own row is
+     highlighted and the playoff cut is drawn, which is the only reason most
+     people open a standings table in November. */
+  const idx = teamIndex();
+  const byId = {};
+  Object.keys(idx).forEach(m => { byId[idx[m].id] = m; });
+  const mineId = (idx[ME] || {}).id;
+
   /* class="fin", not "pos". The position badge owns .pos at the same
      specificity and turns this cell into an inline-flex box. */
   return `<table><thead><tr><th></th><th>Team</th><th class="n">Rec</th>
     <th class="n">PF</th><th class="n">PA</th></tr></thead><tbody>` +
     rows.map((t,i)=>{const o=t.record.overall;
-      return `<tr><td class="fin">${i+1}</td><td>${esc(tname(t))}</td>
+      const cut = (i === PLAYOFF_SPOTS && rows.length > PLAYOFF_SPOTS) ? " cut" : "";
+      return `<tr class="${t.id === mineId ? "you" : ""}${cut}">
+        <td class="fin">${i+1}</td>
+        <td>${esc(tname(t))}${byId[t.id] ? `<span class="who">${esc(byId[t.id])}</span>` : ""}</td>
         <td class="n">${o.wins}-${o.losses}</td>
         <td class="n">${fmt(o.pointsFor)}</td><td class="n">${fmt(o.pointsAgainst)}</td></tr>`;
-    }).join("") + `</tbody></table>`;
+    }).join("") + `</tbody></table>` +
+    (rows.length > PLAYOFF_SPOTS
+      ? `<p class="note">Line marks the playoff cut. Top ${PLAYOFF_SPOTS} get in,
+         top two get a bye.</p>` : "");
 }
 
 function renderSnapshot(){
@@ -1652,7 +1688,8 @@ function renderLeague(){
        seven years do not need to be told who is in the league. */
     el.innerHTML = `<div class="stamp">Connected to ESPN</div>` +
       lock("Standings open Week 1",
-        `All ${teams.length} teams are in and the feed is live. Records fill in once games are played.`);
+        `All ${teams.length} teams are in and the feed is live. Records, power rankings`
+        + ` and playoff odds all fill in once games are played.`);
     return;
   }
   el.innerHTML = `<h2>Standings</h2>` + standingsTable();
@@ -1940,12 +1977,10 @@ function renderPower(){
   if(!el) return;
   if(!liveDraft()){ el.innerHTML = ""; return; }
 
+  /* The standings card right below says the same thing before Week 1, and two
+     locked cards stacked on one screen reads as a broken page. */
   const rows = powerMovement();
-  if(!rows.length){
-    el.innerHTML = `<h2>Power rankings</h2>` + lock("Nothing to rank yet",
-      "These need at least one completed week. They appear the first Tuesday of the season.");
-    return;
-  }
+  if(!rows.length){ el.innerHTML = ""; return; }
 
   const arrow = m => m === null ? `<span class="pwmv new">new</span>`
     : m > 0 ? `<span class="pwmv up">&#9650;${m}</span>`
@@ -1953,8 +1988,6 @@ function renderPower(){
     : `<span class="pwmv flat">&mdash;</span>`;
 
   el.innerHTML = `<h2>Power rankings</h2>
-    <p class="note" style="margin:0 0 14px">Season scoring, the last three weeks,
-      and all-play record. Movement is against last week.</p>
     ${rows.map(r => `<div class="pwrow${r.manager === ME ? " me" : ""}">
       <span class="pwn">${r.rank}</span>
       ${arrow(r.move)}
@@ -2136,7 +2169,8 @@ function renderPicks(){
 
   const ready = picksValid(myPicks, n);
   const noWinner = games.filter(g => !(myPicks[g.id] || {}).w).length;
-  const status = picksState === "saving" ? "Saving\u2026"
+  const status = !n ? "No games on the schedule for this week yet."
+    : picksState === "saving" ? "Saving\u2026"
     : picksState === "error" ? "Offline, your picks are not saved."
     : locked ? "Locked. Results below."
     : `Tap the winner of each game, then rank them. Your most confident pick is `
@@ -2188,7 +2222,7 @@ function renderPicks(){
 
   el.innerHTML = `<h2>Pick&rsquo;em &middot; Week ${wk}</h2>
     <p class="note" style="margin:0 0 12px">${esc(status)}</p>
-    ${n ? rows : `<div class="binderEmpty">No games scheduled for this week yet.</div>`}
+    ${rows}
     ${(!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
         ${ready ? "" : "disabled"}>${
           ready ? "Save picks"
@@ -2275,6 +2309,17 @@ function nextOpponent(){
 function renderNextUp(){
   const el = document.getElementById("nextup");
   if(!el) return;
+
+  /* The single biggest hole for anyone opening the link for the first time.
+     Without a name, Team, Trades and Pick'em are all blank and the page looks
+     broken rather than unconfigured. Shown before the draft too, because that
+     is when everyone will first open it. */
+  if(!ME){
+    el.innerHTML = `<div class="card gold"><h3>Pick your name up top</h3>
+      <p>Your team, your trades and your picks all need to know which one of you
+        is you. Tap the button in the top right. It remembers after that.</p></div>`;
+    return;
+  }
   if(!liveDraft()){ el.innerHTML = ""; return; }
 
   const nx = nextOpponent();
@@ -2316,7 +2361,7 @@ function renderRecords(){
   const { scores, margins } = recordRows();
   if(!scores.length){
     el.innerHTML = `<h2>Records</h2>` + lock("Nothing on file yet",
-      "Records are built from every game since 2019. They appear once data/h2h.json has been generated.");
+      "Records cover every game since 2019. They appear once the overnight job has built them.");
     return;
   }
 
@@ -2379,9 +2424,8 @@ function renderH2H(){
   normaliseH2H();          // idempotent, so a stale file still reads correctly
   const mgrs = h2hManagers();
   if(!mgrs.length){
-    el.innerHTML = `<h2>Head to Head</h2>` + lock("No matchup file yet",
-      "data/h2h.json has not been built. Run <b>node scripts/h2h.mjs</b> or wait for the nightly job. "
-      + "Every meeting since 2019 shows up here once the file lands.");
+    el.innerHTML = `<h2>Head to Head</h2>` + lock("Nothing on file yet",
+      "Every meeting since 2019 shows up here once the overnight job has built it.");
     return;
   }
 
@@ -2455,7 +2499,7 @@ function renderH2H(){
   if(solid.length >= 2){
     const top = solid[0], bot = solid[solid.length - 1];
     html += `<div class="card gold"><h3>${esc(h2hA)} around the league</h3>
-      <p><b>Favourite opponent:</b> ${esc(top.m)}, ${top.r.w}-${top.r.l}<br>
+      <p><b>Favorite opponent:</b> ${esc(top.m)}, ${top.r.w}-${top.r.l}<br>
       <b>Personal problem:</b> ${esc(bot.m)}, ${bot.r.w}-${bot.r.l}</p></div>`;
   }
 
@@ -3001,7 +3045,7 @@ function demoFreeAgents(){
     own: Math.round(rnd(j,5) * 45),
     trend: Math.round(rnd(j,6) * 9000),
     snapPct: Math.round(20 + rnd(j,7) * 70),
-    tgtShare: p === "RB" ? null : Math.round(8 + rnd(j,8) * 22),
+    tgtShare: (p === "RB" || p === "K" || p === "DST") ? null : Math.round(8 + rnd(j,8) * 22),
     injury: null, bye: 5 + Math.floor(rnd(j,9)*9), ir:false
   })).sort((a,b) => b.proj - a.proj);
 }
@@ -3080,12 +3124,14 @@ function rosterBlock(team, sel, side){
   const s = rosterSections(team.players);
   const line = f => f.player
     ? plrRow(f.player, f.slot, sel.has(f.player.id), side, team.manager) : emptyRow(f.slot);
+  /* Kickers and defences are left out here. Nobody has ever traded one, the
+     finder already refuses to suggest them, and they were eight rows of noise
+     between you and the players you might actually move. */
   return sectHead(`${team.manager}'s lineup`, s.total) +
     s.starters.map(line).join("") +
     sectHead("Bench") + (s.bench.length
       ? s.bench.map(p => plrRow(p, "", sel.has(p.id), side, team.manager)).join("")
-      : `<p class="note">Nobody on the bench.</p>`) +
-    sectHead("Kicker and defense") + s.tail.map(line).join("");
+      : `<p class="note">Nobody on the bench.</p>`);
 }
 
 /* True once the draft has unlocked the tabs but ESPN rosters have not landed in
@@ -3182,13 +3228,23 @@ function renderTradePro(){
       <b>${live ? sign(per(d)) : "&mdash;"}</b><i>${esc(who)}</i></span>`;
   const tsHint = `<span class="tsn">pts a week<br>for ${wksN} more</span>`;
 
+  /* Your own gaps were on screen and theirs were not, which is backwards: a
+     deal gets accepted because it fixes something for them. */
+  const gThem = gradeTeam(them, leagueMedians(ROSTERS));
+
   el.innerHTML = demoBanner() +
-    `<div class="tsum">${tsHint}${tsd(dA, me.manager)}${tsd(dB, them.manager)}
-      ${live ? `<button type="button" class="tsx" id="clrTop">Clear</button>` : ""}</div>` +
-    needPills(gMe) +
+    (live
+      ? `<div class="tsum">${tsHint}${tsd(dA, me.manager)}${tsd(dB, them.manager)}
+          <button type="button" class="tsx" id="clrTop">Clear</button></div>`
+      : `<div class="tsum"><span class="tsq">Tap players below to build a deal.
+          The running total follows you down the page.</span></div>`) +
+    `<div class="sect" style="margin-top:6px"><h3>You are short of</h3>
+      <span class="rule"></span></div>` + needPills(gMe) +
     `<div class="picker"><select id="tp">${others.map(t =>
       `<option value="${t.id}" ${t.id===tradePartner?"selected":""}>Trade with ${esc(t.manager)} \u2014 ${esc(t.teamName)}</option>`
       ).join("")}</select></div>
+    <div class="sect"><h3>${esc(them.manager)} is short of</h3><span class="rule"></span></div>
+    ${needPills(gThem)}
 
     <div class="tray ${live?"live":""}">
       <div class="half"><div class="lbl"><b>${esc(me.manager)}</b> gives up</div>
@@ -3262,9 +3318,12 @@ function renderTradePro(){
           : `<p class="note" style="margin:0 0 6px">Starting lineup is unchanged.
              Everything moving is bench depth.</p>`)).join("")}
     </details>` : "") +
+    /* Ideas above the rosters. They were at the bottom, under sixty rows of
+       players, which is the one place nobody scrolls to. They are the fastest
+       route to a deal, so they go where a deal starts. */
+    sectHead(`Ideas with ${esc(them.manager)}`) + `<div id="ideas"></div>` +
     rosterBlock(me, giveSel, "give") +
-    rosterBlock(them, getSel, "get") +
-    sectHead(`Ideas with ${esc(them.manager)}`) + `<div id="ideas"></div>`;
+    rosterBlock(them, getSel, "get");
 
   const ideas = findTrades(me, them);
   document.getElementById("ideas").innerHTML = ideas.length ? ideas.map((i,n) =>
@@ -3532,12 +3591,11 @@ const blockStatusLine = () => {
 };
 
 /* ================= TEAM PAGE ================= */
-/* Drawn, not typed. The emoji rendered at whatever size and weight the system
-   felt like and sat badly next to everything else on the page. Green and red
-   still mean what they mean everywhere else, and average is deliberately grey
-   rather than amber so only the two states worth acting on carry a colour. */
-const GRADE_DOT = { strong:`<span class="gdot s"></span>`,
-  ok:`<span class="gdot o"></span>`, weak:`<span class="gdot w"></span>` };
+/* No bullet. An emoji rendered at whatever size the system felt like, and a
+   drawn dot wrapped onto its own line. The word already carries the meaning,
+   so it is the word that gets the colour, which is what win and loss do
+   everywhere else on the site. */
+const GRADE_WORD = { strong:"Strength", ok:"Average", weak:"Weakness" };
 const GRADE_WHY = {
   QB: { strong:"Set every week, no thinking required.",
         ok:"Fine. Not a problem, not an edge.",
@@ -3584,13 +3642,19 @@ function renderTeamPage(){
   el.innerHTML = demoBanner() +
     `<div class="teamHero">
       <div><div class="th-name">${esc(me.teamName)}</div>
-        <div class="th-man">${esc(me.manager)}</div></div>
-      <div class="th-seed"><b>${seed}</b><span>of ${ROSTERS.length} rest of season</span></div>
+        <div class="th-man">${esc(me.manager)}${(() => {
+          try { const r = seasonTable()[me.id];
+                return (r && (r.w + r.l)) ? ` &middot; ${r.w}-${r.l}` : ""; }
+          catch(e){ return ""; }
+        })()}</div></div>
+      <div class="th-seed"><b>${ordinal(seed)}</b><span>of ${ROSTERS.length} on rest of season</span></div>
     </div>
 
     <h2>This week</h2>
     ${renderMatchup(me)}
     ${renderStartSit(me)}
+
+    ${renderOutlookTable(me)}
 
     <h2>Roster</h2>
     ${renderSuggested(me)}
@@ -3598,8 +3662,7 @@ function renderTeamPage(){
     <h2>Position grades</h2>
     ${Object.entries(g).map(([pos,v]) => `<div class="grade">
       <span class="gpos ${pos}">${pos}</span>
-      <span class="gbody"><b>${GRADE_DOT[v.label]} ${
-        v.label==="strong"?"Strength":v.label==="weak"?"Weakness":"Average"}</b>
+      <span class="gbody"><b class="g-${v.label}">${GRADE_WORD[v.label]}</b>
         <span>${GRADE_WHY[pos][v.label]}</span></span>
       <span class="gnum">${v.avg.toFixed(1)}</span></div>`).join("")}
 
@@ -3801,6 +3864,99 @@ function nextMatchup(meId){
   return opp ? { week, opp } : null;
 }
 
+/* ---------- season at a glance ----------
+   Every week still to play, your best lineup against the best lineup the team
+   you are actually scheduled against can field that week. Byes on both sides.
+   It answers the question the rest of the page dances around: not whether the
+   roster is good, but whether it is going to be enough. */
+
+/* who you play in a given week, off the real schedule */
+function scheduleFor(meId, wk){
+  const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
+  const g = sch.find(m => m.matchupPeriodId === wk && m.home && m.away
+    && (m.home.teamId === meId || m.away.teamId === meId));
+  if(g) return g.home.teamId === meId ? g.away.teamId : g.home.teamId;
+
+  /* No schedule means preseason. Rotating a round robin here is invented, so
+     it is fixtures only and never reaches the league. */
+  if(!PREVIEW) return null;
+  const ids = (ROSTERS || []).map(t => t.id);
+  if(ids.length < 2) return null;
+  const rot = ids.slice(1), shift = (wk - 1) % rot.length;
+  const ordered = [ids[0], ...rot.slice(shift), ...rot.slice(0, shift)];
+  for(let k = 0; k < ordered.length / 2; k++){
+    const a = ordered[k], b = ordered[ordered.length - 1 - k];
+    if(a === meId) return b;
+    if(b === meId) return a;
+  }
+  return null;
+}
+
+function seasonOutlook(me){
+  const out = [];
+  weeksLeft().forEach(wk => {
+    const oppId = scheduleFor(me.id, wk);
+    const opp = (ROSTERS || []).find(t => t.id === oppId);
+    if(!opp) return;
+    const mine = bestLineupWith(me.players, ppgOf, wk).total;
+    const theirs = bestLineupWith(opp.players, ppgOf, wk).total;
+    out.push({ wk, opp, mine, theirs, d: mine - theirs });
+  });
+  return out;
+}
+
+function renderOutlookTable(me){
+  const rows = seasonOutlook(me);
+  if(!rows.length) return "";
+
+  const wins = rows.filter(r => r.d > 0).length;
+  const losses = rows.length - wins;
+
+  /* what is already banked, so the projection can be stated as a finish */
+  let haveW = 0, haveL = 0;
+  try {
+    const r = seasonTable()[me.id];
+    if(r){ haveW = r.w; haveL = r.l; }
+  } catch(e){}
+
+  /* the games that decide it: closest to a coin flip */
+  const swing = rows.slice().sort((a,b) => Math.abs(a.d) - Math.abs(b.d))[0];
+  const worst = rows.slice().sort((a,b) => a.d - b.d)[0];
+
+  /* Only claim a finish if the arithmetic closes. Preseason the schedule has
+     not been published, so the weeks left are counted forward and can overlap
+     games already played; showing a nineteen game season would be worse than
+     showing nothing. */
+  const fits = (haveW + haveL + rows.length) <= REG_WEEKS;
+
+  return `<h2>Season at a glance</h2>
+    <div class="verdict"${fits ? "" : ' style="grid-template-columns:1fr"'}>
+      <div class="vcell"><div class="name">Rest of the way</div>
+        <div class="delta ${wins > losses ? "up" : wins < losses ? "down" : ""}">${wins}-${losses}</div></div>
+      ${fits ? `<div class="vcell"><div class="name">Projected finish</div>
+        <div class="delta">${haveW + wins}-${haveL + losses}</div></div>` : ""}
+      <div class="vnote">${
+        swing ? `Week ${swing.wk} against ${esc(swing.opp.manager)} is the coin flip,
+          ${Math.abs(swing.d).toFixed(1)} in it.` : ""}
+        ${worst && worst.d < 0 ? `Week ${worst.wk} against ${esc(worst.opp.manager)}
+          is the one you are least likely to win.` : ""}</div>
+    </div>
+    <table><thead><tr><th>Wk</th><th>Opponent</th><th class="n">You</th>
+      <th class="n">Them</th><th class="n">Margin</th></tr></thead><tbody>` +
+    rows.map(r => `<tr>
+      <td class="fin">${r.wk}</td>
+      <td>${esc(r.opp.manager)}</td>
+      <td class="n">${r.mine.toFixed(1)}</td>
+      <td class="n">${r.theirs.toFixed(1)}</td>
+      <td class="n mark ${r.d > 0 ? "good" : "bad"}">${r.d > 0 ? "+" : ""}${r.d.toFixed(1)}</td>
+    </tr>`).join("") +
+    `</tbody></table>
+    <p class="note">Both lineups are the best each roster could field that week,
+      with byes taken out on either side. It assumes nobody trades, nobody picks
+      anyone up and nobody gets hurt, none of which will hold, so treat a one
+      point margin as a coin flip rather than a win.</p>`;
+}
+
 /* ---------- lineup problems worth catching before kickoff ---------- */
 function lineupWarnings(team, week){
   const s = rosterSections(team.players);
@@ -3888,12 +4044,12 @@ function renderSuggested(me){
       ? s.bench.map(p => row(p, "")).join("")
       : `<p class="note">Nobody on the bench.</p>`) +
     `<div class="srcline"><span>${esc(src)}</span>
-      <span>starters project ${s.total.toFixed(1)}</span></div>
-    <p class="note">Each number is the average of the sources that have the player,
-      with the gap between them after it. ${split.length
-        ? `${split.length} starter${split.length > 1 ? "s" : ""} the two sources
-           genuinely disagree on, which is where a lineup call is actually worth making.`
-        : "The sources broadly agree on this lineup."}</p>`;
+      <span>starters project ${s.total.toFixed(1)}</span></div>` +
+    (split.length
+      ? `<p class="note">${split.length} starter${split.length > 1 ? "s" : ""} the two
+         sources disagree on, marked above. That is where a lineup call is worth
+         making.</p>`
+      : "");
 }
 
 function renderStartSit(me){
@@ -4106,8 +4262,8 @@ function legacyCard(c){
     const rarity = c.rarity
       || (c.tier === "bronzeC" ? "shame" : c.tier === "gold" ? "rare" : "common");
     return { type:"cons", rarity,
-      rarityLabel: rarity === "shame" ? "Dishonour" : rarity === "rare" ? "Rare" : "Common",
-      kind: rarity === "shame" ? "Weekly Dishonour" : "Weekly Superlative",
+      rarityLabel: rarity === "shame" ? "Dishonor" : rarity === "rare" ? "Rare" : "Common",
+      kind: rarity === "shame" ? "Weekly Dishonor" : "Weekly Superlative",
       icon: rarity === "shame" ? "\u2620\uFE0F" : "\u2605",
       art: c.art, title: c.title, desc: c.sub || "", value: c.rate || "",
       reason: c.reason || "" };
@@ -4699,8 +4855,8 @@ function buildWeekCards(w, wk){
   (w.awards||[]).forEach(a => out.push({
     type:"cons",
     rarity: a.good===false ? "shame" : (a.rare ? "rare" : "common"),
-    rarityLabel: a.good===false ? "Dishonour" : (a.rare ? "Rare" : "Common"),
-    kind: a.good===false ? "Weekly Dishonour" : "Weekly Superlative",
+    rarityLabel: a.good===false ? "Dishonor" : (a.rare ? "Rare" : "Common"),
+    kind: a.good===false ? "Weekly Dishonor" : "Weekly Superlative",
     icon: a.icon || (a.good===false ? "\u2620\uFE0F" : "\u2605"),
     art: a.art || a.emoji || awardArt(a.title, wk, a.good),
     pool: (a.good === false || !won) ? "bad" : "good",
@@ -4800,13 +4956,14 @@ window.addEventListener("hashchange", applyHash);
 applyHash();
 
 const DRAFT=DRAFT_AT;
-const DEADLINE=new Date("2026-12-02T17:00:00Z").getTime();
+const DEADLINE=DEADLINE_AT;
 function tick(){
   const now=Date.now();
+  paintCountdown();
+  if(!countdownWanted()) return;
   let target=DRAFT,label="Draft in",when="Sunday, September 6 \u00b7 5:00 PM ET";
   if(now>=DRAFT){target=DEADLINE;label="Trade deadline in";
     when="Wednesday, December 2 \u00b7 12:00 PM ET";}
-  if(now>=DEADLINE){document.getElementById("countdown").style.display="none";return;}
   document.getElementById("cdlabel").textContent=label;
   document.getElementById("cdwhen").textContent=when;
   let diff=Math.max(0,target-now);
@@ -4851,12 +5008,13 @@ try{ pullPicks(); }catch(e){ console.warn("[bromigos] pick sync:", e && e.messag
         const stale = (Date.now()-when.getTime())/36e5 > 48;
         f.textContent = "League data updated " + stamp;
         if(stale) f.className = "stale";
-        if(chip){ chip.textContent = (stale ? "Data may be stale \u00b7 " : "Updated ") + stamp;
-                  chip.className = "freshchip" + (stale ? " stale" : ""); }
+        /* Only worth the space when something is wrong. The footer carries the
+           timestamp every day; the top of the page is for the league, not for
+           telling ten people the robot ran on time. */
+        if(chip) chip.textContent = stale ? "Data may be stale, last updated " + stamp : "";
       } else {
         f.textContent = "Live data not loaded yet \u2014 history below is complete.";
-        if(chip){ chip.textContent = "History only, live data not loaded";
-                  chip.className = "freshchip stale"; }
+        if(chip) chip.textContent = "History only, live data has not loaded";
       }
       renderAll();
       try { maybeAutoPack(); }

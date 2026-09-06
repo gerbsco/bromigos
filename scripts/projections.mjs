@@ -19,20 +19,24 @@
 // republishes ECR columns in its own files; those are skipped for the same
 // reason. Only their own computed value columns are read.
 //
-// Three things come out of this now, not one:
+// Four things come out of this now:
 //
 //   players  this week, per ESPN id. What the start/sit call uses.
-//   ros      the same projection summed across every week still to be played,
-//            which is what a trade should be judged on. A player is a season,
-//            not a Sunday.
+//   weeks    every remaining week on its own, per ESPN id. Week 7 rated as
+//            week 7 rather than as one flat average, which is what the season
+//            table needs to move with the schedule instead of printing the
+//            same number fourteen times.
+//   ros      those same weeks added up, which is what a trade is judged on.
+//            Kept because it is a cheaper answer to a different question and
+//            the app falls back to it whenever a week is missing.
 //   market   DynastyProcess trade values. A different unit and a different
 //            question, kept separate on purpose so nothing adds points to
 //            rankings. Dynasty values weight age heavily, so in a redraft
 //            league this is a sanity check and not a verdict.
 //
-// Every one of the three is optional. Any of them failing leaves the others
-// intact, because a missing second opinion should degrade the app rather than
-// take the nightly job down with it.
+// Every one of them is optional. Any failing leaves the others intact, because
+// a missing second opinion should degrade the app rather than take the nightly
+// job down with it.
 
 import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -41,9 +45,8 @@ const SEASON = "2026";
 const OUT = "data/projections.json";
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; BromigosBot/1.0)", "Accept": "*/*" };
 
-/* Last regular season week. Playoff weeks are left out of the rest of season
-   sum on purpose: who is playing in them is not decided, so counting them
-   would be guessing twice. */
+/* Last regular season week. Playoff weeks are left out on purpose: who is
+   playing in them is not decided, so counting them would be guessing twice. */
 const LAST_WEEK = 14;
 
 const WANT = new Set(["QB", "RB", "WR", "TE", "K", "DEF"]);
@@ -138,6 +141,19 @@ export function keyByEspn(sleeperPoints, sleeperToEspn) {
     const espn = sleeperToEspn[sid];
     if (espn) out[espn] = sleeperPoints[sid];
   });
+  return out;
+}
+
+/* A zero is not a projection. Sleeper returns one for a bye, for a player who
+   is not active and for anyone it has not published yet, and the three are
+   indistinguishable here. Dropping them keeps the per week file about a third
+   smaller and lets the app tell "no number for this week" apart from "we think
+   he scores nothing", which is the difference between falling back to his
+   season average and benching him by accident. Byes are handled properly on
+   the app side, off the bye week ESPN sends with the roster. */
+export function dropZeros(map) {
+  const out = {};
+  Object.keys(map || {}).forEach(k => { if (map[k] > 0) out[k] = map[k]; });
   return out;
 }
 
@@ -254,28 +270,35 @@ async function main() {
     console.log("     low match rate, the crosswalk columns may have moved again");
   }
 
-  /* ---------- rest of season ---------- */
+  /* ---------- rest of season, week by week ---------- */
   const ahead = weeksAhead(league, week);
-  const got = [], maps = [];
+  const got = [], maps = [], weeks = {};
   console.log(`ok   ${ahead.length} week${ahead.length === 1 ? "" : "s"} left`
     + (ahead.length ? ` (${ahead[0]} to ${ahead[ahead.length - 1]})` : ""));
 
   for (const w of ahead) {
+    let map = null;
     /* the current week is already in hand, no reason to ask twice */
-    if (w === week) { maps.push(sleeper); got.push(w); continue; }
-    try {
-      maps.push(await sleeperWeek(w));
-      got.push(w);
-    } catch (err) {
-      console.log(`     week ${w} unavailable, left out of the sum`);
+    if (w === week) map = sleeper;
+    else {
+      try { map = await sleeperWeek(w); }
+      catch (err) { console.log(`     week ${w} unavailable, left out`); continue; }
     }
+    maps.push(map);
+    got.push(w);
+    /* Keyed by ESPN id and stored under the week, which is the shape the app
+       reads. The sum below is built from the same maps, so the two can never
+       describe different weeks. */
+    weeks[String(w)] = dropZeros(keyByEspn(map, ids));
   }
 
   const ros = keyByEspn(sumWeeks(maps), ids);
   const complete = got.length === ahead.length;
+  const cells = Object.values(weeks).reduce((n, m) => n + Object.keys(m).length, 0);
   console.log(`ok   rest of season: ${Object.keys(ros).length} players across`
     + ` ${got.length} of ${ahead.length} remaining weeks`
     + (complete ? "" : " (partial, see misses above)"));
+  console.log(`ok   per week table: ${cells} projections over ${Object.keys(weeks).length} weeks`);
 
   /* ---------- market ---------- */
   let market = {};
@@ -293,19 +316,23 @@ async function main() {
   }
 
   mkdirSync("data", { recursive: true });
-  writeFileSync(OUT, JSON.stringify({
+  const body = JSON.stringify({
     generatedAt: new Date().toISOString(),
     season: SEASON, week, source: "sleeper",
     players,
+    weeks,
     ros,
     rosWeeks: got,
     rosComplete: complete,
     market,
     marketSource: Object.keys(market).length ? "dynastyprocess" : null
-  }));
+  });
+  writeFileSync(OUT, body);
   console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(players).length} players matched,`
+    + ` ${cells} per week projections,`
     + ` ${Object.keys(ros).length} with a rest of season number,`
-    + ` ${Object.keys(market).length} with a market value)\n`);
+    + ` ${Object.keys(market).length} with a market value,`
+    + ` ${Math.round(body.length / 1024)}kb)\n`);
 }
 
 const invokedDirectly = process.argv[1]

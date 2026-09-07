@@ -839,9 +839,14 @@
   .mxw[aria-pressed=true]{background:rgba(255,255,255,.16);
     background:color-mix(in srgb,var(--accent) 18%,transparent);
     border-color:color-mix(in srgb,var(--accent) 36%,transparent);color:var(--accent)}
-  .mxrow{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:9px;
+  .mxrow{display:grid;grid-template-columns:1fr 58px 1fr;align-items:center;gap:9px;
     padding:11px 12px;background:var(--ink-2);border-radius:14px;margin-bottom:5px}
-  .mxp{min-width:0}
+  .mxp{min-width:0;padding:6px 9px;border-radius:10px}
+  /* The higher projection gets the pill, so the side that is winning a slot
+     reads at a glance rather than by comparing two small numbers. Accent, not
+     green: green means gained on this site and nothing else. */
+  .mxp.lead{background:rgba(255,255,255,.07);
+    background:color-mix(in srgb,var(--accent) 13%,transparent)}
   .mxp b{display:block;font:400 14.5px/1.25 var(--display);letter-spacing:-.012em;
     color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mxp i{display:block;margin-top:3px;font-style:normal;
@@ -850,10 +855,24 @@
   .mxp.r{text-align:right}
   .mxs{text-align:center;border-radius:8px;padding:6px 0;
     font:600 10.5px/1 var(--display);color:var(--faint);background:rgba(255,255,255,.05)}
-  .mxtot{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:9px;
+  .mxgap{display:block;margin-top:5px;font:400 10.5px/1 var(--display);
+    color:var(--faint);font-variant-numeric:tabular-nums}
+  .mxtot{display:grid;grid-template-columns:1fr 58px 1fr;align-items:center;gap:9px;
     padding:6px 12px 0;font:600 15px/1 var(--display);font-variant-numeric:tabular-nums}
   .mxtot .r{text-align:right}
   .mxtot .mid{text-align:center;font:400 11.5px/1 var(--display);color:var(--faint)}
+
+  /* Page sections that fold. The Team page is the longest screen on the site
+     and most of it is reference rather than something you read every time. */
+  .sec{margin:0}
+  .sec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;
+    margin:30px 2px 12px;font:600 21px/1.2 var(--display);letter-spacing:-.024em;
+    color:var(--chalk)}
+  .sec>summary::-webkit-details-marker{display:none}
+  .sec>summary::after{content:"\25B8";margin-left:auto;color:var(--faint);
+    font:400 16px/1 var(--display);transition:transform .15s}
+  .sec[open]>summary::after{transform:rotate(90deg)}
+  .sec>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
@@ -1632,12 +1651,20 @@ function draftRecap(){
 
 function renderRecap(){
   const el = document.getElementById("recap");
-  if(!WEEKLY){
+  /* weekly.json carries a week number once there is a week to write about.
+     Without one it is a preseason post, and after the draft that is out of
+     date the moment the last pick is in: the file still said the rule vote
+     closes at the draft. The draft writeup outranks it until weekly.mjs
+     publishes a real week, at which point that takes over on its own. */
+  if(!WEEKLY || !WEEKLY.week){
     let pre = "";
     try { if(liveDraft()) pre = draftRecap(); }
     catch(e){ console.warn("[bromigos] draft recap:", e && e.message); }
-    el.innerHTML = pre || (`<h2>This Week</h2>` + lock("Nothing to write about yet",
-      "The recap gets written every Tuesday once there is a result worth explaining. Standings and awards update themselves every morning either way."));
+    if(pre){ el.innerHTML = pre; return; }
+  }
+  if(!WEEKLY){
+    el.innerHTML = `<h2>This Week</h2>` + lock("Nothing to write about yet",
+      "The recap gets written every Tuesday once there is a result worth explaining. Standings and awards update themselves every morning either way.");
     return;
   }
   const body = (WEEKLY.body||[]).map(p=>`<p>${esc(p)}</p>`).join("");
@@ -4324,6 +4351,13 @@ const GRADE_WHY = {
         weak:"Streaming territory." }
 };
 
+/* A page section that folds. Everything on My Team below the matchup is
+   reference: you read it once a week, not every time you open the app. An
+   empty body collapses to nothing rather than an empty heading. */
+const fold = (title, body, open) => !String(body || "").trim() ? "" :
+  `<details class="sec"${open ? " open" : ""}>
+     <summary>${esc(title)}</summary>${body}</details>`;
+
 function renderTeamPage(){
   const el = document.getElementById("teamBody");
   if(!el) return;
@@ -4390,33 +4424,31 @@ function renderTeamPage(){
       : renderMatchup(me)}
     ${renderStartSit(me)}
 
-    ${renderOutlookTable(me)}
+    ${fold("Season at a glance", renderOutlookTable(me), true)}
 
-    <h2>Roster</h2>
-    ${renderSuggested(me)}
+    ${fold("Roster", renderSuggested(me), true)}
 
-    <h2>Position grades</h2>
-    ${Object.entries(g).map(([pos,v]) => `<div class="grade">
-      <span class="gpos ${pos}">${pos}</span>
-      <span class="gbody"><b class="g-${v.label}">${GRADE_WORD[v.label]}</b>
-        <span>${GRADE_WHY[pos][v.label]}</span></span>
-      <span class="gnum">${v.avg.toFixed(1)}</span></div>`).join("")}
+    ${fold("Position grades",
+      Object.entries(g).map(([pos,v]) => `<div class="grade">
+        <span class="gpos ${pos}">${pos}</span>
+        <span class="gbody"><b class="g-${v.label}">${GRADE_WORD[v.label]}</b>
+          <span>${GRADE_WHY[pos][v.label]}</span></span>
+        <span class="gnum">${v.avg.toFixed(1)}</span></div>`).join(""), false)}
 
-    <h2>Outlook</h2>
-    <div class="card">
+    ${fold("Outlook", `<div class="card">
       <p><b>Strength.</b> ${strong.length
-        ? `${strong.join(" and ")}. Deep enough to trade from without breaking the lineup.`
+        ? `${listOf(strong)}. Deep enough to trade from without breaking the lineup.`
         : "No position clears the league by much. Balanced, which also means no leverage in a trade."}</p>
       <p><b>Weakness.</b> ${weak.length
-        ? `${weak.join(" and ")}. This is where a win gets left on the table.`
+        ? `${listOf(weak)}. This is where a win gets left on the table.`
         : "Nothing is genuinely weak. Keep an eye on injuries rather than chasing upgrades."}</p>
       <p><b>Hidden.</b> ${esc(hidden)}</p>
       <p><b>Waivers.</b> ${weak.length
-        ? `Watch ${weak.join(" and ")} before anything else.`
+        ? `Watch ${listOf(weak)} before anything else.`
         : "Nothing urgent. Take the best available upside."}</p>
-    </div>
+    </div>`, false)}
     <button type="button" class="cbtn" id="toBlock"
-      style="margin-top:4px">Open the trade block</button>`;
+      style="margin-top:14px">Open the trade block</button>`;
 
   el.querySelectorAll("[data-mw]").forEach(b => b.onclick = () => {
     matchWeek = Number(b.dataset.mw);
@@ -4770,8 +4802,7 @@ function renderOutlookTable(me){
      Week 1 the projected finish is the rest of the way, printed twice. */
   const fits = (haveW + haveL + rows.length) <= REG_WEEKS && (haveW + haveL) > 0;
 
-  return `<h2>Season at a glance</h2>
-    <div class="verdict"${fits ? "" : ' style="grid-template-columns:1fr"'}>
+  return `<div class="verdict"${fits ? "" : ' style="grid-template-columns:1fr"'}>
       <div class="vcell"><div class="name">Rest of the way</div>
         <div class="delta ${wins > losses ? "up" : wins < losses ? "down" : ""}">${wins}-${losses}</div></div>
       ${fits ? `<div class="vcell"><div class="name">Projected finish</div>
@@ -4819,8 +4850,7 @@ function renderSoloTable(me){
   const best = rows.slice().sort((a, b) => b.d - a.d)[0];
   const worst = rows.slice().sort((a, b) => a.d - b.d)[0];
 
-  return `<h2>Season at a glance</h2>
-    <div class="verdict" style="grid-template-columns:1fr 1fr">
+  return `<div class="verdict" style="grid-template-columns:1fr 1fr">
       <div class="vcell"><div class="name">Weeks above league average</div>
         <div class="delta ${above > rows.length / 2 ? "up" : above < rows.length / 2 ? "down" : ""}">${
           above}-${rows.length - above}</div></div>
@@ -4889,48 +4919,66 @@ function renderMatchup(me){
   if(!opp) return "";
 
   const live = matchWeek === wks[0];
+  /* The lineup is always picked on the blend, because that is the better
+     estimate. The toggle changes what is shown and what is totalled, so you
+     can ask what ESPN alone makes of the week without the lineup shuffling
+     under you. */
   const val = p => weekProjOf(p, matchWeek);
+  const show = p => weekViewVal(p, matchWeek);
   const r = live ? null : replFor;
   const mine = bestLineupWith(me.players, val, matchWeek, r);
   const them = bestLineupWith(opp.players, val, matchWeek, r);
-  const diff = mine.total - them.total;
+  const tot = f => f.filled.reduce((n, x) =>
+    n + (x.player ? (show(x.player) || 0) : (x.streamed ? replFor(SLOTS[0]) : 0)), 0);
+  const mineTot = tot(mine), themTot = tot(them);
+  const diff = mineTot - themTot;
+  const has = { blend:true, espn:true, sleeper:!!(PROJ && PROJ.weeks) };
+  const toggle = `<div class="cgroup" style="margin:0 0 12px">${
+    PROJ_VIEW.map(([k, l]) => `<button type="button" class="cbtn"
+      aria-pressed="${projView === k}" data-pv="${k}"${has[k] ? "" : " disabled"}>${l}</button>`
+    ).join("")}</div>`;
 
   /* The slot by slot read was cut once for looking like analysis you cannot
      act on. It is back because you can: it is where you see that the week is
      being decided at tight end, or that a bye has left them streaming a slot
      you are strong at. Nothing here is a suggestion, it is the two lineups. */
-  const side = (f, right) => {
+  const valOf = f => f.player ? (show(f.player) || 0)
+    : (f.streamed ? replFor(SLOTS[0]) : 0);
+  const side = (f, right, lead) => {
     const p = f.player;
-    if(!p) return `<span class="mxp${right ? " r" : ""}"><b>${
-      f.streamed ? "waiver pickup" : "empty"}</b><i>${
-      f.streamed ? replFor(SLOTS[0]).toFixed(1) : "0.0"}</i></span>`;
-    return `<span class="mxp${right ? " r" : ""}" data-v="${val(p).toFixed(1)}">
-      <b>${esc(p.name)}</b><i>${esc(p.team || "")}${
-        p.injury ? ", " + p.injury.toLowerCase() : ""} &middot; ${val(p).toFixed(1)}</i></span>`;
+    const cls = `mxp${right ? " r" : ""}${lead ? " lead" : ""}`;
+    if(!p) return `<span class="${cls}"><b>${f.streamed ? "waiver pickup" : "empty"}</b>
+      <i>${valOf(f).toFixed(1)}</i></span>`;
+    const v = show(p);
+    return `<span class="${cls}"><b>${esc(p.name)}</b>
+      <i>${esc(p.team || "")}${p.injury ? ", " + p.injury.toLowerCase() : ""} &middot; ${
+        v === null ? "&mdash;" : v.toFixed(1)}</i></span>`;
   };
 
   const rows = mine.filled.map((f, i) => {
     const g = them.filled[i];
     if(!g) return "";
-    const a = f.player ? val(f.player) : 0, b = g.player ? val(g.player) : 0;
+    const a = valOf(f), b = valOf(g);
+    const gap = Math.abs(a - b);
     return `<div class="mxrow">
-      ${side(f, false).replace('class="mxp', 'class="mxp' + (a >= b ? " lead" : ""))}
-      <span class="mxs">${esc(f.slot)}</span>
-      ${side(g, true).replace('class="mxp r', 'class="mxp r' + (b >= a ? " lead" : ""))}
+      ${side(f, false, a > b)}
+      <span class="mxs">${esc(f.slot)}${
+        gap >= 0.05 ? `<span class="mxgap">${gap.toFixed(1)}</span>` : ""}</span>
+      ${side(g, true, b > a)}
     </div>`;
   }).join("");
 
   const weeks = wks.map(w => `<button type="button" class="mxw"
       aria-pressed="${w === matchWeek}" data-mw="${w}">Wk ${w}</button>`).join("");
 
-  return `<div class="mxweeks">${weeks}</div>
+  return `<div class="mxweeks">${weeks}</div>${toggle}
     <div class="vs">
       <div class="vsSide"><span class="vsName">${esc(me.manager)}</span>
-        <span class="vsScore">${mine.total.toFixed(1)}</span></div>
+        <span class="vsScore">${mineTot.toFixed(1)}</span></div>
       <div class="vsMid"><span>Week ${matchWeek}</span>
         <b class="${diff>0?"up":diff<0?"down":""}">${diff>0?"+":""}${diff.toFixed(1)}</b></div>
       <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
-        <span class="vsScore">${them.total.toFixed(1)}</span></div>
+        <span class="vsScore">${themTot.toFixed(1)}</span></div>
     </div>
     <div class="mxtot"><span>${esc(me.teamName)}</span>
       <span class="mid">proj</span><span class="r">${esc(opp.teamName)}</span></div>
@@ -4952,6 +5000,17 @@ function renderMatchup(me){
    being told they disagree and left there. */
 let projView = "blend";
 const PROJ_VIEW = [["blend","Blended"],["espn","ESPN"],["sleeper","Sleeper"]];
+
+/* The same three views, for one named week. */
+function weekViewVal(p, wk){
+  if(projView === "espn"){
+    const v = espnWeek(p, wk);
+    if(v) return v;
+    return (wk === weeksLeft()[0] && typeof p.proj === "number" && p.proj > 0) ? p.proj : null;
+  }
+  if(projView === "sleeper") return sleeperWeek(p, wk);
+  return weekProjOf(p, wk);
+}
 
 function viewVal(p){
   if(projView === "espn")

@@ -728,8 +728,11 @@
 
   /* ---------- filter controls ---------- */
   .ctrls{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
-  .cgroup{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  /* Wraps rather than scrolls sideways. Half the sort options were off the
+     right edge of the phone and nobody knew they were there. */
+  .cgroup{display:flex;gap:7px;flex-wrap:wrap}
   .cgroup::-webkit-scrollbar{display:none}
+  .cglabel{font:400 12px/1 var(--display);color:var(--faint);margin:0 0 7px 2px}
   .cbtn{flex:none;padding:10px 15px;border-radius:999px;border:1px solid var(--line);
     background:rgba(255,255,255,.06);color:var(--dim);cursor:pointer;white-space:nowrap;
     font:600 13px/1 var(--display)}
@@ -824,6 +827,33 @@
   .slotd{font:600 14px/1 var(--display);font-variant-numeric:tabular-nums}
   .slotd.up{color:var(--win)}
   .slotd.down{color:var(--loss)}
+
+  /* ---------- weekly matchup, slot against slot ----------
+     Prefix mx. Checked against hh pw pk nx fut cons mini ts g w vs pl. */
+  .mxweeks{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+    margin:0 0 12px;padding-bottom:2px}
+  .mxweeks::-webkit-scrollbar{display:none}
+  .mxw{flex:none;padding:8px 13px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(255,255,255,.06);color:var(--dim);cursor:pointer;
+    font:600 13px/1 var(--display);white-space:nowrap}
+  .mxw[aria-pressed=true]{background:rgba(255,255,255,.16);
+    background:color-mix(in srgb,var(--accent) 18%,transparent);
+    border-color:color-mix(in srgb,var(--accent) 36%,transparent);color:var(--accent)}
+  .mxrow{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:9px;
+    padding:11px 12px;background:var(--ink-2);border-radius:14px;margin-bottom:5px}
+  .mxp{min-width:0}
+  .mxp b{display:block;font:400 14.5px/1.25 var(--display);letter-spacing:-.012em;
+    color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mxp i{display:block;margin-top:3px;font-style:normal;
+    font:400 11.5px/1.2 var(--display);color:var(--faint)}
+  .mxp.lead b{color:var(--chalk);font-weight:600}
+  .mxp.r{text-align:right}
+  .mxs{text-align:center;border-radius:8px;padding:6px 0;
+    font:600 10.5px/1 var(--display);color:var(--faint);background:rgba(255,255,255,.05)}
+  .mxtot{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:9px;
+    padding:6px 12px 0;font:600 15px/1 var(--display);font-variant-numeric:tabular-nums}
+  .mxtot .r{text-align:right}
+  .mxtot .mid{text-align:center;font:400 11.5px/1 var(--display);color:var(--faint)}
 
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
@@ -965,7 +995,6 @@
     <div id="picksPrompt"></div>
     <div id="recap"></div>
     <div id="powerMini"></div>
-    <div id="draft"></div>
     <div id="awards"></div>
   </section>
 
@@ -1040,6 +1069,11 @@
       <div class="rule"><div class="k">Buy-in</div><div class="v">$50</div></div>
     </div>
     <p class="note">Live ESPN settings. Anything the vote changes gets applied before the draft.</p>
+    <!-- Draft order. It was the first thing on Home for the week before the
+         draft, which was right then and is clutter now. It lives at the bottom
+         of the last page in the League tab, for the one person who wants it in
+         November. -->
+    <div id="draft"></div>
   </section>
 
   <section class="panel" id="team"><div id="teamBody"></div></section>
@@ -1459,8 +1493,10 @@ function renderDraft(){
      forty times in the week before and never again after, but throwing it out
      entirely means the one person who wants it in November cannot find it. */
   const done = liveDraft();
-  document.getElementById("draft").innerHTML =
-    (done ? `<details class="hhmore"><summary>Draft order</summary>`
+  const el = document.getElementById("draft");
+  if(!el) return;
+  el.innerHTML =
+    (done ? `<h2>Draft</h2><details class="hhmore"><summary>Order and pick numbers</summary>`
           : `<h2>Draft Order</h2>`) + `<div class="picks">` +
     DRAFT_ORDER.map(([team, man], i) => {
       const p = i + 1;
@@ -1528,11 +1564,80 @@ function playedGames(){
 }
 
 /* ---------- weekly writeup ---------- */
+/* ---------- the draft writeup ----------
+   Stands in the recap's place until the first Tuesday. Everything in it is
+   read off the rosters and the projections rather than asserted, because the
+   one thing worse than no writeup is a confident one that is wrong about who
+   drafted well. The jokes are about the league, the numbers are about the
+   data. */
+function draftRecap(){
+  const rows = preseasonRanks();
+  if(rows.length < 3) return "";
+  const top = rows[0], second = rows[1], last = rows[rows.length - 1];
+  const gap = top.rating - last.rating;
+  const wks = weeksLeft().length;
+
+  /* the roster the model likes least about, and the one nobody can fault */
+  const thinnest = rows.slice().sort((a, b) => b.weak.length - a.weak.length)[0];
+  const flat = rows.filter(r => !r.strong.length && !r.weak.length);
+  const deepest = rows.slice().sort((a, b) => b.strong.length - a.strong.length)[0];
+
+  const body = [];
+  body.push(`Ten teams, fifteen rounds and ninety seconds a pick. Everybody came
+    away with somebody they are quietly pleased about and at least one name they
+    will be explaining in November.`);
+
+  body.push(`On rest of season projections the deepest roster belongs to
+    ${top.manager} at ${f1(top.rating)} points a week, with ${second.manager}
+    ${f1(top.rating - second.rating)} behind. ${last.manager} sits last at
+    ${f1(last.rating)}. The whole league fits inside ${f1(gap)} points a week,
+    which is one good running back, so nobody has won anything and nobody has
+    lost anything.`);
+
+  if(deepest.strong.length)
+    body.push(`${deepest.manager} came out with the clearest surplus, deep at
+      ${listOf(deepest.strong)}, which is the roster everyone else should
+      be calling.${thinnest.weak.length && thinnest.manager !== deepest.manager
+        ? ` ${thinnest.manager} is the one the model has thin at
+          ${listOf(thinnest.weak)}, so that is where the phone rings.` : ""}`);
+  else if(thinnest.weak.length)
+    body.push(`Nobody drafted a real surplus. ${thinnest.manager} is the only one
+      the model calls thin, at ${listOf(thinnest.weak)}.`);
+
+  if(flat.length >= 3)
+    body.push(`${flat.length} teams came out with no surplus and no hole at all,
+      which is either good drafting or ten people taking the same rankings off
+      the same screen.`);
+
+  body.push(`These numbers are projections over ${wks} weeks and they will be
+    wrong by Sunday evening. This gets replaced by the weekly writeup on the
+    first Tuesday.`);
+
+  const moves = rows.slice(0, 3).map((r, i) =>
+    `<div class="mv up"><span class="ar">${i + 1}</span>
+      <span><b>${esc(r.manager)}</b> &mdash; ${esc(preseasonNote(r))},
+        ${f1(r.rating)} a week</span></div>`).join("")
+    + `<div class="mv watch"><span class="ar">\u26A0</span>
+        <span><b>${esc(last.manager)}</b> &mdash; ${esc(preseasonNote(last))},
+          ${f1(last.rating)} a week. Longest way to go on paper.</span></div>`;
+
+  return `<h2>This Week</h2>
+    <div class="recap">
+      <div class="wk">Preseason</div>
+      <h3>The draft is done</h3>
+      ${body.map(t => `<p>${esc(t.replace(/\s+/g, " ").trim())}</p>`).join("")}
+      <div class="moves">${moves}</div>
+    </div>`;
+}
+
 function renderRecap(){
   const el = document.getElementById("recap");
   if(!WEEKLY){
-    el.innerHTML = `<h2>This Week</h2>` + lock("Nothing to write about yet",
-      "The recap gets written every Tuesday once there is a result worth explaining. Standings and awards update themselves every morning either way.");
+    let pre = "";
+    try { if(liveDraft()) pre = draftRecap(); }
+    catch(e){ console.warn("[bromigos] draft recap:", e && e.message); }
+    el.innerHTML = pre || (`<h2>This Week</h2>` + lock("Nothing to write about yet",
+      "The recap gets written every Tuesday once there is a result worth explaining. Standings and awards update themselves every morning either way."));
     return;
   }
   const body = (WEEKLY.body||[]).map(p=>`<p>${esc(p)}</p>`).join("");
@@ -1912,6 +2017,71 @@ function powerRanks(throughWeek){
   }).sort((a,b) => b.rating - a.rating);
 }
 
+/* ---------- preseason power rankings ----------
+   Nothing has been played, so all-play has nothing to work with and the real
+   rankings cannot exist yet. What does exist is every roster and a projection
+   for every remaining week, which is the same thing a draft grade is: how much
+   this team is set up to score. Ranked on points a week for the rest of the
+   season, with the positional read underneath.
+
+   These are the first entry in the table rather than a placeholder outside it.
+   When Week 1 goes final the arrows measure movement against this, so a team
+   that was picked third and starts badly shows the fall. */
+let PRE = null, PRE_KEY = "";
+function preseasonRanks(){
+  const teams = (ROSTERS || []).filter(t => t.players && t.players.length);
+  if(teams.length < 2) return [];
+  const key = rosterKey() + "|" + weeksLeft().length;
+  if(PRE && PRE_KEY === key) return PRE;
+
+  const wks = Math.max(1, weeksLeft().length);
+  const med = leagueMedians(teams);
+  const out = teams.map(t => {
+    const g = gradeTeam(t, med);
+    const pick = label => Object.entries(g).filter(([, v]) => v.label === label).map(([p]) => p);
+    return { manager: t.manager, teamName: t.teamName,
+      rating: seasonValue(t.players) / wks,
+      strong: pick("strong"), weak: pick("weak") };
+  }).sort((a, b) => b.rating - a.rating).map((r, i) => ({ ...r, rank: i + 1 }));
+
+  PRE = out; PRE_KEY = key;
+  return out;
+}
+
+/* "QB", "QB and WR", "QB, WR and TE". Joining three things with "and" twice
+   reads like a machine wrote it, which it did. */
+function listOf(a){
+  const x = (a || []).slice();
+  if(!x.length) return "";
+  if(x.length === 1) return x[0];
+  return x.slice(0, -1).join(", ") + " and " + x[x.length - 1];
+}
+
+/* one line of plain English about a roster, from the grades rather than a view */
+function preseasonNote(r){
+  if(r.strong.length && r.weak.length)
+    return `Deep at ${listOf(r.strong)}, thin at ${listOf(r.weak)}`;
+  if(r.strong.length) return `Deep at ${listOf(r.strong)}, no obvious hole`;
+  if(r.weak.length) return `Thin at ${listOf(r.weak)}, balanced elsewhere`;
+  return "Balanced, no surplus and no hole";
+}
+
+function preseasonRows(limit){
+  const rows = preseasonRanks();
+  if(!rows.length) return "";
+  const show = limit ? rows.slice(0, limit) : rows;
+  const me = rows.find(r => r.manager === ME);
+  const list = (limit && me && show.indexOf(me) < 0) ? show.concat([me]) : show;
+  return list.map((r, i) => `${(limit && i === limit) ? `<div class="pwgap">&middot;&middot;&middot;</div>` : ""}
+    <div class="pwrow${limit ? " tight" : ""}${r.manager === ME ? " me" : ""}">
+      <span class="pwn">${r.rank}</span>
+      <span class="pwmv new">new</span>
+      <span class="pwwho"><b>${esc(r.manager)}</b>
+        <span>${esc(preseasonNote(r))}</span></span>
+      <span class="pwr">${f1(r.rating)}</span>
+    </div>`).join("");
+}
+
 /* rank now against rank a week ago, which is the whole point of the arrow */
 function powerMovement(){
   const now = powerRanks();
@@ -1921,7 +2091,10 @@ function powerMovement(){
     .map(m => res[m].length ? Math.max(...res[m].map(r => r.wk)) : 0));
   const before = played > 1 ? powerRanks(played - 1) : [];
   const prev = {};
-  before.forEach((r, i) => { prev[r.manager] = i + 1; });
+  if(before.length) before.forEach((r, i) => { prev[r.manager] = i + 1; });
+  /* After week 1 there is no earlier week to compare with, so the arrows used
+     to read "new" for everyone. The preseason table is the earlier week. */
+  else preseasonRanks().forEach(r => { prev[r.manager] = r.rank; });
   return now.map((r, i) => ({
     ...r, rank: i + 1,
     move: prev[r.manager] ? prev[r.manager] - (i + 1) : null
@@ -1936,7 +2109,16 @@ function renderPowerMini(){
   if(!liveDraft()){ el.innerHTML = ""; return; }
 
   const rows = powerMovement();
-  if(!rows.length){ el.innerHTML = ""; return; }
+  if(!rows.length){
+    const pre = preseasonRows(5);
+    el.innerHTML = pre ? `<h2>Power rankings</h2>
+      <p class="note" style="margin:-4px 2px 10px">Preseason. Rest of season
+        projection, points a week.</p>${pre}
+      <button type="button" class="cbtn" id="pwMore">Full table</button>` : "";
+    const b0 = document.getElementById("pwMore");
+    if(b0) b0.onclick = () => showTab("power", true);
+    return;
+  }
 
   const top = rows.slice(0, 5);
   const me = rows.find(r => r.manager === ME);
@@ -1995,7 +2177,16 @@ function renderPower(){
   /* The standings card right below says the same thing before Week 1, and two
      locked cards stacked on one screen reads as a broken page. */
   const rows = powerMovement();
-  if(!rows.length){ el.innerHTML = ""; return; }
+  if(!rows.length){
+    const pre = preseasonRows();
+    el.innerHTML = pre ? `<h2>Power rankings</h2>
+      <p class="note" style="margin:-4px 2px 10px">Preseason, and the first real
+        entry in the table rather than a stand in. Every roster's best legal
+        lineup for each of the ${weeksLeft().length} weeks left, byes taken out,
+        divided by the weeks. It is a draft grade with the arithmetic shown.
+        Week 1's arrows measure against this.</p>${pre}` : "";
+    return;
+  }
 
   const arrow = m => m === null ? `<span class="pwmv new">new</span>`
     : m > 0 ? `<span class="pwmv up">&#9650;${m}</span>`
@@ -2586,6 +2777,11 @@ function renderH2H(){
 
 function renderAll(){
   try{ syncLeagueSettings(); }catch(e){ console.warn("[bromigos] settings:", e && e.message); }
+  /* Build the roster model before anything renders. It used to happen inside
+     whichever renderer asked first, which was renderSnapshot, three calls into
+     the sequence. Anything earlier than that saw an empty league: the draft
+     writeup came out blank on first paint for exactly that reason. */
+  try{ ensureRosters(); }catch(e){ console.warn("[bromigos] rosters:", e && e.message); }
   paintTabs();
   /* Every renderer is isolated. A field ESPN stopped sending should cost one
      card, not the whole page, and the page has to keep rendering from baked-in
@@ -3114,20 +3310,45 @@ const rosterValue = players => seasonValue(players);
 /* Which starting slots actually change hands. The delta on its own is a number
    you are asked to trust; this is the arithmetic behind it, slot by slot. The
    two lineups are compared by index, which is safe because SLOTS is fixed. */
+/* The arithmetic behind the headline, slot by slot.
+
+   This used to build one lineup with byes ignored and price the swap on a per
+   game average, while the headline came from every remaining week built
+   separately with byes taken out. The two could disagree, and did: a deal that
+   cost a manager 0.2 a week showed rows adding to plus 0.3, which is the
+   breakdown contradicting the number it is supposed to explain.
+
+   Every remaining week is now walked for both lineups, exactly as the headline
+   does it, and each slot carries the average change across those weeks. The
+   rows therefore add up to the headline by construction. Where the player in a
+   slot changes from week to week, the one who holds it most often is named. */
 function lineupDiff(before, after){
-  const A = bestLineupWith(before, ppgOf, null).filled;
-  const B = bestLineupWith(after, ppgOf, null).filled;
-  const out = [];
-  A.forEach((f, i) => {
-    const g = B[i];
-    if(!g) return;
-    const from = f.player, to = g.player;
-    if((from && to && from.id === to.id) || (!from && !to)) return;
-    out.push({ slot: f.slot,
-      from: from ? from.name : "empty", to: to ? to.name : "empty",
-      d: (to ? ppgOf(to) : 0) - (from ? ppgOf(from) : 0) });
+  const wks = weeksLeft();
+  if(!wks.length) return [];
+  const now = wks[0];
+  const acc = SLOTS.map(sl => ({ slot: sl.k, from: {}, to: {}, d: 0 }));
+
+  wks.forEach(wk => {
+    const r = wk === now ? null : replFor;
+    const A = bestLineupWith(before, p => weekProjOf(p, wk), wk, r);
+    const B = bestLineupWith(after,  p => weekProjOf(p, wk), wk, r);
+    acc.forEach((row, i) => {
+      const f = A.filled[i], g = B.filled[i];
+      if(!f || !g) return;
+      const fn = f.player ? f.player.name : (f.streamed ? "waiver" : "empty");
+      const gn = g.player ? g.player.name : (g.streamed ? "waiver" : "empty");
+      row.from[fn] = (row.from[fn] || 0) + 1;
+      row.to[gn] = (row.to[gn] || 0) + 1;
+      const fv = f.player ? weekProjOf(f.player, wk) : (f.streamed ? replFor(SLOTS[i]) : 0);
+      const gv = g.player ? weekProjOf(g.player, wk) : (g.streamed ? replFor(SLOTS[i]) : 0);
+      row.d += gv - fv;
+    });
   });
-  return out;
+
+  const commonest = m => Object.keys(m).sort((a, b) => m[b] - m[a])[0] || "empty";
+  return acc.map(row => ({ slot: row.slot,
+      from: commonest(row.from), to: commonest(row.to), d: row.d / wks.length }))
+    .filter(r => r.from !== r.to || Math.abs(r.d) >= 0.05);
 }
 
 function applyTrade(players, out, inc){
@@ -3430,7 +3651,7 @@ function ensureRosters(){
 
 function loadRosterModel(){
   ROSTER_KEY = rosterKey();
-  MEDS = null; TIDX = null; REPL = null; PPG = null;
+  MEDS = null; TIDX = null; REPL = null; PPG = null; PRE = null;
   TRADE_CACHE = { key:null, val:[] };
   const live = normalizeLive();
   if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
@@ -3862,15 +4083,22 @@ function renderWirePro(){
 
   const sorters = {
     fit:(a,b)=>b.score-a.score, proj:(a,b)=>b.proj-a.proj,
+    /* Rest of season, the same number the trade evaluator uses. A streamer for
+       this Sunday and a player worth holding are different questions and the
+       board could only answer the first one. */
+    ros:(a,b)=>ppgOf(b)-ppgOf(a),
     trend:(a,b)=>(b.trend||0)-(a.trend||0), own:(a,b)=>(a.own??101)-(b.own??101),
-    snaps:(a,b)=>(b.snapPct||0)-(a.snapPct||0)
+    snaps:(a,b)=>(b.snapPct||0)-(a.snapPct||0),
+    most:(a,b)=>(b.own??-1)-(a.own??-1),
+    name:(a,b)=>String(a.name).localeCompare(String(b.name))
   };
   rows.sort(sorters[wireSort] || sorters.fit);
 
   const POSES = [["ALL","All"],["FLEX","Flex"],["QB","QB"],["RB","RB"],
                  ["WR","WR"],["TE","TE"],["K","K"],["DST","D/ST"]];
-  const SORTS = [["fit","Best fit"],["proj","Projection"],["trend","Trending"],
-                 ["own","Least rostered"],["snaps","Snap share"]];
+  const SORTS = [["fit","Best fit"],["proj","This week"],["ros","Rest of season"],
+                 ["trend","Trending"],["own","Least rostered"],["most","Most rostered"],
+                 ["snaps","Snap share"],["name","Name"]];
   const stat = (v, l) => v == null ? "" : `<span class="wstat"><b>${v}</b><span>${l}</span></span>`;
   /* Name the week. The column is this week's projection, not a season total,
      and "projected" on its own was the only thing saying which. */
@@ -3878,10 +4106,12 @@ function renderWirePro(){
 
   el.innerHTML = demoBanner() + needPills(g) +
     `<div class="ctrls">
-      <div class="cgroup">${POSES.map(([k,l]) =>
-        `<button class="cbtn" aria-pressed="${wireFilter===k}" data-pos="${k}">${l}</button>`).join("")}</div>
-      <div class="cgroup">${SORTS.map(([k,l]) =>
-        `<button class="cbtn" aria-pressed="${wireSort===k}" data-sort="${k}">${l}</button>`).join("")}</div>
+      <div><div class="cglabel">Position</div>
+        <div class="cgroup">${POSES.map(([k,l]) =>
+          `<button class="cbtn" aria-pressed="${wireFilter===k}" data-pos="${k}">${l}</button>`).join("")}</div></div>
+      <div><div class="cglabel">Sort by</div>
+        <div class="cgroup">${SORTS.map(([k,l]) =>
+          `<button class="cbtn" aria-pressed="${wireSort===k}" data-sort="${k}">${l}</button>`).join("")}</div></div>
     </div>
     <p class="note" style="margin:0 0 12px">${rows.length} available${
       weak.length ? `. A green edge means it fills your ${weak.join(" or ")} gap` : ""}.</p>` +
@@ -3889,7 +4119,9 @@ function renderWirePro(){
       <span class="rank">${i+1}</span>
       <span class="pos ${p.pos}">${p.pos}</span>
       <span class="meta"><b>${esc(p.name)}</b><span class="wstats">
-        ${stat(p.proj.toFixed(1), wk ? "week " + wk : "projected")}${stat(p.own!=null?p.own+"%":null,"rostered")}
+        ${stat(p.proj.toFixed(1), wk ? "week " + wk : "projected")}${
+          wireSort === "ros" ? stat(f1(ppgOf(p)), "a week") : ""}${
+          stat(p.own!=null?p.own+"%":null,"rostered")}
         ${stat(p.snapPct!=null?p.snapPct+"%":null,"snaps")}${stat(p.tgtShare!=null?p.tgtShare+"%":null,"targets")}
       </span></span>
       ${p.trend ? `<span class="hot">+${p.trend>999?(p.trend/1000).toFixed(1)+"k":p.trend}</span>` : ""}
@@ -4185,6 +4417,15 @@ function renderTeamPage(){
     </div>
     <button type="button" class="cbtn" id="toBlock"
       style="margin-top:4px">Open the trade block</button>`;
+
+  el.querySelectorAll("[data-mw]").forEach(b => b.onclick = () => {
+    matchWeek = Number(b.dataset.mw);
+    renderTeamPage();
+  });
+  el.querySelectorAll("[data-pv]").forEach(b => b.onclick = () => {
+    projView = b.dataset.pv;
+    renderTeamPage();
+  });
 
   const jump = document.getElementById("toBlock");
   if(jump) jump.onclick = () => { tradeView = "block"; showTab("trade", true); };
@@ -4635,34 +4876,109 @@ function lineupWarnings(team, week){
 /* ---------- rendering for the season features ---------- */
 const pct = v => (v*100 < 1 && v > 0) ? "<1%" : (v*100 > 99 && v < 1) ? ">99%" : Math.round(v*100) + "%";
 
-function renderMatchup(me){
-  const m = nextMatchup(me.id);
-  if(!m) return "";
-  const mine = bestLineup(me.players), theirs = bestLineup(m.opp.players);
-  const diff = mine.total - theirs.total;
+/* Which week the matchup card is showing. Defaults to the one being played. */
+let matchWeek = null;
 
-  /* No slot by slot comparison against the opponent. It looked like analysis
-     and there is nothing to do with it: you cannot bench their running back. */
-  return `<div class="vs">
+function renderMatchup(me){
+  const wks = weeksLeft();
+  if(!wks.length) return "";
+  if(matchWeek === null || wks.indexOf(matchWeek) < 0) matchWeek = wks[0];
+
+  const oppId = scheduleFor(me.id, matchWeek);
+  const opp = (ROSTERS || []).find(t => t.id === oppId);
+  if(!opp) return "";
+
+  const live = matchWeek === wks[0];
+  const val = p => weekProjOf(p, matchWeek);
+  const r = live ? null : replFor;
+  const mine = bestLineupWith(me.players, val, matchWeek, r);
+  const them = bestLineupWith(opp.players, val, matchWeek, r);
+  const diff = mine.total - them.total;
+
+  /* The slot by slot read was cut once for looking like analysis you cannot
+     act on. It is back because you can: it is where you see that the week is
+     being decided at tight end, or that a bye has left them streaming a slot
+     you are strong at. Nothing here is a suggestion, it is the two lineups. */
+  const side = (f, right) => {
+    const p = f.player;
+    if(!p) return `<span class="mxp${right ? " r" : ""}"><b>${
+      f.streamed ? "waiver pickup" : "empty"}</b><i>${
+      f.streamed ? replFor(SLOTS[0]).toFixed(1) : "0.0"}</i></span>`;
+    return `<span class="mxp${right ? " r" : ""}" data-v="${val(p).toFixed(1)}">
+      <b>${esc(p.name)}</b><i>${esc(p.team || "")}${
+        p.injury ? ", " + p.injury.toLowerCase() : ""} &middot; ${val(p).toFixed(1)}</i></span>`;
+  };
+
+  const rows = mine.filled.map((f, i) => {
+    const g = them.filled[i];
+    if(!g) return "";
+    const a = f.player ? val(f.player) : 0, b = g.player ? val(g.player) : 0;
+    return `<div class="mxrow">
+      ${side(f, false).replace('class="mxp', 'class="mxp' + (a >= b ? " lead" : ""))}
+      <span class="mxs">${esc(f.slot)}</span>
+      ${side(g, true).replace('class="mxp r', 'class="mxp r' + (b >= a ? " lead" : ""))}
+    </div>`;
+  }).join("");
+
+  const weeks = wks.map(w => `<button type="button" class="mxw"
+      aria-pressed="${w === matchWeek}" data-mw="${w}">Wk ${w}</button>`).join("");
+
+  return `<div class="mxweeks">${weeks}</div>
+    <div class="vs">
       <div class="vsSide"><span class="vsName">${esc(me.manager)}</span>
         <span class="vsScore">${mine.total.toFixed(1)}</span></div>
-      <div class="vsMid"><span>Week ${m.week}</span>
+      <div class="vsMid"><span>Week ${matchWeek}</span>
         <b class="${diff>0?"up":diff<0?"down":""}">${diff>0?"+":""}${diff.toFixed(1)}</b></div>
-      <div class="vsSide"><span class="vsName">${esc(m.opp.manager)}</span>
-        <span class="vsScore">${theirs.total.toFixed(1)}</span></div>
+      <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
+        <span class="vsScore">${them.total.toFixed(1)}</span></div>
     </div>
-    <p class="note" style="margin:0 0 14px">${
-      Math.abs(diff) < 6 ? "Projects as a coin flip. Every start/sit call matters."
-      : diff > 0 ? `You project ${diff.toFixed(1)} ahead. Comfortable, not safe.`
-      : `You project ${Math.abs(diff).toFixed(1)} behind. You need a swing somewhere.`}</p>`;
+    <div class="mxtot"><span>${esc(me.teamName)}</span>
+      <span class="mid">proj</span><span class="r">${esc(opp.teamName)}</span></div>
+    ${rows}
+    <p class="note" style="margin:8px 0 14px">${live
+      ? (Math.abs(diff) < 6 ? "Projects as a coin flip. Every start/sit call matters."
+         : diff > 0 ? `You project ${diff.toFixed(1)} ahead. Comfortable, not safe.`
+         : `You project ${Math.abs(diff).toFixed(1)} behind. You need a swing somewhere.`)
+      : `Week ${matchWeek}, both lineups as they would be set today with byes taken
+         out. It will move.`}</p>`;
 }
 
 /* The whole roster, in lineup order, then the bench, then the two slots nobody
    thinks about. Read only: My Team answers what you have, and every tappable
    version of this row lives under Trades. */
+/* Which number the roster prints. The lineup is always chosen on the blend,
+   because that is the better estimate; this only changes what is shown, so you
+   can see which provider is the optimistic one on a given player rather than
+   being told they disagree and left there. */
+let projView = "blend";
+const PROJ_VIEW = [["blend","Blended"],["espn","ESPN"],["sleeper","Sleeper"]];
+
+function viewVal(p){
+  if(projView === "espn")
+    return (typeof p.proj === "number" && p.proj > 0) ? p.proj : null;
+  if(projView === "sleeper"){
+    const v = (PROJ && PROJ.players) ? PROJ.players[String(p.id)] : null;
+    return (typeof v === "number" && v > 0) ? v : null;
+  }
+  const b = projOf(p);
+  return b.n ? b.blend : null;
+}
+
 function renderSuggested(me){
   const s = rosterSections(me.players);
   const src = (PROJ && PROJ.players) ? "ESPN and Sleeper" : "ESPN only";
+  const has = { blend:true, espn:true, sleeper:!!(PROJ && PROJ.players) };
+  const sum = list => list.reduce((n, x) => n + (viewVal(x) || 0), 0);
+  const cell = p => {
+    const v = viewVal(p);
+    if(v === null) return `<span class="pj"><b>&mdash;</b></span>`;
+    if(projView !== "blend") return `<span class="pj"><b>${v.toFixed(1)}</b></span>`;
+    return projChip(p);
+  };
+  const toggle = `<div class="cgroup" style="margin:0 0 12px">${
+    PROJ_VIEW.map(([k, l]) => `<button type="button" class="cbtn"
+      aria-pressed="${projView === k}" data-pv="${k}"${has[k] ? "" : " disabled"}>${l}</button>`
+    ).join("")}</div>`;
 
   const row = (p, slot) => {
     if(!p) return `<div class="plr view"><span class="slot">${esc(slot||"")}</span>
@@ -4674,27 +4990,32 @@ function renderSuggested(me){
       <span class="pos ${p.pos}">${p.pos}</span>
       <span class="who2"><b>${esc(p.name)}</b>
         <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}${
-          projDisagrees(v) ? " &middot; sources disagree" : ""}</span></span>
-      ${projChip(p)}</div>`;
+          projView === "blend" && projDisagrees(v) ? " &middot; sources disagree" : ""}</span></span>
+      ${cell(p)}</div>`;
   };
 
-  const benchTotal = s.bench.reduce((n,p) => n + projOf(p).blend, 0);
+  const benchTotal = sum(s.bench);
   const split = s.starters.filter(f => f.player && projDisagrees(projOf(f.player)));
+  const startTotal = sum(s.starters.filter(f => f.player).map(f => f.player));
+  const tailTotal = sum(s.tail.filter(f => f.player).map(f => f.player));
 
-  return sectHead("Starting", s.startTotal) +
+  return toggle + sectHead("Starting", startTotal) +
     s.starters.map(f => row(f.player, f.slot)).join("") +
-    sectHead("Kicker and defense", s.tailTotal) +
+    sectHead("Kicker and defense", tailTotal) +
     s.tail.map(f => row(f.player, f.slot)).join("") +
     sectHead("Bench", s.bench.length ? benchTotal : null) +
     (s.bench.length
       ? s.bench.map(p => row(p, "")).join("")
       : `<p class="note">Nobody on the bench.</p>`) +
     `<div class="srcline"><span>${esc(src)}</span>
-      <span>full lineup projects ${s.total.toFixed(1)}</span></div>` +
+      <span>${projView === "blend" ? "full lineup projects "
+        : projView === "espn" ? "ESPN has the lineup at "
+        : "Sleeper has the lineup at "}${(startTotal + tailTotal).toFixed(1)}</span></div>` +
     (split.length
       ? `<p class="note">${split.length} starter${split.length > 1 ? "s" : ""} the two
-         sources disagree on, marked above. That is where a lineup call is worth
-         making.</p>`
+         sources disagree on${projView === "blend" ? ", marked above" : ""}. That is
+         where a lineup call is worth making. Switch the buttons at the top of the
+         roster to see each provider on its own.</p>`
       : "");
 }
 

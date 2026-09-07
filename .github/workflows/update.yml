@@ -16,11 +16,16 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      # v5 on both. v4 runs on the Node 20 action runtime, which GitHub is
+      # retiring, and that deprecation notice at the top of every run is about
+      # the actions themselves rather than anything in this repo. The
+      # node-version below is separate and still 20, which is what the scripts
+      # want. Bumping that is a one line change whenever you feel like it.
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
 
@@ -50,22 +55,41 @@ jobs:
 
       # Warning only, on purpose. A red test should be visible, but it must not
       # block the nightly data. Check the Actions tab if this step goes yellow.
+      #
+      # Every suite runs, every time. This was one bash script under `set -e`,
+      # so the first suite to fail aborted the step and the eleven after it
+      # never ran at all. That happened for the whole of the preseason without
+      # anyone noticing, because the step is allowed to fail and the job still
+      # shows a tick. Each suite is its own process, so a red one says nothing
+      # about the next.
+      #
+      # The glob picks up new suites on its own rather than needing this list
+      # kept in step with the folder.
       - name: Run tests
         continue-on-error: true
+        shell: bash
         run: |
-          node test/managers.test.mjs
-          node test/projections.test.mjs
-          node test/pwa.test.mjs
-          node test/picks.test.mjs
-          node test/power.test.mjs
-          node test/settings.test.mjs
-          node test/odds.test.mjs
-          node test/build.test.mjs
-          node test/weekly.test.mjs
-          node test/phases.test.mjs
-          node test/h2h.test.mjs
-          node test/binder.test.mjs
-          node test/gate.test.mjs
+          set +e
+          shopt -s nullglob
+          suites=(test/*.test.mjs)
+          if [ ${#suites[@]} -eq 0 ]; then
+            echo "::error::no test suites found in test/"
+            exit 1
+          fi
+          red=()
+          for t in "${suites[@]}"; do
+            echo "::group::$t"
+            node "$t"
+            if [ $? -ne 0 ]; then red+=("$t"); fi
+            echo "::endgroup::"
+          done
+          echo
+          echo "${#suites[@]} suites run, ${#red[@]} red"
+          if [ ${#red[@]} -ne 0 ]; then
+            for t in "${red[@]}"; do echo "::warning file=$t::suite is failing"; done
+            exit 1
+          fi
+          echo "all green"
 
       - name: Commit if anything changed
         run: |

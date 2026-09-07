@@ -2994,21 +2994,58 @@ function espnPerGame(p){
    back to the rest of season average rather than to zero. A missing number
    must never look like a bad one, or the lineup builder benches somebody over
    an absent row. */
+/* One provider's projection for one named week, or null. Both publish a
+   number for every week of the season and both already account for the
+   defence a player is facing, which is the entire reason to use them week by
+   week instead of flattening them into an average. */
+function sleeperWeek(p, wk){
+  const t = (PROJ && PROJ.weeks) ? PROJ.weeks[String(wk)] : null;
+  const v = t ? t[String(p.id)] : null;
+  return (typeof v === "number" && v > 0) ? v : null;
+}
+function espnWeek(p, wk){
+  const t = (LIVE && LIVE.espnWeeks) ? LIVE.espnWeeks[String(wk)] : null;
+  const v = t ? t[String(p.id)] : null;
+  return (typeof v === "number" && v > 0) ? v : null;
+}
+
+/* What a player is worth in one named week: both weekly projections, averaged.
+   Nothing here is a season total or a league average. Those only appear if
+   neither provider published a number for that player that week, and then only
+   so a missing row cannot read as a zero and bench somebody. */
 function weekProjOf(p, wk){
   if(!p) return 0;
-  if(!wk || wk === weeksLeft()[0]) return projOf(p).blend;
-  const table = (PROJ && PROJ.weeks) ? PROJ.weeks[String(wk)] : null;
-  const sleeper = table ? table[String(p.id)] : null;
-  if(!(typeof sleeper === "number" && sleeper > 0)) return ppgOf(p);
-  const espn = espnPerGame(p);
-  const base = espn === null ? sleeper : (sleeper + espn) / 2;
-  return withResults(p, base, true);
+  const now = weeksLeft()[0];
+  /* This week goes through the same call the matchup card uses, so the two can
+     never disagree about the week everyone is actually looking at. */
+  if(!wk || wk === now) return projOf(p).blend;
+
+  const have = [];
+  const sl = sleeperWeek(p, wk);
+  if(sl) have.push(sl);
+  const es = espnWeek(p, wk);
+  if(es) have.push(es);
+  if(have.length)
+    return withResults(p, have.reduce((a, b) => a + b, 0) / have.length, true);
+
+  /* Neither provider published a number for him that week. His current weekly
+     projection is a worse answer than a real one for that week, because it
+     knows nothing about who he is playing, but it is a much better answer than
+     a season average and a far better one than zero. */
+  if(typeof p.proj === "number" && p.proj > 0) return withResults(p, p.proj, true);
+  return ppgOf(p);
+}
+
+/* whether ESPN's own week by week table arrived */
+function espnWeeklyOn(){
+  return !!(LIVE && LIVE.espnWeeks && Object.keys(LIVE.espnWeeks).length);
 }
 
 /* whether the per week table actually arrived, for the copy that explains it */
 function weeklyProjOn(){
   return !!(PROJ && PROJ.weeks && Object.keys(PROJ.weeks).length);
 }
+function bothWeeklyOn(){ return weeklyProjOn() && espnWeeklyOn(); }
 
 /* On bye is out. Anyone ruled out is out of the next week only, because a
    longer absence is a guess and this model does not guess. */
@@ -4459,13 +4496,16 @@ function renderOutlookTable(me){
     </tr>`).join("") +
     `</tbody></table>
     <p class="note">Both lineups are the best each roster could field that week,
-      with byes taken out on either side.${weeklyProjOn()
-        ? ` Every row is that week's own projection for both rosters, so a week
-          against a team with three players off reads differently to a week
-          against a full one.`
-        : ` The per week projections have not loaded, so every week after this
-          one is running off each player's rest of season average and the
-          margins will look flatter than they should.`}
+      with byes taken out on either side.${bothWeeklyOn()
+        ? ` Every row is that week's own projection from ESPN and Sleeper
+          together, so the matchup a player is facing in Week 9 is in the
+          Week 9 number.`
+        : weeklyProjOn() || espnWeeklyOn()
+        ? ` Only one provider's week by week table has loaded, so the other side
+          of the blend is falling back until the next pull.`
+        : ` Neither week by week table has loaded, so every week after this one
+          is running off a season average and the margins will look flatter
+          than they should.`}
       A slot nobody on the roster can fill in a later week is credited at
       waiver level rather than scored as nothing, because a kicker on bye gets
       streamed and always has. It still assumes nobody trades and nobody gets

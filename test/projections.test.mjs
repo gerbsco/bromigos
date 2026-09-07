@@ -6,7 +6,7 @@
  */
 
 import { parseCSV, crosswalk, readSleeper, keyByEspn, currentWeek,
-         dropZeros, sumWeeks, weeksAhead, defenseCrosswalk }
+         dropZeros, sumWeeks, weeksAhead, defenseCrosswalk, unmatchedDefenses }
   from "../scripts/projections.mjs";
 import { boot } from "./harness.mjs";
 
@@ -155,6 +155,27 @@ ok("no schedule counts forward instead of guessing", () => {
   ok("junk in, empty out", () =>
     Object.keys(defenseCrosswalk(null)).length === 0
     && Object.keys(defenseCrosswalk({})).length === 0);
+  /* Sleeper says WAS, ESPN says WSH. One team quietly missing is exactly the
+     sort of thing nobody notices until a bye week. */
+  ok("spelling differences between the two do not lose a team", () => {
+    const m = defenseCrosswalk({ rosters:{ teams:[{ id:1, roster:{ entries:[
+      { playerPoolEntry:{ player:{ id:-16028, defaultPositionId:16, proTeamId:28 } } },
+      { playerPoolEntry:{ player:{ id:-16030, defaultPositionId:16, proTeamId:30 } } },
+      { playerPoolEntry:{ player:{ id:-16014, defaultPositionId:16, proTeamId:14 } } }]}}]}});
+    return [m.WAS === "-16028" && m.WSH === "-16028"
+         && m.JAC === "-16030" && m.JAX === "-16030"
+         && m.LA === "-16014" && m.LAR === "-16014",
+      ["WAS","WSH","JAC","JAX","LA","LAR"].map(k => k + "=" + m[k]).join(" ")];
+  });
+  ok("anything that still fails to match is reported by id", () => {
+    const m = defenseCrosswalk({ rosters:{ teams:[{ id:1, roster:{ entries:[
+      { playerPoolEntry:{ player:{ id:-16006, defaultPositionId:16, proTeamId:6 } } }]}}]}});
+    const pts = readSleeper([
+      { player_id:"DAL", position:"DEF", stats:{ pts_half_ppr: 7.4 } },
+      { player_id:"ZZZ", position:"DEF", stats:{ pts_half_ppr: 5.0 } }]);
+    const lost = unmatchedDefenses(pts, m);
+    return [lost.length === 1 && lost[0] === "ZZZ", JSON.stringify(lost)];
+  });
   ok("Sleeper's DEF rows survive the read and key onto ESPN ids", () => {
     const pts = readSleeper([
       { player_id:"DAL", position:"DEF", stats:{ pts_half_ppr: 7.4 } },

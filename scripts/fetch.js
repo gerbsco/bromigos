@@ -179,23 +179,38 @@ async function main() {
      keep whatever the last good pull had rather than publishing a file that
      says the season does not exist. */
   const scheduleOf = d => (d && Array.isArray(d.schedule)) ? d.schedule : [];
+  /* Every attempt is recorded, with what ESPN actually sent back, and the
+     record goes into league.json. Guessing at this from a phone has cost two
+     evenings; the next run says out loud which views answered, what keys were
+     in the reply and how many games each carried. */
+  snap.scheduleTried = [];
   if (!scheduleOf(snap.matchups).length) {
+    const wk = snap.scoringPeriodId || 1;
     for (const url of [
+      `${ESPN}?view=mMatchup`,
       `${ESPN}?view=mMatchupScore`,
-      `${ESPN}?view=mMatchup&scoringPeriodId=${snap.scoringPeriodId || 1}`,
-      `${ESPN}?view=mMatchupScore&scoringPeriodId=${snap.scoringPeriodId || 1}`,
-      `${ESPN}?view=mSchedule`
+      `${ESPN}?view=mMatchup&view=mMatchupScore&view=mTeam`,
+      `${ESPN}?view=mMatchup&scoringPeriodId=${wk}`,
+      `${ESPN}?view=mMatchupScore&scoringPeriodId=${wk}`,
+      `${ESPN}?view=mBoxscore&scoringPeriodId=${wk}`,
+      `${ESPN}?view=mSchedule`,
+      `${ESPN}`
     ]) {
+      const label = url.split("?")[1] || "no view";
       try {
         const d = await getJSON(url);
-        if (scheduleOf(d).length) {
+        const games = scheduleOf(d).length;
+        snap.scheduleTried.push({ view: label, ok: true, games,
+          keys: Object.keys(d || {}).slice(0, 14) });
+        if (games) {
           snap.matchups = d;
-          console.log(`ok   espn schedule <- ${url.split("?").pop()}`);
+          console.log(`ok   espn schedule <- ${label} (${games} games)`);
           break;
         }
-        console.log(`     schedule empty from ${url.split("?").pop()}`);
+        console.log(`     schedule empty from ${label}, keys: ${Object.keys(d || {}).join(",")}`);
       } catch (err) {
-        console.log(`     schedule miss ${url.split("?").pop()} (${err.message})`);
+        snap.scheduleTried.push({ view: label, ok: false, error: err.message });
+        console.log(`     schedule miss ${label} (${err.message})`);
       }
       await pause(300);
     }

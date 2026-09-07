@@ -6,7 +6,7 @@
  */
 
 import { parseCSV, crosswalk, readSleeper, keyByEspn, currentWeek,
-         dropZeros, sumWeeks, weeksAhead }
+         dropZeros, sumWeeks, weeksAhead, defenseCrosswalk }
   from "../scripts/projections.mjs";
 import { boot } from "./harness.mjs";
 
@@ -121,6 +121,48 @@ ok("no schedule counts forward instead of guessing", () => {
   const w = weeksAhead(null, 12);
   return [w.join(",") === "12,13,14", w.join(",")];
 });
+
+/* ---------- team defenses ----------
+   Sleeper keys a defense by team abbreviation and ESPN by its own id, and no
+   published crosswalk carries them, which is why the D/ST slot was blank on
+   the Sleeper view. The mapping is read out of league.json rather than guessed
+   at, so a change to ESPN's id scheme cannot attach a projection to the wrong
+   team, it can only fail to attach it at all. */
+{
+  const league = {
+    rosters:{ teams:[
+      { id:1, roster:{ entries:[
+        { playerPoolEntry:{ player:{ id:-16006, defaultPositionId:16, proTeamId:6 } } },
+        { playerPoolEntry:{ player:{ id:4262921, defaultPositionId:2, proTeamId:6 } } } ]}},
+      { id:2, roster:{ entries:[
+        { playerPoolEntry:{ player:{ id:-16030, defaultPositionId:16, proTeamId:30 } } } ]}}
+    ]},
+    freeAgents:[ { player:{ id:-16012, defaultPositionId:16, proTeamId:12 } } ]
+  };
+  ok("defenses map from the league file, rosters and free agents alike", () => {
+    const m = defenseCrosswalk(league);
+    return [m.DAL === "-16006" && m.JAX === "-16030" && m.KC === "-16012", JSON.stringify(m)];
+  });
+  ok("no skill player is mistaken for a defense", () => {
+    const m = defenseCrosswalk(league);
+    return [!Object.values(m).includes("4262921"), JSON.stringify(m)];
+  });
+  ok("a league file with no defenses yields nothing rather than a guess", () => {
+    const m = defenseCrosswalk({ rosters:{ teams:[{ id:1, roster:{ entries:[
+      { playerPoolEntry:{ player:{ id:5, defaultPositionId:2, proTeamId:6 } } }]}}]}});
+    return [Object.keys(m).length === 0, JSON.stringify(m)];
+  });
+  ok("junk in, empty out", () =>
+    Object.keys(defenseCrosswalk(null)).length === 0
+    && Object.keys(defenseCrosswalk({})).length === 0);
+  ok("Sleeper's DEF rows survive the read and key onto ESPN ids", () => {
+    const pts = readSleeper([
+      { player_id:"DAL", position:"DEF", stats:{ pts_half_ppr: 7.4 } },
+      { player_id:"JAX", position:"DEF", stats:{ pts_half_ppr: 8.2 } }]);
+    const out = keyByEspn(pts, defenseCrosswalk(league));
+    return [out["-16006"] === 7.4 && out["-16030"] === 8.2, JSON.stringify(out)];
+  });
+}
 
 /* ---------- blending in the app ---------- */
 {

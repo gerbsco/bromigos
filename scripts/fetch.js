@@ -235,6 +235,60 @@ async function main() {
     : "FAIL espn schedule is empty from every view - the season table stays hidden");
   if (!games) snap.errors.push("schedule: no view returned any matchups");
 
+  /* ---------- 1c. ESPN weekly projections, every remaining week ----------
+     ESPN publishes a projection for every scoring period, not just the current
+     one, and those numbers already account for the defence a player is facing
+     that week. We were only ever asking for the live week, so the app had one
+     real ESPN weekly number and had to approximate the other thirteen from a
+     season total. Ask for each week instead. One request per remaining week,
+     roughly six seconds, and it is the difference between a season table that
+     reflects matchups and one that does not. */
+  const REG_LAST = 14;
+  const remainingWeeks = () => {
+    const sch = (snap.matchups && snap.matchups.schedule) || [];
+    const open = [...new Set(sch
+      .filter(m => m && m.home && m.away
+        && (!m.playoffTierType || m.playoffTierType === "NONE")
+        && (!m.winner || m.winner === "UNDECIDED")
+        && Number(m.matchupPeriodId) <= REG_LAST)
+      .map(m => Number(m.matchupPeriodId)))].filter(Number.isFinite).sort((a, b) => a - b);
+    if (open.length) return open;
+    const out = [];
+    for (let w = snap.scoringPeriodId || 1; w <= REG_LAST; w++) out.push(w);
+    return out;
+  };
+
+  snap.espnWeeks = {};
+  const wantWeeks = remainingWeeks();
+  for (const w of wantWeeks) {
+    try {
+      const d = await getJSON(`${ESPN}?view=mRoster&scoringPeriodId=${w}`);
+      const map = {};
+      ((d && d.teams) || []).forEach(t =>
+        (((t.roster && t.roster.entries) || [])).forEach(e => {
+          const pl = e && e.playerPoolEntry && e.playerPoolEntry.player;
+          if (!pl || pl.id == null) return;
+          const st = (pl.stats || []).find(x =>
+            x.statSourceId === 1 && Number(x.scoringPeriodId) === w);
+          const v = st ? Number(st.appliedTotal) : NaN;
+          /* A zero is a bye or a player ESPN has not projected, and the two
+             cannot be told apart here. Leaving it out lets the app fall back
+             rather than start somebody at nothing by accident. */
+          if (Number.isFinite(v) && v > 0) map[String(pl.id)] = Math.round(v * 10) / 10;
+        }));
+      if (Object.keys(map).length) snap.espnWeeks[String(w)] = map;
+      console.log(`ok   espn week ${w} projections (${Object.keys(map).length} players)`);
+    } catch (err) {
+      console.log(`     espn week ${w} unavailable (${err.message})`);
+    }
+    await pause(300);
+  }
+  const espnCells = Object.values(snap.espnWeeks)
+    .reduce((n, m) => n + Object.keys(m).length, 0);
+  console.log(`ok   espn per week table: ${espnCells} projections over`
+    + ` ${Object.keys(snap.espnWeeks).length} of ${wantWeeks.length} weeks`);
+  if (!espnCells) snap.errors.push("espnWeeks: no weekly projections came back");
+
   /* ---------- 2. pro team bye weeks ---------- */
   let byes = {};
   for (const url of [

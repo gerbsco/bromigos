@@ -5,7 +5,8 @@
  * rather than an error, which is the worst failure mode a start/sit tool has.
  */
 
-import { parseCSV, crosswalk, readSleeper, keyByEspn, currentWeek }
+import { parseCSV, crosswalk, readSleeper, keyByEspn, currentWeek,
+         dropZeros, sumWeeks, weeksAhead }
   from "../scripts/projections.mjs";
 import { boot } from "./harness.mjs";
 
@@ -87,6 +88,40 @@ ok("week comes from the file the nightly job already wrote", () =>
 ok("a missing week falls back to 1", () =>
   currentWeek(null) === 1 && currentWeek({}) === 1 && currentWeek({ scoringPeriodId: 0 }) === 1);
 
+/* ---------- the per week table ----------
+   A zero is a bye, an inactive player or one the provider has not published,
+   and the three cannot be told apart. Dropping them lets the app distinguish
+   "no number this week" from "we think he scores nothing", which is the
+   difference between using his season average and benching him by accident. */
+ok("zeros are dropped from a week rather than stored", () => {
+  const m = dropZeros({ "1": 12.4, "2": 0, "3": 8.1 });
+  return [Object.keys(m).length === 2 && m["2"] === undefined, JSON.stringify(m)];
+});
+ok("dropZeros survives junk", () =>
+  Object.keys(dropZeros(null)).length === 0 && Object.keys(dropZeros({})).length === 0);
+ok("weeks add up to the rest of season total", () => {
+  const total = sumWeeks([{ "1": 10 }, { "1": 12.5 }, { "2": 4 }]);
+  return [total["1"] === 22.5 && total["2"] === 4, JSON.stringify(total)];
+});
+ok("a player missing from a week does not break the sum", () => {
+  const total = sumWeeks([{ "1": 10 }, {}, { "1": 5 }]);
+  return [total["1"] === 15, JSON.stringify(total)];
+});
+ok("remaining weeks come off the real schedule", () => {
+  const league = { matchups: { schedule: [
+    { matchupPeriodId:1, playoffTierType:"NONE", winner:"HOME", home:{}, away:{} },
+    { matchupPeriodId:2, playoffTierType:"NONE", winner:"UNDECIDED", home:{}, away:{} },
+    { matchupPeriodId:3, playoffTierType:"NONE", winner:"UNDECIDED", home:{}, away:{} },
+    { matchupPeriodId:15, playoffTierType:"WINNERS_BRACKET", winner:"UNDECIDED", home:{}, away:{} }
+  ]}};
+  const w = weeksAhead(league, 2);
+  return [w.join(",") === "2,3", w.join(",")];
+});
+ok("no schedule counts forward instead of guessing", () => {
+  const w = weeksAhead(null, 12);
+  return [w.join(",") === "12,13,14", w.join(",")];
+});
+
 /* ---------- blending in the app ---------- */
 {
   const { sandbox: S, setVar } = boot({ search:"?pack=1", now:"2026-09-16T12:00:00Z" });
@@ -131,9 +166,20 @@ ok("a missing week falls back to 1", () =>
     const h = S.projChip({ id:101, proj:17.6 });
     return [/18\.0/.test(h) && /0\.8/.test(h), h];
   });
-  ok("a single source says so instead of faking agreement", () => {
+  /* The chip used to append "espn only" to every single-source row. It was
+     removed on purpose: it appeared fifteen times down one screen and said
+     nothing a manager could act on, and the line under the roster already
+     names the sources once. What must never happen is a spread being printed
+     when there is only one number, because that would be inventing agreement
+     between sources that never both answered. */
+  ok("a single source prints its number and claims no agreement", () => {
     const h = S.projChip({ id:999, proj:12.2 });
-    return [/espn only/.test(h), h];
+    return [/12\.2/.test(h) && !/plusmn|&#177;|\u00b1/.test(h), h];
+  });
+  ok("two sources do print a spread", () => {
+    setVar("PROJ", JSON.stringify({ week:2, players:{ "101": 18.4 } }));
+    const h = S.projChip({ id:101, proj:17.6 });
+    return [/plusmn|&#177;|\u00b1/.test(h), h];
   });
   ok("nothing projected renders nothing", () => S.projChip({ id:998, proj:0 }) === "");
 }
@@ -143,9 +189,13 @@ ok("a missing week falls back to 1", () =>
   const { sandbox: S, byId, setVar } = boot({ search:"?pack=1", now:"2026-09-16T12:00:00Z" });
   setVar("ME", '"Scotty"');
   ok("PROJ starts null", () => S.projOf({ id:1, proj:10 }).n === 1);
+  /* The heading was "Suggested lineup" before the Team page was rebuilt around
+     the full roster. It is "Starting" now, over the slots, with the bench and
+     the kicker and defense in their own sections underneath. */
   ok("the lineup still builds on ESPN alone", () => {
     S.renderTeamPage();
-    return /Suggested lineup/.test(byId("teamBody").innerHTML);
+    const h = String(byId("teamBody").innerHTML);
+    return [/Starting/.test(h) && /class="plr/.test(h), h.slice(0, 90)];
   });
   ok("and says so rather than implying a consensus", () =>
     /ESPN only/.test(byId("teamBody").innerHTML));

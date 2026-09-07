@@ -3143,6 +3143,23 @@ const weekStat = (p, src) => {
   const wk = Number(LIVE && LIVE.scoringPeriodId) || 0;
   return wk ? statOf(p, src, wk) : null;
 };
+
+/* This week's projection, and never the season total standing in for it.
+   Falling back to "any projection" put a whole year in a weekly column for
+   every player ESPN has not projected this week, which is why Brandon Aiyuk
+   sat on the waiver board at 95.1 for week 1 and why a lineup carrying one or
+   two of them read a hundred and eleven in week 1 and eighty-two every week
+   after. A player with no projection for this week has no projection for this
+   week. Any weekly entry will do if the payload is shaped oddly, the season
+   entry will not. */
+function weekProjStat(p){
+  const list = (p && p.stats) || [];
+  const wk = Number(LIVE && LIVE.scoringPeriodId) || 0;
+  return (wk ? list.find(st => st.statSourceId === 1
+                            && Number(st.scoringPeriodId) === wk) : null)
+      || list.find(st => st.statSourceId === 1 && Number(st.scoringPeriodId) > 0)
+      || null;
+}
 /* ESPN sends the pro team as a number, and the roster row was printing it raw,
    so every player read "Jaxson Dart, 19" where 19 is the Giants. The ids are
    fixed and have not moved in years. Anything unmapped prints nothing rather
@@ -3213,7 +3230,7 @@ function normalizeLive(){
       /* Empty object, never null: a player ESPN has sent no stats for at all
          is normal in the hours after a draft, and reading a field off nothing
          took the whole roster build down with it. */
-      const projStat = weekStat(p, 1) || anyStat(p, 1) || {};
+      const projStat = weekProjStat(p) || {};
       const realStat = seasonStat(p, 0) || anyStat(p, 0) || {};
       const seasonProj = seasonStat(p, 1);
       return {
@@ -3344,7 +3361,7 @@ function loadRosterModel(){
     .filter(p => Number(p.player && p.player.proTeamId) > 0)
     .map(p => {
       const pl = p.player || {};
-      const projStat = weekStat(pl, 1) || anyStat(pl, 1) || {};
+      const projStat = weekProjStat(pl) || {};
       const realStat = seasonStat(pl, 0) || anyStat(pl, 0) || {};
       return {
         id:String(p.id), name: pl.fullName || "Unknown",

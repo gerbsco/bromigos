@@ -9,6 +9,7 @@
 // No API keys. No dependencies. Requires Node 20+ for built-in fetch.
 
 import { writeFile, mkdir } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 
 const LEAGUE_ID = "24869044";
 const SEASON = "2026";
@@ -170,13 +171,54 @@ async function main() {
 
   const drafted = snap.settings?.draftDetail?.drafted;
 
-  /* The site reads its whole schedule off this. Worth saying out loud how many
-     games came back, because an empty one is not an error and looks identical
-     to a good pull until the season table turns up blank. */
-  const games = snap.matchups?.schedule?.length || 0;
+  /* ---------- 1b. the schedule, which the whole season table hangs off ----------
+     mMatchup is the documented view and usually carries it, but it has come
+     back without a schedule on this league while ESPN's own app was happily
+     showing the Week 1 matchup, so one view is not enough to depend on. Try
+     the others, take the first that actually has games in it, and if none do,
+     keep whatever the last good pull had rather than publishing a file that
+     says the season does not exist. */
+  const scheduleOf = d => (d && Array.isArray(d.schedule)) ? d.schedule : [];
+  if (!scheduleOf(snap.matchups).length) {
+    for (const url of [
+      `${ESPN}?view=mMatchupScore`,
+      `${ESPN}?view=mMatchup&scoringPeriodId=${snap.scoringPeriodId || 1}`,
+      `${ESPN}?view=mMatchupScore&scoringPeriodId=${snap.scoringPeriodId || 1}`,
+      `${ESPN}?view=mSchedule`
+    ]) {
+      try {
+        const d = await getJSON(url);
+        if (scheduleOf(d).length) {
+          snap.matchups = d;
+          console.log(`ok   espn schedule <- ${url.split("?").pop()}`);
+          break;
+        }
+        console.log(`     schedule empty from ${url.split("?").pop()}`);
+      } catch (err) {
+        console.log(`     schedule miss ${url.split("?").pop()} (${err.message})`);
+      }
+      await pause(300);
+    }
+  }
+
+  /* Last resort: the previous file. A view that fails or comes back thin for
+     one run must not wipe a schedule the league has been reading all week. */
+  if (!scheduleOf(snap.matchups).length) {
+    try {
+      const prev = JSON.parse(readFileSync("data/league.json", "utf8"));
+      if (scheduleOf(prev.matchups).length) {
+        snap.matchups = prev.matchups;
+        snap.scheduleFrom = prev.fetchedAt || "an earlier pull";
+        console.log(`ok   schedule carried forward from ${snap.scheduleFrom}`);
+      }
+    } catch (err) { /* no previous file, nothing to carry */ }
+  }
+
+  const games = scheduleOf(snap.matchups).length;
   console.log(games
     ? `ok   espn schedule (${games} matchups)`
-    : "WARN espn schedule is empty - the season table stays hidden until it fills");
+    : "FAIL espn schedule is empty from every view - the season table stays hidden");
+  if (!games) snap.errors.push("schedule: no view returned any matchups");
 
   /* ---------- 2. pro team bye weeks ---------- */
   let byes = {};

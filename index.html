@@ -4303,6 +4303,47 @@ function scheduleFor(meId, wk){
   return null;
 }
 
+/* Why the schedule is missing, for the one person who can do anything about
+   it. The nightly job records every view it tried and what came back; this
+   prints it rather than making the commissioner read an Actions log on a
+   phone. Nobody else in the league ever sees it. */
+function scheduleDebug(){
+  if(!PREVIEW) return "";
+  const line = (k, v) => `<p class="note" style="margin:0 0 6px"><b>${esc(k)}</b> ${esc(v)}</p>`;
+  /* What is in the file right now, which needs no new run to read. This is the
+     one question worth answering first: is the schedule missing from the data,
+     or present and not being read. */
+  const m = (LIVE && LIVE.matchups) || null;
+  const sch = (m && Array.isArray(m.schedule)) ? m.schedule : null;
+  let now = line("file pulled", (LIVE && LIVE.fetchedAt) || "no league.json loaded");
+  now += line("matchups key", m ? "present, keys: " + Object.keys(m).join(", ") : "MISSING");
+  now += line("schedule array", sch ? sch.length + " entries" : "MISSING");
+  if(sch && sch.length){
+    const one = sch[0] || {};
+    now += line("first entry", "week " + one.matchupPeriodId
+      + ", tier " + (one.playoffTierType || "none")
+      + ", winner " + (one.winner || "none")
+      + ", home " + ((one.home || {}).teamId) + " away " + ((one.away || {}).teamId));
+    now += line("my team id", String((teamIndex()[ME] || {}).id));
+    now += line("weeks left", JSON.stringify(weeksLeft()));
+    now += line("REG_WEEKS", String(REG_WEEKS));
+  }
+
+  const tried = (LIVE && LIVE.scheduleTried) || null;
+  const errs = ((LIVE && LIVE.errors) || []).filter(e => /schedule|mMatchup/i.test(e));
+
+  return `<details class="hhmore"><summary>Why there is no schedule</summary>
+    ${now}
+    ${errs.length ? `<p class="note" style="margin:8px 0 6px">${esc(errs.join(" \u00b7 "))}</p>` : ""}
+    ${tried ? `<p class="note" style="margin:8px 0 6px"><b>views tried last run</b></p>`
+      + tried.map(t => `<p class="note" style="margin:0 0 6px">
+        <b>${esc(t.view)}</b> &middot; ${t.ok
+          ? esc(t.games + " games, keys: " + (t.keys || []).join(", "))
+          : esc("failed, " + t.error)}</p>`).join("") : ""}
+    <p class="note" style="margin:8px 0 2px">Commissioner only, hidden from the
+      league.</p></details>`;
+}
+
 /* Everything the page can honestly say when ESPN has not published the
    schedule. No opponent, so no margin, but the roster is real and so is what
    the rest of the league can field that week. Your own total against the
@@ -4345,11 +4386,12 @@ function renderSolo(me){
       <div class="vsSide"><span class="vsName">League average</span>
         <span class="vsScore">${r.avg.toFixed(1)}</span></div>
     </div>
-    <p class="note" style="margin:0 0 14px">ESPN has not published the matchups
-      yet, so there is no opponent to line up against. This is your best lineup
-      for Week ${r.wk} against what the other ${r.of - 1} rosters can field the
-      same week, which puts you <b>${ordinal(r.rank)} of ${r.of}</b>. The
-      opponent, the margin and the head to head all appear on the next pull.</p>`;
+    <p class="note" style="margin:0 0 14px">The schedule has not come across
+      from ESPN, so there is no opponent to line up against. This is your best
+      lineup for Week ${r.wk} against what the other ${r.of - 1} rosters can
+      field the same week, which puts you <b>${ordinal(r.rank)} of ${r.of}</b>.
+      The opponent, the margin and the head to head all appear the moment it
+      lands.</p>${scheduleDebug()}`;
 }
 
 function seasonOutlook(me){

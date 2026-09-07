@@ -117,6 +117,17 @@ export const ESPN_PRO_TEAM = { 1:"ATL", 2:"BUF", 3:"CHI", 4:"CIN", 5:"CLE",
   22:"ARI", 23:"PIT", 24:"LAC", 25:"SF", 26:"SEA", 27:"TB", 28:"WSH", 29:"CAR",
   30:"JAX", 33:"BAL", 34:"HOU" };
 
+/* The two providers do not spell every team the same. Sleeper says WAS where
+   ESPN says WSH, and both have used older spellings for teams that moved. Each
+   ESPN abbreviation gets every spelling Sleeper might use, so the lookup hits
+   whichever one turns up rather than silently missing one team. */
+const TEAM_ALIASES = {
+  WSH:["WAS","WSH"], JAX:["JAX","JAC"], LAR:["LAR","LA","STL"], LAC:["LAC","SD"],
+  LV:["LV","OAK","LVR"], ARI:["ARI","ARZ"], HOU:["HOU","HST"], BAL:["BAL","BLT"],
+  CLE:["CLE","CLV"], NO:["NO","NOR"], NE:["NE","NWE"], SF:["SF","SFO"],
+  TB:["TB","TAM"], GB:["GB","GNB"], KC:["KC","KAN"]
+};
+
 export function defenseCrosswalk(league) {
   const byTeam = {};
   const scan = list => (list || []).forEach(e => {
@@ -131,9 +142,21 @@ export function defenseCrosswalk(league) {
 
   const out = {};
   Object.keys(ESPN_PRO_TEAM).forEach(id => {
-    if (byTeam[id]) out[ESPN_PRO_TEAM[id]] = byTeam[id];
+    if (!byTeam[id]) return;
+    const ab = ESPN_PRO_TEAM[id];
+    (TEAM_ALIASES[ab] || [ab]).forEach(key => {
+      out[key] = byTeam[id];
+      out[key.toLowerCase()] = byTeam[id];
+    });
   });
   return out;
+}
+
+/* Which Sleeper defenses came back and never found an ESPN id. This is the
+   line that ends the guessing: it prints the ids Sleeper actually used. */
+export function unmatchedDefenses(sleeperPoints, ids) {
+  return Object.keys(sleeperPoints || {})
+    .filter(k => /^[A-Za-z]{2,4}$/.test(k) && !(ids || {})[k]);
 }
 
 /* sleeper id -> espn id. Column names differ between the crosswalks, so accept
@@ -301,6 +324,15 @@ async function main() {
   ], async url => readSleeper(await getJSON(url)),
      pts => Object.keys(pts).length > 50);
   console.log(`ok   sleeper (${Object.keys(sleeper).length} projections)`);
+
+  /* Defenses are keyed by an abbreviation rather than a number, so they show
+     up in the payload looking nothing like the other rows. Say out loud how
+     many were seen, how many matched, and the ids of any that did not. */
+  const defIds = Object.keys(sleeper).filter(k => /^[A-Za-z]{2,4}$/.test(k));
+  const lost = unmatchedDefenses(sleeper, ids);
+  console.log(`ok   sleeper defenses: ${defIds.length} in the payload,`
+    + ` ${defIds.length - lost.length} matched`
+    + (lost.length ? `, unmatched: ${lost.join(", ")}` : ""));
 
   const players = keyByEspn(sleeper, ids);
   const rate = Object.keys(sleeper).length

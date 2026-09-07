@@ -722,6 +722,9 @@
   .idea .sw i{font-style:normal;color:var(--faint)}
   .idea .why{margin:9px 0 0;font:400 13px/1.4 var(--display);color:var(--faint)}
   .idea .why b{color:var(--win);font-weight:600}
+  /* A one sided idea prints a negative for the other manager, and that number
+     has to read as the cost it is rather than as a gain. */
+  .idea .why b.down{color:var(--loss)}
 
   /* ---------- filter controls ---------- */
   .ctrls{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
@@ -2935,13 +2938,42 @@ function withResults(p, base, imported){
   return base * (1 - w) + avg * w;
 }
 
-function ppgOf(p){
+/* The old per game number, built from whatever rest of season figures the two
+   providers give. Still the last resort when nobody has published a week. */
+function seasonAvgOf(p){
   if(!p) return 0;
   const ros = rosOf(p);
-  /* A real rest of season number beats anything derived from one Sunday, so
-     it goes first. It is already per game. */
   const base = ros ? ros.pts : projOf(p).blend;
   return withResults(p, base, !!ros);
+}
+
+/* What a player is worth a game from here, built from the weeks themselves.
+
+   This used to be a separate estimate, which meant the trade finder sifted
+   thousands of candidates on one number and then rated the survivors on a
+   different one. A deal could be thrown out in the first pass and never reach
+   the pass that would have liked it. Now both passes are the same arithmetic:
+   the weeks he can actually play, each on that week's own projection, averaged.
+   Cached per pull, because the finder asks for this a few thousand times. */
+let PPG = null, PPG_KEY = "";
+function ppgOf(p){
+  if(!p) return 0;
+  const key = rosterKey() + "|" + weeksLeft().length
+    + "|" + ((PROJ && PROJ.generatedAt) || "none");
+  if(!PPG || PPG_KEY !== key){ PPG = new Map(); PPG_KEY = key; }
+  const id = String(p.id);
+  if(PPG.has(id)) return PPG.get(id);
+
+  const wks = weeksLeft();
+  let out;
+  if(!wks.length) out = seasonAvgOf(p);
+  else {
+    let sum = 0, n = 0;
+    wks.forEach(wk => { if(availableIn(p, wk)){ sum += weekProjOf(p, wk); n++; } });
+    out = n ? sum / n : seasonAvgOf(p);
+  }
+  PPG.set(id, out);
+  return out;
 }
 
 /* ESPN's season projection covers the NFL season, all eighteen weeks of it.
@@ -3033,7 +3065,9 @@ function weekProjOf(p, wk){
      knows nothing about who he is playing, but it is a much better answer than
      a season average and a far better one than zero. */
   if(typeof p.proj === "number" && p.proj > 0) return withResults(p, p.proj, true);
-  return ppgOf(p);
+  /* seasonAvgOf, not ppgOf: ppgOf is built out of this function and would
+     chase its own tail. */
+  return seasonAvgOf(p);
 }
 
 /* whether ESPN's own week by week table arrived */
@@ -3153,13 +3187,25 @@ function findTrades(mine, theirs, limit = 6){
   /* A quarter of a point a week each way. Anything under that is noise dressed
      up as a suggestion, and a long list of those is worse than a short list. */
   const floor = 0.25 * Math.max(1, weeksLeft().length);
-  return shortlist.map(i => {
+  const rated = shortlist.map(i => {
     const a = seasonValue(applyTrade(mine.players, i.give, i.get)) - seasonA;
     const b = seasonValue(applyTrade(theirs.players, i.get, i.give)) - seasonB;
     return { ...i, a, b, score: Math.min(a, b) };
-  }).filter(i => i.a > floor && i.b > floor)
-    .sort((x,y) => y.score - x.score)
-    .slice(0, limit);
+  });
+
+  const both = rated.filter(i => i.a > floor && i.b > floor)
+    .sort((x, y) => y.score - x.score).slice(0, limit);
+  if(both.length) return both;
+
+  /* Nothing helps both sides. That is a real answer in a league that has just
+     drafted, where everybody is balanced and nobody has a surplus yet, but an
+     empty panel is not: it looks like the feature is broken. Show the closest
+     deals instead, the ones that help you and cost them least, marked as what
+     they are. A trade you have to sweeten is still somewhere to start. */
+  return rated.filter(i => i.a > floor)
+    .sort((x, y) => y.b - x.b)
+    .slice(0, 3)
+    .map(i => ({ ...i, oneSided: true }));
 }
 
 /* ---------- turn the ESPN payload into the model above ---------- */
@@ -3384,7 +3430,8 @@ function ensureRosters(){
 
 function loadRosterModel(){
   ROSTER_KEY = rosterKey();
-  MEDS = null; TIDX = null; REPL = null; TRADE_CACHE = { key:null, val:[] };
+  MEDS = null; TIDX = null; REPL = null; PPG = null;
+  TRADE_CACHE = { key:null, val:[] };
   const live = normalizeLive();
   if(live && live.length){ ROSTERS = live; IS_DEMO = false; }
   else if(PREVIEW){ ROSTERS = demoRosters(); IS_DEMO = true; }
@@ -3736,14 +3783,23 @@ function renderTradePro(){
     rosterBlock(them, getSel, "get", true);
 
   const ideas = tradeIdeas(me, them);
-  document.getElementById("ideas").innerHTML = ideas.length ? ideas.map((i,n) =>
+  const sign1 = n => (n > 0 ? "+" : "") + per(n).toFixed(1);
+  document.getElementById("ideas").innerHTML = ideas.length
+    ? (ideas[0].oneSided
+        ? `<p class="note" style="margin:0 0 10px">Nothing here helps both sides
+           outright. These are the closest: they help you and cost
+           ${esc(them.manager)} least, so they are a starting point rather than
+           a deal he takes as it stands.</p>` : "")
+      + ideas.map((i,n) =>
     `<div class="idea" data-idea="${n}"><div class="sw">
       <i>You send</i> ${i.give.map(p=>esc(p.name)).join(" and ")}
       <i>for</i> ${i.get.map(p=>esc(p.name)).join(" and ")}</div>
-      <p class="why">You <b>+${per(i.a).toFixed(1)}</b> a week, them
-        <b>+${per(i.b).toFixed(1)}</b>. Tap to load it.</p>
+      <p class="why">You <b>${sign1(i.a)}</b> a week, them
+        <b class="${i.b < 0 ? "down" : ""}">${sign1(i.b)}</b>. Tap to load it.</p>
     </div>`).join("")
-    : `<p class="note">Nothing with ${esc(them.manager)} improves both lineups right now. Try someone else.</p>`;
+    : `<p class="note">Nothing with ${esc(them.manager)} moves either lineup by
+       enough to be worth suggesting. Everyone is balanced this early; check
+       again once byes and injuries have opened somebody up.</p>`;
 
   document.getElementById("tp").onchange = e => {
     tradePartner = Number(e.target.value); giveSel.clear(); getSel.clear();

@@ -4955,6 +4955,10 @@ function renderMatchup(me){
         v === null ? "&mdash;" : v.toFixed(1)}</i></span>`;
   };
 
+  const tag = f => ({ slot: f.slot, player: f.player,
+    value: f.player ? show(f.player) : (f.streamed ? replFor(SLOTS[0]) : 0) });
+  const gaps = missingSlots([mine.filled.map(tag), them.filled.map(tag)]);
+
   const rows = mine.filled.map((f, i) => {
     const g = them.filled[i];
     if(!g) return "";
@@ -4980,6 +4984,7 @@ function renderMatchup(me){
       <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
         <span class="vsScore">${themTot.toFixed(1)}</span></div>
     </div>
+    ${sourceNote(gaps, true)}
     <div class="mxtot"><span>${esc(me.teamName)}</span>
       <span class="mid">proj</span><span class="r">${esc(opp.teamName)}</span></div>
     ${rows}
@@ -5000,6 +5005,29 @@ function renderMatchup(me){
    being told they disagree and left there. */
 let projView = "blend";
 const PROJ_VIEW = [["blend","Blended"],["espn","ESPN"],["sleeper","Sleeper"]];
+
+const VIEW_NAME = { blend:"The blend", espn:"ESPN", sleeper:"Sleeper" };
+
+/* Which slots the chosen provider has nothing to say about. Sleeper does not
+   publish team defenses and the crosswalk has no row for them, so on the
+   Sleeper view the D/ST slot shows a dash and contributes nothing. Both sides
+   lose it equally so the comparison stays fair, but the total is then not a
+   lineup total and the page has to say so rather than print a number that
+   looks like one. */
+function missingSlots(lists){
+  const out = [];
+  (lists || []).forEach(list => (list || []).forEach(f => {
+    if(!f || !f.player) return;
+    if(f.value === null && out.indexOf(f.slot) < 0) out.push(f.slot);
+  }));
+  return out;
+}
+function sourceNote(slots, both){
+  if(projView === "blend" || !slots.length) return "";
+  return `<p class="note" style="margin:0 0 12px">${VIEW_NAME[projView]} has no
+    number for ${listOf(slots)}, so ${slots.length > 1 ? "those slots are" : "that slot is"}
+    out of ${both ? "both totals" : "the total"}. Blended covers everybody.</p>`;
+}
 
 /* The same three views, for one named week. */
 function weekViewVal(p, wk){
@@ -5053,12 +5081,17 @@ function renderSuggested(me){
       ${cell(p)}</div>`;
   };
 
+  const rosterGaps = missingSlots([
+    s.starters.map(f => ({ slot:f.slot, player:f.player,
+      value: f.player ? viewVal(f.player) : 0 })),
+    s.tail.map(f => ({ slot:f.slot, player:f.player,
+      value: f.player ? viewVal(f.player) : 0 }))]);
   const benchTotal = sum(s.bench);
   const split = s.starters.filter(f => f.player && projDisagrees(projOf(f.player)));
   const startTotal = sum(s.starters.filter(f => f.player).map(f => f.player));
   const tailTotal = sum(s.tail.filter(f => f.player).map(f => f.player));
 
-  return toggle + sectHead("Starting", startTotal) +
+  return toggle + sourceNote(rosterGaps, false) + sectHead("Starting", startTotal) +
     s.starters.map(f => row(f.player, f.slot)).join("") +
     sectHead("Kicker and defense", tailTotal) +
     s.tail.map(f => row(f.player, f.slot)).join("") +

@@ -101,6 +101,41 @@ export function parseCSV(text) {
   });
 }
 
+/* ---------- team defenses ----------
+   Sleeper keys a defense by team abbreviation, "DAL", and ESPN by an id of its
+   own. No published crosswalk carries them, which is why the Sleeper column
+   showed a dash at D/ST and the blend fell back to ESPN alone for that slot.
+
+   Rather than guess ESPN's id scheme, read it out of the league file we have
+   already downloaded: every rostered defense there carries both an ESPN id and
+   a proTeamId, and every free agent defense does too. That is the mapping,
+   observed rather than assumed, so a change at ESPN's end cannot silently
+   attach a projection to the wrong team. */
+export const ESPN_PRO_TEAM = { 1:"ATL", 2:"BUF", 3:"CHI", 4:"CIN", 5:"CLE",
+  6:"DAL", 7:"DEN", 8:"DET", 9:"GB", 10:"TEN", 11:"IND", 12:"KC", 13:"LV",
+  14:"LAR", 15:"MIA", 16:"MIN", 17:"NE", 18:"NO", 19:"NYG", 20:"NYJ", 21:"PHI",
+  22:"ARI", 23:"PIT", 24:"LAC", 25:"SF", 26:"SEA", 27:"TB", 28:"WSH", 29:"CAR",
+  30:"JAX", 33:"BAL", 34:"HOU" };
+
+export function defenseCrosswalk(league) {
+  const byTeam = {};
+  const scan = list => (list || []).forEach(e => {
+    const p = e && (e.playerPoolEntry ? e.playerPoolEntry.player : e.player);
+    if (!p || Number(p.defaultPositionId) !== 16) return;
+    if (p.proTeamId == null || p.id == null) return;
+    byTeam[String(p.proTeamId)] = String(p.id);
+  });
+  ((league && league.rosters && league.rosters.teams) || []).forEach(t =>
+    scan((t.roster && t.roster.entries) || []));
+  scan((league && league.freeAgents) || []);
+
+  const out = {};
+  Object.keys(ESPN_PRO_TEAM).forEach(id => {
+    if (byTeam[id]) out[ESPN_PRO_TEAM[id]] = byTeam[id];
+  });
+  return out;
+}
+
 /* sleeper id -> espn id. Column names differ between the crosswalks, so accept
    any of the spellings each publishes. */
 export function crosswalk(rows) {
@@ -231,6 +266,8 @@ export function marketValues(rows) {
   return out;
 }
 
+let snap_note = false;
+
 async function main() {
   let league = null;
   try { league = JSON.parse(readFileSync("data/league.json", "utf8")); }
@@ -249,6 +286,14 @@ async function main() {
   ], async url => crosswalk(parseCSV(await getText(url))),
      map => Object.keys(map).length > 500);
   console.log(`ok   crosswalk (${Object.keys(ids).length} players)`);
+
+  /* Defenses are added on top, from the league file rather than the crosswalk. */
+  const defs = defenseCrosswalk(league);
+  Object.assign(ids, defs);
+  console.log(Object.keys(defs).length
+    ? `ok   defenses mapped (${Object.keys(defs).length} of 32) <- data/league.json`
+    : "     no defenses mapped, the D/ST slot will stay blank on the Sleeper view");
+  if (!Object.keys(defs).length) snap_note = true;
 
   const sleeper = await firstWorking("sleeper projections", [
     `https://api.sleeper.app/projections/nfl/${SEASON}/${week}?season_type=regular`,
@@ -321,6 +366,7 @@ async function main() {
     season: SEASON, week, source: "sleeper",
     players,
     weeks,
+    defenses: !snap_note,
     ros,
     rosWeeks: got,
     rosComplete: complete,

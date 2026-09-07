@@ -862,17 +862,26 @@
   .mxtot .r{text-align:right}
   .mxtot .mid{text-align:center;font:400 11.5px/1 var(--display);color:var(--faint)}
 
-  /* Page sections that fold. The Team page is the longest screen on the site
-     and most of it is reference rather than something you read every time. */
-  .sec{margin:0}
+  /* Page sections that fold. Same shape as the drawers under Trades and
+     History, which are the ones everybody already knows how to open: a card,
+     an accent label, a chevron on the left that turns. Bigger type, because
+     these are page sections rather than an aside. */
+  .sec{margin:22px 0 12px;background:var(--ink-2);border:1px solid var(--line);
+    border-radius:16px;padding:0 16px}
   .sec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;
-    margin:30px 2px 12px;font:600 21px/1.2 var(--display);letter-spacing:-.024em;
-    color:var(--chalk)}
+    padding:16px 0;font:600 17px/1.2 var(--display);letter-spacing:-.02em;
+    color:var(--accent)}
   .sec>summary::-webkit-details-marker{display:none}
-  .sec>summary::after{content:"\25B8";margin-left:auto;color:var(--faint);
-    font:400 16px/1 var(--display);transition:transform .15s}
-  .sec[open]>summary::after{transform:rotate(90deg)}
-  .sec>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .sec>summary::before{content:"\25B8";display:inline-block;margin-right:10px;
+    font:400 15px/1 var(--display);transition:transform .15s}
+  .sec[open]>summary::before{transform:rotate(90deg)}
+  .sec>summary::after{content:"tap";margin-left:auto;color:var(--faint);
+    font:400 11.5px/1 var(--display)}
+  .sec[open]>summary::after{content:"hide"}
+  .sec[open]{padding-bottom:14px}
+  .sec>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  /* the first thing inside a drawer should not add its own top margin */
+  .sec[open]>*:not(summary):first-of-type{margin-top:0}
 
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
@@ -1595,50 +1604,92 @@ function draftRecap(){
   const top = rows[0], second = rows[1], last = rows[rows.length - 1];
   const gap = top.rating - last.rating;
   const wks = weeksLeft().length;
+  const ring = m => (led[m] || {}).t || 0;
+  const seasons = m => (led[m] || {}).yrs || 0;
 
-  /* the roster the model likes least about, and the one nobody can fault */
+  /* the week the top roster plays the bottom one, if the schedule says so */
+  let meeting = null;
+  try {
+    const a = (ROSTERS || []).find(t => t.manager === top.manager);
+    const b = (ROSTERS || []).find(t => t.manager === last.manager);
+    if(a && b) weeksLeft().forEach(w => {
+      if(meeting === null && scheduleFor(a.id, w) === b.id) meeting = w;
+    });
+  } catch(e){}
+
+  /* anyone who has played every season and never won it */
+  const cursed = rows.map(r => r.manager)
+    .filter(m => seasons(m) >= 6 && ring(m) === 0);
+
+  const deepest = rows.slice().sort((a, b) => b.strong.length - a.strong.length)[0];
   const thinnest = rows.slice().sort((a, b) => b.weak.length - a.weak.length)[0];
   const flat = rows.filter(r => !r.strong.length && !r.weak.length);
-  const deepest = rows.slice().sort((a, b) => b.strong.length - a.strong.length)[0];
 
   const body = [];
-  body.push(`Ten teams, fifteen rounds and ninety seconds a pick. Everybody came
-    away with somebody they are quietly pleased about and at least one name they
-    will be explaining in November.`);
 
-  body.push(`On rest of season projections the deepest roster belongs to
-    ${top.manager} at ${f1(top.rating)} points a week, with ${second.manager}
-    ${f1(top.rating - second.rating)} behind. ${last.manager} sits last at
-    ${f1(last.rating)}. The whole league fits inside ${f1(gap)} points a week,
-    which is one good running back, so nobody has won anything and nobody has
-    lost anything.`);
+  /* the most decorated manager still in the league, whoever that is */
+  const champ = rows.map(r => r.manager)
+    .sort((a, b) => ring(b) - ring(a))[0];
+  body.push(`The draft is over and all ${rows.length} of you have privately
+    decided you won it. ${ring(champ) >= 2
+      ? `Nine of you are wrong and one of you is ${champ}, who has ${ring(champ)}
+         rings and will win it again without appearing to try.`
+      : `Nine of you are wrong. History does not say which nine, only that it is
+         nine.`}`);
+
+  body.push(`${top.manager} comes out with the deepest roster on paper,
+    ${f1(top.rating)} points a week, ${f1(top.rating - second.rating)} clear of
+    ${second.manager}. ${ring(top.manager)
+      ? `That is ${ring(top.manager) === 1 ? "a second" : "another"} ring being
+         quietly measured for, which nobody wants to hear in September.`
+      : `He has ${seasons(top.manager)} seasons here and no rings, so this is the
+         part of the year where that feels like it is about to change.`}`);
+
+  body.push(`${last.manager} is last at ${f1(last.rating)}, which sounds worse
+    than it is. The whole league fits inside ${f1(gap)} points a week, about one
+    running back, and projections have never once been right about this league.
+    ${meeting ? `He plays ${top.manager} in Week ${meeting}, and you already know
+      how that is going to go.` : ""}`);
 
   if(deepest.strong.length)
-    body.push(`${deepest.manager} came out with the clearest surplus, deep at
-      ${listOf(deepest.strong)}, which is the roster everyone else should
-      be calling.${thinnest.weak.length && thinnest.manager !== deepest.manager
-        ? ` ${thinnest.manager} is the one the model has thin at
-          ${listOf(thinnest.weak)}, so that is where the phone rings.` : ""}`);
+    body.push(`${deepest.manager} drafted the only real surplus, deep at
+      ${listOf(deepest.strong)}. Everyone else has his number.${
+      thinnest.weak.length && thinnest.manager !== deepest.manager
+        ? ` ${thinnest.manager} is thin at ${listOf(thinnest.weak)} and will spend
+            October explaining that he likes his upside.` : ""}`);
   else if(thinnest.weak.length)
-    body.push(`Nobody drafted a real surplus. ${thinnest.manager} is the only one
-      the model calls thin, at ${listOf(thinnest.weak)}.`);
+    body.push(`Nobody drafted a surplus worth the name. ${thinnest.manager} is
+      the only one the model calls thin, at ${listOf(thinnest.weak)}, which he
+      will describe as a strategy.`);
 
   if(flat.length >= 3)
-    body.push(`${flat.length} teams came out with no surplus and no hole at all,
-      which is either good drafting or ten people taking the same rankings off
-      the same screen.`);
+    body.push(`${flat.length} teams came out with no surplus and no hole, which
+      is either ten people drafting well or ten people reading the same list off
+      the same phone. It is the second one.`);
 
-  body.push(`These numbers are projections over ${wks} weeks and they will be
-    wrong by Sunday evening. This gets replaced by the weekly writeup on the
-    first Tuesday.`);
+  if(cursed.length >= 2)
+    body.push(`${listOf(cursed)} have ${cursed.map(seasons).reduce((a,b)=>a+b,0)}
+      seasons between them and nothing to show for any of them. Somebody is due.
+      Statistically that has also been true every year since 2019.`);
 
+  body.push(`All of this is a projection over ${wks} weeks and it will be wrong
+    by about four o'clock on Sunday. The real writeup starts Tuesday, at which
+    point there will be results and somebody to blame.`);
+
+  const jab = r => {
+    if(r.rank === 1) return `top of the pile, ${f1(r.rating)} a week`;
+    if(r.rank === 2) return `${f1(rows[0].rating - r.rating)} off the top and
+      already talking about depth`;
+    /* lower the first letter only, so QB and W/T survive */
+    return `${f1(r.rating)} a week, ${preseasonNote(r).replace(/^./, c => c.toLowerCase())}`;
+  };
   const moves = rows.slice(0, 3).map((r, i) =>
     `<div class="mv up"><span class="ar">${i + 1}</span>
-      <span><b>${esc(r.manager)}</b> &mdash; ${esc(preseasonNote(r))},
-        ${f1(r.rating)} a week</span></div>`).join("")
+      <span><b>${esc(r.manager)}</b> &mdash; ${esc(jab(r).replace(/\s+/g, " ").trim())}</span></div>`).join("")
     + `<div class="mv watch"><span class="ar">\u26A0</span>
         <span><b>${esc(last.manager)}</b> &mdash; ${esc(preseasonNote(last))},
-          ${f1(last.rating)} a week. Longest way to go on paper.</span></div>`;
+          ${f1(last.rating)} a week. Longest way to go, shortest odds of anyone
+          mentioning it again if he wins.</span></div>`;
 
   return `<h2>This Week</h2>
     <div class="recap">

@@ -4061,10 +4061,7 @@ function renderTeamPage(){
             those matchups and scores are on ESPN. Your roster and grades below
             still update every morning.</p></div>`
       : !nx
-      ? `<div class="card"><h3>Waiting on the schedule</h3>
-          <p>ESPN has not published the matchups yet. Your opponent, the weekly
-            projection and the season table all fill in on the next pull. The
-            lineup check below works either way.</p></div>`
+      ? renderSolo(me)
       : renderMatchup(me)}
     ${renderStartSit(me)}
 
@@ -4306,6 +4303,55 @@ function scheduleFor(meId, wk){
   return null;
 }
 
+/* Everything the page can honestly say when ESPN has not published the
+   schedule. No opponent, so no margin, but the roster is real and so is what
+   the rest of the league can field that week. Your own total against the
+   league average is a genuine answer to "am I in decent shape", and it beats
+   a card apologising for a missing fixture. */
+function leagueWeek(wk){
+  const teams = (ROSTERS || []).filter(t => t.players && t.players.length);
+  if(!teams.length) return null;
+  const now = weeksLeft()[0];
+  const vals = teams.map(t => ({ id: t.id, manager: t.manager,
+    v: bestLineupWith(t.players, p => weekProjOf(p, wk), wk,
+         wk === now ? null : replFor).total }));
+  vals.sort((a, b) => b.v - a.v);
+  const avg = vals.reduce((n, x) => n + x.v, 0) / vals.length;
+  return { vals, avg, best: vals[0] };
+}
+
+function soloOutlook(me){
+  return weeksLeft().map(wk => {
+    const lg = leagueWeek(wk);
+    if(!lg) return null;
+    const mine = lg.vals.find(x => x.id === me.id);
+    if(!mine) return null;
+    return { wk, mine: mine.v, avg: lg.avg, d: mine.v - lg.avg,
+             rank: lg.vals.findIndex(x => x.id === me.id) + 1,
+             of: lg.vals.length, live: wk === weeksLeft()[0] };
+  }).filter(Boolean);
+}
+
+function renderSolo(me){
+  const rows = soloOutlook(me);
+  if(!rows.length) return "";
+  const r = rows[0];
+  return `<div class="vs">
+      <div class="vsSide"><span class="vsName">${esc(me.manager)}</span>
+        <span class="vsScore">${r.mine.toFixed(1)}</span></div>
+      <div class="vsMid"><span>Week ${r.wk}</span>
+        <b class="${r.d > 0 ? "up" : r.d < 0 ? "down" : ""}">${
+          r.d > 0 ? "+" : ""}${r.d.toFixed(1)}</b></div>
+      <div class="vsSide"><span class="vsName">League average</span>
+        <span class="vsScore">${r.avg.toFixed(1)}</span></div>
+    </div>
+    <p class="note" style="margin:0 0 14px">ESPN has not published the matchups
+      yet, so there is no opponent to line up against. This is your best lineup
+      for Week ${r.wk} against what the other ${r.of - 1} rosters can field the
+      same week, which puts you <b>${ordinal(r.rank)} of ${r.of}</b>. The
+      opponent, the margin and the head to head all appear on the next pull.</p>`;
+}
+
 function seasonOutlook(me){
   const out = [];
   const now = weeksLeft()[0];
@@ -4324,7 +4370,7 @@ function seasonOutlook(me){
 
 function renderOutlookTable(me){
   const rows = seasonOutlook(me);
-  if(!rows.length) return "";
+  if(!rows.length) return renderSoloTable(me);
 
   const wins = rows.filter(r => r.d > 0).length;
   const losses = rows.length - wins;
@@ -4383,6 +4429,40 @@ function renderOutlookTable(me){
       streamed and always has. It still assumes nobody trades and nobody gets
       hurt, neither of which will hold, so treat a one point margin as a coin
       flip rather than a win.</p>`;
+}
+
+/* The same table without an opponent column, for the weeks before ESPN
+   publishes a schedule. Every number in it is real. */
+function renderSoloTable(me){
+  const rows = soloOutlook(me);
+  if(rows.length < 2) return "";
+  const above = rows.filter(r => r.d > 0).length;
+  const best = rows.slice().sort((a, b) => b.d - a.d)[0];
+  const worst = rows.slice().sort((a, b) => a.d - b.d)[0];
+
+  return `<h2>Season at a glance</h2>
+    <div class="verdict" style="grid-template-columns:1fr 1fr">
+      <div class="vcell"><div class="name">Weeks above league average</div>
+        <div class="delta ${above > rows.length / 2 ? "up" : above < rows.length / 2 ? "down" : ""}">${
+          above}-${rows.length - above}</div></div>
+      <div class="vcell"><div class="name">Rest of season rank</div>
+        <div class="delta">${ordinal(rows[0].rank)}</div></div>
+      <div class="vnote">Week ${best.wk} is your strongest week and Week ${worst.wk}
+        your thinnest, mostly on who is off. Opponents fill in once ESPN posts
+        the schedule and this becomes a margin instead of a gap.</div>
+    </div>
+    <table><thead><tr><th>Wk</th><th class="n">You</th>
+      <th class="n">League avg</th><th class="n">Gap</th></tr></thead><tbody>` +
+    rows.map(r => `<tr>
+      <td class="fin">${r.wk}</td>
+      <td class="n">${r.mine.toFixed(1)}</td>
+      <td class="n">${r.avg.toFixed(1)}</td>
+      <td class="n mark ${r.d > 0 ? "good" : "bad"}">${r.d > 0 ? "+" : ""}${r.d.toFixed(1)}</td>
+    </tr>`).join("") +
+    `</tbody></table>
+    <p class="note">Your best legal lineup each week against the average of what
+      the other nine rosters can field the same week, byes taken out on every
+      side. It is not a matchup, because there is not one to show yet.</p>`;
 }
 
 /* ---------- lineup problems worth catching before kickoff ---------- */

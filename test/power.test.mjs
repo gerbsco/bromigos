@@ -130,10 +130,13 @@ const at = (schedule, now = "2026-10-20T12:00:00Z") => {
   });
 }
 {
-  /* one week played: nothing to compare against yet */
+  /* One week played. There is no earlier week to compare against, so the
+     arrows measure against the preseason table instead of reading "new" for
+     everybody. That table is built from rosters, and there are none here, so
+     this still reports nothing rather than inventing a move. */
   const { sandbox: S } = at([game(1,1, 1,101, 2,100), game(2,1, 3,140, 4,150)]);
   const rows = S.powerMovement();
-  ok("a single week reports no movement rather than a fake zero", () =>
+  ok("a single week with no rosters reports no movement rather than a fake zero", () =>
     [rows.every(r => r.move === null), rows.map(r => r.move).join(",")]);
 }
 
@@ -149,10 +152,13 @@ const at = (schedule, now = "2026-10-20T12:00:00Z") => {
     /how you would have done against every team/.test(h));
 }
 {
+  /* No completed weeks and no rosters either, so there is nothing to rank on
+     record and nothing to rank on projections. */
   const { sandbox: S, byId } = at([], "2026-10-20T12:00:00Z");
   S.renderPower();
   ok("no completed weeks shows a lock, not an empty table", () =>
-    /Nothing to rank yet/.test(byId("powerBody").innerHTML));
+    [/Nothing to rank yet/.test(byId("powerBody").innerHTML),
+     byId("powerBody").innerHTML.slice(0, 80)]);
 }
 {
   const { sandbox: S, byId, setVar } = boot({ search:"", now:"2026-09-01T12:00:00Z" });

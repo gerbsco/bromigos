@@ -1217,6 +1217,14 @@ function liveDraft(){
 }
 function livePacks(){ return PREVIEW || Date.now() >= PACKS_AT; }
 
+/* Whether the draft has genuinely happened, as opposed to whether the tabs are
+   unlocked. liveDraft() answers the second question and is deliberately true in
+   preview; anything that makes a claim about the world needs the first. */
+function draftDone(){
+  if(Date.now() >= DRAFT_AT) return true;
+  try { return drafted(); } catch(e){ return false; }
+}
+
 /* ---------- navigation ----------
    Five destinations, each holding one or more panels. Panels themselves did not
    move; only the way you reach them did. A destination appears once any panel
@@ -1543,6 +1551,19 @@ function renderDraft(){
 /* ---------- live state ---------- */
 let LIVE = null, WEEKLY = null, PROJ = null;
 
+/* Every cache in here used to key off LIVE.fetchedAt, which works right up
+   until a payload arrives without one. Then the key never changes, the empty
+   index cached on first paint is served forever and the whole app renders as
+   though the league has no teams in it. Identity is the honest test: a new
+   object means new data, whatever fields it happens to carry. */
+let GEN_LIVE = null, GEN_PROJ = null, GEN = 0;
+function dataGen(){
+  if(LIVE !== GEN_LIVE || PROJ !== GEN_PROJ){
+    GEN_LIVE = LIVE; GEN_PROJ = PROJ; GEN++;
+  }
+  return GEN;
+}
+
 /* ---------- blended projections ----------
    ESPN's number arrives with the roster. Sleeper's arrives in data/projections.json
    keyed by ESPN player id. Blending is a plain mean; the spread between them is
@@ -1709,7 +1730,11 @@ function renderRecap(){
      publishes a real week, at which point that takes over on its own. */
   if(!WEEKLY || !WEEKLY.week){
     let pre = "";
-    try { if(liveDraft()) pre = draftRecap(); }
+    /* Not liveDraft(). That is true in preview, and preview is how the
+       commissioner looks at the site before the draft, where a card headed
+       "The draft is done" is simply a lie. This asks whether the draft has
+       actually happened. */
+    try { if(draftDone()) pre = draftRecap(); }
     catch(e){ console.warn("[bromigos] draft recap:", e && e.message); }
     if(pre){ el.innerHTML = pre; return; }
   }
@@ -3088,7 +3113,7 @@ function gradeTeam(team, med){
    and thrown away the moment a new pull lands. */
 let WKS = null, WKS_KEY = "";
 function weeks(){
-  const key = ((LIVE && LIVE.fetchedAt) || "none") + "|" + REG_WEEKS;
+  const key = dataGen() + "|" + REG_WEEKS;
   if(WKS && WKS_KEY === key) return WKS;
   const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
   const done = sch.filter(m => m.winner && m.winner !== "UNDECIDED")
@@ -3232,8 +3257,7 @@ function seasonAvgOf(p){
 let PPG = null, PPG_KEY = "";
 function ppgOf(p){
   if(!p) return 0;
-  const key = rosterKey() + "|" + weeksLeft().length
-    + "|" + ((PROJ && PROJ.generatedAt) || "none");
+  const key = rosterKey() + "|" + weeksLeft().length;
   if(!PPG || PPG_KEY !== key){ PPG = new Map(); PPG_KEY = key; }
   const id = String(p.id);
   if(PPG.has(id)) return PPG.get(id);
@@ -3559,13 +3583,13 @@ const proTeam = id => PRO_TEAM[Number(id)] || "";
 /* Walked once per call and called from weekGames, which powerRanks calls for
    every week, twice, for the table and again for the movement arrows. That was
    seventy-odd rebuilds of the same object per paint. It only changes when the
-   pull does. */
-let TIDX = null, TIDX_KEY = "";
+   data does. */
+let TIDX = null, TIDX_GEN = -1;
 function teamIndex(){
-  const key = (LIVE && LIVE.fetchedAt) || "none";
-  if(TIDX && TIDX_KEY === key) return TIDX;
+  const gen = dataGen();
+  if(TIDX && TIDX_GEN === gen) return TIDX;
   const out = buildTeamIndex();
-  TIDX = out; TIDX_KEY = key;
+  TIDX = out; TIDX_GEN = gen;
   return out;
 }
 function buildTeamIndex(){
@@ -3720,7 +3744,7 @@ let tradeScroll = null;
    rosters that arrived a second later were never picked up. Key the model to
    the fetch instead and it rebuilds exactly once per pull. */
 function rosterKey(){
-  return ((LIVE && LIVE.fetchedAt) || "none") + "|" + (PREVIEW ? "preview" : "live");
+  return dataGen() + "|" + (PREVIEW ? "preview" : "live");
 }
 function ensureRosters(){
   if(ROSTERS && ROSTER_KEY === rosterKey()) return;
@@ -5241,7 +5265,7 @@ function renderStartSit(me){
    which they did, because the simulation is random. */
 let ODDS_CACHE = { key:null, html:"" };
 function renderOdds(){
-  const key = [(LIVE && LIVE.fetchedAt) || "none", PLAYOFF_SPOTS, REG_WEEKS, ME].join("|");
+  const key = [dataGen(), PLAYOFF_SPOTS, REG_WEEKS, ME].join("|");
   if(ODDS_CACHE.key === key) return ODDS_CACHE.html;
   const html = buildOdds();
   ODDS_CACHE = { key, html };

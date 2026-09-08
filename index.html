@@ -908,6 +908,10 @@
   .tgnum{font:400 13px/1 var(--display);color:var(--faint);
     font-variant-numeric:tabular-nums}
 
+  /* a plain inline control that reads as a link rather than a button */
+  .lnkbtn{background:none;border:0;padding:0;cursor:pointer;
+    font:inherit;color:var(--accent);text-decoration:underline}
+
   /* ---------- bench ledger ---------- */
   .blrow{display:grid;grid-template-columns:20px 1fr 54px 46px 34px;align-items:center;
     gap:8px;padding:10px 2px;border-bottom:1px solid var(--line)}
@@ -1153,7 +1157,9 @@
   <!-- Every roster in the league, on one screen. ESPN makes you tap through
        ten teams one at a time; this is the whole league graded in one scroll,
        which is the single thing people kept opening ESPN for. -->
-  <section class="panel" id="p-teams" data-panel="teams" hidden>
+  <!-- The id has to be the panel id itself. showTab does getElementById(name),
+       so a prefixed id makes the tab render, highlight and do nothing. -->
+  <section class="panel" id="teams">
     <div id="teamsBody"></div>
   </section>
 
@@ -2657,15 +2663,51 @@ function picksTable(){
     .sort((a,b) => (b.pts - a.pts) || (b.right - a.right) || a.manager.localeCompare(b.manager));
 }
 
+/* The sheet is the only copy of anyone's picks, and a JSONP call that does not
+   come back leaves PICKS at its empty default. Nothing is lost when that
+   happens, but the board goes blank, which looks exactly like everyone's picks
+   having been wiped and is the worst possible thing for it to look like.
+
+   So the last good answer is kept on the device. A failed pull falls back to
+   it and says the numbers are from the last time the sheet answered, rather
+   than showing an empty week. */
+const PICKS_CACHE = "bromigos.picks.v1";
+
+function cachePicks(picks){
+  try { localStorage.setItem(PICKS_CACHE,
+    JSON.stringify({ at: Date.now(), picks })); } catch(e){}
+}
+function cachedPicks(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(PICKS_CACHE) || "null");
+    if(raw && raw.picks && typeof raw.picks === "object") return raw;
+  } catch(e){}
+  return null;
+}
+
+let picksRetried = false;
+
 async function pullPicks(){
   if(!PICKS_URL || !liveDraft()) return;
   try {
     const res = await jsonp(PICKS_URL);
     PICKS = (res && res.picks) || {};
     picksState = "ok";
+    cachePicks(PICKS);
   } catch(err){
-    picksState = "error";
+    const cached = cachedPicks();
+    if(cached && Object.keys(cached.picks).length){
+      PICKS = cached.picks;
+      picksState = "stale";
+    } else {
+      picksState = "error";
+    }
     console.warn("[bromigos] pick'em offline:", err && err.message);
+    /* one quiet retry, because most of these are a single dropped request */
+    if(!picksRetried){
+      picksRetried = true;
+      setTimeout(() => { pullPicks(); }, 5000);
+    }
   }
   try { renderPicks(); renderPicksPrompt(); } catch(e){}
 }
@@ -2682,6 +2724,7 @@ async function savePicks(){
     PICKS[String(wk)] = PICKS[String(wk)] || {};
     PICKS[String(wk)][ME] = { ...myPicks };
     picksState = "ok";
+    cachePicks(PICKS);
   } catch(err){
     picksState = "error";
     console.warn("[bromigos] pick save failed:", err && err.message);
@@ -2718,7 +2761,9 @@ function renderPicks(){
   const noWinner = games.filter(g => !(myPicks[g.id] || {}).w).length;
   const status = !n ? "No games on the schedule for this week yet."
     : picksState === "saving" ? "Saving\u2026"
-    : picksState === "error" ? "Offline, your picks are not saved."
+    : picksState === "stale" ? "The sheet did not answer. These are the picks from"
+        + " the last time it did, and nothing new is being saved yet."
+    : picksState === "error" ? "The sheet did not answer, so nothing is saved yet."
     : locked ? "Locked. Results below."
     : `Tap the winner of each game, then rank them. Your most confident pick is `
       + `worth ${n}, your least is worth 1.`;
@@ -2768,7 +2813,9 @@ function renderPicks(){
     : "";
 
   el.innerHTML = `<h2>Pick&rsquo;em &middot; Week ${wk}</h2>
-    <p class="note" style="margin:0 0 12px">${esc(status)}</p>
+    <p class="note" style="margin:0 0 12px">${esc(status)}${
+      (picksState === "error" || picksState === "stale")
+        ? ` <button type="button" class="lnkbtn" id="pkRetry">Try again</button>` : ""}</p>
     ${rows}
     ${(!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
         ${ready ? "" : "disabled"}>${
@@ -2793,6 +2840,9 @@ function renderPicks(){
     myPicks[sel.dataset.c] = { w: cur.w, c: v };
     renderPicks();
   });
+  const retry = document.getElementById("pkRetry");
+  if(retry) retry.onclick = () => { picksRetried = false; pullPicks(); };
+
   const sv = document.getElementById("pkSave");
   if(sv) sv.onclick = () => savePicks();
 }

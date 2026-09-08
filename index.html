@@ -4404,9 +4404,28 @@ const GRADE_WHY = {
 
 /* A page section that folds. Everything on My Team below the matchup is
    reference: you read it once a week, not every time you open the app. An
-   empty body collapses to nothing rather than an empty heading. */
+   empty body collapses to nothing rather than an empty heading.
+
+   Open and closed is remembered. Every tap on the source buttons or the week
+   strip rebuilds the whole page, and a details element loses its state when
+   its markup is replaced, so a section you had deliberately closed sprang back
+   open on the next tap. Kept on the device, so it also survives a reload. */
+let secOpen = {};
+try { secOpen = JSON.parse(localStorage.getItem("bromigos.folds") || "{}") || {}; }
+catch(e){ secOpen = {}; }
+
+function rememberFolds(root){
+  (root || document).querySelectorAll("[data-sec]").forEach(d => {
+    d.ontoggle = () => {
+      secOpen[d.dataset.sec] = !!d.open;
+      try { localStorage.setItem("bromigos.folds", JSON.stringify(secOpen)); } catch(e){}
+    };
+  });
+}
+
 const fold = (title, body, open) => !String(body || "").trim() ? "" :
-  `<details class="sec"${open ? " open" : ""}>
+  `<details class="sec" data-sec="${esc(title)}"${
+     (title in secOpen ? secOpen[title] : open) ? " open" : ""}>
      <summary>${esc(title)}</summary>${body}</details>`;
 
 function renderTeamPage(){
@@ -4501,6 +4520,7 @@ function renderTeamPage(){
     <button type="button" class="cbtn" id="toBlock"
       style="margin-top:14px">Open the trade block</button>`;
 
+  rememberFolds(el);
   el.querySelectorAll("[data-mw]").forEach(b => b.onclick = () => {
     matchWeek = Number(b.dataset.mw);
     renderTeamPage();
@@ -4960,6 +4980,49 @@ const pct = v => (v*100 < 1 && v > 0) ? "<1%" : (v*100 > 99 && v < 1) ? ">99%" :
 /* Which week the matchup card is showing. Defaults to the one being played. */
 let matchWeek = null;
 
+/* Your bench for the week on screen, under the matchup, because a close week
+   is decided on the bench and the two were on different screens. Anyone the
+   builder would rather start than a current starter is called out, so a real
+   swap is not buried in a list of backups nobody is going to play. */
+function benchFold(me, lineup, wk){
+  const bench = (lineup.bench || []).filter(p => !TAIL(p));
+  if(!bench.length) return "";
+  const show = p => weekViewVal(p, wk);
+  const order = bench.slice().sort((a, b) => (show(b) || 0) - (show(a) || 0));
+
+  /* which starting slot each bench player could actually take, and by how much */
+  const starters = lineup.filled.filter(f => f.player);
+  const upgrade = p => {
+    let best = null;
+    starters.forEach(f => {
+      const slot = SLOTS.find(x => x.k === f.slot);
+      if(!slot || !slot.elig.includes(p.pos)) return;
+      const gain = (show(p) || 0) - (show(f.player) || 0);
+      if(gain > 0.05 && (!best || gain > best.gain)) best = { slot: f.slot, gain, over: f.player };
+    });
+    return best;
+  };
+
+  const rows = order.map(p => {
+    const up = upgrade(p);
+    const v = show(p);
+    return `<div class="plr view">
+      <span class="slot">${up ? esc(up.slot) : "BE"}</span>
+      <span class="pos ${p.pos}">${p.pos}</span>
+      <span class="who2"><b>${esc(p.name)}</b>
+        <span>${esc(p.team || "")}${p.bye ? ", bye " + p.bye : ""}${
+          p.injury ? ", " + p.injury.toLowerCase() : ""}${
+          up ? ` &middot; ${up.gain.toFixed(1)} over ${esc(up.over.name)}` : ""}</span></span>
+      <span class="pj"><b>${v === null ? "&mdash;" : v.toFixed(1)}</b></span></div>`;
+  }).join("");
+
+  const better = order.filter(p => upgrade(p)).length;
+  const title = `Your bench, Week ${wk}${better ? ` \u00b7 ${better} worth a look` : ""}`;
+  return fold(title, rows + `<p class="note">Anyone projecting above a starter in
+    a slot he can fill is marked with that slot and the gap. Byes are already
+    taken out, so a name here is somebody who is playing that week.</p>`, false);
+}
+
 function renderMatchup(me){
   const wks = weeksLeft();
   if(!wks.length) return "";
@@ -5039,6 +5102,7 @@ function renderMatchup(me){
     <div class="mxtot"><span>${esc(me.teamName)}</span>
       <span class="mid">proj</span><span class="r">${esc(opp.teamName)}</span></div>
     ${rows}
+    ${benchFold(me, mine, matchWeek)}
     <p class="note" style="margin:8px 0 14px">${live
       ? (Math.abs(diff) < 6 ? "Projects as a coin flip. Every start/sit call matters."
          : diff > 0 ? `You project ${diff.toFixed(1)} ahead. Comfortable, not safe.`
@@ -5465,6 +5529,43 @@ function seedBinderSamples(){
   weeks.forEach(([n, w]) => saveToBinder(buildWeekCards(w, n), n, true));
 }
 
+/* ---------- rebuilding a binder that was lost ----------
+   Cards are kept on the device that opened the pack, which means a new phone,
+   a cleared Safari, private browsing or picking a different name in the
+   dropdown all leave somebody staring at an empty binder halfway through the
+   season. Nothing about that is recoverable from the device.
+
+   It is recoverable from the data. A card is a pure function of that week's
+   pack payload and the week number: the tier comes from the margin, the
+   picture from pick() which indexes the pool by week, and dedupeArt walks the
+   cards in a fixed order. Same payload and same week gives the same pictures
+   every time, which is the part that has to be true or a rebuilt binder is a
+   different binder. Verified across weeks and across repeated builds.
+
+   So the nightly job keeps an archive of the pack payloads and this rebuilds
+   from it. Anything already in the binder is left alone, so a card that
+   survived keeps the picture it was pulled with and only the gaps are filled. */
+function packHistory(){
+  const h = (WEEKLY && WEEKLY.history) || null;
+  if(!h || typeof h !== "object") return [];
+  return Object.keys(h).map(Number).filter(Number.isFinite).sort((a, b) => a - b)
+    .map(wk => ({ wk, packs: h[String(wk)] || {} }));
+}
+
+function rebuildBinder(){
+  if(!ME || !livePacks()) return 0;
+  const before = readBinder().length;
+  const add = (payload, wk) => {
+    if(!payload || !wk) return;
+    try { saveToBinder(buildWeekCards(payload, wk), wk, false); }
+    catch(e){ console.warn("[bromigos] rebuild week " + wk + ":", e && e.message); }
+  };
+  packHistory().forEach(({ wk, packs }) => add(packs[ME], wk));
+  /* the live week is not in the archive until the next Tuesday */
+  if(WEEKLY && WEEKLY.week) add((WEEKLY.packs || {})[ME], WEEKLY.week);
+  return readBinder().length - before;
+}
+
 /* Commissioner escape hatch. Clears fixtures and rebuilds them, never touching
    a card that was pulled for real. */
 function resetBinderSamples(){
@@ -5483,6 +5584,9 @@ function renderBinder(){
     el.innerHTML = `<div class="binderEmpty">Pick your name at the top and your cards will show up here.</div>`;
     return;
   }
+  let restored = 0;
+  try { restored = rebuildBinder(); }
+  catch(e){ console.warn("[bromigos] binder rebuild:", e && e.message); }
   const cards = readBinder();
   const controls = `<div class="binderCtl">
       <button class="cbtn" aria-pressed="${binderSort==="week"}" data-bs="week">By week</button>
@@ -5493,7 +5597,9 @@ function renderBinder(){
   if(!cards.length){
     el.innerHTML = controls + `<div class="binderEmpty">
       Nothing collected yet. Every card you pull on a Tuesday lands here and stays for the season,
-      so you can scroll back through the good weeks and the bad ones.</div>`;
+      so you can scroll back through the good weeks and the bad ones.
+      ${packHistory().length ? "" : "Cards are kept on this device, and rebuilt from the "
+        + "league archive if you ever open the site somewhere else."}</div>`;
     el.querySelectorAll("[data-bs]").forEach(b => b.onclick = () => {
       if(b.dataset.bs === "reset") return resetBinderSamples();
       binderSort = b.dataset.bs; renderBinder();
@@ -5521,7 +5627,8 @@ function renderBinder(){
   el.innerHTML = controls +
     `<p class="bcount">${IS_DEMO?"Sample cards for testing. ":""}${cards.length} card${cards.length>1?"s":""} collected across ${
       new Set(cards.map(c => c.week)).size} week${new Set(cards.map(c=>c.week)).size>1?"s":""}${
-      bestName ? `. Best pull so far: ${TIER_NAME[bestName[0]] || bestName[0]}` : ""}.</p>` +
+      bestName ? `. Best pull so far: ${TIER_NAME[bestName[0]] || bestName[0]}` : ""}.${
+      restored ? ` ${restored} rebuilt from the league archive on this device.` : ""}</p>` +
     order.map(g => `<h2>${esc(g)}</h2><div class="bgrid">` +
       groups[g].map(c => miniCard(c)).join("") + `</div>`).join("");
 

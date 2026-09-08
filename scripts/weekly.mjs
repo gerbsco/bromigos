@@ -219,6 +219,33 @@ export function weekRows(schedule, owners, week) {
   return rows;
 }
 
+/* ---------- settled results, frozen ----------
+   The pick'em leaderboard and the power rankings both recompute from ESPN's
+   schedule every time the page paints. Nothing is stored, so if that view ever
+   stops reporting completed weeks, or a pull writes a schedule missing them,
+   every past score silently becomes zero with nothing to fall back on.
+
+   These are the outcomes, written once the week is final and never rewritten.
+   The game id has to match the one the app keys picks by, which is ESPN's
+   matchup id with a home-away fallback, or a frozen result would not line up
+   with the pick it is meant to score. */
+export function weekResults(schedule, owners, week) {
+  const out = [];
+  (schedule || []).forEach(m => {
+    if (m.matchupPeriodId !== week || !m.home || !m.away) return;
+    if (!m.winner || m.winner === "UNDECIDED") return;
+    const home = owners[m.home.teamId], away = owners[m.away.teamId];
+    if (!home || !away) return;
+    out.push({
+      id: String(m.id != null ? m.id : m.home.teamId + "-" + m.away.teamId),
+      home, away,
+      homePts: Math.round((m.home.totalPoints || 0) * 100) / 100,
+      awayPts: Math.round((m.away.totalPoints || 0) * 100) / 100
+    });
+  });
+  return out;
+}
+
 /* running record through the given week */
 export function records(schedule, owners, week) {
   const rec = {};
@@ -473,6 +500,21 @@ async function main() {
     }
   }
   const history = mergeHistory(oldHistory, built);
+
+  /* Same policy as the packs: a week already frozen is left exactly as it was,
+     so a stat correction in November cannot rewrite October's leaderboard. */
+  const oldResults = (old && old.results) || {};
+  const newResults = {};
+  weeks.forEach(w => {
+    if (oldResults[String(w)]) return;
+    const r = weekResults(schedule, owners, w);
+    if (r.length) newResults[String(w)] = r;
+  });
+  const results = mergeHistory(oldResults, newResults);
+  const frozen = Object.values(results).reduce((n, g) => n + g.length, 0);
+  console.log(`ok   results frozen: ${frozen} games over`
+    + ` ${Object.keys(results).length} weeks`
+    + (Object.keys(newResults).length ? `, ${Object.keys(newResults).length} new` : ""));
   console.log(`ok   archive: ${Object.keys(history).length} of ${weeks.length} weeks`
     + (fetched ? `, ${fetched} rebuilt this run` : "")
     + ` (${Object.keys(history).sort((a,b)=>a-b).join(", ")})`);
@@ -492,7 +534,8 @@ async function main() {
     posted: new Date().toISOString().slice(0, 10),
     ...prose,
     packs,
-    history
+    history,
+    results
   }, null, 2));
   console.log(prose.auto ? "     wrote a placeholder recap, replace it with a real one"
                          : "     kept the written recap");

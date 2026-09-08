@@ -12,6 +12,13 @@
 //
 // Prose is not generated here. If data/weekly.json already holds a headline and
 // body for this same week, they are preserved and only the packs refresh.
+//
+// The file also carries an archive of every completed week's packs, under
+// `history`. Cards live in localStorage on whichever phone opened the pack, so
+// a new device, a cleared Safari or a name change would otherwise lose a
+// season's collection. A card is a pure function of its pack payload and the
+// week number, so the archive is enough for the app to rebuild a binder
+// exactly, picture for picture.
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -119,6 +126,7 @@ const AWARDS = {
 const pick = (list, wk) => list[Math.abs(wk || 0) % list.length];
 const one = n => n.toFixed(1);
 const ord = n => ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th"][n - 1] || (n + "th");
+const pause = ms => new Promise(r => setTimeout(r, ms));
 
 async function getJSON(url, extra = {}) {
   const res = await fetch(url, { headers: { ...UA, ...extra } });
@@ -133,6 +141,16 @@ function ownerMap(teamDoc) {
   const flat = {};
   Object.keys(full).forEach(id => { flat[id] = full[id].name; });
   return flat;
+}
+
+/* manager name -> team logo, so a card can keep the badge from its own week */
+export function crestMap(teamDoc, owners) {
+  const out = {};
+  ((teamDoc && teamDoc.teams) || []).forEach(t => {
+    const name = owners[t.id];
+    if (name && t.logo) out[name] = t.logo;
+  });
+  return out;
 }
 
 /* actual and projected points for one side of a matchup */
@@ -155,22 +173,27 @@ export function sideTotals(side, week) {
   return { bench, projected, high, starters: counted };
 }
 
-/* the most recent matchup period where every game has a winner */
-export function latestCompleteWeek(schedule) {
+/* every matchup period where every game has a winner, oldest first */
+export function completeWeeks(schedule) {
   const byWeek = new Map();
   (schedule || []).forEach(m => {
     const w = m.matchupPeriodId;
     if (!byWeek.has(w)) byWeek.set(w, []);
     byWeek.get(w).push(m);
   });
-  let best = 0;
+  const out = [];
   for (const [w, games] of byWeek) {
     const real = games.filter(g => g.home && g.away);
     if (!real.length) continue;
-    const done = real.every(g => g.winner && g.winner !== "UNDECIDED");
-    if (done && w > best) best = w;
+    if (real.every(g => g.winner && g.winner !== "UNDECIDED")) out.push(w);
   }
-  return best;
+  return out.sort((a, b) => a - b);
+}
+
+/* the most recent matchup period where every game has a winner */
+export function latestCompleteWeek(schedule) {
+  const weeks = completeWeeks(schedule);
+  return weeks.length ? weeks[weeks.length - 1] : 0;
 }
 
 /* one row per manager for the given week, before awards are assigned */
@@ -318,7 +341,7 @@ export function assignAwards(rows, week) {
   return rows;
 }
 
-export function buildPacks(schedule, owners, week) {
+export function buildPacks(schedule, owners, week, crests) {
   const rows = weekRows(schedule, owners, week);
   if (!rows.length) return {};
   const rec = records(schedule, owners, week);
@@ -341,6 +364,12 @@ export function buildPacks(schedule, owners, week) {
       leagueLow: r.myScore === bot,
       awards: r.awards
     };
+    /* Stored rather than resolved by the app, so a card rebuilt in December
+       carries the badge that team was flying in week 3 rather than whatever
+       they have renamed themselves to since. Left off entirely when there is
+       no logo, so nothing downstream has to handle a null. */
+    const crest = crests && crests[r.manager];
+    if (crest) packs[r.manager].crest = crest;
   });
   return packs;
 }
@@ -375,55 +404,106 @@ export function autoProse(packs, week) {
   };
 }
 
+/* ---------- the archive ----------
+   Everything the app needs to rebuild a binder it has lost. Weeks already in
+   the file are kept exactly as they were written: those are the packs people
+   actually pulled, and a rule change later must not quietly rewrite somebody's
+   week 3. Missing weeks are fetched and built, so the archive repairs itself
+   if the file is ever truncated or a run fails partway. */
+export function mergeHistory(existing, additions) {
+  const out = {};
+  Object.keys(existing || {}).forEach(k => { out[k] = existing[k]; });
+  Object.keys(additions || {}).forEach(k => { if (!out[k]) out[k] = additions[k]; });
+  return out;
+}
+
 async function main() {
   const teamDoc = await getJSON(`${ESPN}?view=mTeam`);
   const owners = ownerMap(teamDoc);
+  const crests = crestMap(teamDoc, owners);
   const matchDoc = await getJSON(`${ESPN}?view=mMatchup`);
   const schedule = matchDoc.schedule || [];
 
-  const week = latestCompleteWeek(schedule);
+  const weeks = completeWeeks(schedule);
+  const week = weeks.length ? weeks[weeks.length - 1] : 0;
   if (!week) {
     console.log("No completed week yet. Nothing to publish.");
     return;
   }
   console.log(`ok   latest completed week: ${week}`);
+  console.log(`ok   completed weeks on file: ${weeks.join(", ")}`);
+
+  /* Read the previous file once: it carries the written prose and the archive
+     of weeks already published. */
+  let old = null;
+  try { old = JSON.parse(readFileSync(OUT, "utf8")); } catch (e) { /* no file yet */ }
+  const oldHistory = (old && old.history) || {};
+  /* A file written before the archive existed still holds its own week's packs,
+     which would otherwise be the one week nobody could recover. */
+  if (old && old.week && old.packs && !oldHistory[String(old.week)]) {
+    oldHistory[String(old.week)] = old.packs;
+    console.log(`ok   adopted week ${old.week} from the previous file`);
+  }
+
+  const detailFor = async w => {
+    const d = await getJSON(`${ESPN}?view=mMatchup&view=mRoster&scoringPeriodId=${w}`);
+    return d.schedule || schedule;
+  };
 
   /* rosters carry the bench and projection numbers, and only the per-week
      request includes them */
-  const detail = await getJSON(`${ESPN}?view=mMatchup&view=mRoster&scoringPeriodId=${week}`);
-  const packs = buildPacks(detail.schedule || schedule, owners, week);
+  const packs = buildPacks(await detailFor(week), owners, week, crests);
 
   if (!Object.keys(packs).length) {
     throw new Error("Week resolved but no packs built - aborting so the last good file survives.");
   }
 
+  const built = {};
+  let fetched = 0;
+  for (const w of weeks) {
+    if (oldHistory[String(w)]) continue;
+    if (w === week) { built[String(w)] = packs; continue; }
+    try {
+      await pause(400);
+      const p = buildPacks(await detailFor(w), owners, w, crests);
+      if (Object.keys(p).length) { built[String(w)] = p; fetched++; }
+      else console.log(`     week ${w} built nothing, left out of the archive`);
+    } catch (err) {
+      console.log(`     week ${w} unavailable for the archive (${err.message})`);
+    }
+  }
+  const history = mergeHistory(oldHistory, built);
+  console.log(`ok   archive: ${Object.keys(history).length} of ${weeks.length} weeks`
+    + (fetched ? `, ${fetched} rebuilt this run` : "")
+    + ` (${Object.keys(history).sort((a,b)=>a-b).join(", ")})`);
+
   /* A written headline and body always win and are never touched again. If none
      exists, fall back to a plain factual recap marked auto:true, so the page is
      never blank on a Tuesday and a real writeup can still replace it later. */
   let prose = autoProse(packs, week);
-  try {
-    const old = JSON.parse(readFileSync(OUT, "utf8"));
-    if (old.week === week && old.headline && !old.auto) {
-      prose = { headline: old.headline, body: old.body, changed: old.changed };
-      console.log("     kept the written writeup for this week");
-    }
-  } catch (e) { /* no file yet */ }
+  if (old && old.week === week && old.headline && !old.auto) {
+    prose = { headline: old.headline, body: old.body, changed: old.changed };
+    console.log("     kept the written writeup for this week");
+  }
 
   mkdirSync("data", { recursive: true });
   writeFileSync(OUT, JSON.stringify({
     week,
     posted: new Date().toISOString().slice(0, 10),
     ...prose,
-    packs
+    packs,
+    history
   }, null, 2));
   console.log(prose.auto ? "     wrote a placeholder recap, replace it with a real one"
                          : "     kept the written recap");
 
-  console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(packs).length} managers)`);
+  console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(packs).length} managers,`
+    + ` ${Object.keys(history).length} weeks archived)`);
   rosterReport(new Map(Object.keys(packs).map(m => [m, packs[m].awards.length])));
   Object.values(packs).forEach(p => {
     console.log(`  ${p.manager.padEnd(10)} ${one(p.myScore).padStart(6)} vs ${
-      one(p.oppScore).padStart(6)} ${p.opponent.padEnd(10)} ${p.awards[0].title}`);
+      one(p.oppScore).padStart(6)} ${p.opponent.padEnd(10)} ${
+      p.awards.length ? p.awards[0].title : "no card"}`);
   });
 }
 

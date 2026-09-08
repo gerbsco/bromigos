@@ -912,6 +912,41 @@
   .lnkbtn{background:none;border:0;padding:0;cursor:pointer;
     font:inherit;color:var(--accent);text-decoration:underline}
 
+  /* ---------- projection accuracy ---------- */
+  .acrow{display:grid;grid-template-columns:1fr 60px 60px 44px;align-items:center;
+    gap:8px;padding:9px 2px;border-bottom:1px solid var(--line)}
+  .acrow:last-child{border-bottom:0}
+  .achead{font:400 10.5px/1 var(--display);color:var(--faint);
+    text-transform:uppercase;letter-spacing:.06em;padding-bottom:5px}
+  .achead span{text-align:right}
+  .aclab{font:400 14px/1.2 var(--display);color:var(--chalk)}
+  .acv{text-align:right;font:400 14px/1 var(--display);color:var(--dim);
+    font-variant-numeric:tabular-nums}
+  .acv.win{color:var(--win);font-weight:600}
+  .acn{text-align:right;font:400 11.5px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums}
+
+  /* ---------- receipts ---------- */
+  .rcrow{display:grid;grid-template-columns:20px 1fr 56px 44px 40px;align-items:center;
+    gap:8px;padding:10px 2px;border-bottom:1px solid var(--line)}
+  .rcrow:last-child{border-bottom:0}
+  .rcrow.me{background:rgba(255,255,255,.04);border-radius:10px;
+    padding-left:8px;padding-right:8px}
+  .rchead{font:400 10.5px/1 var(--display);color:var(--faint);
+    text-transform:uppercase;letter-spacing:.06em;padding-bottom:6px}
+  .rchead span{text-align:right}
+  .rchead span:nth-child(2){text-align:left}
+  .rcn{font:600 12px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums}
+  .rcwho{min-width:0}
+  .rcwho b{display:block;font:400 14.5px/1.2 var(--display);color:var(--chalk)}
+  .rcwho span{display:block;margin-top:3px;font:400 11px/1.2 var(--display);
+    color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rcv{text-align:right;font:400 14px/1 var(--display);color:var(--dim);
+    font-variant-numeric:tabular-nums}
+  .rcv.up{color:var(--win);font-weight:600}
+  .rcv.down{color:var(--loss);font-weight:600}
+
   /* ---------- bench ledger ---------- */
   .blrow{display:grid;grid-template-columns:20px 1fr 54px 46px 34px;align-items:center;
     gap:8px;padding:10px 2px;border-bottom:1px solid var(--line)}
@@ -1066,14 +1101,17 @@
 
   <div class="subtabs" id="subtabs" role="tablist"></div>
 
+  <!-- Home, in the order a person actually needs it: the one thing to do, then
+       the game being played, then what just happened, then where you stand,
+       then the things you browse rather than act on, folded. -->
   <section class="panel on" id="hq">
     <div id="installHint"></div>
-    <div id="nextup"></div>
     <div id="picksPrompt"></div>
+    <div id="nextup"></div>
     <div id="recap"></div>
     <div id="powerMini"></div>
-    <div id="benchLedger"></div>
     <div id="awards"></div>
+    <div id="benchLedger"></div>
   </section>
 
   <section class="panel" id="trade">
@@ -1116,6 +1154,9 @@
   </section>
 
   <section class="panel" id="records"><div id="recordsBody"></div></section>
+
+  <!-- Every claim the site has made, scored against what happened. -->
+  <section class="panel" id="receipts"><div id="receiptsBody"></div></section>
 
   <section class="panel" id="picks"><div id="picksBody"></div></section>
 
@@ -1303,10 +1344,10 @@ const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
   ["trades", "Trades", ["trade", "wire"]],
-  ["league", "League", ["power", "teams", "picks", "history", "records", "rules"]],
+  ["league", "League", ["power", "teams", "picks", "receipts", "history", "records", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
-const PANEL_LABEL = { hq:"Home", team:"My team", power:"Standings", teams:"Rosters", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
+const PANEL_LABEL = { hq:"Home", team:"My team", power:"Standings", teams:"Rosters", receipts:"Receipts", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
   trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
 
 /* The wordmark is the only place the destination is named in words. Naming it
@@ -1324,6 +1365,8 @@ function panelVisible(id){
   if(id === "picks")   return liveDraft();
   if(id === "power")   return liveDraft();
   if(id === "teams")   return liveDraft();
+  /* Nothing to hold anyone to until a week has been archived. */
+  if(id === "receipts") return liveDraft() && receipts().length > 1;
   if(id === "binder")  return livePacks();
   if(id === "demo")    return PREVIEW;
   return true;
@@ -1609,7 +1652,7 @@ function renderDraft(){
 }
 
 /* ---------- live state ---------- */
-let LIVE = null, WEEKLY = null, PROJ = null;
+let LIVE = null, WEEKLY = null, PROJ = null, ACC = null;
 
 /* Every cache in here used to key off LIVE.fetchedAt, which works right up
    until a payload arrives without one. Then the key never changes, the empty
@@ -1877,6 +1920,70 @@ function renderBench(){
   rememberFolds(el);
 }
 
+/* ---------- receipts ----------
+   The site makes claims every week: a projection for each team, a scoring rank,
+   an expectation. Nobody keeps them, so nobody is ever wrong out loud. The pack
+   archive already stores each manager's projection and what they actually put
+   up, so the claims can be scored against reality and printed with a name on
+   them. This is the whole point of keeping seven years of anything. */
+function receipts(){
+  const hist = (WEEKLY && WEEKLY.history) || null;
+  if(!hist) return [];
+  const rows = {};
+  Object.keys(hist).map(Number).filter(Number.isFinite).sort((a,b)=>a-b)
+    .forEach(wk => {
+      const packs = hist[String(wk)] || {};
+      Object.keys(packs).forEach(m => {
+        const p = packs[m];
+        if(!p || typeof p.myScore !== "number" || typeof p.projected !== "number") return;
+        if(p.projected <= 0) return;
+        const r = rows[m] = rows[m] || { manager:m, weeks:0, gap:0, beat:0,
+          best:null, worst:null, ranks:[] };
+        const d = p.myScore - p.projected;
+        r.weeks++; r.gap += d;
+        if(d > 0) r.beat++;
+        if(!r.best || d > r.best.d) r.best = { wk, d };
+        if(!r.worst || d < r.worst.d) r.worst = { wk, d };
+        if(typeof p.rank === "number") r.ranks.push(p.rank);
+      });
+    });
+  return Object.values(rows).filter(r => r.weeks)
+    .map(r => ({ ...r, avg: r.gap / r.weeks,
+      meanRank: r.ranks.length ? r.ranks.reduce((a,b)=>a+b,0) / r.ranks.length : null }))
+    .sort((a, b) => b.avg - a.avg);
+}
+
+function renderReceipts(){
+  const el = document.getElementById("receiptsBody");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  const rows = receipts();
+  if(rows.length < 2){ el.innerHTML = ""; return; }
+  const over = rows[0], under = rows[rows.length - 1];
+  const wks = rows[0].weeks;
+
+  const sign = v => (v > 0 ? "+" : "") + v.toFixed(1);
+  el.innerHTML = `<h2>Receipts</h2>
+    <p class="note" style="margin:-4px 2px 12px">What the projections said against
+      what actually happened, over ${wks} week${wks === 1 ? "" : "s"}. Positive
+      means the team has been better than the numbers expected.</p>
+    <div class="rcrow rchead"><span></span><span>Manager</span>
+      <span>A week</span><span>Beat</span><span>Rank</span></div>` +
+    rows.map((r, i) => `<div class="rcrow${r.manager === ME ? " me" : ""}">
+      <span class="rcn">${i + 1}</span>
+      <span class="rcwho"><b>${esc(r.manager)}</b>
+        <span>best ${sign(r.best.d)} in week ${r.best.wk}, worst
+          ${sign(r.worst.d)} in week ${r.worst.wk}</span></span>
+      <span class="rcv ${r.avg >= 0 ? "up" : "down"}">${sign(r.avg)}</span>
+      <span class="rcv">${r.beat}/${r.weeks}</span>
+      <span class="rcv">${r.meanRank === null ? "&mdash;" : r.meanRank.toFixed(1)}</span>
+    </div>`).join("") +
+    `<p class="note" style="margin:12px 2px 0">${esc(over.manager)} has been the
+      most underrated at ${sign(over.avg)} a week. ${esc(under.manager)} has been
+      the most flattered at ${sign(under.avg)}. Neither of them will accept
+      this.</p>`;
+}
+
 function renderAwards(){
   const el = document.getElementById("awards");
   const teams = teamList();
@@ -1958,10 +2065,15 @@ function renderAwards(){
   push("Most Dominant", dom.name,
     `${dom.w}-${dom.l}, ${fmt(dom.pf)} points, ${dom.pf>dom.pa?"+":""}${fmt(dom.pf-dom.pa)} differential.`, "hot");
 
-  el.innerHTML = `<h2>Superlatives</h2><div class="awards">` +
+  /* Folded. Home is a stack of cards and every one of them shouting the same
+     volume is why nothing on it reads as important. The things you act on stay
+     open; the things you browse fold away. */
+  el.innerHTML = fold(`Superlatives \u00b7 ${A.length}`,
+    `<div class="awards">` +
     A.map(a=>`<div class="aw ${a.cls}"><div class="ttl">${a.ttl}</div>
       <div class="win">${esc(a.win)}</div><div class="stat">${esc(a.stat)}</div></div>`).join("") +
-    `</div><p class="note">Recalculated every morning from completed games.</p>`;
+    `</div><p class="note">Recalculated every morning from completed games.</p>`, false);
+  rememberFolds(el);
 }
 
 /* ---------- standings ---------- */
@@ -2390,6 +2502,61 @@ function renderPicksPrompt(){
    the whole league on one screen, each roster graded, with its surplus and its
    hole named. Everything here already existed for My Team, it was just only
    ever pointed at you. */
+/* ---------- which provider to believe ----------
+   Both publish a number for every player every week and nobody ever checks
+   which one was closer, because nobody keeps both. We do. The nightly job
+   freezes each week's two projections and then the actual, and scores them on
+   mean absolute error: how many points out, on average, per player.
+
+   This is the one thing here that no major app can do, because no major app
+   carries a rival's numbers. */
+function accuracySummary(){
+  const sum = (ACC && ACC.summary) || null;
+  if(!sum || !sum.all || !sum.all.n) return null;
+  return sum;
+}
+
+function accuracyVerdict(a){
+  if(!a || a.espn === null || a.sleeper === null) return "";
+  const gap = Math.abs(a.espn - a.sleeper);
+  if(gap < 0.15) return "Nothing between them so far. The blend is the safe read.";
+  const better = a.espn < a.sleeper ? "ESPN" : "Sleeper";
+  return `${better} has been closer by ${gap.toFixed(2)} points a player.`;
+}
+
+function renderAccuracy(){
+  const el = document.getElementById("accuracy");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  const sum = accuracySummary();
+  if(!sum){ el.innerHTML = ""; return; }
+
+  const order = ["QB","RB","WR","TE","K","DST"].filter(p => sum[p] && sum[p].n);
+  const cell = (v, best) => v === null ? `<span class="acv">&mdash;</span>`
+    : `<span class="acv${best ? " win" : ""}">${v.toFixed(2)}</span>`;
+  const row = (label, a, n) => {
+    const espnBest = a.espn !== null && a.sleeper !== null && a.espn < a.sleeper;
+    const sleepBest = a.espn !== null && a.sleeper !== null && a.sleeper < a.espn;
+    return `<div class="acrow">
+      <span class="aclab">${esc(label)}</span>
+      ${cell(a.espn, espnBest)}${cell(a.sleeper, sleepBest)}
+      <span class="acn">${n}</span></div>`;
+  };
+
+  el.innerHTML = fold("Which projection to believe",
+    `<p class="note" style="margin:0 0 10px">Average points out, per player, per
+      week. Lower is better. Only players who actually scored are counted,
+      because scoring a projection against somebody who was inactive measures
+      the injury report rather than the projection.</p>
+     <div class="acrow achead"><span></span><span>ESPN</span>
+       <span>Sleeper</span><span>n</span></div>
+     ${row("All players", sum.all, sum.all.n)}
+     ${order.map(p => row(p, sum[p], sum[p].n)).join("")}
+     <p class="note" style="margin:10px 0 0">${esc(accuracyVerdict(sum.all))}</p>`,
+    false);
+  rememberFolds(el);
+}
+
 function renderTeams(){
   const el = document.getElementById("teamsBody");
   if(!el) return;
@@ -3168,6 +3335,7 @@ function renderAll(){
   try{ renderPower(); }catch(e){ console.warn("[bromigos] power:", e && e.message); }
   try{ renderTeams(); }catch(e){ console.warn("[bromigos] teams:", e && e.message); }
   try{ renderBench(); }catch(e){ console.warn("[bromigos] bench:", e && e.message); }
+  try{ renderReceipts(); }catch(e){ console.warn("[bromigos] receipts:", e && e.message); }
   try{ renderPowerMini(); }catch(e){ console.warn("[bromigos] power mini:", e && e.message); }
   try{ renderPicksPrompt(); }catch(e){ console.warn("[bromigos] picks prompt:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
@@ -4790,6 +4958,7 @@ function renderTeamPage(){
     ${fold("Season at a glance", renderOutlookTable(me), true)}
 
     ${fold("Roster", renderSuggested(me), true)}
+    <div id="accuracy"></div>
 
     ${fold("Position grades",
       Object.entries(g).map(([pos,v]) => `<div class="grade">
@@ -4814,6 +4983,7 @@ function renderTeamPage(){
       style="margin-top:14px">Open the trade block</button>`;
 
   rememberFolds(el);
+  try { renderAccuracy(); } catch(e){ console.warn("[bromigos] accuracy:", e && e.message); }
   el.querySelectorAll("[data-mw]").forEach(b => b.onclick = () => {
     matchWeek = Number(b.dataset.mw);
     renderTeamPage();
@@ -6552,9 +6722,9 @@ try{ pullPicks(); }catch(e){ console.warn("[bromigos] pick sync:", e && e.messag
     }
   };
   Promise.all([grab("data/league.json"), grab("data/weekly.json"), grab("data/h2h.json"),
-               grab("data/projections.json")])
-    .then(([lg, wk, hh, pj]) => {
-      LIVE = lg; WEEKLY = wk; H2H = hh; PROJ = pj;
+               grab("data/projections.json"), grab("data/accuracy.json")])
+    .then(([lg, wk, hh, pj, ac]) => {
+      LIVE = lg; WEEKLY = wk; H2H = hh; PROJ = pj; ACC = ac;
       const f = document.getElementById("freshness");
       const chip = document.getElementById("freshTop");
       if(lg && lg.fetchedAt){

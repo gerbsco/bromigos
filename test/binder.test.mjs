@@ -85,7 +85,10 @@ const WEEK = {
   ok("superlative keeps its name", () => binCons.indexOf("Chair Recipient") >= 0);
   ok("superlative keeps its description", () => binCons.indexOf("not competitive") >= 0);
   ok("superlative keeps its stat line", () => binCons.indexOf("Lost by 42.6") >= 0);
-  ok("superlative keeps its rarity tag", () => binCons.indexOf("Dishonour") >= 0);
+  /* American spelling throughout. British ones shipped twice and were fixed. */
+  ok("superlative keeps its rarity tag", () => [binCons.indexOf("Dishonor") >= 0,
+    (binCons.match(/rarityTag">([^<]*)</) || [])[1]]);
+  ok("and the tag is spelled the American way", () => !/Dishonour/.test(binCons));
   ok("superlative shows why it was given", () =>
     binCons.indexOf("Biggest losing margin, 42.6") >= 0);
   ok("the reason is its own line, not the flavour text", () =>
@@ -115,7 +118,8 @@ const WEEK = {
   ok("summary-only superlative is not a result card", () => !/class="fut /.test(html));
   ok("its stat is not crammed into the big-number slot", () =>
     !/futL"><b>78\.4 points/.test(html));
-  ok("shame tier maps to Dishonour", () => html.indexOf("Dishonour") >= 0);
+  ok("shame tier maps to Dishonor", () => [html.indexOf("Dishonor") >= 0,
+    (html.match(/rarityTag">([^<]*)</) || [])[1]]);
 
   const legacyMatch = { key:"6:match:Scotty", week:6, type:"match", tier:"bronzeC",
     title:"Scotty", rate:"78.4", pos:"LOSS", art:"chair", sub:"lost to Justin", ts:2 };
@@ -124,11 +128,7 @@ const WEEK = {
   ok("and puts the score in the big-number slot", () => /futL"><b>78\.4<\/b>/.test(mh));
 }
 
-/* ---------- fixtures from ANY earlier build get swept ----------
-   The shape that matters is the untagged one. Entries written before fixtures
-   carried a demo flag have no flag at all, so every "is this stale" test
-   against the entry itself answers no and they survive forever. This is the
-   case that shipped broken twice. */
+/* ---------- fixtures from ANY earlier build get swept ---------- */
 {
   const { sandbox: S, byId, setVar } =
     boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
@@ -177,7 +177,6 @@ const WEEK = {
   ok("a real pull is stored with demo false, not undefined", () =>
     [real.every(c => c.demo === false), JSON.stringify(real.map(c => c.demo))]);
 
-  /* drop an untagged fixture in beside it, no marker set */
   S.localStorage.setItem("bromigos.binder.v2.Scotty", JSON.stringify(
     real.concat([{ key:"9:match:old", week:9, type:"match", tier:"bronze",
                    title:"Scotty", rate:"1.0", ts:1 }])));

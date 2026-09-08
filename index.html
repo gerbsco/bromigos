@@ -883,6 +883,51 @@
   /* the first thing inside a drawer should not add its own top margin */
   .sec[open]>*:not(summary):first-of-type{margin-top:0}
 
+  /* ---------- every roster in the league ---------- */
+  .teamfold>summary{display:grid;grid-template-columns:22px 1fr auto auto;
+    align-items:center;gap:10px;font:600 15px/1.2 var(--display);color:var(--chalk)}
+  .teamfold>summary::before{display:none}
+  .teamfold>summary::after{content:"";margin:0}
+  .tfrank{font:600 13px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums}
+  .tfwho{min-width:0}
+  .tfwho b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tfwho span{display:block;margin-top:3px;font:400 11.5px/1.2 var(--display);
+    color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tfchips{display:flex;gap:4px}
+  .tgchip{padding:3px 6px;border-radius:6px;font:600 9.5px/1 var(--display)}
+  .tgchip.g-strong{background:rgba(74,222,128,.15);color:var(--win)}
+  .tgchip.g-weak{background:rgba(248,113,113,.15);color:var(--loss)}
+  .tfnum{font:600 15px/1 var(--display);color:var(--chalk);
+    font-variant-numeric:tabular-nums}
+  .tgrid{margin:2px 0 12px}
+  .tgrow{display:grid;grid-template-columns:44px 1fr auto;align-items:center;
+    gap:10px;padding:8px 2px;border-bottom:1px solid var(--line)}
+  .tgrow:last-child{border-bottom:0}
+  .tgword{font:400 13px/1.2 var(--display)}
+  .tgnum{font:400 13px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums}
+
+  /* ---------- bench ledger ---------- */
+  .blrow{display:grid;grid-template-columns:20px 1fr 54px 46px 34px;align-items:center;
+    gap:8px;padding:10px 2px;border-bottom:1px solid var(--line)}
+  .blrow:last-child{border-bottom:0}
+  .blrow.me{background:rgba(255,255,255,.04);border-radius:10px;padding-left:8px;
+    padding-right:8px}
+  .blhead{font:400 10.5px/1 var(--display);color:var(--faint);
+    text-transform:uppercase;letter-spacing:.06em;padding-bottom:6px}
+  .blhead span{text-align:right}
+  .blhead span:nth-child(2){text-align:left}
+  .bln{font:600 12px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums}
+  .blwho{min-width:0}
+  .blwho b{display:block;font:400 14.5px/1.2 var(--display);color:var(--chalk)}
+  .blwho span{display:block;margin-top:3px;font:400 11px/1.2 var(--display);
+    color:var(--faint)}
+  .blv{text-align:right;font:400 14px/1 var(--display);color:var(--dim);
+    font-variant-numeric:tabular-nums}
+  .blv.bad{color:var(--loss);font-weight:600}
+
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
     font:400 14px/1.5 var(--display);background:var(--ink-2);color:var(--dim)}
@@ -1023,6 +1068,7 @@
     <div id="picksPrompt"></div>
     <div id="recap"></div>
     <div id="powerMini"></div>
+    <div id="benchLedger"></div>
     <div id="awards"></div>
   </section>
 
@@ -1102,6 +1148,13 @@
          of the last page in the League tab, for the one person who wants it in
          November. -->
     <div id="draft"></div>
+  </section>
+
+  <!-- Every roster in the league, on one screen. ESPN makes you tap through
+       ten teams one at a time; this is the whole league graded in one scroll,
+       which is the single thing people kept opening ESPN for. -->
+  <section class="panel" id="p-teams" data-panel="teams" hidden>
+    <div id="teamsBody"></div>
   </section>
 
   <section class="panel" id="team"><div id="teamBody"></div></section>
@@ -1244,10 +1297,10 @@ const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
   ["trades", "Trades", ["trade", "wire"]],
-  ["league", "League", ["power", "picks", "history", "records", "rules"]],
+  ["league", "League", ["power", "teams", "picks", "history", "records", "rules"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
-const PANEL_LABEL = { hq:"Home", team:"My team", power:"Standings", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
+const PANEL_LABEL = { hq:"Home", team:"My team", power:"Standings", teams:"Rosters", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
   trade:"Trades", wire:"Waiver wire", binder:"Binder", demo:"Pack test" };
 
 /* The wordmark is the only place the destination is named in words. Naming it
@@ -1264,6 +1317,7 @@ function panelVisible(id){
   if(id === "records") return liveDraft();
   if(id === "picks")   return liveDraft();
   if(id === "power")   return liveDraft();
+  if(id === "teams")   return liveDraft();
   if(id === "binder")  return livePacks();
   if(id === "demo")    return PREVIEW;
   return true;
@@ -1766,6 +1820,57 @@ function renderRecap(){
 }
 
 /* ---------- superlatives (computed) ---------- */
+/* ---------- the bench ledger ----------
+   Points left on the bench, per manager, running all season, off the pack
+   archive that already stores it. It exists as a one week superlative, which
+   is a joke you read once. As a cumulative table it becomes the thing people
+   check to work out exactly how much they have cost themselves, which is a
+   different and much stickier feeling. */
+function benchLedger(){
+  const hist = (WEEKLY && WEEKLY.history) || null;
+  const rows = {};
+  const add = (wk, packs) => Object.keys(packs || {}).forEach(m => {
+    const p = packs[m];
+    if(!p || typeof p.bench !== "number" || typeof p.myScore !== "number") return;
+    const r = rows[m] = rows[m] || { manager:m, total:0, weeks:0, worst:null, cost:0 };
+    r.total += p.bench; r.weeks++;
+    if(!r.worst || p.bench > r.worst.bench) r.worst = { wk, bench:p.bench };
+    /* a week the bench would actually have flipped */
+    if(typeof p.oppScore === "number" && p.myScore < p.oppScore
+       && p.bench > p.oppScore - p.myScore) r.cost++;
+  });
+  if(hist) Object.keys(hist).forEach(wk => add(Number(wk), hist[wk]));
+  else if(WEEKLY && WEEKLY.week) add(WEEKLY.week, WEEKLY.packs);
+
+  return Object.values(rows).filter(r => r.weeks)
+    .map(r => ({ ...r, avg: r.total / r.weeks }))
+    .sort((a, b) => b.total - a.total);
+}
+
+function renderBench(){
+  const el = document.getElementById("benchLedger");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  const rows = benchLedger();
+  if(rows.length < 2){ el.innerHTML = ""; return; }
+  const worst = rows[0];
+
+  el.innerHTML = fold(`Bench ledger \u00b7 ${esc(worst.manager)} leads`,
+    `<p class="note" style="margin:0 0 10px">Points left on the bench, adding up
+      all season. The last column counts weeks where the bench alone would have
+      turned a loss into a win.</p>` +
+    `<div class="blrow blhead"><span></span><span>Manager</span>
+      <span>Total</span><span>A week</span><span>Cost</span></div>` +
+    rows.map((r, i) => `<div class="blrow${r.manager === ME ? " me" : ""}">
+      <span class="bln">${i + 1}</span>
+      <span class="blwho"><b>${esc(r.manager)}</b>
+        <span>worst: ${r.worst ? f1(r.worst.bench) + " in week " + r.worst.wk : "\u2014"}</span></span>
+      <span class="blv">${f1(r.total)}</span>
+      <span class="blv">${f1(r.avg)}</span>
+      <span class="blv${r.cost ? " bad" : ""}">${r.cost}</span></div>`).join(""), false);
+  rememberFolds(el);
+}
+
 function renderAwards(){
   const el = document.getElementById("awards");
   const teams = teamList();
@@ -2271,6 +2376,86 @@ function renderPicksPrompt(){
   }
   const b = document.getElementById("pkGo");
   if(b) b.onclick = () => showTab("picks", true);
+}
+
+/* ---------- every roster in the league ----------
+   The one thing people kept leaving the site for. ESPN makes you tap through
+   ten teams one at a time and shows you a lineup with no read on it; this is
+   the whole league on one screen, each roster graded, with its surplus and its
+   hole named. Everything here already existed for My Team, it was just only
+   ever pointed at you. */
+function renderTeams(){
+  const el = document.getElementById("teamsBody");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  try { ensureRosters(); } catch(e){}
+  if(rostersPending()){
+    el.innerHTML = `<h2>Rosters</h2>` + lock("Rosters are syncing",
+      "ESPN publishes them within a few minutes of the last pick. This fills in on the next pull.");
+    return;
+  }
+  const teams = (ROSTERS || []).filter(t => t.players && t.players.length);
+  if(teams.length < 2){ el.innerHTML = ""; return; }
+
+  const wks = Math.max(1, weeksLeft().length);
+  const med = leagueMedians(teams);
+  const now = weeksLeft()[0];
+
+  const rows = teams.map(t => {
+    const g = gradeTeam(t, med);
+    const pick = lab => Object.entries(g).filter(([, v]) => v.label === lab).map(([p]) => p);
+    return { t, g, strong: pick("strong"), weak: pick("weak"),
+      week: now ? bestLineupWith(t.players, p => weekProjOf(p, now), now).total : 0,
+      rest: seasonValue(t.players) / wks,
+      /* recOf returns ESPN's own record object, whose fields are wins and
+         losses rather than w and l. Reading the wrong ones printed
+         "undefined-undefined" next to every team name. */
+      /* recOf returns ESPN's own record object, whose fields are wins and
+         losses rather than w and l. Reading the wrong ones printed
+         "undefined-undefined" next to every team name, and before a game has
+         been played there is no record worth printing at all. */
+      rec: recOf(t) };
+  }).sort((a, b) => b.rest - a.rest);
+
+  const chip = (pos, v) => `<span class="tgchip g-${v.label}" title="${esc(pos)}">${pos}</span>`;
+
+  el.innerHTML = `<h2>Rosters</h2>
+    <p class="note" style="margin:-4px 2px 14px">All ten, ranked on projected
+      points a week for the rest of the season. Green is a position with a
+      surplus, red is a hole. Tap a team for its lineup.</p>` +
+    rows.map((r, i) => {
+      const t = r.t;
+      const body = `<div class="tgrid">${
+        Object.entries(r.g).map(([pos, v]) => `<div class="tgrow">
+          <span class="gpos ${pos}">${pos}</span>
+          <span class="tgword g-${v.label}">${GRADE_WORD[v.label]}</span>
+          <span class="tgnum">${v.avg.toFixed(1)}</span></div>`).join("")}</div>
+        ${now ? rosterSections(t.players).starters.map(f => `<div class="plr view">
+          <span class="slot">${esc(f.slot)}</span>
+          ${f.player ? `<span class="pos ${f.player.pos}">${f.player.pos}</span>
+            <span class="who2"><b>${esc(f.player.name)}</b>
+              <span>${esc(f.player.team || "")}${f.player.bye ? ", bye " + f.player.bye : ""}${
+                f.player.injury ? ", " + f.player.injury.toLowerCase() : ""}</span></span>
+            <span class="pj"><b>${weekProjOf(f.player, now).toFixed(1)}</b></span>`
+          : `<span class="who2"><b>empty</b></span>`}</div>`).join("") : ""}
+        ${t.manager !== ME ? `<button type="button" class="cbtn" data-tp="${esc(t.manager)}"
+            style="margin-top:12px">Build a trade with ${esc(t.manager)}</button>` : ""}`;
+      return `<details class="sec teamfold" data-sec="roster ${esc(t.manager)}">
+        <summary>
+          <span class="tfrank">${i + 1}</span>
+          <span class="tfwho"><b>${esc(t.manager)}${t.manager === ME ? " (you)" : ""}</b>
+            <span>${esc(t.teamName)}${(r.rec.wins || r.rec.losses)
+              ? " &middot; " + (r.rec.wins || 0) + "-" + (r.rec.losses || 0) : ""}</span></span>
+          <span class="tfchips">${Object.entries(r.g)
+            .filter(([, v]) => v.label !== "ok").map(([pos, v]) => chip(pos, v)).join("")}</span>
+          <span class="tfnum">${f1(r.rest)}</span>
+        </summary>${body}</details>`;
+    }).join("");
+
+  rememberFolds(el);
+  el.querySelectorAll("[data-tp]").forEach(b => b.onclick = () => {
+    tradePartner = b.dataset.tp; tradeView = "build"; showTab("trade", true);
+  });
 }
 
 function renderPower(){
@@ -2931,6 +3116,8 @@ function renderAll(){
   try{ renderRecords(); }catch(e){ console.warn("[bromigos] records:", e && e.message); }
   try{ renderPicks(); }catch(e){ console.warn("[bromigos] picks:", e && e.message); }
   try{ renderPower(); }catch(e){ console.warn("[bromigos] power:", e && e.message); }
+  try{ renderTeams(); }catch(e){ console.warn("[bromigos] teams:", e && e.message); }
+  try{ renderBench(); }catch(e){ console.warn("[bromigos] bench:", e && e.message); }
   try{ renderPowerMini(); }catch(e){ console.warn("[bromigos] power mini:", e && e.message); }
   try{ renderPicksPrompt(); }catch(e){ console.warn("[bromigos] picks prompt:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
@@ -5033,6 +5220,38 @@ function lineupWarnings(team, week){
 /* ---------- rendering for the season features ---------- */
 const pct = v => (v*100 < 1 && v > 0) ? "<1%" : (v*100 > 99 && v < 1) ? ">99%" : Math.round(v*100) + "%";
 
+/* Seven years of this league is sitting in h2h.json and nowhere near the one
+   screen where it means something. ESPN cannot do this because ESPN does not
+   remember 2019. */
+function rivalryLine(a, b){
+  if(!a || !b || a === b) return "";
+  let r = null;
+  try { r = h2hSeries(a, b); } catch(e){ return ""; }
+  /* Collapsed, because a template literal broken across lines for readability
+     puts real newlines in the middle of a sentence. HTML hides that; anything
+     reading the text does not. */
+  const say = t => `<p class="note" style="margin:0 0 12px">${
+    t.replace(/\s+/g, " ").trim()}</p>`;
+
+  if(!r || !r.games || !r.games.length)
+    return say(`You have never played ${esc(b)}. Whatever happens on Sunday is
+      the whole record.`);
+
+  const n = r.games.length;
+  /* A series game carries mine and theirs. pf and pa are the series totals,
+     which is what I reached for first and is how the average margin came out
+     as NaN on a real pairing. */
+  const margin = r.games.reduce((t, g) => t + Math.abs(g.mine - g.theirs), 0) / n;
+  let streak = "";
+  try { streak = h2hStreak(r.games) || ""; } catch(e){}
+  const lead = r.w > r.l ? `You lead <b>${r.w}-${r.l}</b>`
+    : r.l > r.w ? `${esc(b)} leads <b>${r.l}-${r.w}</b>`
+    : `Level at <b>${r.w}-${r.l}</b>`;
+
+  return say(`${lead} over ${n} meeting${n === 1 ? "" : "s"} since 2019,
+    average margin ${margin.toFixed(1)}.${streak ? " " + esc(streak) + "." : ""}`);
+}
+
 /* Which week the matchup card is showing. Defaults to the one being played. */
 let matchWeek = null;
 
@@ -5154,6 +5373,7 @@ function renderMatchup(me){
       <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
         <span class="vsScore">${themTot.toFixed(1)}</span></div>
     </div>
+    ${rivalryLine(me.manager, opp.manager)}
     ${sourceNote(gaps, true)}
     <div class="mxtot"><span>${esc(me.teamName)}</span>
       <span class="mid">proj</span><span class="r">${esc(opp.teamName)}</span></div>

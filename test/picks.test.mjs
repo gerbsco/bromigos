@@ -286,5 +286,79 @@ const at = now => {
     byId("picksPrompt").innerHTML === "");
 }
 
+
+/* ---------- results are frozen once the week is final ----------
+   Scores used to be recomputed from ESPN on every paint with nothing stored,
+   so a schedule that stopped reporting completed weeks would have taken the
+   whole leaderboard to zero and left no way to get it back. The nightly job
+   freezes each week's outcomes into weekly.json; these check the app prefers
+   them and survives without ESPN. */
+{
+  const RESULTS = { "1": [
+      { id:"11", home:"Scotty", away:"Bo",   homePts:120, awayPts:100 },
+      { id:"12", home:"Dawson", away:"Cody", homePts: 90, awayPts:110 }] };
+  const PICKS_JSON = JSON.stringify({ "1": {
+    Scotty: { "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} },
+    Bo:     { "11":{w:"Bo",c:2},     "12":{w:"Cody",c:1} } } });
+
+  const at2 = (schedule, results) => {
+    const h = boot({ search:"", now:"2026-09-16T12:00:00Z" });
+    h.setVar("ME", '"Scotty"');
+    h.setVar("LIVE", JSON.stringify({
+      settings:{ draftDetail:{ drafted:true } },
+      teams:{ members:[{id:"{A}",firstName:"Scott"},{id:"{B}",firstName:"bo"},
+                       {id:"{C}",firstName:"Andrew"},{id:"{D}",firstName:"Cody"}],
+        teams:[{id:1,owners:["{A}"]},{id:2,owners:["{B}"]},
+               {id:3,owners:["{C}"]},{id:4,owners:["{D}"]}]},
+      matchups:{ schedule } }));
+    if(results) h.setVar("WEEKLY", JSON.stringify({ week:1, results }));
+    h.setVar("PICKS", PICKS_JSON);
+    return h.sandbox;
+  };
+  const WEEK1 = [
+    {id:11,matchupPeriodId:1,winner:"HOME",home:{teamId:1,totalPoints:120},away:{teamId:2,totalPoints:100}},
+    {id:12,matchupPeriodId:1,winner:"AWAY",home:{teamId:3,totalPoints:90},away:{teamId:4,totalPoints:110}}];
+
+  const live = at2(WEEK1, null);
+  const both = at2(WEEK1, RESULTS);
+  const gone = at2([], RESULTS);
+
+  ok("the frozen week scores the same as the live one", () => {
+    const a = live.scoreWeek(1, "Scotty"), b = both.scoreWeek(1, "Scotty");
+    return [a.pts === b.pts && a.right === b.right && a.done === b.done,
+      JSON.stringify(a) + " vs " + JSON.stringify(b)];
+  });
+  ok("scores survive ESPN losing the schedule", () => {
+    const a = live.scoreWeek(1, "Scotty"), c = gone.scoreWeek(1, "Scotty");
+    return [a.pts === c.pts && c.done === 2, JSON.stringify(c)];
+  });
+  ok("so does the whole leaderboard", () => {
+    const a = live.picksTable().map(r => r.manager + ":" + r.pts).join(",");
+    const c = gone.picksTable().map(r => r.manager + ":" + r.pts).join(",");
+    return [a === c, a + " | " + c];
+  });
+  ok("and so do the power rankings", () =>
+    [gone.weeklyResults()["Scotty"].length === 1,
+     JSON.stringify(Object.keys(gone.weeklyResults()))]);
+
+  /* the point of freezing: a late correction cannot rewrite an old week */
+  const moved = at2(WEEK1, { "1": [
+    { id:"11", home:"Scotty", away:"Bo", homePts:100, awayPts:120 },
+    { id:"12", home:"Dawson", away:"Cody", homePts:90, awayPts:110 }] });
+  ok("the archive outranks ESPN where they disagree", () => {
+    const r = moved.scoreWeek(1, "Scotty");
+    return [r.pts === 1, JSON.stringify(r)];   // loses the 2-point game
+  });
+
+  ok("an empty archive falls back rather than scoring nothing", () => {
+    const s = at2(WEEK1, { "1": [] });
+    return [s.scoreWeek(1, "Scotty").pts === 3, JSON.stringify(s.scoreWeek(1, "Scotty"))];
+  });
+  ok("a malformed archive entry is ignored, not trusted", () => {
+    const s = at2(WEEK1, { "1": [{ id:"11" }, null] });
+    return [s.scoreWeek(1, "Scotty").pts === 3, JSON.stringify(s.scoreWeek(1, "Scotty"))];
+  });
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

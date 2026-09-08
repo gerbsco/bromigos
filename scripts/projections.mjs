@@ -101,6 +101,87 @@ export function parseCSV(text) {
   });
 }
 
+/* ---------- the accuracy log ----------
+   Both providers publish a number for every player every week and nobody ever
+   checks which one was closer. We have both feeds, so we can. The catch is
+   that a projection is only visible before the week is played: once week 3 is
+   done, ESPN's week 3 projection is gone from its API and Sleeper's with it.
+   So it has to be captured while the week is live, and frozen once it is not.
+
+   This writes data/accuracy.json: for each week, every rostered player's two
+   projections, and later their actual. A week already marked final is never
+   touched again, so a late stat correction cannot rewrite the scorecard. */
+const POS_NAME = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
+
+export function captureWeek(league, espnWeek, sleeperWeek) {
+  const out = {};
+  const teams = ((league && league.rosters && league.rosters.teams) || []);
+  teams.forEach(t => (((t.roster && t.roster.entries) || [])).forEach(e => {
+    const p = e && e.playerPoolEntry && e.playerPoolEntry.player;
+    if (!p || p.id == null) return;
+    const id = String(p.id);
+    const espn = Number((espnWeek || {})[id]);
+    const sleeper = Number((sleeperWeek || {})[id]);
+    if (!Number.isFinite(espn) && !Number.isFinite(sleeper)) return;
+    out[id] = {
+      pos: POS_NAME[p.defaultPositionId] || "FLEX",
+      espn: Number.isFinite(espn) ? espn : null,
+      sleeper: Number.isFinite(sleeper) ? sleeper : null,
+      actual: null
+    };
+  }));
+  return out;
+}
+
+/* Actual points for one scoring period, off the same roster payload. */
+export function actualsFor(league, week) {
+  const out = {};
+  ((league && league.rosters && league.rosters.teams) || []).forEach(t =>
+    (((t.roster && t.roster.entries) || [])).forEach(e => {
+      const p = e && e.playerPoolEntry && e.playerPoolEntry.player;
+      if (!p || p.id == null) return;
+      const st = (p.stats || []).find(x =>
+        x.statSourceId === 0 && Number(x.scoringPeriodId) === Number(week));
+      const v = st ? Number(st.appliedTotal) : NaN;
+      if (Number.isFinite(v)) out[String(p.id)] = Math.round(v * 100) / 100;
+    }));
+  return out;
+}
+
+/* Mean absolute error per provider, overall and by position. Only players who
+   actually played are counted: scoring a projection against a zero from
+   somebody who was inactive measures the injury report, not the projection. */
+export function scoreAccuracy(log) {
+  const acc = {};
+  const bump = (key, prov, err) => {
+    const a = acc[key] = acc[key] || { espn:{ n:0, err:0 }, sleeper:{ n:0, err:0 } };
+    a[prov].n++; a[prov].err += err;
+  };
+  Object.keys(log || {}).forEach(wk => {
+    const w = log[wk];
+    if (!w || !w.final || !w.players) return;
+    Object.values(w.players).forEach(p => {
+      if (typeof p.actual !== "number" || p.actual <= 0) return;
+      ["espn", "sleeper"].forEach(prov => {
+        if (typeof p[prov] !== "number") return;
+        const err = Math.abs(p[prov] - p.actual);
+        bump("all", prov, err);
+        bump(p.pos || "FLEX", prov, err);
+      });
+    });
+  });
+  const out = {};
+  Object.keys(acc).forEach(k => {
+    const a = acc[k];
+    out[k] = {
+      espn: a.espn.n ? Math.round(a.espn.err / a.espn.n * 100) / 100 : null,
+      sleeper: a.sleeper.n ? Math.round(a.sleeper.err / a.sleeper.n * 100) / 100 : null,
+      n: Math.max(a.espn.n, a.sleeper.n)
+    };
+  });
+  return out;
+}
+
 /* ---------- team defenses ----------
    Sleeper keys a defense by team abbreviation, "DAL", and ESPN by an id of its
    own. No published crosswalk carries them, which is why the Sleeper column
@@ -406,6 +487,45 @@ async function main() {
     marketSource: Object.keys(market).length ? "dynastyprocess" : null
   });
   writeFileSync(OUT, body);
+  /* ---------- accuracy log ---------- */
+  try {
+    const LOG = "data/accuracy.json";
+    let log = {};
+    try { log = JSON.parse(readFileSync(LOG, "utf8")) || {}; } catch (e) { /* first run */ }
+
+    const live = Number(league && league.scoringPeriodId) || 0;
+    const espnWeeks = (league && league.espnWeeks) || {};
+
+    /* refresh the live week until it settles, never touch a frozen one */
+    if (live && !(log[String(live)] || {}).final) {
+      const players = captureWeek(league, espnWeeks[String(live)], weeks[String(live)]);
+      if (Object.keys(players).length)
+        log[String(live)] = { week: live, final: false, players };
+    }
+
+    /* any earlier week with actuals in hand gets its answers and is closed */
+    Object.keys(log).map(Number).filter(w => Number.isFinite(w) && w < live)
+      .forEach(w => {
+        const entry = log[String(w)];
+        if (!entry || entry.final) return;
+        const real = actualsFor(league, w);
+        let filled = 0;
+        Object.keys(entry.players).forEach(id => {
+          if (typeof real[id] === "number") { entry.players[id].actual = real[id]; filled++; }
+        });
+        if (filled) { entry.final = true; console.log(`ok   accuracy: week ${w} closed, ${filled} players`); }
+        else console.log(`     accuracy: week ${w} has no actuals yet, left open`);
+      });
+
+    log.summary = scoreAccuracy(log);
+    writeFileSync(LOG, JSON.stringify(log, null, 2));
+    const s = log.summary.all;
+    console.log(`ok   accuracy log: ${Object.keys(log).filter(k => k !== "summary").length} weeks`
+      + (s ? `, espn ${s.espn} vs sleeper ${s.sleeper} mean error over ${s.n}` : ", nothing scored yet"));
+  } catch (err) {
+    console.log(`     accuracy log skipped (${err.message})`);
+  }
+
   console.log(`\nwrote ${OUT} (week ${week}, ${Object.keys(players).length} players matched,`
     + ` ${cells} per week projections,`
     + ` ${Object.keys(ros).length} with a rest of season number,`

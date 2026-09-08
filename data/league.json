@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-08T23:51:18.108Z",
+  "fetchedAt": "2026-09-08T23:57:32.439Z",
   "leagueId": "24869044",
   "season": "2026",
   "sources": {
@@ -256487,273 +256487,273 @@
         "pos": "RB",
         "team": "CHI",
         "status": null,
-        "count": 164184
+        "count": 164984
       },
       {
         "name": "New England Patriots",
         "pos": "DEF",
         "team": "NE",
         "status": null,
-        "count": 95361
+        "count": 95977
       },
       {
         "name": "Alvin Kamara",
         "pos": "RB",
         "team": "NO",
         "status": "Questionable",
-        "count": 84888
+        "count": 85344
       },
       {
         "name": "Jaydon Blue",
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 81352
+        "count": 81768
       },
       {
         "name": "Oronde Gadsden",
         "pos": "TE",
         "team": "LAC",
         "status": null,
-        "count": 80220
+        "count": 80585
       },
       {
         "name": "Brenton Strange",
         "pos": "TE",
         "team": "JAX",
         "status": null,
-        "count": 79281
+        "count": 79731
       },
       {
         "name": "Kenyon Sadiq",
         "pos": "TE",
         "team": "NYJ",
         "status": "Questionable",
-        "count": 77292
+        "count": 77697
       },
       {
         "name": "Darius Slayton",
         "pos": "WR",
         "team": null,
         "status": null,
-        "count": 69288
+        "count": 69852
       },
       {
         "name": "Tyreek Hill",
         "pos": "WR",
         "team": null,
         "status": "Questionable",
-        "count": 63080
+        "count": 63384
       },
       {
         "name": "Cyrus Allen",
         "pos": "WR",
         "team": "KC",
         "status": null,
-        "count": 61284
+        "count": 61794
       },
       {
         "name": "Detroit Lions",
         "pos": "DEF",
         "team": "DET",
         "status": null,
-        "count": 52830
+        "count": 53109
       },
       {
         "name": "Jalen Nailor",
         "pos": "WR",
         "team": "LV",
         "status": null,
-        "count": 52218
+        "count": 52560
       },
       {
         "name": "Keaton Mitchell",
         "pos": "RB",
         "team": "LAC",
         "status": "Questionable",
-        "count": 51129
+        "count": 51444
       },
       {
         "name": "Omar Cooper",
         "pos": "WR",
         "team": "NYJ",
         "status": null,
-        "count": 50576
+        "count": 50816
       },
       {
         "name": "Fernando Mendoza",
         "pos": "QB",
         "team": "LV",
         "status": null,
-        "count": 49872
+        "count": 50120
       },
       {
         "name": "Jerry Jeudy",
         "pos": "WR",
         "team": "CLE",
         "status": null,
-        "count": 48024
+        "count": 48240
       },
       {
         "name": "Malik Washington",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 47880
+        "count": 48088
       },
       {
         "name": "Josh Jacobs",
         "pos": "RB",
         "team": "GB",
         "status": "NA",
-        "count": 46695
+        "count": 46980
       },
       {
         "name": "Chris Rodriguez",
         "pos": "RB",
         "team": "JAX",
         "status": null,
-        "count": 45567
+        "count": 45900
       },
       {
         "name": "Malik Davis",
         "pos": "RB",
         "team": "DAL",
         "status": null,
-        "count": 44946
+        "count": 45225
       },
       {
         "name": "Tank Bigsby",
         "pos": "RB",
         "team": "PHI",
         "status": null,
-        "count": 44380
+        "count": 44625
       },
       {
         "name": "Jordyn Tyson",
         "pos": "WR",
         "team": "NO",
         "status": "IR",
-        "count": 43240
+        "count": 43416
       },
       {
         "name": "Emanuel Wilson",
         "pos": "RB",
         "team": "SEA",
         "status": null,
-        "count": 43011
+        "count": 43272
       },
       {
         "name": "Brian Robinson",
         "pos": "RB",
         "team": "ATL",
         "status": null,
-        "count": 42552
+        "count": 42804
       },
       {
         "name": "Caleb Douglas",
         "pos": "WR",
         "team": "MIA",
         "status": null,
-        "count": 40640
+        "count": 40848
       },
       {
         "name": "Emmett Johnson",
         "pos": "RB",
         "team": "KC",
         "status": null,
-        "count": 40428
+        "count": 40599
       },
       {
         "name": "Kaelon Black",
         "pos": "RB",
         "team": "SF",
         "status": null,
-        "count": 38794
+        "count": 39053
       },
       {
         "name": "Chimere Dike",
         "pos": "WR",
         "team": "TEN",
         "status": null,
-        "count": 38070
+        "count": 38340
       },
       {
         "name": "Isiah Pacheco",
         "pos": "RB",
         "team": "DET",
         "status": "IR",
-        "count": 37984
+        "count": 38200
       },
       {
         "name": "Terrance Ferguson",
         "pos": "TE",
         "team": "LAR",
         "status": null,
-        "count": 37808
+        "count": 37952
       },
       {
         "name": "Zach Ertz",
         "pos": "TE",
         "team": null,
         "status": null,
-        "count": 37386
+        "count": 37647
       },
       {
         "name": "Kyle Monangai",
         "pos": "RB",
         "team": "CHI",
         "status": "Questionable",
-        "count": 35070
+        "count": 35310
       },
       {
         "name": "Zachariah Branch",
         "pos": "WR",
         "team": "ATL",
         "status": null,
-        "count": 34528
+        "count": 34688
       },
       {
         "name": "Minnesota Vikings",
         "pos": "DEF",
         "team": "MIN",
         "status": null,
-        "count": 34515
+        "count": 34665
       },
       {
         "name": "KC Concepcion",
         "pos": "WR",
         "team": "CLE",
         "status": null,
-        "count": 33489
+        "count": 33687
       },
       {
         "name": "Jam Miller",
         "pos": "RB",
         "team": null,
         "status": "Questionable",
-        "count": 33336
+        "count": 33552
       },
       {
         "name": "Sean Tucker",
         "pos": "RB",
         "team": "TB",
         "status": "Questionable",
-        "count": 33111
+        "count": 33363
       },
       {
         "name": "Khalil Shakir",
         "pos": "WR",
         "team": "BUF",
         "status": "Questionable",
-        "count": 33030
+        "count": 33264
       },
       {
         "name": "Darren Waller",
         "pos": "TE",
         "team": "CAR",
         "status": null,
-        "count": 32508
+        "count": 32796
       }
     ]
   },

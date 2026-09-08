@@ -7,6 +7,14 @@ on:
     - cron: "0 11 * * *"
     # Tuesday morning extra run, after Monday night games settle.
     - cron: "0 13 * * 2"
+    # Sunday late morning, 15:00 UTC = 11:00 AM ET, an hour before the early
+    # window. The overnight pull is twenty hours old by kickoff, which means
+    # the lineup warnings can be telling somebody their kicker is questionable
+    # when he was ruled out at nine. A stale warning is worse than none,
+    # because people act on it.
+    - cron: "0 15 * * 0"
+    # And again just before the late window, for anyone still deciding.
+    - cron: "0 19 * * 0"
   workflow_dispatch: {}   # lets you run it by hand from the Actions tab
 
 permissions:

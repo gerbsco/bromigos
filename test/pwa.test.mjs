@@ -36,8 +36,21 @@ ok("has a name and a short name", () => manifest.name && manifest.short_name);
 ok("short name fits under a home screen icon", () =>
   [manifest.short_name.length <= 12, manifest.short_name]);
 ok("opens standalone, without browser chrome", () => manifest.display === "standalone");
+
+/* The colour is read off the page rather than written here twice. Hardcoding
+   it meant that changing the app's background silently left this asserting a
+   shade that no longer existed anywhere, which is worse than not checking:
+   the launch splash and the page really can drift apart and nobody would see
+   it except as a white flash on open. */
+const pageTheme = (html.match(/name="theme-color"[^>]*content="([^"]+)"/) || [])[1];
+ok("the page declares a theme colour to match against", () =>
+  [!!pageTheme, String(pageTheme)]);
 ok("colours match the app so there is no white flash", () =>
-  manifest.background_color === "#0E2438" && manifest.theme_color === "#0E2438");
+  [manifest.background_color === pageTheme && manifest.theme_color === pageTheme,
+   `page ${pageTheme}, manifest ${manifest.theme_color} / ${manifest.background_color}`]);
+ok("both manifest colours agree with each other", () =>
+  [manifest.background_color === manifest.theme_color,
+   manifest.background_color + " vs " + manifest.theme_color]);
 
 /* GitHub Pages serves this from /bromigos/, not the domain root */
 ok("paths are relative, so the subpath is not hardcoded", () => {

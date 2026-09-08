@@ -67,7 +67,12 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   ok(tag + " owners still render", () => byId("dossiers").innerHTML.indexOf("Dawson") >= 0);
   ok(tag + " all-time ledger renders", () => byId("tall").innerHTML.indexOf("Scotty") >= 0);
   ok(tag + " recap shows the preseason lock", () =>
-    byId("recap").innerHTML.indexOf("First writeup lands after Week 1") >= 0);
+    [byId("recap").innerHTML.indexOf("Nothing to write about yet") >= 0,
+     byId("recap").innerHTML.replace(/<[^>]*>/g," ").slice(0,80)]);
+  /* and must not announce a draft that has not happened, which liveDraft()
+     alone would have done under ?pack=1 */
+  ok(tag + " recap does not claim the draft is done", () =>
+    byId("recap").innerHTML.indexOf("The draft is done") < 0);
   ok(tag + " autopack refuses to fire", () => { S.maybeAutoPack(); return true; });
 }
 
@@ -107,9 +112,7 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
     byId("binderBody").innerHTML.indexOf("Pick your name") >= 0);
 }
 
-/* ============ draft night: tabs unlocked, ESPN rosters not in yet ============
-   The gap between the draft unlocking and league.json refreshing. The app used
-   to fall back to invented players here, on the public link. */
+/* ============ draft night: tabs unlocked, ESPN rosters not in yet ============ */
 {
   const { sandbox: S, byId, setVar, warnings } =
     boot({ search: "", now: "2026-09-07T00:00:00Z" });
@@ -176,10 +179,7 @@ const empty = (byId, id) => byId(id) && byId(id).innerHTML === "";
   ok(tag + " history subnav visible", () => byId("histNav").style.display === "flex");
 }
 
-/* ---------- no offered tab may open onto nothing ----------
-   The Records tab shipped ungated while its contents were gated, so before the
-   draft it appeared in the League row and led to a blank screen. This walks
-   every destination and sub-tab at each phase and opens it. */
+/* ---------- no offered tab may open onto nothing ---------- */
 {
   const BODY = { team:"teamBody", records:"recordsBody", trade:"tradeBody",
                  wire:"wireBody", binder:"binderBody", history:"dossiers" };

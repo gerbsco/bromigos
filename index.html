@@ -2063,13 +2063,14 @@ function h2hTopRival(a, mgrs, ix){
 /* every completed result, by manager, straight off the real ESPN schedule */
 function weeklyResults(throughWeek){
   const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
-  const weeks = [...new Set(sch.map(m => m.matchupPeriodId))]
+  /* Weeks ESPN still knows about, plus any that only survive in the archive,
+     so a schedule that has lost its history does not lose the rankings too. */
+  const weeks = [...new Set(sch.map(m => m.matchupPeriodId).concat(archivedWeeks()))]
     .filter(Number.isFinite).sort((a,b) => a-b);
   const out = {};
   weeks.forEach(wk => {
     if(throughWeek && wk > throughWeek) return;
-    weekGames(wk).forEach(g => {
-      if(!g.done) return;
+    settledGames(wk).forEach(g => {
       (out[g.home] = out[g.home] || []).push({ wk, pts:g.homePts, opp:g.away, oppPts:g.awayPts });
       (out[g.away] = out[g.away] || []).push({ wk, pts:g.awayPts, opp:g.home, oppPts:g.homePts });
     });
@@ -2360,6 +2361,31 @@ function pickWeek(){
   return all.length ? Math.max(...all) : 1;
 }
 
+/* ---------- settled results ----------
+   Scores used to be recomputed from ESPN every time the page painted, with
+   nothing stored. If that view ever stopped reporting completed weeks, or a
+   pull wrote a schedule missing them, every past pick'em score and every power
+   ranking would have silently gone to zero with nothing to fall back on.
+
+   The nightly job now freezes each week's outcomes into weekly.json once it is
+   final. This prefers those, and falls back to ESPN for the week in progress
+   and for anything not yet frozen. */
+function archivedGames(wk){
+  const t = (WEEKLY && WEEKLY.results) ? WEEKLY.results[String(wk)] : null;
+  if(!Array.isArray(t) || !t.length) return null;
+  const out = t.filter(g => g && g.home && g.away).map(g => ({
+    id: String(g.id), home: String(g.home), away: String(g.away),
+    homePts: Number(g.homePts) || 0, awayPts: Number(g.awayPts) || 0, done: true }));
+  return out.length ? out : null;
+}
+function archivedWeeks(){
+  const t = (WEEKLY && WEEKLY.results) || null;
+  return t ? Object.keys(t).map(Number).filter(Number.isFinite) : [];
+}
+function settledGames(wk){
+  return archivedGames(wk) || weekGames(wk).filter(g => g.done);
+}
+
 function weekGames(wk){
   const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
   const idx = teamIndex();
@@ -2381,8 +2407,7 @@ function weekGames(wk){
 function scoreWeek(wk, manager){
   const picks = (PICKS[String(wk)] || {})[manager] || {};
   let pts = 0, right = 0, done = 0, max = 0;
-  weekGames(wk).forEach(g => {
-    if(!g.done) return;
+  settledGames(wk).forEach(g => {
     done++;
     const entry = picks[g.id] || {};
     const conf = Number(entry.c) || 0;

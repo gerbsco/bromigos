@@ -62,9 +62,18 @@ const at = now => {
   const { sandbox: S } = at("2026-09-16T12:00:00Z");   // after week 1 kickoff
   ok("week 1 is locked once its kickoff has passed", () => S.picksLocked(1) === true);
   ok("a future week is still open", () => S.picksLocked(3) === false);
+  /* Seven days apart in wall clock terms, not in UTC. The first Sunday in
+     November moves the clocks and a flat seven day step would have shut the
+     week an hour early from week 9 onward. */
   ok("each week locks seven days after the one before", () => {
     const gap = S.lockAt(4) - S.lockAt(3);
     return [gap === 7 * 86400000, gap / 86400000 + " days"];
+  });
+  ok("and stays at the same clock time across the November change", () => {
+    const et = t => new Date(t).toLocaleString("en-US",
+      { timeZone:"America/New_York", hour:"numeric", minute:"2-digit" });
+    const times = [1, 8, 9, 14].map(w => et(S.lockAt(w)));
+    return [times.every(t => t === "8:15 PM"), times.join(", ")];
   });
 }
 {
@@ -206,6 +215,23 @@ const at = now => {
     const h = byId("picksBody").innerHTML;
     return /Tap the winner of each game, then rank them/.test(h);
   });
+}
+
+/* ---------- entries must not carry across weeks ----------
+   myPicks is keyed by game id. Week 1's ids mean nothing in week 2, so an
+   entry left over from last week made the ranking look invalid and, worse,
+   a save would have posted last week's picks into this week's row. */
+{
+  const { sandbox: S, byId, setVar, getVar } = at("2026-09-16T12:00:00Z");
+  setVar("myPicks", JSON.stringify({ "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} }));
+  setVar("myPicksWeek", "1");
+  S.renderPicks();
+  ok("last week's entry is dropped when the week turns over", () => {
+    const keys = Object.keys(getVar("myPicks"));
+    return [keys.every(k => k === "21" || k === "22"), JSON.stringify(keys)];
+  });
+  ok("and the week it belongs to is recorded", () =>
+    [getVar("myPicksWeek") === S.pickWeek(), String(getVar("myPicksWeek"))]);
 }
 
 /* ---------- something to rank on ---------- */

@@ -2282,12 +2282,19 @@ function renderPower(){
   const rows = powerMovement();
   if(!rows.length){
     const pre = preseasonRows();
+    /* Nothing played and no rosters either, so there is nothing to rank on
+       results and nothing to rank on projections. The lock says so. Dropping
+       it when the preseason table went in left this panel blank, which reads
+       as broken rather than as early. */
     el.innerHTML = pre ? `<h2>Power rankings</h2>
       <p class="note" style="margin:-4px 2px 10px">Preseason, and the first real
         entry in the table rather than a stand in. Every roster's best legal
         lineup for each of the ${weeksLeft().length} weeks left, byes taken out,
         divided by the weeks. It is a draft grade with the arithmetic shown.
-        Week 1's arrows measure against this.</p>${pre}` : "";
+        Week 1's arrows measure against this.</p>${pre}`
+      : `<h2>Power rankings</h2>` + lock("Nothing to rank yet",
+        "Rankings appear once a week has been played. Before that they are built"
+        + " from the rosters, which land the night of the draft.");
     return;
   }
 

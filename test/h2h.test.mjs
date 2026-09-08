@@ -25,14 +25,17 @@ ok("no console warnings during first paint", () => [warnings.length === 0, warni
 ok("PREVIEW is on for ?pack=1", () => getVar("PREVIEW") === true);
 ok("H2H starts null", () => getVar("H2H") === null);
 
-/* ---------- 2. empty state ---------- */
+/* ---------- 2. empty state ----------
+   The card is read by the league, not by whoever maintains the build, so it
+   says where the data comes from rather than naming a file in the repo. */
 S.renderH2H();
-ok("empty state renders a lock, not a crash", () => /No matchup file yet/.test(h()));
-ok("empty state names the build script", () => /scripts\/h2h\.mjs/.test(h()));
+ok("empty state renders a lock, not a crash", () => [/Nothing on file yet/.test(h()), h().slice(0,80)]);
+ok("empty state says the data arrives overnight", () =>
+  [/overnight job/.test(h()), h().slice(0,140)]);
+ok("empty state does not name a build script at the league", () =>
+  !/scripts\//.test(h()));
 
-/* ---------- 3. fixture with known answers ----------
-   Scotty vs Bo 3-1, Scotty vs Cody 0-2, Bo vs Cody 1-0.
-   Scotty's last two vs Bo are wins. Closest 1.0, best win 61.0. */
+/* ---------- 3. fixture with known answers ---------- */
 load({
   seasons: [2019, 2020],
   managers: ["Bo", "Cody", "Scotty"],

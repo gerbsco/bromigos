@@ -51,6 +51,13 @@ const LAST_WEEK = 14;
 
 const WANT = new Set(["QB", "RB", "WR", "TE", "K", "DEF"]);
 
+/* league.json is written by fetch.js with view=mRoster and no scoring period,
+   so it carries whatever week ESPN considers current. Past weeks' actuals may
+   simply not be in it, and a week that cannot be closed never gets scored. So
+   there is a direct fallback: ask ESPN for that week by name. */
+const ESPN_LEAGUE = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/${SEASON}`
+  + `/segments/0/leagues/24869044`;
+
 async function getText(url) {
   const res = await fetch(url, { headers: UA });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -503,19 +510,38 @@ async function main() {
         log[String(live)] = { week: live, final: false, players };
     }
 
-    /* any earlier week with actuals in hand gets its answers and is closed */
-    Object.keys(log).map(Number).filter(w => Number.isFinite(w) && w < live)
-      .forEach(w => {
+    /* any earlier week with actuals in hand gets its answers and is closed.
+       A for loop rather than forEach, because closing a week can need a
+       request and you cannot await inside a forEach callback. */
+    const toClose = Object.keys(log).map(Number)
+      .filter(w => Number.isFinite(w) && w < live).sort((a, b) => a - b);
+    for (const w of toClose) {
+      {
         const entry = log[String(w)];
-        if (!entry || entry.final) return;
-        const real = actualsFor(league, w);
+        if (!entry || entry.final) continue;
+        let real = actualsFor(league, w);
+        let src = "league.json";
+        if (!Object.keys(real).length) {
+          try {
+            const d = await getJSON(`${ESPN_LEAGUE}?view=mRoster&scoringPeriodId=${w}`);
+            real = actualsFor({ rosters: d }, w);
+            src = "espn";
+          } catch (err) {
+            console.log(`     accuracy: week ${w} actuals unavailable (${err.message})`);
+          }
+        }
         let filled = 0;
         Object.keys(entry.players).forEach(id => {
           if (typeof real[id] === "number") { entry.players[id].actual = real[id]; filled++; }
         });
-        if (filled) { entry.final = true; console.log(`ok   accuracy: week ${w} closed, ${filled} players`); }
-        else console.log(`     accuracy: week ${w} has no actuals yet, left open`);
-      });
+        if (filled) {
+          entry.final = true;
+          console.log(`ok   accuracy: week ${w} closed, ${filled} players <- ${src}`);
+        } else {
+          console.log(`     accuracy: week ${w} has no actuals yet, left open`);
+        }
+      }
+    }
 
     log.summary = scoreAccuracy(log);
     writeFileSync(LOG, JSON.stringify(log, null, 2));

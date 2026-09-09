@@ -317,6 +317,22 @@ const WEEK = {
     const card = S.pickemCard({ pts:3, right:2, done:2 }, false);
     return [card.icon !== card.art, card.icon + " vs " + card.art];
   });
+  /* .side has no stacking context, so a z-index inside the back face competes
+     with the front face rather than its own siblings, and the mirrored crest
+     painted straight through the card. */
+  ok("the back face cannot paint through the front", () => {
+    const css = readFileSync(join(HERE, "..", "index.html"), "utf8")
+      .replace(/\s+/g, " ");
+    return [/\.pickemback\{isolation:isolate\}/.test(css)
+      && /\.cons\.pickem\{isolation:isolate\}/.test(css), "both isolated"];
+  });
+  ok("and nothing on the front is see-through", () => {
+    const css = readFileSync(join(HERE, "..", "index.html"), "utf8");
+    const art = (css.match(/\.cons\.pickem \.consArt\{[\s\S]*?\}/) || [""])[0];
+    const bg = art.split("box-shadow")[0];
+    return [bg.indexOf("rgba") < 0, bg.trim().slice(0, 60)];
+  });
+
   ok("the art well is not the shared near-black", () => {
     const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
     return [/\.cons\.pickem \.consArt\{background:/.test(html.replace(/\s+/g, " ")),

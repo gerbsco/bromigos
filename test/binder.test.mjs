@@ -223,5 +223,123 @@ const WEEK = {
     !keys.includes("bromigos.binder.Scotty"));
 }
 
+
+/* ---------- the pick'em card ----------
+   One a week, to whoever topped the confidence board, on the FUT Birthday
+   palette. It is not an ESPN result so it cannot come from the pack payload;
+   it is computed from the picks and the frozen results. Fixed art, so a binder
+   rebuilt in December reproduces it exactly. */
+{
+  const { sandbox: S, setVar } =
+    boot({ search: "?pack=1", now: AFTER_PACKS, storage: true });
+  setVar("ME", '"Scotty"');
+  setVar("LIVE", JSON.stringify({
+    settings:{ draftDetail:{ drafted:true } },
+    teams:{ members:[{id:"{A}",firstName:"Scott"},{id:"{B}",firstName:"bo"},
+                     {id:"{C}",firstName:"Andrew"},{id:"{D}",firstName:"Cody"}],
+      teams:[{id:1,owners:["{A}"]},{id:2,owners:["{B}"]},
+             {id:3,owners:["{C}"]},{id:4,owners:["{D}"]}]},
+    matchups:{ schedule:[
+      {id:11,matchupPeriodId:1,winner:"HOME",home:{teamId:1,totalPoints:151},away:{teamId:2,totalPoints:100}},
+      {id:12,matchupPeriodId:1,winner:"AWAY",home:{teamId:3,totalPoints:90},away:{teamId:4,totalPoints:110}}]}}));
+  setVar("PICKS", JSON.stringify({ "1": {
+    Scotty: { "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} },
+    Bo:     { "11":{w:"Scotty",c:1}, "12":{w:"Dawson",c:2} },
+    Cody:   { "11":{w:"Bo",c:2},     "12":{w:"Dawson",c:1} } } }));
+  const pack = m => ({ manager:m, myScore:151, oppScore:100, opponent:"Bo",
+    leagueHigh:true, rank:1, bench:12, record:"1-0", high:30, projected:120,
+    awards:[{title:"Scoring Machine",stat:"151.0 points",rare:true,
+             reason:"Highest score in the league",desc:"Most points."}] });
+
+  ok("the winner is read off the picks and the results", () => {
+    const w = S.pickemWinners(1);
+    return [w.length === 1 && w[0].manager === "Scotty" && w[0].pts === 3,
+      JSON.stringify(w)];
+  });
+  ok("the winner's pack carries the card", () => {
+    const c = S.buildWeekCards(pack("Scotty"), 1);
+    return [c.some(x => x.rarity === "pickem"), c.map(x => x.title).join(",")];
+  });
+  ok("nobody else's does", () =>
+    !S.buildWeekCards(pack("Cody"), 1).some(x => x.rarity === "pickem"));
+  ok("it uses its own skin, not a superlative's", () => {
+    const card = S.buildWeekCards(pack("Scotty"), 1).find(x => x.rarity === "pickem");
+    return [/class="cons pickem/.test(S.consCardHTML(card)), "pickem class"];
+  });
+  ok("its art is fixed and the deduper leaves it alone", () => {
+    const a = S.buildWeekCards(pack("Scotty"), 1).find(x => x.rarity === "pickem").art;
+    const b = S.buildWeekCards(pack("Scotty"), 1).find(x => x.rarity === "pickem").art;
+    return [a === b && a === "\u{1F52E}", a];
+  });
+  ok("the reason states the score that won it", () => {
+    const card = S.buildWeekCards(pack("Scotty"), 1).find(x => x.rarity === "pickem");
+    return [/3 points, 2 of 2 right/.test(card.reason), card.reason];
+  });
+  ok("a tie gives both of them one", () => {
+    setVar("PICKS", JSON.stringify({ "1": {
+      Scotty: { "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} },
+      Bo:     { "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} } } }));
+    const w = S.pickemWinners(1);
+    const card = S.buildWeekCards(pack("Bo"), 1).find(x => x.rarity === "pickem");
+    return [w.length === 2 && !!card && /Tied/.test(card.reason),
+      JSON.stringify(w.map(x => x.manager))];
+  });
+  ok("no picks on file means no card rather than a wrong one", () => {
+    setVar("PICKS", "{}");
+    return !S.buildWeekCards(pack("Scotty"), 1).some(x => x.rarity === "pickem");
+  });
+}
+
+/* ---------- somebody who has never opened the app ----------
+   A manager who first picks their name in week 5 must still receive every
+   week that has been archived, not start from empty. */
+{
+  const LIVE = JSON.stringify({
+    settings:{ draftDetail:{ drafted:true } },
+    teams:{ members:[{id:"{A}",firstName:"Scott"},{id:"{B}",firstName:"bo"}],
+      teams:[{id:1,owners:["{A}"]},{id:2,owners:["{B}"]}]},
+    matchups:{ schedule:[1,2,3,4].map(w => ({ id:10+w, matchupPeriodId:w, winner:"HOME",
+      home:{teamId:1,totalPoints:120+w}, away:{teamId:2,totalPoints:110+w} })) }});
+  const pk = (m,w) => ({ manager:m, myScore:120+w, oppScore:110+w, opponent:"Bo",
+    rank:2, bench:10+w, record:w+"-0", high:22, projected:118, crest:"img/x.png",
+    awards:[{title:"Blowout King",stat:"Won by 10",rare:true,reason:"Biggest margin",
+             desc:"Over by noon."}] });
+  const hist = {}; [1,2,3,4].forEach(w => {
+    hist[String(w)] = { Scotty:pk("Scotty",w), Bo:pk("Bo",w) }; });
+
+  const { sandbox: S, byId, setVar } =
+    boot({ search:"", now:"2026-10-06T15:00:00Z", storage: true });
+  setVar("LIVE", LIVE);
+  setVar("WEEKLY", JSON.stringify({ week:4, posted:"2026-10-06", headline:"W4",
+    body:["x"], changed:[], packs: hist["4"], history: hist }));
+  S.renderBinder();
+  ok("nothing is invented before a name is chosen", () =>
+    [S.readBinder().length === 0 &&
+      byId("binderBody").innerHTML.indexOf("Pick your name") >= 0, "clean"]);
+
+  setVar("ME", '"Scotty"');
+  S.renderBinder();
+  ok("choosing a name in week 5 recovers every archived week", () => {
+    const wks = [...new Set(S.readBinder().map(c => c.week))].sort().join(",");
+    return [wks === "1,2,3,4", wks];
+  });
+  ok("and says how many were recovered", () =>
+    [/rebuilt from the league archive/.test(byId("binderBody").innerHTML), "said"]);
+  /* Bo appears legitimately as the opponent on Scotty's cards. What must not
+     appear is a card belonging to Bo. */
+  ok("nobody else's cards come with them", () => {
+    const owners = [...new Set(S.readBinder()
+      .filter(c => c.type === "match").map(c => c.title))];
+    return [owners.length === 1 && owners[0] === "Scotty", owners.join(",")];
+  });
+
+  setVar("ME", '"Bo"');
+  S.renderBinder();
+  ok("a second manager on the same phone gets his own", () => {
+    const wks = [...new Set(S.readBinder().map(c => c.week))].sort().join(",");
+    return [wks === "1,2,3,4" && S.readBinder().length === 8, wks];
+  });
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

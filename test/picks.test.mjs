@@ -350,6 +350,30 @@ const at = now => {
     return [r.pts === 1, JSON.stringify(r)];   // loses the 2-point game
   });
 
+  /* A frozen week that lost a game must not replace a complete week. A name
+     that failed to resolve when the archive was written would otherwise drop
+     that game from the pick'em and drop whole teams out of the power rankings,
+     permanently and silently. */
+  ok("a partial archive does not override a complete week", () => {
+    const s = at2(WEEK1, { "1": [
+      { id:"11", home:"Scotty", away:"Bo", homePts:120, awayPts:100 }] });
+    const r = s.scoreWeek(1, "Scotty");
+    return [r.done === 2 && r.pts === 3, JSON.stringify(r)];
+  });
+  ok("nor drop teams out of the rankings", () => {
+    const s = at2(WEEK1, { "1": [
+      { id:"11", home:"Scotty", away:"Bo", homePts:120, awayPts:100 }] });
+    return [Object.keys(s.weeklyResults()).length === 4,
+      Object.keys(s.weeklyResults()).join(",")];
+  });
+  ok("a complete archive is still preferred over ESPN", () => {
+    const moved2 = at2(WEEK1, { "1": [
+      { id:"11", home:"Scotty", away:"Bo", homePts:100, awayPts:120 },
+      { id:"12", home:"Dawson", away:"Cody", homePts:90, awayPts:110 }] });
+    return [moved2.scoreWeek(1, "Scotty").pts === 1,
+      JSON.stringify(moved2.scoreWeek(1, "Scotty"))];
+  });
+
   ok("an empty archive falls back rather than scoring nothing", () => {
     const s = at2(WEEK1, { "1": [] });
     return [s.scoreWeek(1, "Scotty").pts === 3, JSON.stringify(s.scoreWeek(1, "Scotty"))];

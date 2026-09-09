@@ -3015,7 +3015,18 @@ function archivedWeeks(){
   return t ? Object.keys(t).map(Number).filter(Number.isFinite) : [];
 }
 function settledGames(wk){
-  return archivedGames(wk) || weekGames(wk).filter(g => g.done);
+  const live = weekGames(wk).filter(g => g.done);
+  const arch = archivedGames(wk);
+  if(!arch) return live;
+  /* The archive is authoritative only while it is complete. A frozen week that
+     lost a game, because a manager's name failed to resolve when it was
+     written or because a run was cut short, would otherwise permanently
+     replace a full week with a partial one: the power rankings would quietly
+     drop whole teams and the pick'em would stop scoring games that were
+     played. If ESPN still knows about more games than the archive holds, ESPN
+     wins for that week. */
+  if(live.length > arch.length) return live;
+  return arch;
 }
 
 function weekGames(wk){

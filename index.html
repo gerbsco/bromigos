@@ -559,6 +559,34 @@
   .cons.shame .consTab{background:linear-gradient(160deg,#7C5B49,#4A3428)}
   .cons.shame .consFoot{background:rgba(0,0,0,.3)}
 
+  /* The pick'em card, off the FUT Birthday palette: mint base, coral panel,
+     confetti thrown across it. Same shape as every other card, because the
+     shape is the thing that makes them a set. One of these exists per week and
+     only one person gets it. */
+  .cons.pickem{background:linear-gradient(160deg,#7FE3DA,#3FBFB6 46%,#67D8CE);
+    color:#7A1B22}
+  .cons.pickem::before{content:"";position:absolute;inset:0;pointer-events:none;
+    opacity:.85;
+    background-image:
+      radial-gradient(4px 7px at 12% 14%, #F0455A 96%, transparent 0),
+      radial-gradient(6px 4px at 78% 9%,  #FFD25E 96%, transparent 0),
+      radial-gradient(4px 6px at 26% 33%, #FFFFFF 96%, transparent 0),
+      radial-gradient(5px 5px at 88% 41%, #F0455A 96%, transparent 0),
+      radial-gradient(7px 4px at 8%  62%, #FFD25E 96%, transparent 0),
+      radial-gradient(4px 7px at 61% 72%, #FFFFFF 96%, transparent 0),
+      radial-gradient(5px 5px at 34% 88%, #F0455A 96%, transparent 0),
+      radial-gradient(6px 4px at 91% 84%, #FFFFFF 96%, transparent 0)}
+  .cons.pickem>*{position:relative;z-index:1}
+  .cons.pickem .consTab{background:linear-gradient(160deg,#FF8A94,#E03A4E);
+    color:#FFF4F5}
+  .cons.pickem .consTitle{color:#7A1B22}
+  .cons.pickem .consName,
+  .cons.pickem .consWhy{color:#5E1319}
+  .cons.pickem .consDesc{color:rgba(94,19,25,.78)}
+  .cons.pickem .consFoot{background:rgba(224,58,78,.9);color:#FFF4F5}
+  .cons.pickem .rarityTag{background:rgba(224,58,78,.92);color:#FFF4F5;
+    border-color:rgba(255,255,255,.5)}
+
   .packbar{position:relative;z-index:6;margin-top:16px;display:flex;align-items:center;
     justify-content:center;gap:12px}
   .dots{display:flex;gap:5px}
@@ -7024,6 +7052,8 @@ const ART = {
   low:      ["\u{1F480}","\u{1FAE0}","\u{1F921}","\u{1FAA6}"]
 };
 const FIXED = {
+  /* the pick'em card, one a week, never rotated */
+  pickem: "\u{1F52E}",
   totw:     "\u{1F451}",     // league high
   blowoutW: S_("firepit"),   // won big
   tightL:   S_("copium"),    // lost close
@@ -7045,6 +7075,10 @@ function dedupeArt(cards){
   cards.forEach((c, i) => {
     const a = c.art;
     if(i === 0){ used.add(a); return; }          // result card always keeps its art
+    /* The pick'em card is one picture, deliberately. Letting the deduper swap
+       it for whatever is next in the pool would make the rarest card in the
+       set look like any other superlative. */
+    if(c.fixedArt){ used.add(a); return; }
     if(a && !used.has(a)){ used.add(a); return; }
     const pool = c.pool === "bad" ? SUB.bad : SUB.good;
     const swap = pool.find(x => !used.has(x));
@@ -7106,8 +7140,52 @@ function buildWeekCards(w, wk){
     flare: a.good===false ? "bronzeC" : (a.rare ? "gold" : "silverC")
   }));
 
+  /* ---------- the pick'em card ----------
+     One a week, to whoever topped the confidence board. It is not an ESPN
+     result so it cannot come from the pack payload; it is computed from the
+     picks and the frozen results, both of which settle at the same time the
+     week does. Fixed art, so a rebuilt binder reproduces it exactly. */
+  const winners = pickemWinners(wk);
+  const who = w.manager || ME;
+  if(who && winners.some(x => x.manager === who)){
+    const win = winners.find(x => x.manager === who);
+    const shared = winners.length > 1;
+    out.push({ type:"cons", rarity:"pickem", rarityLabel:"Pick'em",
+      kind:"Weekly Pick'em", icon:"\u{1F52E}", art:FIXED.pickem,
+      pool:"good", title:"Called It",
+      reason: shared
+        ? `Tied the pick'em on ${win.pts} points, ${win.right} of ${win.done} right`
+        : `Won the pick'em on ${win.pts} points, ${win.right} of ${win.done} right`,
+      desc: shared
+        ? "Shared the week. Somebody else read it exactly as well, which takes the shine off."
+        : "Nobody read the week better. One of these exists and it went to you.",
+      value: win.pts + " pts", flare:"gold", fixedArt:true });
+  }
+
   /* No filler card. A week that earned nothing is a one card pack. */
   return dedupeArt(out);
+}
+
+/* Who topped the confidence board for a settled week. Ties all win, because a
+   tie is rare enough to be worth two cards and arbitrary enough that picking
+   one of them would be worse. Returns nothing while the week is unsettled or
+   while the sheet has not answered. */
+function pickemWinners(wk){
+  if(!wk) return [];
+  const week = (PICKS || {})[String(wk)] || null;
+  if(!week || !Object.keys(week).length) return [];
+  const games = settledGames(wk);
+  if(!games.length) return [];
+
+  const rows = Object.keys(week).map(m => {
+    const r = scoreWeek(wk, m);
+    return { manager: m, pts: r.pts, right: r.right, done: r.done };
+  }).filter(r => r.done > 0);
+  if(!rows.length) return [];
+
+  const top = Math.max(...rows.map(r => r.pts));
+  if(top <= 0) return [];
+  return rows.filter(r => r.pts === top);
 }
 
 function maybeAutoPack(){

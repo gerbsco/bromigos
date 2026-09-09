@@ -99,20 +99,37 @@ jobs:
           fi
           echo "all green"
 
+      # Two runs have now ended with data/accuracy.json missing and no way to
+      # tell whether the script never wrote it, wrote it and git ignored it, or
+      # whether the repo is even running the version that writes it. This says
+      # so out loud rather than leaving it to be guessed at again.
+      - name: What is actually in data
+        if: always()
+        run: |
+          echo "::group::files on disk"
+          ls -la data || echo "no data directory"
+          echo "::endgroup::"
+          echo "::group::what git sees"
+          git status --porcelain -- data || true
+          git check-ignore -v data/accuracy.json || echo "accuracy.json is not ignored"
+          echo "::endgroup::"
+          echo "::group::which version of the script is checked out"
+          grep -c "accuracy log" scripts/projections.mjs \
+            || echo "MISSING: this projections.mjs has no accuracy block in it"
+          grep -c "captureWeek" scripts/projections.mjs || true
+          echo "::endgroup::"
+
       - name: Commit if anything changed
         run: |
           git config user.name "bromigos-bot"
           git config user.email "actions@github.com"
-          git add data/league.json
-          if [ -f data/h2h.json ]; then
-            git add data/h2h.json
-          fi
-          if [ -f data/weekly.json ]; then
-            git add data/weekly.json
-          fi
-          if [ -f data/projections.json ]; then
-            git add data/projections.json
-          fi
+          # The whole directory, not a hand kept list. Naming the files one by
+          # one means anything a script starts writing is generated on every
+          # run and thrown away, with nothing in the log to say so. That is
+          # exactly what happened to data/accuracy.json, which is the file the
+          # projection scorecard is built from and the one thing that cannot be
+          # recovered after a week has been played.
+          git add -A data
           if git diff --staged --quiet; then
             echo "No changes."
           else

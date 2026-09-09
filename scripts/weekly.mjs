@@ -528,11 +528,21 @@ async function main() {
     console.log("     kept the written writeup for this week");
   }
 
+  /* The preseason power ranking, frozen the first time this runs and never
+     touched again. The app can recompute it from today's rosters, but by
+     November those are not the preseason rosters, and a retrospective that
+     quietly rewrites what it predicted is worth nothing. */
+  const preseason = (old && Array.isArray(old.preseason) && old.preseason.length)
+    ? old.preseason : null;
+  if (preseason) console.log(`ok   preseason ranking held (${preseason.length} teams)`);
+  else console.log("     no preseason ranking on file, the app will post one");
+
   mkdirSync("data", { recursive: true });
   writeFileSync(OUT, JSON.stringify({
     week,
     posted: new Date().toISOString().slice(0, 10),
     ...prose,
+    ...(preseason ? { preseason } : {}),
     packs,
     history,
     results

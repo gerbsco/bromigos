@@ -305,6 +305,24 @@ const WEEK = {
       && real.rarity === bench.rarity && real.kind === bench.kind,
       real.title + " / " + bench.title];
   });
+  /* The back used to flip over to gold, which is a different card to the one
+     you are about to see. */
+  ok("the back of the card matches the front", () => {
+    const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
+    const card = S.pickemCard({ pts:3, right:2, done:2 }, false);
+    return [card.flare === "pickem" && /pickem:\s*\{/.test(html)
+      && /pickemback/.test(html), "flare " + card.flare];
+  });
+  ok("the corner badge is not a second copy of the art", () => {
+    const card = S.pickemCard({ pts:3, right:2, done:2 }, false);
+    return [card.icon !== card.art, card.icon + " vs " + card.art];
+  });
+  ok("the art well is not the shared near-black", () => {
+    const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
+    return [/\.cons\.pickem \.consArt\{background:/.test(html.replace(/\s+/g, " ")),
+      "own art well"];
+  });
+
   ok("the bench offers it under ?pack=1", () => {
     const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
     const demo = html.slice(html.indexOf('id="demo"'), html.indexOf('id="tabbar"'));

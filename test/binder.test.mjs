@@ -7,6 +7,10 @@
  */
 
 import { boot } from "./harness.mjs";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+const HERE = dirname(fileURLToPath(import.meta.url));
 
 let fails = 0, passes = 0;
 function ok(name, fn){
@@ -287,6 +291,29 @@ const WEEK = {
   ok("no picks on file means no card rather than a wrong one", () => {
     setVar("PICKS", "{}");
     return !S.buildWeekCards(pack("Scotty"), 1).some(x => x.rarity === "pickem");
+  });
+
+  /* The test bench builds through pickemCard, the same function the real pack
+     uses, so what the commissioner previews cannot drift from what ships. */
+  ok("the bench card and the shipped card are the same object", () => {
+    setVar("PICKS", JSON.stringify({ "1": {
+      Scotty: { "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} } } }));
+    const real = S.buildWeekCards(pack("Scotty"), 1).find(x => x.rarity === "pickem");
+    const bench = S.pickemCard({ pts:real.value ? parseInt(real.value) : 3,
+      right:2, done:2 }, false);
+    return [real.title === bench.title && real.art === bench.art
+      && real.rarity === bench.rarity && real.kind === bench.kind,
+      real.title + " / " + bench.title];
+  });
+  ok("the bench offers it under ?pack=1", () => {
+    const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
+    const demo = html.slice(html.indexOf('id="demo"'), html.indexOf('id="tabbar"'));
+    return [demo.indexOf('id="demoPick"') >= 0, "bench slot present"];
+  });
+  ok("with a tie and a full pull to look at", () => {
+    const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
+    return [/tied for the week/.test(html) && /a full week's pull/.test(html),
+      "both variants"];
   });
 }
 

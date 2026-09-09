@@ -378,7 +378,7 @@
       "4362081": {
         "pos": "K",
         "espn": 10.8,
-        "sleeper": 7.1,
+        "sleeper": 7.2,
         "actual": null
       },
       "4362238": {
@@ -615,12 +615,6 @@
         "sleeper": 9,
         "actual": null
       },
-      "4432710": {
-        "pos": "RB",
-        "espn": 0,
-        "sleeper": null,
-        "actual": null
-      },
       "4432773": {
         "pos": "WR",
         "espn": 8.6,
@@ -648,7 +642,7 @@
       "4569173": {
         "pos": "RB",
         "espn": 12.7,
-        "sleeper": 15.2,
+        "sleeper": 15,
         "actual": null
       },
       "4569587": {
@@ -906,7 +900,7 @@
       "-16024": {
         "pos": "DST",
         "espn": 7.5,
-        "sleeper": 8.4,
+        "sleeper": 8.5,
         "actual": null
       },
       "-16034": {

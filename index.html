@@ -967,6 +967,75 @@
     font-variant-numeric:tabular-nums}
   .blv.bad{color:var(--loss);font-weight:600}
 
+  /* one line under a heading, never a paragraph */
+  .subline{margin:-4px 2px 14px;font:400 13px/1.45 var(--display);color:var(--faint)}
+  .sec.how{margin-top:20px}
+  .sec.how>summary{font-size:14px;padding:13px 0}
+
+  /* A number on its own says nothing. The bar is the number against the best
+     in the table, so a glance tells you the shape before you read a digit. */
+  .barcell{position:relative}
+  .barfill{position:absolute;inset:auto 0 -6px 0;height:3px;border-radius:2px;
+    background:color-mix(in srgb,var(--accent) 55%,transparent)}
+  .barfill.dim{background:rgba(255,255,255,.16)}
+
+  /* ---------- start and sit ---------- */
+  .ssbox{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;
+    padding:14px 14px 12px;margin:0 0 14px}
+  .sshead{display:flex;align-items:baseline;gap:8px;margin:0 0 10px}
+  .sshead b{font:600 22px/1 var(--display);color:var(--win);
+    font-variant-numeric:tabular-nums}
+  .sshead span{font:400 13px/1.2 var(--display);color:var(--faint)}
+  .ssrow{display:grid;grid-template-columns:44px 1fr auto;align-items:center;
+    gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+  .ssslot{font:600 10.5px/1 var(--display);color:var(--faint);text-align:center;
+    background:rgba(255,255,255,.05);border-radius:7px;padding:6px 0}
+  .ssrow.bad .ssslot{color:var(--loss);background:rgba(248,113,113,.12)}
+  .sswho{min-width:0}
+  .sswho b{display:block;font:400 14.5px/1.2 var(--display);color:var(--chalk);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sswho span{display:block;margin-top:3px;font:400 11.5px/1.2 var(--display);
+    color:var(--faint)}
+  .ssgain{font:600 15px/1 var(--display);color:var(--win);
+    font-variant-numeric:tabular-nums}
+
+  /* ---------- player sheet ---------- */
+  #sheet{position:fixed;inset:0;z-index:60;pointer-events:none}
+  #sheet.open{pointer-events:auto}
+  .shscrim{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+  .shcard{position:absolute;left:0;right:0;bottom:0;background:var(--ink-1);
+    border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+    padding:8px 16px calc(20px + env(safe-area-inset-bottom));
+    max-height:82vh;overflow-y:auto}
+  .shgrab{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);
+    margin:0 auto 12px}
+  .shtop{display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+    gap:10px;margin:0 0 14px}
+  .shname{min-width:0}
+  .shname b{display:block;font:600 19px/1.2 var(--display);color:var(--chalk);
+    letter-spacing:-.02em}
+  .shname span{display:block;margin-top:3px;font:400 12px/1.2 var(--display);
+    color:var(--faint)}
+  .shx{background:none;border:0;color:var(--faint);font-size:26px;line-height:1;
+    padding:0 4px;cursor:pointer}
+  .shstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
+  .shstats div{background:var(--ink-2);border-radius:12px;padding:10px 12px}
+  .shstats b{display:block;font:600 18px/1 var(--display);color:var(--chalk);
+    font-variant-numeric:tabular-nums}
+  .shstats span{display:block;margin-top:4px;font:400 10.5px/1 var(--display);
+    color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
+  .shw{display:grid;grid-template-columns:1fr 56px 56px 56px;gap:8px;
+    padding:8px 2px;border-bottom:1px solid var(--line);
+    font:400 13.5px/1 var(--display);color:var(--dim);
+    font-variant-numeric:tabular-nums}
+  .shw span:first-child{color:var(--faint)}
+  .shw span:not(:first-child){text-align:right}
+  .shw b{color:var(--chalk);font-weight:600}
+  .shw.bye{opacity:.5}
+  .shhead{font:400 10.5px/1 var(--display);color:var(--faint);
+    text-transform:uppercase;letter-spacing:.06em;border-bottom:0}
+  [data-pid]{cursor:pointer}
+
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
     font:400 14px/1.5 var(--display);background:var(--ink-2);color:var(--dim)}
@@ -1111,8 +1180,14 @@
     <div id="recap"></div>
     <div id="powerMini"></div>
     <div id="awards"></div>
+    <div id="race"></div>
+    <div id="retro"></div>
+    <div id="weekdiff"></div>
     <div id="benchLedger"></div>
   </section>
+
+  <!-- Everything about one player, from anywhere his name appears. -->
+  <div id="sheet"></div>
 
   <section class="panel" id="trade">
     <div class="subnav" id="tradeNav" style="display:none">
@@ -1151,22 +1226,16 @@
     </div>
 
     <div id="h2hBody" style="display:none"></div>
-  </section>
 
-  <section class="panel" id="records"><div id="recordsBody"></div></section>
-
-  <!-- Every claim the site has made, scored against what happened. -->
-  <section class="panel" id="receipts"><div id="receiptsBody"></div></section>
-
-  <section class="panel" id="picks"><div id="picksBody"></div></section>
-
-  <section class="panel" id="power">
-    <div id="leagueBody"></div>
-    <div id="powerBody"></div>
-    <div id="snapshot"></div>
-  </section>
-
-  <section class="panel" id="rules">
+    <!-- Records and the rulebook were their own sub-tabs, sixth and seventh in
+         a row that scrolls sideways, which meant nobody ever saw them. They are
+         reference, and this is the page somebody looking up reference is on. -->
+    <details class="sec" data-sec="Records">
+      <summary>Records</summary>
+      <div id="recordsBody"></div>
+    </details>
+    <details class="sec" data-sec="Rules and calendar">
+      <summary>Rules and calendar</summary>
     <h2>Calendar</h2>
     <div class="rules">
       <div class="rule"><div class="k">Draft</div><div class="v">Sun Sept 6, 5:00 PM ET</div></div>
@@ -1193,7 +1262,20 @@
          of the last page in the League tab, for the one person who wants it in
          November. -->
     <div id="draft"></div>
+    </details>
   </section>
+
+  <!-- Every claim the site has made, scored against what happened. -->
+  <section class="panel" id="receipts"><div id="receiptsBody"></div></section>
+
+  <section class="panel" id="picks"><div id="picksBody"></div></section>
+
+  <section class="panel" id="power">
+    <div id="leagueBody"></div>
+    <div id="powerBody"></div>
+    <div id="snapshot"></div>
+  </section>
+
 
   <!-- Every roster in the league, on one screen. ESPN makes you tap through
        ten teams one at a time; this is the whole league graded in one scroll,
@@ -1344,7 +1426,11 @@ const DESTS = [
   ["home",   "Home",   ["hq"]],
   ["team",   "Team",   ["team"]],
   ["trades", "Trades", ["trade", "wire"]],
-  ["league", "League", ["power", "teams", "picks", "receipts", "history", "records", "rules"]],
+  /* Seven sub-tabs in a row that scrolls sideways means the last three do not
+     exist as far as anyone is concerned. Records and Rules are reference and
+     now live at the bottom of History, which is where somebody looking them up
+     would go anyway. */
+  ["league", "League", ["power", "teams", "picks", "receipts", "history"]],
   ["cards",  "Cards",  ["binder", "demo"]]
 ];
 const PANEL_LABEL = { hq:"Home", team:"My team", power:"Standings", teams:"Rosters", receipts:"Receipts", history:"History", records:"Records", picks:"Pick'em", rules:"Rules",
@@ -1361,7 +1447,10 @@ const DEST_TITLE = { home:"Bromigos", team:"My team", trades:"Trades",
    the tab was ungated while its contents were not. */
 function panelVisible(id){
   if(id === "team")    return liveDraft();
-  if(id === "records") return liveDraft();
+  /* Records and Rules are no longer destinations of their own. They live at the
+     bottom of History. Left here so nothing that still asks goes undefined. */
+  if(id === "records") return false;
+  if(id === "rules")   return false;
   if(id === "picks")   return liveDraft();
   if(id === "power")   return liveDraft();
   if(id === "teams")   return liveDraft();
@@ -1708,6 +1797,15 @@ const tname = t => (t.name||"").trim();
 const ZERO_REC = { wins:0, losses:0, ties:0, pointsFor:0, pointsAgainst:0 };
 const recOf = t => (t && t.record && t.record.overall) || ZERO_REC;
 
+/* ROSTERS entries are the normalised roster model and carry no record, so
+   handing one to recOf silently returns zeros. The record lives on ESPN's team
+   object, which is a lookup away by manager. */
+function recFor(manager){
+  const idx = teamIndex()[manager];
+  if(!idx) return ZERO_REC;
+  return recOf((teamList() || []).find(t => t.id === idx.id));
+}
+
 /* played games only */
 function playedGames(){
   const sch = (LIVE && LIVE.matchups && LIVE.matchups.schedule) || [];
@@ -1953,6 +2051,60 @@ function receipts(){
     .sort((a, b) => b.avg - a.avg);
 }
 
+/* ---------- the draft, revisited ----------
+   The preseason table was published as the first real entry in the power
+   rankings and then never mentioned again. Scoring it out loud at the quarter
+   mark is the funniest thing the archive can produce, and it only works
+   because the ranking was frozen rather than recomputed. */
+function draftRetro(){
+  const pre = (WEEKLY && WEEKLY.preseason) || null;
+  const now = powerMovement();
+  if(!pre || !now.length) return null;
+  const played = playedGames().length;
+  if(played < 4) return null;                 // nothing to say before the quarter mark
+
+  const was = {};
+  (Array.isArray(pre) ? pre : []).forEach((m, i) => { was[m] = i + 1; });
+  const rows = now.map((r, i) => ({
+    manager: r.manager, now: i + 1, was: was[r.manager] || null,
+    move: was[r.manager] ? was[r.manager] - (i + 1) : null
+  })).filter(r => r.was);
+  if(rows.length < 3) return null;
+
+  const risers = rows.filter(r => r.move > 0).sort((a,b) => b.move - a.move);
+  const fallers = rows.filter(r => r.move < 0).sort((a,b) => a.move - b.move);
+  return { rows, risers, fallers, weeks: Math.max(...now.map(() => 0)) || played };
+}
+
+function renderRetro(){
+  const el = document.getElementById("retro");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  const d = draftRetro();
+  if(!d){ el.innerHTML = ""; return; }
+  const up = d.risers[0], down = d.fallers[0];
+
+  el.innerHTML = fold("The draft, revisited",
+    `<p class="note" style="margin:0 0 10px">Where the preseason table had
+      everyone against where they actually are. The preseason numbers were
+      frozen the night of the draft, so this is the ranking as it was published
+      and not a rewrite.</p>` +
+    d.rows.sort((a, b) => a.now - b.now).map(r => `<div class="rcrow${
+      r.manager === ME ? " me" : ""}">
+      <span class="rcn">${r.now}</span>
+      <span class="rcwho"><b>${esc(r.manager)}</b>
+        <span>ranked ${ordinal(r.was)} preseason</span></span>
+      <span class="rcv${r.move > 0 ? " up" : r.move < 0 ? " down" : ""}">${
+        r.move > 0 ? "+" + r.move : r.move === 0 ? "&mdash;" : r.move}</span>
+    </div>`).join("") +
+    ((up || down) ? `<p class="note" style="margin:12px 2px 0">${
+      up ? `${esc(up.manager)} was ${ordinal(up.was)} and is ${ordinal(up.now)}.` : ""}${
+      down ? ` ${esc(down.manager)} went the other way, ${ordinal(down.was)} to
+        ${ordinal(down.now)}, which he has presumably explained at length.` : ""}</p>`
+      : ""), false);
+  rememberFolds(el);
+}
+
 function renderReceipts(){
   const el = document.getElementById("receiptsBody");
   if(!el) return;
@@ -1981,7 +2133,124 @@ function renderReceipts(){
     `<p class="note" style="margin:12px 2px 0">${esc(over.manager)} has been the
       most underrated at ${sign(over.avg)} a week. ${esc(under.manager)} has been
       the most flattered at ${sign(under.avg)}. Neither of them will accept
-      this.</p>`;
+      this.</p>` +
+    howItWorks(`Every week the site publishes a projection for each team. This
+      is what those projections said against what the team actually scored.
+      Positive means better than expected. Rank is that manager's average
+      finish in weekly scoring.`);
+}
+
+/* ---------- what has to happen ----------
+   Playoff odds are a percentage, and a percentage tells you how to feel rather
+   than what to do. This is the condition: how many of the weeks left you have
+   to win to be safe whatever anyone else does, and what happens if you do not.
+   Run off the same all-play strength the odds use, so the two cannot disagree. */
+function raceLines(){
+  const teams = (ROSTERS || []).filter(t => t.players && t.players.length);
+  if(teams.length < 4) return null;
+  const left = weeksLeft().length;
+  if(!left) return null;
+
+  const rows = teams.map(t => {
+    const r = recFor(t.manager);
+    return { manager: t.manager, w: r.wins || 0, l: r.losses || 0 };
+  }).sort((a, b) => (b.w - a.w) || (a.l - b.l));
+  if(!rows.some(r => r.w + r.l)) return null;
+
+  const spots = PLAYOFF_SPOTS || 6;
+  const cut = rows[Math.min(spots, rows.length) - 1];
+  const bubble = rows[Math.min(spots, rows.length - 1)] || null;
+
+  return rows.map(r => {
+    const most = r.w + left;                       // win out
+    const cutFloor = (cut ? cut.w : 0);
+    /* wins needed to reach the current cut line's pace, floored at zero */
+    const need = Math.max(0, Math.min(left, cutFloor + 1 - r.w));
+    return { ...r, left, need, most,
+      alive: most >= cutFloor,
+      clinchable: need <= left };
+  });
+}
+
+function renderRace(){
+  const el = document.getElementById("race");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  const rows = raceLines();
+  if(!rows){ el.innerHTML = ""; return; }
+  const left = rows[0].left;
+  const me = rows.find(r => r.manager === ME);
+
+  const line = r => !r.alive
+    ? "Out of it. The rest is for pride and card art."
+    : r.need === 0
+    ? `In on current pace. ${left} to play.`
+    : r.need >= left
+    ? `Has to win out. All ${left}.`
+    : `${r.need} of the last ${left} does it.`;
+
+  el.innerHTML = fold(`Playoff race${me ? " \u00b7 " + line(me).replace(/\.$/, "") : ""}`,
+    `<p class="note" style="margin:0 0 10px">${PLAYOFF_SPOTS || 6} spots,
+      ${left} week${left === 1 ? "" : "s"} left. Wins needed to reach the pace
+      of the team currently on the cut line.</p>` +
+    rows.map((r, i) => `<div class="rcrow${r.manager === ME ? " me" : ""}">
+      <span class="rcn">${i + 1}</span>
+      <span class="rcwho"><b>${esc(r.manager)}</b><span>${esc(line(r))}</span></span>
+      <span class="rcv">${r.w}-${r.l}</span>
+      <span class="rcv${r.need === 0 ? " up" : !r.alive ? " down" : ""}">${
+        r.alive ? r.need : "\u2014"}</span>
+    </div>`).join(""), false);
+  rememberFolds(el);
+}
+
+/* ---------- what changed since last week ----------
+   The archive holds every week, so the difference between two of them is a
+   changelog for the league: who climbed, whose position went red, who is
+   suddenly leaving points on the bench. No other app remembers last Tuesday. */
+function weeklyDiff(){
+  const hist = (WEEKLY && WEEKLY.history) || null;
+  if(!hist) return null;
+  const wks = Object.keys(hist).map(Number).filter(Number.isFinite).sort((a,b)=>a-b);
+  if(wks.length < 2) return null;
+  const now = wks[wks.length - 1], was = wks[wks.length - 2];
+
+  const rankOf = wk => {
+    const packs = hist[String(wk)] || {};
+    return Object.keys(packs).sort((a, b) =>
+      (packs[b].myScore || 0) - (packs[a].myScore || 0));
+  };
+  const a = rankOf(was), b = rankOf(now);
+  const out = [];
+  b.forEach((m, i) => {
+    const before = a.indexOf(m);
+    if(before < 0) return;
+    const move = before - i;
+    const p = hist[String(now)][m] || {};
+    const q = hist[String(was)][m] || {};
+    const bits = [];
+    if(move) bits.push(`${move > 0 ? "up" : "down"} ${Math.abs(move)} on scoring`);
+    if(typeof p.bench === "number" && typeof q.bench === "number"
+       && p.bench - q.bench > 8) bits.push(`benched ${f1(p.bench)}, up from ${f1(q.bench)}`);
+    if(typeof p.myScore === "number" && typeof p.projected === "number"
+       && p.myScore - p.projected > 15) bits.push(`beat his projection by ${f1(p.myScore - p.projected)}`);
+    if(typeof p.myScore === "number" && typeof p.projected === "number"
+       && p.projected - p.myScore > 15) bits.push(`missed his projection by ${f1(p.projected - p.myScore)}`);
+    if(bits.length) out.push({ manager: m, move, note: listOf(bits) });
+  });
+  return { now, was, rows: out.sort((x, y) => Math.abs(y.move) - Math.abs(x.move)) };
+}
+
+function renderDiff(){
+  const el = document.getElementById("weekdiff");
+  if(!el) return;
+  if(!liveDraft()){ el.innerHTML = ""; return; }
+  const d = weeklyDiff();
+  if(!d || !d.rows.length){ el.innerHTML = ""; return; }
+  el.innerHTML = fold(`What changed \u00b7 week ${d.was} to ${d.now}`,
+    d.rows.map(r => `<div class="mv ${r.move > 0 ? "up" : r.move < 0 ? "down" : "watch"}">
+      <span class="ar">${r.move > 0 ? "\u2191" : r.move < 0 ? "\u2193" : "\u26A0"}</span>
+      <span><b>${esc(r.manager)}</b> &mdash; ${esc(r.note)}</span></div>`).join(""), false);
+  rememberFolds(el);
 }
 
 function renderAwards(){
@@ -2583,19 +2852,16 @@ function renderTeams(){
       /* recOf returns ESPN's own record object, whose fields are wins and
          losses rather than w and l. Reading the wrong ones printed
          "undefined-undefined" next to every team name. */
-      /* recOf returns ESPN's own record object, whose fields are wins and
-         losses rather than w and l. Reading the wrong ones printed
-         "undefined-undefined" next to every team name, and before a game has
-         been played there is no record worth printing at all. */
-      rec: recOf(t) };
+      /* ESPN's own record object, looked up by manager: a ROSTERS entry does
+         not carry one, so recOf(t) here quietly returned zeros for everybody
+         and the Rosters page never showed a record at all. */
+      rec: recFor(t.manager) };
   }).sort((a, b) => b.rest - a.rest);
 
   const chip = (pos, v) => `<span class="tgchip g-${v.label}" title="${esc(pos)}">${pos}</span>`;
 
-  el.innerHTML = `<h2>Rosters</h2>
-    <p class="note" style="margin:-4px 2px 14px">All ten, ranked on projected
-      points a week for the rest of the season. Green is a position with a
-      surplus, red is a hole. Tap a team for its lineup.</p>` +
+  const best = rows.length ? rows[0].rest : 1;
+  el.innerHTML = panelHead("Rosters", "All ten, best first. Tap one for its lineup.") +
     rows.map((r, i) => {
       const t = r.t;
       const body = `<div class="tgrid">${
@@ -2606,7 +2872,7 @@ function renderTeams(){
         ${now ? rosterSections(t.players).starters.map(f => `<div class="plr view">
           <span class="slot">${esc(f.slot)}</span>
           ${f.player ? `<span class="pos ${f.player.pos}">${f.player.pos}</span>
-            <span class="who2"><b>${esc(f.player.name)}</b>
+            <span class="who2" data-pid="${esc(f.player.id)}"><b>${esc(f.player.name)}</b>
               <span>${esc(f.player.team || "")}${f.player.bye ? ", bye " + f.player.bye : ""}${
                 f.player.injury ? ", " + f.player.injury.toLowerCase() : ""}</span></span>
             <span class="pj"><b>${weekProjOf(f.player, now).toFixed(1)}</b></span>`
@@ -2621,11 +2887,18 @@ function renderTeams(){
               ? " &middot; " + (r.rec.wins || 0) + "-" + (r.rec.losses || 0) : ""}</span></span>
           <span class="tfchips">${Object.entries(r.g)
             .filter(([, v]) => v.label !== "ok").map(([pos, v]) => chip(pos, v)).join("")}</span>
-          <span class="tfnum">${f1(r.rest)}</span>
+          <span class="tfnum barcell">${f1(r.rest)}
+            <i class="barfill" style="width:${Math.max(8,
+              Math.round(r.rest / best * 100))}%"></i></span>
         </summary>${body}</details>`;
-    }).join("");
+    }).join("") +
+    howItWorks(`The number is projected points a week for the rest of the
+      season: each roster's best legal lineup for every week left, byes taken
+      out, divided by the weeks. The bar is that number against the top team.
+      A green chip is a position with a surplus, red is a hole, measured
+      against the league median at that position.`);
 
-  rememberFolds(el);
+  rememberFolds(el); wireSheet(el);
   el.querySelectorAll("[data-tp]").forEach(b => b.onclick = () => {
     tradePartner = b.dataset.tp; tradeView = "build"; showTab("trade", true);
   });
@@ -2645,12 +2918,13 @@ function renderPower(){
        results and nothing to rank on projections. The lock says so. Dropping
        it when the preseason table went in left this panel blank, which reads
        as broken rather than as early. */
-    el.innerHTML = pre ? `<h2>Power rankings</h2>
-      <p class="note" style="margin:-4px 2px 10px">Preseason, and the first real
-        entry in the table rather than a stand in. Every roster's best legal
-        lineup for each of the ${weeksLeft().length} weeks left, byes taken out,
-        divided by the weeks. It is a draft grade with the arithmetic shown.
-        Week 1's arrows measure against this.</p>${pre}`
+    el.innerHTML = pre
+      ? panelHead("Power rankings", "Preseason, on roster strength.") + pre
+        + howItWorks(`Nothing has been played, so this ranks every roster on its
+          best legal lineup for each of the ${weeksLeft().length} weeks left,
+          byes taken out, divided by the weeks. It is a draft grade with the
+          arithmetic shown, and it is the first real entry in the table rather
+          than a stand in: Week 1's arrows measure against it.`)
       : `<h2>Power rankings</h2>` + lock("Nothing to rank yet",
         "Rankings appear once a week has been played. Before that they are built"
         + " from the rosters, which land the night of the draft.");
@@ -3124,7 +3398,7 @@ function renderRecords(){
   normaliseH2H();
   const { scores, margins } = recordRows();
   if(!scores.length){
-    el.innerHTML = `<h2>Records</h2>` + lock("Nothing on file yet",
+    el.innerHTML = lock("Nothing on file yet",
       "Records cover every game since 2019. They appear once the overnight job has built them.");
     return;
   }
@@ -3334,8 +3608,12 @@ function renderAll(){
   try{ renderPicks(); }catch(e){ console.warn("[bromigos] picks:", e && e.message); }
   try{ renderPower(); }catch(e){ console.warn("[bromigos] power:", e && e.message); }
   try{ renderTeams(); }catch(e){ console.warn("[bromigos] teams:", e && e.message); }
+  try{ renderRace(); }catch(e){ console.warn("[bromigos] race:", e && e.message); }
+  try{ renderRetro(); }catch(e){ console.warn("[bromigos] retro:", e && e.message); }
+  try{ renderDiff(); }catch(e){ console.warn("[bromigos] diff:", e && e.message); }
   try{ renderBench(); }catch(e){ console.warn("[bromigos] bench:", e && e.message); }
   try{ renderReceipts(); }catch(e){ console.warn("[bromigos] receipts:", e && e.message); }
+  try{ wireSheet(); renderSheet(); }catch(e){ console.warn("[bromigos] sheet:", e && e.message); }
   try{ renderPowerMini(); }catch(e){ console.warn("[bromigos] power mini:", e && e.message); }
   try{ renderPicksPrompt(); }catch(e){ console.warn("[bromigos] picks prompt:", e && e.message); }
   try{ renderNextUp(); }catch(e){ console.warn("[bromigos] nextup:", e && e.message); }
@@ -3484,11 +3762,30 @@ function bestLineup(players){
 }
 
 /* Depth score per position: starters plus a discounted first backup. */
+/* Which positions are worth a grade, read off the league's own lineup rather
+   than assumed. There is no dedicated tight end slot this season, so a tight
+   end is one of several ways to fill W/T and FLEX and grading the position on
+   its own says nothing: a team with no tight end at all is not weak there, it
+   has made a choice. If a dedicated TE slot is ever voted back in, the slot
+   appears in ESPN's settings and the grade comes back with it, untouched. */
+function gradedPositions(){
+  const base = ["QB", "RB", "WR"];
+  const dedicated = (SLOTS || []).some(s => s.k === "TE");
+  return dedicated ? base.concat(["TE"]) : base;
+}
+
+/* How many of a position a lineup actually starts, so the profile measures the
+   right number of players rather than a hardcoded guess. */
+function startsAt(pos){
+  const n = (SLOTS || []).filter(s => s.k === pos).length;
+  return n || (pos === "QB" ? 1 : 1);
+}
+
 function posProfile(players){
   const out = {};
-  ["QB","RB","WR","TE"].forEach(pos => {
+  gradedPositions().forEach(pos => {
     const at = players.filter(p => p.pos === pos).sort((a,b) => b.proj - a.proj);
-    const need = pos === "RB" ? 2 : pos === "WR" ? 2 : 1;
+    const need = startsAt(pos);
     const starters = at.slice(0, need);
     const avg = starters.length ? starters.reduce((s,p)=>s+p.proj,0) / starters.length : 0;
     out[pos] = { count: at.length, avg, depth: at.length - need, top: at[0] || null };
@@ -3507,8 +3804,9 @@ function leagueMedians(teams){
 }
 function buildMedians(teams){
   const med = {};
-  ["QB","RB","WR","TE"].forEach(pos => {
-    const vals = teams.map(t => posProfile(t.players)[pos].avg).sort((a,b)=>a-b);
+  gradedPositions().forEach(pos => {
+    const vals = teams.map(t => (posProfile(t.players)[pos] || {}).avg || 0)
+      .sort((a,b) => a-b);
     med[pos] = vals[Math.floor(vals.length/2)] || 0;
   });
   return med;
@@ -4090,6 +4388,12 @@ function normalizeLive(){
         bye:  p.byeWeek || null,
         own:  p.ownership ? Math.round(p.ownership.percentOwned) : null,
         ir:   e.lineupSlotId === 21,
+        /* The slot ESPN has him in right now, as opposed to the slot the best
+           lineup would put him in. Without this the site could tell you what
+           the optimal lineup was but never that yours differed from it, which
+           is the only version you can act on. */
+        slotId: e.lineupSlotId,
+        benched: e.lineupSlotId === 20 || e.lineupSlotId === 21,
         injury: p.injuryStatus && p.injuryStatus !== "ACTIVE" ? p.injuryStatus : null
       };
     });
@@ -4863,6 +5167,21 @@ const GRADE_WHY = {
         weak:"Streaming territory." }
 };
 
+/* Every panel opens the same way: a title, one line of context, then the data.
+   Explanations used to sit in a three line paragraph under the heading, which
+   on a phone pushes the thing you came for below the fold. They go at the
+   bottom now, behind a fold, where they are available and not in the way. */
+function panelHead(title, sub){
+  return `<h2>${esc(title)}</h2>${sub
+    ? `<p class="subline">${esc(String(sub).replace(/\s+/g, " ").trim())}</p>` : ""}`;
+}
+function howItWorks(body, label){
+  const t = String(body || "").replace(/\s+/g, " ").trim();
+  if(!t) return "";
+  return `<details class="sec how"><summary>${esc(label || "How this works")}</summary>
+    <p class="note" style="margin:0">${t}</p></details>`;
+}
+
 /* A page section that folds. Everything on My Team below the matchup is
    reference: you read it once a week, not every time you open the app. An
    empty body collapses to nothing rather than an empty heading.
@@ -4982,10 +5301,24 @@ function renderTeamPage(){
     <button type="button" class="cbtn" id="toBlock"
       style="margin-top:14px">Open the trade block</button>`;
 
-  rememberFolds(el);
+  rememberFolds(el); wireSheet(el);
   try { renderAccuracy(); } catch(e){ console.warn("[bromigos] accuracy:", e && e.message); }
+  /* The strip is rebuilt with the page, so it came back scrolled to Week 1
+     every time you picked a later week and the chip you had just tapped was
+     off the left edge. Put it back where it was, then centre the selection. */
+  const strip = el.querySelector(".mxweeks");
+  if(strip){
+    if(weekScroll > 0) strip.scrollLeft = weekScroll;
+    const on = el.querySelector('[data-mw][aria-pressed="true"]');
+    if(on && typeof on.offsetLeft === "number" && strip.clientWidth){
+      const want = on.offsetLeft - strip.clientWidth / 2 + (on.offsetWidth || 0) / 2;
+      if(want > 0) strip.scrollLeft = want;
+    }
+    strip.onscroll = () => { weekScroll = strip.scrollLeft || 0; };
+  }
   el.querySelectorAll("[data-mw]").forEach(b => b.onclick = () => {
     matchWeek = Number(b.dataset.mw);
+    if(strip) weekScroll = strip.scrollLeft || 0;
     renderTeamPage();
   });
   el.querySelectorAll("[data-pv]").forEach(b => b.onclick = () => {
@@ -5472,8 +5805,173 @@ function rivalryLine(a, b){
     average margin ${margin.toFixed(1)}.${streak ? " " + esc(streak) + "." : ""}`);
 }
 
+/* ---------- the player sheet ----------
+   A name was inert text in five different places, and everything worth knowing
+   about a player was scattered across as many screens. Tapping one now opens
+   the lot: both providers week by week, rest of season, bye, who has him, and
+   whether he fills a hole on your roster. */
+let sheetId = null;
+
+function playerById(id){
+  const all = (ROSTERS || []).flatMap(t =>
+    (t.players || []).map(p => ({ ...p, owner: t.manager })));
+  return all.find(p => String(p.id) === String(id))
+    || (FREEAGENTS || []).map(p => ({ ...p, owner: null }))
+        .find(p => String(p.id) === String(id)) || null;
+}
+
+function openSheet(id){ sheetId = String(id); renderSheet(); }
+function closeSheet(){ sheetId = null; renderSheet(); }
+
+function renderSheet(){
+  const el = document.getElementById("sheet");
+  if(!el) return;
+  if(!sheetId){ el.innerHTML = ""; el.className = ""; return; }
+  const p = playerById(sheetId);
+  if(!p){ el.innerHTML = ""; el.className = ""; sheetId = null; return; }
+
+  const wks = weeksLeft();
+  const me = myTeam();
+  const g = me ? gradeTeam(me, leagueMedians((ROSTERS || [])
+    .filter(t => t.players && t.players.length))) : null;
+  const hole = g && g[p.pos] && g[p.pos].label === "weak";
+
+  const rows = wks.slice(0, 8).map(w => {
+    const bye = p.bye === w;
+    const e = espnWeek(p, w), sl = sleeperWeek(p, w);
+    return `<div class="shw${bye ? " bye" : ""}">
+      <span>Wk ${w}</span>
+      <span>${bye ? "bye" : (e === null ? "&mdash;" : e.toFixed(1))}</span>
+      <span>${bye ? "" : (sl === null ? "&mdash;" : sl.toFixed(1))}</span>
+      <span><b>${bye ? "0.0" : weekProjOf(p, w).toFixed(1)}</b></span></div>`;
+  }).join("");
+
+  el.className = "open";
+  el.innerHTML = `<div class="shscrim" data-sh="close"></div>
+    <div class="shcard" role="dialog" aria-label="${esc(p.name)}">
+      <div class="shgrab"></div>
+      <div class="shtop">
+        <span class="pos ${p.pos}">${p.pos}</span>
+        <span class="shname"><b>${esc(p.name)}</b>
+          <span>${esc(p.team || "free agent")}${p.bye ? ", bye " + p.bye : ""}${
+            p.injury ? ", " + p.injury.toLowerCase() : ""}</span></span>
+        <button type="button" class="shx" data-sh="close" aria-label="Close">&times;</button>
+      </div>
+      <div class="shstats">
+        <div><b>${f1(ppgOf(p))}</b><span>a week</span></div>
+        <div><b>${wks.length ? f1(seasonPtsOf(p)) : "&mdash;"}</b><span>rest of season</span></div>
+        <div><b>${p.own === null || p.own === undefined ? "&mdash;" : p.own + "%"}</b>
+          <span>rostered</span></div>
+      </div>
+      <p class="note" style="margin:0 0 10px">${p.owner
+        ? (p.owner === ME ? "On your roster."
+           : `${esc(p.owner)} has him.${hole ? " He fills your thinnest position."
+              : ""}`)
+        : "Free agent."}${!p.owner && hole ? " He fills your thinnest position." : ""}</p>
+      <div class="shw shhead"><span></span><span>ESPN</span><span>Sleeper</span>
+        <span>Blend</span></div>
+      ${rows || `<p class="note" style="margin:0">No weeks left to project.</p>`}
+      ${p.owner && p.owner !== ME ? `<button type="button" class="cbtn"
+        data-shtrade="${esc(p.owner)}" style="margin-top:12px">Build a trade with
+        ${esc(p.owner)}</button>` : ""}
+    </div>`;
+
+  el.querySelectorAll("[data-sh]").forEach(b => b.onclick = closeSheet);
+  el.querySelectorAll("[data-shtrade]").forEach(b => b.onclick = () => {
+    tradePartner = b.dataset.shtrade; tradeView = "build";
+    closeSheet(); showTab("trade", true);
+  });
+}
+
+/* Total points from here, which the sheet shows and ppgOf averages. */
+function seasonPtsOf(p){
+  return weeksLeft().reduce((n, w) => n + (availableIn(p, w) ? weekProjOf(p, w) : 0), 0);
+}
+
+/* Any element carrying data-pid opens the sheet. Wired once per render pass so
+   every list gets it without each one remembering to. */
+function wireSheet(root){
+  (root || document).querySelectorAll("[data-pid]").forEach(el => {
+    el.onclick = () => openSheet(el.dataset.pid);
+  });
+}
+
+/* ---------- your lineup against the best one ----------
+   The site has always shown the optimal lineup and never what you have
+   actually set, so it could tell you the answer without telling you that you
+   had it wrong. ESPN's own slot is on every player now, so the two can be
+   compared and the specific swap named. */
+function actualStarters(players){
+  return (players || []).filter(p => !p.benched);
+}
+
+function lineupGaps(team, wk){
+  if(!team || !team.players) return null;
+  const set = actualStarters(team.players);
+  /* Nothing to compare against if ESPN has not told us where anyone is. */
+  if(!set.length || set.length === team.players.length) return null;
+
+  const val = p => weekProjOf(p, wk);
+  const mine = set.reduce((n, p) => n + (availableIn(p, wk) ? val(p) : 0), 0);
+  const best = bestLineupWith(team.players, val, wk);
+  const used = new Set(best.filled.filter(f => f.player).map(f => f.player.id));
+
+  const bench = team.players.filter(p => p.benched && availableIn(p, wk));
+  const outs = set.filter(p => !used.has(p.id));
+  const ins = bench.filter(p => used.has(p.id));
+
+  const swaps = [];
+  ins.forEach(inP => {
+    const slot = (best.filled.find(f => f.player && f.player.id === inP.id) || {}).slot;
+    const outP = outs.find(o => {
+      const s = SLOTS.find(x => x.k === slot);
+      return s && s.elig.includes(o.pos);
+    }) || outs[0];
+    if(!outP) return;
+    outs.splice(outs.indexOf(outP), 1);
+    swaps.push({ slot, in: inP, out: outP, gain: val(inP) - val(outP) });
+  });
+
+  /* somebody started who is not playing at all that week */
+  const dead = set.filter(p => !availableIn(p, wk));
+
+  /* Somebody started who is not playing is called out on its own line, so
+     listing him again as the loser of a swap says the same thing twice. */
+  const deadIds = new Set(dead.map(p => p.id));
+  return { mine, best: best.total, gap: best.total - mine,
+    swaps: swaps.filter(x => x.gain > 0.05 && !deadIds.has(x.out.id))
+      .sort((a, b) => b.gain - a.gain),
+    dead };
+}
+
+function renderStartSitGaps(me, wk){
+  const g = lineupGaps(me, wk);
+  if(!g) return "";
+  if(!g.swaps.length && !g.dead.length)
+    return `<p class="note" style="margin:0 0 12px">Your lineup is the best one
+      available for Week ${wk}. Nothing to change.</p>`;
+
+  return `<div class="ssbox">
+    <div class="sshead"><b>${g.gap > 0 ? "+" + g.gap.toFixed(1) : "0.0"}</b>
+      <span>on the table in Week ${wk}</span></div>
+    ${g.dead.map(p => `<div class="ssrow bad">
+      <span class="ssslot">OUT</span>
+      <span class="sswho"><b>${esc(p.name)}</b>
+        <span>${p.bye === wk ? "on bye this week" : "not playing"}, still in your lineup</span></span>
+    </div>`).join("")}
+    ${g.swaps.map(sw => `<div class="ssrow">
+      <span class="ssslot">${esc(sw.slot)}</span>
+      <span class="sswho"><b>${esc(sw.in.name)}</b>
+        <span>for ${esc(sw.out.name)}</span></span>
+      <span class="ssgain">+${sw.gain.toFixed(1)}</span>
+    </div>`).join("")}
+    <p class="note" style="margin:10px 0 0">Change it in ESPN. This reads your
+      lineup as it stands, so it clears itself once you have.</p>
+  </div>`;
+}
+
 /* Which week the matchup card is showing. Defaults to the one being played. */
-let matchWeek = null;
+let matchWeek = null, weekScroll = 0;
 
 /* Your bench for the week on screen, under the matchup, because a close week
    is decided on the bench and the two were on different screens. Anyone the
@@ -5537,8 +6035,13 @@ function renderMatchup(me){
   const r = live ? null : replFor;
   const mine = bestLineupWith(me.players, val, matchWeek, r);
   const them = bestLineupWith(opp.players, val, matchWeek, r);
-  const tot = f => f.filled.reduce((n, x) =>
-    n + (x.player ? (show(x.player) || 0) : (x.streamed ? replFor(SLOTS[0]) : 0)), 0);
+  /* A slot nobody can fill is credited at replacement level for THAT slot.
+     SLOTS[0] is the quarterback, so a kicker on bye was being priced as a
+     streamed quarterback: 18.9 points, in the K row, on a week where nobody
+     was playing. filled runs parallel to SLOTS, so the index is the slot. */
+  const replAt = i => replFor(SLOTS[i]);
+  const tot = f => f.filled.reduce((n, x, i) =>
+    n + (x.player ? (show(x.player) || 0) : (x.streamed ? replAt(i) : 0)), 0);
   const mineTot = tot(mine), themTot = tot(them);
   const diff = mineTot - themTot;
   const has = { blend:true, espn:true, sleeper:!!(PROJ && PROJ.weeks) };
@@ -5551,33 +6054,34 @@ function renderMatchup(me){
      act on. It is back because you can: it is where you see that the week is
      being decided at tight end, or that a bye has left them streaming a slot
      you are strong at. Nothing here is a suggestion, it is the two lineups. */
-  const valOf = f => f.player ? (show(f.player) || 0)
-    : (f.streamed ? replFor(SLOTS[0]) : 0);
-  const side = (f, right, lead) => {
+  const valOf = (f, i) => f.player ? (show(f.player) || 0)
+    : (f.streamed ? replAt(i) : 0);
+  const side = (f, right, lead, i) => {
     const p = f.player;
     const cls = `mxp${right ? " r" : ""}${lead ? " lead" : ""}`;
+    const tap = p ? ` data-pid="${esc(p.id)}"` : "";
     if(!p) return `<span class="${cls}"><b>${f.streamed ? "waiver pickup" : "empty"}</b>
-      <i>${valOf(f).toFixed(1)}</i></span>`;
+      <i>${valOf(f, i).toFixed(1)}</i></span>`;
     const v = show(p);
-    return `<span class="${cls}"><b>${esc(p.name)}</b>
+    return `<span class="${cls}"${tap}><b>${esc(p.name)}</b>
       <i>${esc(p.team || "")}${p.injury ? ", " + p.injury.toLowerCase() : ""} &middot; ${
         v === null ? "&mdash;" : v.toFixed(1)}</i></span>`;
   };
 
-  const tag = f => ({ slot: f.slot, player: f.player,
-    value: f.player ? show(f.player) : (f.streamed ? replFor(SLOTS[0]) : 0) });
+  const tag = (f, i) => ({ slot: f.slot, player: f.player,
+    value: f.player ? show(f.player) : (f.streamed ? replAt(i) : 0) });
   const gaps = missingSlots([mine.filled.map(tag), them.filled.map(tag)]);
 
   const rows = mine.filled.map((f, i) => {
     const g = them.filled[i];
     if(!g) return "";
-    const a = valOf(f), b = valOf(g);
+    const a = valOf(f, i), b = valOf(g, i);
     const gap = Math.abs(a - b);
     return `<div class="mxrow">
-      ${side(f, false, a > b)}
+      ${side(f, false, a > b, i)}
       <span class="mxs">${esc(f.slot)}${
         gap >= 0.05 ? `<span class="mxgap">${gap.toFixed(1)}</span>` : ""}</span>
-      ${side(g, true, b > a)}
+      ${side(g, true, b > a, i)}
     </div>`;
   }).join("");
 
@@ -5593,6 +6097,7 @@ function renderMatchup(me){
       <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
         <span class="vsScore">${themTot.toFixed(1)}</span></div>
     </div>
+    ${renderStartSitGaps(me, matchWeek)}
     ${rivalryLine(me.manager, opp.manager)}
     ${sourceNote(gaps, true)}
     <div class="mxtot"><span>${esc(me.teamName)}</span>
@@ -5686,7 +6191,7 @@ function renderSuggested(me){
     return `<div class="plr view">
       <span class="slot">${esc(slot||"")}</span>
       <span class="pos ${p.pos}">${p.pos}</span>
-      <span class="who2"><b>${esc(p.name)}</b>
+      <span class="who2" data-pid="${esc(p.id)}"><b>${esc(p.name)}</b>
         <span>${esc(p.team||"")}${p.bye?", bye "+p.bye:""}${p.injury?", "+p.injury.toLowerCase():""}${
           projView === "blend" && projDisagrees(v) ? " &middot; sources disagree" : ""}</span></span>
       ${cell(p)}</div>`;

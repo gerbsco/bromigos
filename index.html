@@ -587,10 +587,9 @@
   .cons.pickem .consTitle{color:#8C1F27}
   /* The art well: a lighter panel of the same family with a hairline, rather
      than the shared near-black, which read as a hole cut in the card. */
-  .cons.pickem .consArt{background:
-      linear-gradient(168deg,rgba(255,255,255,.42),rgba(255,255,255,.14));
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),
-      inset 0 -18px 26px -18px rgba(94,19,25,.35)}
+  .cons.pickem .consArt{background:linear-gradient(168deg,#B4EFE7,#7FDCD2);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),
+      inset 0 -18px 26px -18px rgba(94,19,25,.3)}
   .cons.pickem .consName{color:#5E1319;letter-spacing:-.01em}
   /* A rule under the name, the way the FIFA 12 card separates the head from
      the stat block. */
@@ -603,20 +602,34 @@
   .cons.pickem .consFoot{background:linear-gradient(160deg,#E8394F,#C82438);
     color:#FFF1F2;padding:8px 6px 4px;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
-  .cons.pickem .rarityTag{margin-top:0;padding:0 0 7px;color:rgba(255,241,242,.72);
-    background:linear-gradient(160deg,#E8394F,#C82438);opacity:1;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);border-radius:0 0 2px 2px}
+  /* Same 4px gutter as the value bar it sits under, so the two read as one
+     slab rather than two bars of different widths. */
+  .cons.pickem .rarityTag{margin:0 4px 2px;padding:0 0 7px;
+    color:rgba(255,241,242,.72);background:linear-gradient(160deg,#E8394F,#C82438);
+    opacity:1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+    border-radius:0 0 2px 2px}
   .cons.pickem .consFoot{border-radius:2px 2px 0 0;margin-bottom:0}
 
-  /* The back of the card is the same card. It was flipping over to gold. */
+  /* The back of the card is the same card. It was flipping over to gold.
+
+     isolation:isolate matters here. .side has no stacking context of its own,
+     so a z-index on anything inside the back face competes with the front face
+     rather than with its own siblings, and Safari painted the mirrored crest
+     straight through the card you were meant to be looking at. Isolating the
+     back keeps its layering to itself. */
+  .pickemback{isolation:isolate}
   .pickemback::before{content:"";position:absolute;inset:0;pointer-events:none;
-    opacity:.5;
+    z-index:0;opacity:.5;
     background-image:
       radial-gradient(3px 6px at 16% 12%, #F0455A 96%, transparent 0),
       radial-gradient(5px 3px at 74% 9%,  #FFD25E 96%, transparent 0),
       radial-gradient(3px 5px at 88% 78%, #FFFFFF 96%, transparent 0),
       radial-gradient(5px 3px at 10% 86%, #FFD25E 96%, transparent 0)}
   .pickemback .crest,.pickemback .mark{position:relative;z-index:1}
+
+  /* And the front has to be opaque. A translucent art well let the face behind
+     it show through on any browser whose backface handling is imperfect. */
+  .cons.pickem{isolation:isolate}
 
   .packbar{position:relative;z-index:6;margin-top:16px;display:flex;align-items:center;
     justify-content:center;gap:12px}

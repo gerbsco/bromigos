@@ -1325,6 +1325,10 @@
     <div class="card"><h3>Weekly results</h3>
       <p>Worst to best. Flares wrap the card and grow with the result.</p>
       <div id="demoBtns"></div></div>
+    <div class="card"><h3>Pick&rsquo;em</h3>
+      <p>One a week, to whoever tops the confidence board. The same card the
+        league gets, built by the same function.</p>
+      <div id="demoPick"></div></div>
     <div class="card"><h3>Milestones</h3><p>Never fire from a normal week.</p>
       <div id="demoSpecial"></div></div>
     <div class="card"><p><label><input type="checkbox" id="noanim"> Skip animations on this device</label></p></div>
@@ -7147,23 +7151,25 @@ function buildWeekCards(w, wk){
      week does. Fixed art, so a rebuilt binder reproduces it exactly. */
   const winners = pickemWinners(wk);
   const who = w.manager || ME;
-  if(who && winners.some(x => x.manager === who)){
-    const win = winners.find(x => x.manager === who);
-    const shared = winners.length > 1;
-    out.push({ type:"cons", rarity:"pickem", rarityLabel:"Pick'em",
-      kind:"Weekly Pick'em", icon:"\u{1F52E}", art:FIXED.pickem,
-      pool:"good", title:"Called It",
-      reason: shared
-        ? `Tied the pick'em on ${win.pts} points, ${win.right} of ${win.done} right`
-        : `Won the pick'em on ${win.pts} points, ${win.right} of ${win.done} right`,
-      desc: shared
-        ? "Shared the week. Somebody else read it exactly as well, which takes the shine off."
-        : "Nobody read the week better. One of these exists and it went to you.",
-      value: win.pts + " pts", flare:"gold", fixedArt:true });
-  }
+  if(who && winners.some(x => x.manager === who))
+    out.push(pickemCard(winners.find(x => x.manager === who), winners.length > 1));
 
   /* No filler card. A week that earned nothing is a one card pack. */
   return dedupeArt(out);
+}
+
+/* The card itself, built in one place so the test bench under ?pack=1 shows
+   the card that actually ships rather than a copy of it that can drift. */
+function pickemCard(win, shared){
+  return { type:"cons", rarity:"pickem", rarityLabel:"Pick'em",
+    kind:"Weekly Pick'em", icon:"\u{1F52E}", art:FIXED.pickem,
+    pool:"good", title:"Called It",
+    reason: `${shared ? "Tied" : "Won"} the pick'em on ${win.pts} points, `
+      + `${win.right} of ${win.done} right`,
+    desc: shared
+      ? "Shared the week. Somebody else read it exactly as well, which takes the shine off."
+      : "Nobody read the week better. One of these exists and it went to you.",
+    value: win.pts + " pts", flare:"gold", fixedArt:true };
 }
 
 /* Who topped the confidence board for a settled week. Ties all win, because a
@@ -7236,6 +7242,25 @@ if(PREVIEW){
     .map(k=>`<button class="cbtn demoGo" data-k="${k}" style="display:block;width:100%;margin-top:9px;text-align:center">${k}</button>`).join("");
   document.querySelectorAll("#demoBtns .demoGo").forEach(b=>{
     b.onclick = () => PACK.open("Week 1", buildWeekCards(S[b.dataset.k], 1)); });
+  const PK = {
+    "Pick'em: won it outright":        [{ pts:34, right:8, done:9 }, false],
+    "Pick'em: tied for the week":      [{ pts:31, right:8, done:9 }, true],
+    "Pick'em: a full week's pull":     null
+  };
+  document.getElementById("demoPick").innerHTML = Object.keys(PK)
+    .map(k=>`<button class="cbtn pkGo" data-k="${esc(k)}" style="display:block;width:100%;margin-top:9px;text-align:center">${esc(k)}</button>`).join("");
+  document.querySelectorAll(".pkGo").forEach(b=>{
+    b.onclick = () => {
+      const spec = PK[b.dataset.k];
+      if(spec) return PACK.open("Week 1", [pickemCard(spec[0], spec[1])]);
+      /* the realistic pull: the week's result card, its superlative, and the
+         pick'em on top, in the order the real pack builds them */
+      PACK.open("Week 1", dedupeArt(
+        buildWeekCards(S["Gold rare: blowout win"], 1)
+          .concat([pickemCard({ pts:34, right:8, done:9 }, false)])));
+    };
+  });
+
   const SP={blue:"Blue: clinched playoffs",orange:"Orange: 1 seed",purple:"Purple: first-round bye"};
   document.getElementById("demoSpecial").innerHTML = Object.entries(SP)
     .map(([t,l])=>`<button class="cbtn spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;text-align:center">${l}</button>`).join("");

@@ -559,33 +559,64 @@
   .cons.shame .consTab{background:linear-gradient(160deg,#7C5B49,#4A3428)}
   .cons.shame .consFoot{background:rgba(0,0,0,.3)}
 
-  /* The pick'em card, off the FUT Birthday palette: mint base, coral panel,
-     confetti thrown across it. Same shape as every other card, because the
-     shape is the thing that makes them a set. One of these exists per week and
-     only one person gets it. */
-  .cons.pickem{background:linear-gradient(160deg,#7FE3DA,#3FBFB6 46%,#67D8CE);
-    color:#7A1B22}
+  /* ---------- the pick'em card ----------
+     FUT Birthday palette on the FIFA 12 frame. Three passes on this: the art
+     well was a black hole punched in a mint card, the confetti was landing on
+     the reading text, and the value bar and the rarity tag were two separate
+     red slabs stacked on each other. What FIFA 12 actually does is quieter
+     than it looks: one field, one panel for the portrait, and the type sitting
+     directly on the card. */
+  .cons.pickem{color:#5E1319;
+    background:
+      radial-gradient(120% 78% at 50% -14%, #A6F0E6 0%, transparent 62%),
+      linear-gradient(163deg,#6FDACF 0%,#41BEB5 52%,#5FD2C8 100%)}
+  /* Confetti only where nothing is read: the header band and the very bottom
+     corners. It was sitting across the reason line and the description. */
   .cons.pickem::before{content:"";position:absolute;inset:0;pointer-events:none;
-    opacity:.85;
+    z-index:0;opacity:.55;
     background-image:
-      radial-gradient(4px 7px at 12% 14%, #F0455A 96%, transparent 0),
-      radial-gradient(6px 4px at 78% 9%,  #FFD25E 96%, transparent 0),
-      radial-gradient(4px 6px at 26% 33%, #FFFFFF 96%, transparent 0),
-      radial-gradient(5px 5px at 88% 41%, #F0455A 96%, transparent 0),
-      radial-gradient(7px 4px at 8%  62%, #FFD25E 96%, transparent 0),
-      radial-gradient(4px 7px at 61% 72%, #FFFFFF 96%, transparent 0),
-      radial-gradient(5px 5px at 34% 88%, #F0455A 96%, transparent 0),
-      radial-gradient(6px 4px at 91% 84%, #FFFFFF 96%, transparent 0)}
+      radial-gradient(3px 6px at 14% 5%,  #F0455A 96%, transparent 0),
+      radial-gradient(5px 3px at 62% 3%,  #FFD25E 96%, transparent 0),
+      radial-gradient(3px 5px at 86% 8%,  #FFFFFF 96%, transparent 0),
+      radial-gradient(4px 4px at 34% 10%, #FFFFFF 96%, transparent 0),
+      radial-gradient(5px 3px at 6%  95%, #FFD25E 96%, transparent 0),
+      radial-gradient(3px 5px at 94% 96%, #F0455A 96%, transparent 0)}
   .cons.pickem>*{position:relative;z-index:1}
-  .cons.pickem .consTab{background:linear-gradient(160deg,#FF8A94,#E03A4E);
-    color:#FFF4F5}
-  .cons.pickem .consTitle{color:#7A1B22}
-  .cons.pickem .consName,
-  .cons.pickem .consWhy{color:#5E1319}
-  .cons.pickem .consDesc{color:rgba(94,19,25,.78)}
-  .cons.pickem .consFoot{background:rgba(224,58,78,.9);color:#FFF4F5}
-  .cons.pickem .rarityTag{background:rgba(224,58,78,.92);color:#FFF4F5;
-    border-color:rgba(255,255,255,.5)}
+  .cons.pickem .consTab{background:linear-gradient(160deg,#FF7E8B,#DE2E44);
+    color:#FFF1F2}
+  .cons.pickem .consTitle{color:#8C1F27}
+  /* The art well: a lighter panel of the same family with a hairline, rather
+     than the shared near-black, which read as a hole cut in the card. */
+  .cons.pickem .consArt{background:
+      linear-gradient(168deg,rgba(255,255,255,.42),rgba(255,255,255,.14));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),
+      inset 0 -18px 26px -18px rgba(94,19,25,.35)}
+  .cons.pickem .consName{color:#5E1319;letter-spacing:-.01em}
+  /* A rule under the name, the way the FIFA 12 card separates the head from
+     the stat block. */
+  .cons.pickem .consName::after{content:"";display:block;width:52px;height:2px;
+    margin:7px auto 0;border-radius:1px;background:rgba(222,46,68,.65)}
+  .cons.pickem .consWhy{color:rgba(94,19,25,.82);opacity:1}
+  .cons.pickem .consDesc{color:rgba(94,19,25,.74)}
+  /* One slab, not two. The rarity tag rides on the value bar rather than
+     repeating it underneath. */
+  .cons.pickem .consFoot{background:linear-gradient(160deg,#E8394F,#C82438);
+    color:#FFF1F2;padding:8px 6px 4px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
+  .cons.pickem .rarityTag{margin-top:0;padding:0 0 7px;color:rgba(255,241,242,.72);
+    background:linear-gradient(160deg,#E8394F,#C82438);opacity:1;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);border-radius:0 0 2px 2px}
+  .cons.pickem .consFoot{border-radius:2px 2px 0 0;margin-bottom:0}
+
+  /* The back of the card is the same card. It was flipping over to gold. */
+  .pickemback::before{content:"";position:absolute;inset:0;pointer-events:none;
+    opacity:.5;
+    background-image:
+      radial-gradient(3px 6px at 16% 12%, #F0455A 96%, transparent 0),
+      radial-gradient(5px 3px at 74% 9%,  #FFD25E 96%, transparent 0),
+      radial-gradient(3px 5px at 88% 78%, #FFFFFF 96%, transparent 0),
+      radial-gradient(5px 3px at 10% 86%, #FFD25E 96%, transparent 0)}
+  .pickemback .crest,.pickemback .mark{position:relative;z-index:1}
 
   .packbar{position:relative;z-index:6;margin-top:16px;display:flex;align-items:center;
     justify-content:center;gap:12px}
@@ -6811,7 +6842,10 @@ const TIER = {
   totw:   { n:24, size:38, bl:.70, col:"#FFD98A", back:"#141414" },
   blue:   { n:26, size:39, bl:.74, col:"#BFEBFF", back:"#1B5C8A" },
   orange: { n:28, size:40, bl:.78, col:"#FFD2A0", back:"#B24A08" },
-  purple: { n:28, size:40, bl:.78, col:"#E2C9FF", back:"#4B2A86" }
+  purple: { n:28, size:40, bl:.78, col:"#E2C9FF", back:"#4B2A86" },
+  /* The pick'em card's own flare and back. It flipped over to a gold back,
+     which is a different card to the one you are about to see. */
+  pickem: { n:26, size:38, bl:.68, col:"#8FF0E4", back:"#127F78" }
 };
 
 const PACK = (function(){
@@ -6952,7 +6986,8 @@ const PACK = (function(){
     return html.replace(/class="(fut|cons) /, 'class="$1 in ');
   };
 
-  const backOf = (c, t) => `<div class="cardback" style="background:
+  const backOf = (c, t) => `<div class="cardback${
+      c.rarity === "pickem" ? " pickemback" : ""}" style="background:
       linear-gradient(160deg, ${t.back} 0%, rgba(0,0,0,.55) 55%, ${t.back} 100%);
       color:${t.col}">
       <span class="crest">UB</span>
@@ -7162,14 +7197,16 @@ function buildWeekCards(w, wk){
    the card that actually ships rather than a copy of it that can drift. */
 function pickemCard(win, shared){
   return { type:"cons", rarity:"pickem", rarityLabel:"Pick'em",
-    kind:"Weekly Pick'em", icon:"\u{1F52E}", art:FIXED.pickem,
+    /* The corner tab is a badge, not a second copy of the portrait. It was
+       showing the same crystal ball as the art well an inch below it. */
+    kind:"Weekly Pick'em", icon:"\u2726", art:FIXED.pickem,
     pool:"good", title:"Called It",
     reason: `${shared ? "Tied" : "Won"} the pick'em on ${win.pts} points, `
       + `${win.right} of ${win.done} right`,
     desc: shared
       ? "Shared the week. Somebody else read it exactly as well, which takes the shine off."
       : "Nobody read the week better. One of these exists and it went to you.",
-    value: win.pts + " pts", flare:"gold", fixedArt:true };
+    value: win.pts + " pts", flare:"pickem", fixedArt:true };
 }
 
 /* Who topped the confidence board for a settled week. Ties all win, because a

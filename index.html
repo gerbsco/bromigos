@@ -422,8 +422,10 @@
     box-shadow:0 22px 55px rgba(0,0,0,.68), inset 0 0 0 1px rgba(0,0,0,.30)}
   .fut .gloss{position:absolute;inset:0;pointer-events:none;z-index:3;
     background:
-      linear-gradient(118deg,transparent 38%,rgba(255,255,255,.13) 47%,transparent 55%),
-      radial-gradient(130% 70% at 20% 4%, rgba(255,255,255,.14), transparent 60%)}
+      linear-gradient(118deg,transparent 34%,rgba(255,255,255,.17) 46%,
+        rgba(255,255,255,.05) 52%,transparent 60%),
+      radial-gradient(120% 62% at 18% 0%, rgba(255,255,255,.20), transparent 58%),
+      radial-gradient(90% 50% at 84% 104%, rgba(0,0,0,.22), transparent 62%)}
   .fut.matte .gloss{background:linear-gradient(118deg,transparent 40%,rgba(255,255,255,.05) 48%,transparent 56%)}
 
   .futTop{position:relative;z-index:1;display:flex;align-items:stretch;min-height:78px;
@@ -521,9 +523,9 @@
     display:flex;align-items:center;justify-content:center;font-size:19px}
   .consTitle{text-align:right;font:800 11.5px/1.12 system-ui,sans-serif;letter-spacing:.04em;
     text-transform:uppercase;max-width:130px}
-  .consArt{height:118px;margin:0 4px;border-radius:2px;display:flex;align-items:center;
-    justify-content:center;font-size:58px;background:#0A0C0F;position:relative;z-index:1;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+  .consArt{height:118px;margin:0 4px;display:flex;align-items:center;
+    justify-content:center;font-size:58px;position:relative;z-index:1}
+  .consArt::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px}
   .consName{margin:9px 4px 0;text-align:center;font:600 17px/1.2 system-ui,sans-serif;
     position:relative;z-index:1}
   .consWhy{margin:5px 7px 0;text-align:center;position:relative;z-index:1;
@@ -531,11 +533,27 @@
     text-transform:uppercase;opacity:.72}
   .consDesc{margin:5px 8px 0;text-align:center;font:500 12px/1.42 system-ui,sans-serif;
     opacity:.9;position:relative;z-index:1;flex:1}
-  .consFoot{margin:0 4px 2px;padding:7px 6px 8px;border-radius:2px;text-align:center;
-    position:relative;z-index:1}
-  .consFoot .v{font:800 15px/1.15 system-ui,sans-serif}
-  .rarityTag{margin-top:6px;text-align:center;font:700 8.5px/1 ui-monospace,Menlo,monospace;
-    letter-spacing:.2em;text-transform:uppercase;opacity:.8;position:relative;z-index:1}
+  .consSplit{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;
+    margin:9px 10px 0;position:relative;z-index:1}
+  .consSplit.one{grid-template-columns:1fr}
+  .consSplit i{height:34px;display:block}
+  .consSt{text-align:center}
+  .consSt b{display:block;font:800 19px/1 system-ui,sans-serif;
+    font-variant-numeric:tabular-nums}
+  .consSt span{display:block;margin-top:4px;
+    font:700 8px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+    text-transform:uppercase;opacity:.62}
+  /* the same diagonal shine the weekly card carries, so the two families read
+     as one set rather than two products */
+  .consSheen{position:absolute;inset:0;pointer-events:none;z-index:2;
+    background:
+      linear-gradient(118deg,transparent 34%,rgba(255,255,255,.16) 46%,
+        rgba(255,255,255,.05) 52%,transparent 60%),
+      radial-gradient(120% 62% at 18% 0%, rgba(255,255,255,.18), transparent 58%),
+      radial-gradient(90% 50% at 84% 104%, rgba(0,0,0,.18), transparent 62%)}
+  .rarityTag{margin:auto 4px 2px;padding-top:8px;text-align:center;
+    font:700 8.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;
+    text-transform:uppercase;position:relative;z-index:1}
 
   .fut.bronzeC{--base:#6B4726;--edge:#8A5E38;--ink:#F0E1CF;--bar:rgba(0,0,0,.42);--wedge:rgba(0,0,0,.22)}
   .fut.bronze {--base:#8E5B2C;--edge:#C68E52;--ink:#FFF2E1;--bar:rgba(0,0,0,.34);--wedge:rgba(0,0,0,.24)}
@@ -548,67 +566,100 @@
   .fut.orange {--base:#C2560B;--edge:#F79B45;--ink:#FFF0E2;--bar:rgba(0,0,0,.30);--wedge:rgba(0,0,0,.22)}
   .fut.purple {--base:#523090;--edge:#A67CE0;--ink:#F4EBFF;--bar:rgba(0,0,0,.30);--wedge:rgba(0,0,0,.22)}
 
-  .cons.common{background:linear-gradient(160deg,#8E97A1,#5A636D 46%,#79828C);color:#F4F7FA}
-  .cons.common .consTab{background:linear-gradient(160deg,#C3CBD3,#8A939D)}
-  .cons.common .consFoot{background:rgba(0,0,0,.28)}
-  .cons.rare{background:linear-gradient(160deg,#F0D274,#A87F20 46%,#DFBC5D);color:#312404}
-  .cons.rare .consTab{background:linear-gradient(160deg,#FFF0BC,#D6AC3E)}
-  .cons.rare .consFoot{background:rgba(0,0,0,.16)}
-  .cons.shame{background:#4A3229;background-image:linear-gradient(160deg,#5E4335,#33231C 46%,#4C3529);
-    color:#E3CDBE}
-  .cons.shame .consTab{background:linear-gradient(160deg,#7C5B49,#4A3428)}
-  .cons.shame .consFoot{background:rgba(0,0,0,.3)}
+  .cons.common{background:linear-gradient(178deg,#E4EBF2 0%,#B2BCC6 56%,#A3AEBA 100%);
+    color:#1C242E}
+  .cons.common .consTab{background:linear-gradient(160deg,#3B4854,#242D37);color:#E9EFF5}
+  .cons.common .consTitle,.cons.common .consName,.cons.common .consSt b{color:#1C242E}
+  .cons.common .consWhy,.cons.common .consDesc{color:rgba(28,36,46,.76)}
+  .cons.common .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(28,36,46,.32) 22%,rgba(28,36,46,.32) 78%,transparent)}
+  .cons.common .consSplit i{background:rgba(28,36,46,.24)}
+  .cons.common .rarityTag{border-top:1px solid rgba(28,36,46,.2);color:rgba(28,36,46,.68)}
+  .cons.rare{background:linear-gradient(178deg,#F0DCA0 0%,#D6B14E 56%,#C29F46 100%);
+    color:#332604}
+  .cons.rare .consTab{background:linear-gradient(160deg,#4A3A12,#2C2208);color:#F6E098}
+  .cons.rare .consTitle,.cons.rare .consName,.cons.rare .consSt b{color:#332604}
+  .cons.rare .consWhy,.cons.rare .consDesc{color:rgba(51,38,4,.76)}
+  .cons.rare .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(51,38,4,.34) 22%,rgba(51,38,4,.34) 78%,transparent)}
+  .cons.rare .consSplit i{background:rgba(51,38,4,.26)}
+  .cons.rare .rarityTag{border-top:1px solid rgba(51,38,4,.22);color:rgba(51,38,4,.7)}
+  .cons.shame{background:linear-gradient(178deg,#8C6B57 0%,#5E4433 56%,#4C362A 100%);
+    color:#F3E7DC}
+  .cons.shame .consTab{background:linear-gradient(160deg,#3A2A1F,#241911);color:#E4CDBB}
+  .cons.shame .consTitle,.cons.shame .consName,.cons.shame .consSt b{color:#F3E7DC}
+  .cons.shame .consWhy,.cons.shame .consDesc{color:rgba(243,231,220,.74)}
+  .cons.shame .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(243,231,220,.28) 22%,rgba(243,231,220,.28) 78%,transparent)}
+  .cons.shame .consSplit i{background:rgba(243,231,220,.2)}
+  .cons.shame .rarityTag{border-top:1px solid rgba(243,231,220,.16);
+    color:rgba(243,231,220,.58)}
 
-  /* ---------- the pick'em card ----------
-     FUT Birthday palette on the FIFA 12 frame. Three passes on this: the art
-     well was a black hole punched in a mint card, the confetti was landing on
-     the reading text, and the value bar and the rarity tag were two separate
-     red slabs stacked on each other. What FIFA 12 actually does is quieter
-     than it looks: one field, one panel for the portrait, and the type sitting
-     directly on the card. */
-  .cons.pickem{color:#5E1319;
-    background:
-      radial-gradient(120% 78% at 50% -14%, #A6F0E6 0%, transparent 62%),
-      linear-gradient(163deg,#6FDACF 0%,#41BEB5 52%,#5FD2C8 100%)}
-  /* Confetti only where nothing is read: the header band and the very bottom
-     corners. It was sitting across the reason line and the description. */
-  .cons.pickem::before{content:"";position:absolute;inset:0;pointer-events:none;
-    z-index:0;opacity:.55;
-    background-image:
-      radial-gradient(3px 6px at 14% 5%,  #F0455A 96%, transparent 0),
-      radial-gradient(5px 3px at 62% 3%,  #FFD25E 96%, transparent 0),
-      radial-gradient(3px 5px at 86% 8%,  #FFFFFF 96%, transparent 0),
-      radial-gradient(4px 4px at 34% 10%, #FFFFFF 96%, transparent 0),
-      radial-gradient(5px 3px at 6%  95%, #FFD25E 96%, transparent 0),
-      radial-gradient(3px 5px at 94% 96%, #F0455A 96%, transparent 0)}
-  .cons.pickem>*{position:relative;z-index:1}
-  .cons.pickem .consTab{background:linear-gradient(160deg,#FF7E8B,#DE2E44);
-    color:#FFF1F2}
+  /* ---------- milestones ----------
+     Three specific cards rather than one dark one, and the mapping the league
+     asked for, which is the reverse of what shipped: top seed blue, the bye
+     orange, clinching purple. Nobody has earned one, so nothing changes hands. */
+  .cons.blue{background:linear-gradient(178deg,#1B4E8C 0%,#0E2E58 56%,#081C38 100%);
+    color:#DCEEFF}
+  .cons.blue .consTab{background:linear-gradient(160deg,#CFE6FF,#7FB6E8);color:#082144}
+  .cons.blue .consTitle{color:#BFE0FF}
+  .cons.blue .consName,.cons.blue .consSt b{color:#F0F8FF}
+  .cons.blue .consWhy,.cons.blue .consDesc{color:rgba(220,238,255,.78)}
+  .cons.blue .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(190,225,255,.55) 22%,rgba(190,225,255,.55) 78%,transparent)}
+  .cons.blue .consSplit i{background:rgba(190,225,255,.34)}
+  .cons.blue .rarityTag{border-top:1px solid rgba(190,225,255,.28);
+    color:rgba(220,238,255,.72)}
+
+  .cons.orange{background:linear-gradient(178deg,#F2A03C 0%,#DE7415 56%,#C25E0B 100%);
+    color:#FFF3E4}
+  .cons.orange .consTab{background:linear-gradient(160deg,#5C2A05,#3B1A02);color:#FFD9A8}
+  .cons.orange .consTitle{color:#FFE7CC}
+  .cons.orange .consName,.cons.orange .consSt b{color:#FFF8EF}
+  .cons.orange .consWhy,.cons.orange .consDesc{color:rgba(255,243,228,.82)}
+  .cons.orange .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(255,240,220,.5) 22%,rgba(255,240,220,.5) 78%,transparent)}
+  .cons.orange .consSplit i{background:rgba(255,240,220,.34)}
+  .cons.orange .rarityTag{border-top:1px solid rgba(255,240,220,.3);
+    color:rgba(255,243,228,.76)}
+
+  .cons.purple{background:linear-gradient(178deg,#6F4BB0 0%,#4B2A86 56%,#391F6B 100%);
+    color:#F0E6FF}
+  .cons.purple .consTab{background:linear-gradient(160deg,#2A1550,#1B0D36);color:#DCC8FF}
+  .cons.purple .consTitle{color:#E2D2FF}
+  .cons.purple .consName,.cons.purple .consSt b{color:#F7F1FF}
+  .cons.purple .consWhy,.cons.purple .consDesc{color:rgba(240,230,255,.8)}
+  .cons.purple .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(226,210,255,.5) 22%,rgba(226,210,255,.5) 78%,transparent)}
+  .cons.purple .consSplit i{background:rgba(226,210,255,.34)}
+  .cons.purple .rarityTag{border-top:1px solid rgba(226,210,255,.28);
+    color:rgba(240,230,255,.74)}
+
+  /* ---------- pick'em, the only card in the set with ribbons ---------- */
+  .cons.pickem{background:linear-gradient(178deg,#74DED2 0%,#49C3B9 58%,#3AB2A9 100%);
+    color:#5A1218}
+  .cons.pickem .consTab{background:linear-gradient(160deg,#FF7E8B,#DE2E44);color:#FFF1F2}
   .cons.pickem .consTitle{color:#8C1F27}
-  /* The art well: a lighter panel of the same family with a hairline, rather
-     than the shared near-black, which read as a hole cut in the card. */
-  .cons.pickem .consArt{background:linear-gradient(168deg,#B4EFE7,#7FDCD2);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),
-      inset 0 -18px 26px -18px rgba(94,19,25,.3)}
-  .cons.pickem .consName{color:#5E1319;letter-spacing:-.01em}
-  /* A rule under the name, the way the FIFA 12 card separates the head from
-     the stat block. */
-  .cons.pickem .consName::after{content:"";display:block;width:52px;height:2px;
-    margin:7px auto 0;border-radius:1px;background:rgba(222,46,68,.65)}
-  .cons.pickem .consWhy{color:rgba(94,19,25,.82);opacity:1}
-  .cons.pickem .consDesc{color:rgba(94,19,25,.74)}
-  /* One slab, not two. The rarity tag rides on the value bar rather than
-     repeating it underneath. */
-  .cons.pickem .consFoot{background:linear-gradient(160deg,#E8394F,#C82438);
-    color:#FFF1F2;padding:8px 6px 4px;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
-  /* Same 4px gutter as the value bar it sits under, so the two read as one
-     slab rather than two bars of different widths. */
-  .cons.pickem .rarityTag{margin:0 4px 2px;padding:0 0 7px;
-    color:rgba(255,241,242,.72);background:linear-gradient(160deg,#E8394F,#C82438);
-    opacity:1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
-    border-radius:0 0 2px 2px}
-  .cons.pickem .consFoot{border-radius:2px 2px 0 0;margin-bottom:0}
+  .cons.pickem .consName,.cons.pickem .consSt b{color:#5A1218}
+  .cons.pickem .consWhy,.cons.pickem .consDesc{color:rgba(90,18,24,.76)}
+  .cons.pickem .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(90,18,24,.35) 22%,rgba(90,18,24,.35) 78%,transparent)}
+  .cons.pickem .consSplit i{background:rgba(90,18,24,.28)}
+  .cons.pickem .rarityTag{border-top:1px solid rgba(90,18,24,.22);
+    color:rgba(90,18,24,.6)}
+  .cons.pickem::before,.cons.pickem::after{content:"";position:absolute;
+    pointer-events:none;z-index:0}
+  .cons.pickem::before{top:-70px;left:-60px;width:220px;height:220px;
+    transform:rotate(-8deg);background:
+      linear-gradient(122deg,transparent 46%,rgba(240,69,90,.34) 46% 49%,transparent 49%),
+      linear-gradient(122deg,transparent 56%,rgba(255,210,94,.34) 56% 58%,transparent 58%),
+      linear-gradient(122deg,transparent 66%,rgba(255,255,255,.32) 66% 68%,transparent 68%)}
+  .cons.pickem::after{bottom:-80px;right:-70px;width:230px;height:230px;
+    transform:rotate(6deg);background:
+      linear-gradient(122deg,transparent 40%,rgba(255,255,255,.26) 40% 42%,transparent 42%),
+      linear-gradient(122deg,transparent 52%,rgba(240,69,90,.26) 52% 55%,transparent 55%),
+      linear-gradient(122deg,transparent 64%,rgba(255,210,94,.28) 64% 66%,transparent 66%)}
+  .cons.pickem>*{position:relative;z-index:1}
 
   /* The back of the card is the same card. It was flipping over to gold.
 
@@ -1107,6 +1158,57 @@
   .shhead{font:400 10.5px/1 var(--display);color:var(--faint);
     text-transform:uppercase;letter-spacing:.06em;border-bottom:0}
   [data-pid]{cursor:pointer}
+
+  /* A tier nobody has a palette for still has to look like a card. Holiday
+     designs land later, and a device on an older build must not blank out
+     somebody's binder because it has never heard of "halloween". Lower
+     specificity than every skin above, so it applies only when none match. */
+  .cons{background:linear-gradient(178deg,#8E97A1 0%,#5A636D 56%,#79828C 100%);
+    color:#F4F7FA}
+  .cons .consArt::after{background:linear-gradient(90deg,transparent,
+    rgba(255,255,255,.3) 22%,rgba(255,255,255,.3) 78%,transparent)}
+  .cons .consSplit i{background:rgba(255,255,255,.22)}
+  .cons .rarityTag{border-top:1px solid rgba(255,255,255,.16)}
+
+  /* ---------- everyone's picks, once the week is locked ---------- */
+  .pkYou{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:11px 13px;
+    border-radius:14px;background:color-mix(in srgb,var(--accent) 13%,transparent);
+    border:1px solid color-mix(in srgb,var(--accent) 26%,transparent)}
+  .pkYou b{font:600 15px/1 var(--display);color:var(--accent)}
+  .pkYou span{font:400 12.5px/1.35 var(--display);color:var(--dim)}
+  .pkYou em{margin-left:auto;font-style:normal;font:800 20px/1 var(--display);
+    color:var(--accent);font-variant-numeric:tabular-nums}
+  .pkGame{padding:11px 0 12px;border-top:1px solid var(--line)}
+  .pkGame:first-of-type{border-top:0;padding-top:2px}
+  .pkGameTop{display:flex;align-items:baseline;gap:8px;margin:0 0 8px}
+  .pkGameTop b{font:600 14.5px/1.15 var(--display);color:var(--dim)}
+  .pkTally{margin-left:auto;font:700 11.5px/1 ui-monospace,Menlo,monospace;
+    color:var(--faint);letter-spacing:.06em;white-space:nowrap}
+  .lane{display:grid;grid-template-columns:78px 1fr;align-items:start;gap:8px;
+    padding:6px;border-radius:9px;margin-bottom:3px;background:rgba(255,255,255,.04)}
+  .lane.won{background:rgba(74,222,128,.11)}
+  .lane.lost{background:rgba(255,255,255,.03)}
+  .lane>b{font:600 12.5px/1.6 var(--display);color:var(--dim);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lane.won>b{color:var(--win)}
+  .lane.won>b::after{content:" \2713";font-size:11px}
+  .lane.lost>b{opacity:.6}
+  .lanePicks{display:flex;flex-wrap:wrap;gap:3px}
+  .laneNone{font:400 11px/1.6 var(--display);color:var(--faint);opacity:.55}
+  .lc{display:inline-flex;align-items:baseline;gap:4px;padding:4px 7px;
+    border-radius:6px;background:rgba(255,255,255,.07);
+    font:500 11.5px/1 var(--display);color:var(--dim);white-space:nowrap}
+  .lc u{text-decoration:none;font:700 8.5px/1 ui-monospace,Menlo,monospace;opacity:.55}
+  .lane.won .lc{background:rgba(74,222,128,.16);color:#BDF2D0}
+  .lane.lost .lc{opacity:.6}
+  .lc.me{background:var(--accent);color:#1B1230;font-weight:700}
+  .lane.won .lc.me{background:#C9F7D8;color:#12351F}
+  .pkLegend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 0}
+  .pkLegend span{display:inline-flex;align-items:center;gap:6px;
+    font:400 11px/1 var(--display);color:var(--faint)}
+  .pkDot{width:9px;height:9px;border-radius:3px;display:inline-block}
+  .pkDot.won{background:rgba(74,222,128,.55)}
+  .pkDot.me{background:var(--accent)}
 
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
@@ -3069,6 +3171,59 @@ function pickWeek(){
   return all.length ? Math.max(...all) : 1;
 }
 
+/* ---------- everyone's picks, once the week is locked ----------
+   Grouped by matchup rather than by manager. The grid version made you take a
+   cell, find its column header and reconstruct what it meant; here the two
+   managers are the two lanes and whoever backed them is inside that lane, so
+   there is nothing to cross-reference and nothing scrolls sideways. */
+function lockedPicks(wk){
+  const games = weekGames(wk);
+  if(!games.length) return "";
+  const week = (PICKS || {})[String(wk)] || {};
+  const who = Object.keys(week);
+  if(!who.length) return `<p class="note">Nobody entered this week.</p>`;
+
+  const entered = who.filter(m => Object.keys(week[m] || {}).length);
+  /* Managers, not ESPN team names. tname() gives "TE University"; the roll call
+     has to read Bo and Dawson or it is worse than saying nothing. */
+  const missing = Object.keys(teamIndex()).filter(m => entered.indexOf(m) < 0);
+
+  const mine = ME ? scoreWeek(wk, ME) : null;
+
+  const body = games.map(g => {
+    const winner = g.done ? (g.homePts >= g.awayPts ? g.home : g.away) : null;
+    const lane = side => {
+      const backers = entered.filter(m => ((week[m] || {})[g.id] || {}).w === side)
+        .map(m => ({ m, c: Number((week[m][g.id] || {}).c) || 0 }))
+        .sort((a, b) => b.c - a.c);
+      const state = !winner ? "" : side === winner ? " won" : " lost";
+      return `<div class="lane${state}">
+        <b>${esc(side)}</b>
+        <div class="lanePicks">${backers.length
+          ? backers.map(x => `<span class="lc${x.m === ME ? " me" : ""}">${
+              esc(x.m === ME ? "You" : x.m)}<u>${x.c || "\u2014"}</u></span>`).join("")
+          : `<span class="laneNone">nobody</span>`}</div></div>`;
+    };
+    const nh = entered.filter(m => ((week[m] || {})[g.id] || {}).w === g.home).length;
+    const na = entered.filter(m => ((week[m] || {})[g.id] || {}).w === g.away).length;
+    return `<div class="pkGame">
+      <div class="pkGameTop"><b>${esc(g.home)} v ${esc(g.away)}</b>
+        <span class="pkTally">${nh} &ndash; ${na}</span></div>
+      ${lane(g.home)}${lane(g.away)}</div>`;
+  }).join("");
+
+  return (mine && mine.done ? `<div class="pkYou"><b>You</b>
+      <span>${mine.right} of ${mine.done}${mine.done ? "" : ""}</span>
+      <em>${mine.pts}</em></div>` : "") +
+    body +
+    `<div class="pkLegend">
+      <span><i class="pkDot won"></i> side that won</span>
+      <span><i class="pkDot me"></i> you</span>
+      <span>small digit is the confidence rank</span></div>` +
+    (missing.length ? `<p class="note" style="margin:10px 2px 0">${
+      listOf(missing)} did not enter this week.</p>` : "");
+}
+
 /* ---------- settled results ----------
    Scores used to be recomputed from ESPN every time the page painted, with
    nothing stored. If that view ever stopped reporting completed weeks, or a
@@ -3331,8 +3486,7 @@ function renderPicks(){
 
   const board = picksTable();
   const table = board.length
-    ? `<h2>Season standings</h2>
-       <table><thead><tr><th>Manager</th><th class="n">Points</th>
+    ? `<table><thead><tr><th>Manager</th><th class="n">Points</th>
          <th class="n">Correct</th></tr></thead>
        <tbody>${board.map(r => `<tr${r.manager === ME ? ' class="you"' : ""}>
          <td>${esc(r.manager)}</td><td class="n mark">${r.pts}</td>
@@ -3340,18 +3494,29 @@ function renderPicks(){
        </tbody></table>`
     : "";
 
-  el.innerHTML = `<h2>Pick&rsquo;em &middot; Week ${wk}</h2>
-    <p class="note" style="margin:0 0 12px">${esc(status)}${
+  /* Open, the page is your entry and the clock and nothing else: nobody should
+     be able to read the room before they have committed. Locked, everyone's
+     picks come out and the entry form goes away. The leaderboard and the
+     explainer fold either way, because they were sitting above the picks and
+     pushing them off the screen. */
+  el.innerHTML = panelHead(`Pick'em \u00b7 Week ${wk}`,
+      locked ? "Locked. Everyone's picks are open now." : status) +
+    (!locked ? `<p class="note" style="margin:0 0 12px">${esc(status)}${
       (picksState === "error" || picksState === "stale")
-        ? ` <button type="button" class="lnkbtn" id="pkRetry">Try again</button>` : ""}</p>
-    ${rows}
-    ${(!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
+        ? ` <button type="button" class="lnkbtn" id="pkRetry">Try again</button>` : ""}</p>`
+      : "") +
+    (locked ? lockedPicks(wk) : rows) +
+    ((!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
         ${ready ? "" : "disabled"}>${
           ready ? "Save picks"
           : noWinner ? `Pick a winner in ${noWinner} more game${noWinner > 1 ? "s" : ""}`
-          : "Give every game a different rank"}</button>` : ""}
-    ${!ME ? `<p class="note">Pick your name at the top first.</p>` : ""}
-    ${table}`;
+          : "Give every game a different rank"}</button>` : "") +
+    (!ME ? `<p class="note">Pick your name at the top first.</p>` : "") +
+    fold("Season leaderboard", table, false) +
+    howItWorks(`Rank every game by how sure you are. Your most confident pick is
+      worth the number of games that week, your least is worth 1. Get it right
+      and you bank that number. There is no penalty for being wrong, only the
+      points you did not take.`, "How scoring works");
 
   el.querySelectorAll("[data-g]").forEach(b => b.onclick = () => {
     const cur = myPicks[b.dataset.g] || {};
@@ -6526,7 +6691,7 @@ function saveToBinder(cards, week, demo){
 var TIER_RANK = { totw:6, goldC:4.5, purple:6, orange:6, blue:6, gold:5, silver:4, silverC:3, bronze:2, bronzeC:1 };
 var TIER_NAME = { totw:"Team of the week", gold:"Gold rare", goldC:"Gold common",
   silver:"Silver rare", silverC:"Silver common", bronze:"Bronze rare", bronzeC:"Bronze common",
-  blue:"Milestone", orange:"Milestone", purple:"Milestone" };
+  blue:"Top Seed", orange:"First Round Bye", purple:"Clinched" };
 
 /* The binder shows the same card art as the pack, scaled to fit the grid.
    An entry saved by an older build has no .card, so rebuild one from the
@@ -6783,16 +6948,46 @@ function matchCardHTML(c){
     </div></div>`;
 }
 
+/* The portrait sits on the card rather than in a box, the two figures behind
+   the award go in columns split by a rule, and the footer is a hairline instead
+   of a slab. A card carrying only one figure keeps its reason line, which is
+   what it showed before. */
 function consCardHTML(c){
+  const pair = consFigures(c);
   return `<div class="cons ${c.rarity} hexskin">
+    <div class="consSheen"></div>
     <div class="consHead"><span class="consTab">${c.icon||"\u2605"}</span>
       <span class="consTitle">${esc(c.kind||"Superlative")}</span></div>
     <div class="consArt">${artHTML(c.art)}</div>
     <div class="consName">${esc(c.title)}</div>
     ${c.reason ? `<div class="consWhy">${esc(c.reason)}</div>` : ""}
+    ${pair ? `<div class="consSplit${pair.length > 1 ? "" : " one"}">
+        <span class="consSt"><b>${esc(pair[0][0])}</b><span>${esc(pair[0][1])}</span></span>
+        ${pair.length > 1 ? `<i></i>
+          <span class="consSt"><b>${esc(pair[1][0])}</b><span>${esc(pair[1][1])}</span></span>`
+          : ""}
+      </div>` : ""}
     <div class="consDesc">${esc(c.desc||"")}</div>
-    <div class="consFoot"><div class="v">${esc(c.value||"")}</div></div>
     <div class="rarityTag">${esc(c.rarityLabel||"")}</div></div>`;
+}
+
+/* The figures for the block under the name.
+
+   A card can name its own pair, which the pick'em one does. Everything else
+   carries a single phrase like "Lost by 42.6" or "151.8 points", so the number
+   comes out of it and the words become the label: 42.6 over LOST, 151.8 over
+   POINTS. There is only ever one real figure in that payload, so this returns
+   one and the block centres it. Manufacturing a second by scraping the reason
+   line for the same number back again is how a card ends up saying 42.6 twice. */
+function consFigures(c){
+  if(Array.isArray(c.figures) && c.figures.length) return c.figures.slice(0, 2);
+  const raw = String(c.value || "").trim();
+  if(!raw) return null;
+  const m = raw.match(/[-+]?\d+(?:\.\d+)?/);
+  if(!m) return null;
+  const label = raw.replace(m[0], " ").replace(/\bby\b/gi, " ")
+    .replace(/[^A-Za-z ]/g, " ").replace(/\s+/g, " ").trim();
+  return [[m[0], label || "Value"]];
 }
 
 
@@ -6853,9 +7048,12 @@ const TIER = {
   goldC:  { n:14, size:30, bl:.46, col:"#E7CE8E", back:"#8A6A24" },
   gold:   { n:18, size:33, bl:.55, col:"#FFE9A8", back:"#B08423" },
   totw:   { n:24, size:38, bl:.70, col:"#FFD98A", back:"#141414" },
-  blue:   { n:26, size:39, bl:.74, col:"#BFEBFF", back:"#1B5C8A" },
-  orange: { n:28, size:40, bl:.78, col:"#FFD2A0", back:"#B24A08" },
-  purple: { n:28, size:40, bl:.78, col:"#E2C9FF", back:"#4B2A86" },
+  /* top seed */
+  blue:   { n:28, size:40, bl:.80, col:"#CFE6FF", back:"#0E2E58" },
+  /* first round bye */
+  orange: { n:27, size:39, bl:.76, col:"#FFD9A8", back:"#B25A08" },
+  /* clinched */
+  purple: { n:26, size:38, bl:.72, col:"#DCC8FF", back:"#3E2172" },
   /* The pick'em card's own flare and back. It flipped over to a gold back,
      which is a different card to the one you are about to see. */
   pickem: { n:26, size:38, bl:.68, col:"#8FF0E4", back:"#127F78" }
@@ -6945,7 +7143,7 @@ const PACK = (function(){
      walkout still decides which card. */
   const PACK_NAME = { bronzeC:"Bronze", bronze:"Bronze", silverC:"Silver",
     silver:"Silver", goldC:"Gold", gold:"Gold", totw:"Team of the week",
-    blue:"Milestone", orange:"Milestone", purple:"Milestone" };
+    blue:"Top Seed", orange:"First Round Bye", purple:"Clinched" };
 
   const tierKey = c => c.flare || c.tier || (c.rarity === "rare" ? "gold" : "silverC");
   function topTier(list){
@@ -7206,6 +7404,42 @@ function buildWeekCards(w, wk){
   return dedupeArt(out);
 }
 
+/* ---------- milestones ----------
+   Three specific cards rather than one dark one, on the palettes the league
+   asked for. That mapping is the reverse of what shipped: blue was clinching
+   and is now the top seed, purple was the bye and is now clinching. Nobody has
+   earned one yet, so nothing in anybody's binder changes.
+
+   They are consumables, not result cards. A milestone is an award, and the
+   award layout is the one that carries a title, a reason and a figure. */
+const MILESTONES = [
+  { key:"blue",   label:"Blue: clinched the 1 seed",   title:"Top Seed",
+    kind:"Milestone", tag:"Top Seed", icon:"\u2605", art:"\u{1F3C6}",
+    reason:"First in the league, clinched",
+    desc:"First in the league with weeks to spare. The bracket comes through you.",
+    right:"Seed" },
+  { key:"orange", label:"Orange: clinched a first-round bye", title:"Week Off",
+    kind:"Milestone", tag:"First Round Bye", icon:"\u2605", art:"\u{1F6CB}\uFE0F",
+    reason:"First round bye, clinched",
+    desc:"A first round bye. Everyone else plays while you watch.",
+    right:"Seed" },
+  { key:"purple", label:"Purple: clinched the playoffs", title:"In the Bracket",
+    kind:"Milestone", tag:"Clinched", icon:"\u2605", art:"\u{1F3AB}",
+    reason:"Playoff spot clinched",
+    desc:"Playoffs clinched. Nobody asks how you got there.",
+    right:"Seed" }
+];
+
+function milestoneCard(key, facts){
+  const m = MILESTONES.find(x => x.key === key) || MILESTONES[2];
+  const f = facts || {};
+  return { type:"cons", rarity:m.key, rarityLabel:m.tag, kind:m.kind,
+    icon:m.icon, art:m.art, pool:"good", title:m.title,
+    reason:m.reason, desc:m.desc, value:f.seed || "", flare:m.key, fixedArt:true,
+    figures:[[f.seed || "\u2014", m.right],
+             [f.record || "\u2014", "Record"]] };
+}
+
 /* The card itself, built in one place so the test bench under ?pack=1 shows
    the card that actually ships rather than a copy of it that can drift. */
 function pickemCard(win, shared){
@@ -7219,7 +7453,10 @@ function pickemCard(win, shared){
     desc: shared
       ? "Shared the week. Somebody else read it exactly as well, which takes the shine off."
       : "Nobody read the week better. One of these exists and it went to you.",
-    value: win.pts + " pts", flare:"pickem", fixedArt:true };
+    value: win.pts + " pts", flare:"pickem", fixedArt:true,
+    /* the one card with two real figures, so it names them itself */
+    figures: [[String(win.pts), "Points"],
+              [win.right + "/" + win.done, "Correct"]] };
 }
 
 /* Who topped the confidence board for a settled week. Ties all win, because a
@@ -7311,13 +7548,13 @@ if(PREVIEW){
     };
   });
 
-  const SP={blue:"Blue: clinched playoffs",orange:"Orange: 1 seed",purple:"Purple: first-round bye"};
-  document.getElementById("demoSpecial").innerHTML = Object.entries(SP)
-    .map(([t,l])=>`<button class="cbtn spGo" data-t="${t}" style="display:block;width:100%;margin-top:9px;text-align:center">${l}</button>`).join("");
+  document.getElementById("demoSpecial").innerHTML = MILESTONES
+    .map(m=>`<button class="cbtn spGo" data-t="${esc(m.key)}" style="display:block;width:100%;margin-top:9px;text-align:center">${esc(m.label)}</button>`).join("");
   document.querySelectorAll(".spGo").forEach(b=>{
-    b.onclick = () => PACK.open("Milestone",[{type:"match",tier:b.dataset.t,flare:b.dataset.t,
-      art:"\u{1F3DF}\uFE0F",mine:"1",theirs:"10",pos:"SEED",vs:"clinched",oppName:"teams",
-      title:"Scotty",stats:[["1st","SEED"],["\u2014","MRG"],["\u2014","RNK"],["\u2014","BEN"],["\u2014","REC"],["\u2014","TOP"]]}]); });
+    b.onclick = () => PACK.open("Milestone", [milestoneCard(b.dataset.t,
+      { seed: b.dataset.t === "blue" ? "1st" : b.dataset.t === "orange" ? "2nd" : "5th",
+        record: b.dataset.t === "blue" ? "10-1" : b.dataset.t === "orange" ? "9-2" : "7-4" })]);
+  });
   const na=document.getElementById("noanim");
   try{ na.checked=localStorage.getItem("bromigos.noanim")==="1"; }catch(e){}
   na.onchange=()=>{ try{ localStorage.setItem("bromigos.noanim",na.checked?"1":"0"); }catch(e){} };

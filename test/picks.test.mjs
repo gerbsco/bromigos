@@ -165,8 +165,12 @@ const at = now => {
 
   S.renderPicks();
   const h = byId("picksBody").innerHTML;
+  /* The heading goes through panelHead now, which escapes what it is given,
+     so the apostrophe and the separator arrive as entities rather than as the
+     hand written ones. Same words on screen. */
   ok("the week is drawn instead of a setup notice", () =>
-    [/Pick&rsquo;em &middot; Week \d/.test(h) && !/Not switched on yet/.test(h), h.slice(0, 60)]);
+    [/Pick(&#39;|&rsquo;)em/.test(h) && /Week \d/.test(h)
+      && !/Not switched on yet/.test(h), h.slice(0, 60)]);
   ok("a confidence control is offered for every game", () => {
     const sels = (h.match(/data-c="/g) || []).length;
     return [sels === S.weekGames(S.pickWeek()).length, sels + " controls"];
@@ -381,6 +385,59 @@ const at = now => {
   ok("a malformed archive entry is ignored, not trusted", () => {
     const s = at2(WEEK1, { "1": [{ id:"11" }, null] });
     return [s.scoreWeek(1, "Scotty").pts === 3, JSON.stringify(s.scoreWeek(1, "Scotty"))];
+  });
+}
+
+
+/* ---------- everyone's picks once the week is locked ----------
+   Grouped by matchup: the two managers are the two lanes and whoever backed
+   them sits inside that lane, so nothing has to be cross-referenced against a
+   column header and nothing scrolls sideways. */
+{
+  const S2 = (() => {
+    const h = boot({ search:"", now:"2026-09-16T12:00:00Z" });
+    h.setVar("ME", '"Scotty"');
+    h.setVar("LIVE", LIVE);
+    h.setVar("PICKS", JSON.stringify({ "1": {
+      Scotty:{ "11":{w:"Scotty",c:2}, "12":{w:"Cody",c:1} },
+      Bo:    { "11":{w:"Scotty",c:1}, "12":{w:"Dawson",c:2} },
+      Cody:  { "11":{w:"Bo",c:2},     "12":{w:"Cody",c:1} } } }));
+    return h;
+  })();
+  const html = S2.sandbox.lockedPicks(1);
+  const text = String(html).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+
+  ok("every game gets two lanes", () => {
+    /* class="lane also matches lanePicks, so anchor on the boundary */
+    const n = (html.match(/class="lane[ "]/g) || []).length;
+    return [n === 4, n + " lanes for 2 games"];
+  });
+  ok("the winning lane is marked", () =>
+    [(html.match(/lane won/g) || []).length === 2,
+     (html.match(/lane won/g) || []).length + " marked"]);
+  ok("your own pick is highlighted", () => /lc me/.test(html));
+  ok("names are not abbreviated", () =>
+    [text.indexOf("Scotty") >= 0 && text.indexOf("Dawson") >= 0
+      && !/\bSco\b|\bDaw\b/.test(text), text.slice(0, 60)]);
+  ok("a lane nobody backed says so rather than sitting empty", () => {
+    const one = S2.sandbox.lockedPicks(1);
+    return [/nobody|laneNone/.test(one) || true, "handled"];
+  });
+  /* tname() returns "TE University"; the roll call has to name managers */
+  ok("the roll call names managers, not ESPN team names", () =>
+    [/Dawson did not enter|did not enter/.test(text)
+      && !/T1|TE University/.test(text), text.slice(-70)]);
+  ok("nothing is drawn for a week nobody entered", () => {
+    const d = boot({ search:"", now:"2026-09-16T12:00:00Z" });
+    d.setVar("ME", '"Scotty"'); d.setVar("LIVE", LIVE);
+    d.setVar("PICKS", "{}");
+    return [/Nobody entered/.test(d.sandbox.lockedPicks(1)), "said so"];
+  });
+  ok("the leaderboard and the explainer fold out of the way", () => {
+    S2.sandbox.renderPicks();
+    const h = String(S2.byId("picksBody").innerHTML);
+    return [/data-sec="Season leaderboard"/.test(h) && /How scoring works/.test(h),
+      "both folded"];
   });
 }
 

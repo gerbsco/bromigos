@@ -415,6 +415,7 @@ const WEEK = {
   const ctx = boot({ search:"?pack=1", now:AFTER_PACKS, storage:true });
   ctx.setVar("ME", '"Scotty"');
   const S = ctx.sandbox;
+  void ctx;
   const alien = { type:"cons", rarity:"halloween", rarityLabel:"Spooky",
     kind:"Holiday", icon:"\u2605", art:"\u{1F383}", title:"Trick or Treat",
     reason:"Something happened, 13.0", desc:"A card from the future.",
@@ -429,17 +430,21 @@ const WEEK = {
       .replace(/\s+/g, " ");
     return [/\.cons\{background:linear-gradient/.test(css), "base skin present"];
   });
-  /* Built inside the sandbox rather than handed in from out here: an object
-     created in this realm and passed into the vm is not the same shape to the
-     code under test. */
-  const put = `localStorage.removeItem("bromigos.binder.v2.Scotty");
-    saveToBinder([${JSON.stringify(alien)}], 9);`;
+  /* saveToBinder guards its input with Array.isArray, which is false for an
+     array built out here and passed into the vm: different realm, different
+     Array. readBinder hands back one of its own, so it gets reused. */
   ok("the binder stores and reads it back unchanged", () => {
-    const back = ctx.run(put + " readBinder().map(c => c.card && c.card.rarity)");
-    return [back.length === 1 && back[0] === "halloween", JSON.stringify(back)];
+    S.localStorage.removeItem("bromigos.binder.v2.Scotty");
+    const box = S.readBinder();
+    box.length = 0; box.push(alien);
+    S.saveToBinder(box, 9);
+    const back = S.readBinder();
+    return [back.length === 1 && back[0].card
+      && back[0].card.rarity === "halloween",
+      JSON.stringify(back.map(c => c.card && c.card.rarity))];
   });
   ok("and draws it in the binder without a layout of its own", () => {
-    const h = ctx.run("miniCard(readBinder()[0])");
+    const h = S.miniCard(S.readBinder()[0]);
     return [/class="cons /.test(h) && !/class="fut /.test(h), h.slice(0, 50)];
   });
 

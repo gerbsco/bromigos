@@ -88,7 +88,10 @@ const WEEK = {
   ok("binder superlative is not a result card", () => !/class="fut /.test(binCons));
   ok("superlative keeps its name", () => binCons.indexOf("Chair Recipient") >= 0);
   ok("superlative keeps its description", () => binCons.indexOf("not competitive") >= 0);
-  ok("superlative keeps its stat line", () => binCons.indexOf("Lost by 42.6") >= 0);
+  /* The phrase became a figure and a label: 42.6 over LOST. */
+  ok("superlative keeps its stat line", () =>
+    [binCons.indexOf("42.6") >= 0 && /consSt/.test(binCons),
+     (binCons.match(/consSt[\s\S]{0,80}/) || [""])[0].replace(/<[^>]*>/g, " ")]);
   /* American spelling throughout. British ones shipped twice and were fixed. */
   ok("superlative keeps its rarity tag", () => [binCons.indexOf("Dishonor") >= 0,
     (binCons.match(/rarityTag">([^<]*)</) || [])[1]]);
@@ -326,17 +329,19 @@ const WEEK = {
     return [/\.pickemback\{isolation:isolate\}/.test(css)
       && /\.cons\.pickem\{isolation:isolate\}/.test(css), "both isolated"];
   });
-  ok("and nothing on the front is see-through", () => {
-    const css = readFileSync(join(HERE, "..", "index.html"), "utf8");
-    const art = (css.match(/\.cons\.pickem \.consArt\{[\s\S]*?\}/) || [""])[0];
-    const bg = art.split("box-shadow")[0];
-    return [bg.indexOf("rgba") < 0, bg.trim().slice(0, 60)];
+  /* There is no art well any more. The portrait sits on the card, so the rule
+     that has to hold is that nothing paints a box behind it. */
+  ok("no card paints a box behind the portrait", () => {
+    const css = readFileSync(join(HERE, "..", "index.html"), "utf8")
+      .replace(/\s+/g, " ");
+    const art = (css.match(/\.consArt\{[^}]*\}/) || [""])[0];
+    return [art.indexOf("background") < 0, art.slice(0, 80)];
   });
-
-  ok("the art well is not the shared near-black", () => {
-    const html = readFileSync(join(HERE, "..", "index.html"), "utf8");
-    return [/\.cons\.pickem \.consArt\{background:/.test(html.replace(/\s+/g, " ")),
-      "own art well"];
+  ok("and the front of the pick'em card stays opaque", () => {
+    const css = readFileSync(join(HERE, "..", "index.html"), "utf8")
+      .replace(/\s+/g, " ");
+    const skin = (css.match(/\.cons\.pickem\{[^}]*\}/) || [""])[0];
+    return [skin.indexOf("rgba") < 0, skin.slice(0, 80)];
   });
 
   ok("the bench offers it under ?pack=1", () => {
@@ -399,6 +404,62 @@ const WEEK = {
   ok("a second manager on the same phone gets his own", () => {
     const wks = [...new Set(S.readBinder().map(c => c.week))].sort().join(",");
     return [wks === "1,2,3,4" && S.readBinder().length === 8, wks];
+  });
+}
+
+
+/* ---------- new card designs land later ----------
+   Holiday cards are coming. A binder built on a device that has never heard of
+   the tier must still render the card rather than blanking it out. */
+{
+  const ctx = boot({ search:"?pack=1", now:AFTER_PACKS, storage:true });
+  ctx.setVar("ME", '"Scotty"');
+  const S = ctx.sandbox;
+  const alien = { type:"cons", rarity:"halloween", rarityLabel:"Spooky",
+    kind:"Holiday", icon:"\u2605", art:"\u{1F383}", title:"Trick or Treat",
+    reason:"Something happened, 13.0", desc:"A card from the future.",
+    value:"13.0 points" };
+  ok("a tier this build has never heard of still renders", () => {
+    const h = S.consCardHTML(alien);
+    return [h.indexOf("Trick or Treat") >= 0 && /class="cons halloween/.test(h),
+      h.slice(0, 60)];
+  });
+  ok("and it falls back to a readable skin rather than nothing", () => {
+    const css = readFileSync(join(HERE, "..", "index.html"), "utf8")
+      .replace(/\s+/g, " ");
+    return [/\.cons\{background:linear-gradient/.test(css), "base skin present"];
+  });
+  /* Built inside the sandbox rather than handed in from out here: an object
+     created in this realm and passed into the vm is not the same shape to the
+     code under test. */
+  const put = `localStorage.removeItem("bromigos.binder.v2.Scotty");
+    saveToBinder([${JSON.stringify(alien)}], 9);`;
+  ok("the binder stores and reads it back unchanged", () => {
+    const back = ctx.run(put + " readBinder().map(c => c.card && c.card.rarity)");
+    return [back.length === 1 && back[0] === "halloween", JSON.stringify(back)];
+  });
+  ok("and draws it in the binder without a layout of its own", () => {
+    const h = ctx.run("miniCard(readBinder()[0])");
+    return [/class="cons /.test(h) && !/class="fut /.test(h), h.slice(0, 50)];
+  });
+
+  /* the three milestones, on the palettes the league asked for */
+  ok("the milestone mapping is the one that was asked for", () => {
+    const m = k => S.milestoneCard(k, { seed:"1st", record:"10-1" });
+    return [m("blue").title === "Top Seed" && m("orange").title === "Week Off"
+      && m("purple").title === "In the Bracket",
+      [m("blue").title, m("orange").title, m("purple").title].join(", ")];
+  });
+  ok("each milestone carries its own skin and card back", () => {
+    const css = readFileSync(join(HERE, "..", "index.html"), "utf8")
+      .replace(/\s+/g, " ");
+    return [["blue","orange","purple"].every(k =>
+      css.indexOf(".cons." + k + "{background") >= 0
+      && new RegExp(k + ": ?\\{ ?n:").test(css)), "all three"];
+  });
+  ok("a milestone is a consumable, not a result card", () => {
+    const h = S.consCardHTML(S.milestoneCard("blue", { seed:"1st", record:"10-1" }));
+    return [/class="cons blue/.test(h), h.slice(0, 44)];
   });
 }
 

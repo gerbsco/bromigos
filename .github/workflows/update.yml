@@ -13,8 +13,13 @@ on:
     # when he was ruled out at nine. A stale warning is worse than none,
     # because people act on it.
     - cron: "0 15 * * 0"
-    # And again just before the late window, for anyone still deciding.
-    - cron: "0 19 * * 0"
+    # Then three passes over Sunday itself, so the live score and the win
+    # chance on the matchup card mean something while the games are on rather
+    # than catching up on Monday morning. 4pm ET is after the early window,
+    # 7pm ET is after the late one, and 11pm ET catches the Sunday night game.
+    - cron: "0 20 * * 0"
+    - cron: "0 23 * * 0"
+    - cron: "0 3 * * 1"
   workflow_dispatch: {}   # lets you run it by hand from the Actions tab
 
 permissions:

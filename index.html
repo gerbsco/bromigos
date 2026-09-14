@@ -1210,6 +1210,25 @@
   .pkDot.won{background:rgba(74,222,128,.55)}
   .pkDot.me{background:var(--accent)}
 
+  /* ---------- a game in progress ---------- */
+  .lvbox{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;
+    padding:14px 14px 12px;margin:0 0 14px}
+  .lvtop{display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:10px}
+  .lvside b{display:block;font:700 26px/1 var(--display);color:var(--chalk);
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .lvside span{display:block;margin-top:4px;font:400 11.5px/1 var(--display);
+    color:var(--faint)}
+  .lvside.r{text-align:right}
+  .lvmid{font:600 10.5px/1 var(--display);color:var(--accent);
+    text-transform:uppercase;letter-spacing:.1em}
+  .lvbar{height:6px;border-radius:3px;background:rgba(255,255,255,.09);
+    overflow:hidden;margin:12px 0 8px}
+  .lvbar i{display:block;height:100%;border-radius:3px;
+    background:color-mix(in srgb,var(--accent) 75%,transparent)}
+  .lvfoot{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;
+    font:400 11.5px/1.3 var(--display);color:var(--faint)}
+  .lvfoot .r{text-align:right}
+
   /* ---------- warnings ---------- */
   .warn{padding:14px 16px;border-radius:14px;margin-bottom:6px;
     font:400 14px/1.5 var(--display);background:var(--ink-2);color:var(--dim)}
@@ -1916,6 +1935,12 @@ function renderDraft(){
     }).join("") +
     `</div>` + (done ? `</details>`
       : `<p class="note">Snake format, 90 seconds a pick. Sunday Sept 6, 5:00 PM ET.</p>`);
+}
+
+/* The scoring period ESPN is currently on, which is the week whose actuals are
+   in the roster payload. */
+function LIVE_WK(){
+  return Number(LIVE && LIVE.scoringPeriodId) || 0;
 }
 
 /* ---------- live state ---------- */
@@ -4645,6 +4670,16 @@ function normalizeLive(){
            the optimal lineup was but never that yours differed from it, which
            is the only version you can act on. */
         slotId: e.lineupSlotId,
+        /* What he has actually banked in the week being played, and whether
+           ESPN has him down as having finished. Both are needed to say
+           anything honest about a game in progress: a starter on zero is
+           either yet to kick off or having a shocker, and those are not the
+           same thing. */
+        live: (() => {
+          const st = (p.stats || []).find(x =>
+            x.statSourceId === 0 && Number(x.scoringPeriodId) === Number(LIVE_WK()));
+          return st ? Math.round((Number(st.appliedTotal) || 0) * 10) / 10 : null;
+        })(),
         benched: e.lineupSlotId === 20 || e.lineupSlotId === 21,
         injury: p.injuryStatus && p.injuryStatus !== "ACTIVE" ? p.injuryStatus : null
       };
@@ -6148,6 +6183,86 @@ function wireSheet(root){
   });
 }
 
+/* ---------- a game in progress ----------
+   Between kickoff and the final whistle the matchup card was still showing two
+   projections, which is the one time of the week nobody wants them. This reads
+   the actual points ESPN has banked and what is still to come, and turns the
+   pair into a win chance.
+
+   The model is deliberately plain. Each side's finish is its points so far plus
+   the projection of whoever has not scored yet. The uncertainty left is the
+   uncertainty in those unplayed players, taken as roughly nine points a head
+   and added in quadrature, so a matchup with everyone done has no uncertainty
+   left and the number goes to a certainty rather than hovering at 80 percent. */
+function liveSide(team, wk){
+  if(!team || !team.players) return null;
+  const best = bestLineupWith(team.players, p => weekProjOf(p, wk), wk);
+  let now = 0, left = 0, yet = 0, played = 0;
+  best.filled.forEach(f => {
+    const p = f.player;
+    if(!p) return;
+    const got = typeof p.live === "number" ? p.live : null;
+    if(got !== null && got > 0){ now += got; played++; }
+    else { left += weekProjOf(p, wk); yet++; }
+  });
+  return { now: Math.round(now * 10) / 10, left: Math.round(left * 10) / 10,
+    yet, played, slots: best.filled.length,
+    finish: Math.round((now + left) * 10) / 10 };
+}
+
+/* the standard normal, close enough for a percentage nobody will audit */
+function normCdf(z){
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp(-z * z / 2);
+  const p = d * t * (1.330274 * t * t * t * t - 1.821256 * t * t * t
+    + 1.781478 * t * t - 0.356538 * t + 0.319381);
+  return z > 0 ? 1 - p : p;
+}
+
+function liveOdds(a, b){
+  if(!a || !b) return null;
+  const gap = a.finish - b.finish;
+  const unknown = Math.sqrt((a.yet + b.yet)) * 9;
+  if(unknown < 0.5) return gap > 0 ? 1 : gap < 0 ? 0 : 0.5;
+  return normCdf(gap / unknown);
+}
+
+/* Is this week actually being played, as opposed to sitting in the future? */
+function weekInPlay(wk){
+  if(Number(wk) !== LIVE_WK()) return false;
+  const t = (ROSTERS || []).some(x => (x.players || [])
+    .some(p => typeof p.live === "number" && p.live > 0));
+  return t;
+}
+
+function renderLive(me, opp, wk){
+  if(!weekInPlay(wk)) return "";
+  const a = liveSide(me, wk), b = liveSide(opp, wk);
+  if(!a || !b) return "";
+  const odds = liveOdds(a, b);
+  if(odds === null) return "";
+  const pct = Math.round(odds * 100);
+  const done = a.yet === 0 && b.yet === 0;
+
+  return `<div class="lvbox">
+    <div class="lvtop">
+      <span class="lvside"><b>${a.now.toFixed(1)}</b><span>${esc(me.manager)}</span></span>
+      <span class="lvmid">${done ? "Final" : "Live"}</span>
+      <span class="lvside r"><b>${b.now.toFixed(1)}</b><span>${esc(opp.manager)}</span></span>
+    </div>
+    <div class="lvbar"><i style="width:${Math.max(2, Math.min(98, pct))}%"></i></div>
+    <div class="lvfoot">
+      <span>${pct}% ${esc(me.manager)}</span>
+      <span>${done ? "All players done"
+        : `${a.yet} left, ${b.yet} for ${esc(opp.manager)}`}</span>
+      <span class="r">${100 - pct}% ${esc(opp.manager)}</span>
+    </div>
+    <p class="note" style="margin:9px 0 0">Projected finish
+      ${a.finish.toFixed(1)} to ${b.finish.toFixed(1)}. A starter on zero who has
+      not kicked off counts as still to come, so an early number moves a lot.</p>
+  </div>`;
+}
+
 /* ---------- your lineup against the best one ----------
    The site has always shown the optimal lineup and never what you have
    actually set, so it could tell you the answer without telling you that you
@@ -6349,6 +6464,7 @@ function renderMatchup(me){
       <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
         <span class="vsScore">${themTot.toFixed(1)}</span></div>
     </div>
+    ${renderLive(me, opp, matchWeek)}
     ${renderStartSitGaps(me, matchWeek)}
     ${rivalryLine(me.manager, opp.manager)}
     ${sourceNote(gaps, true)}

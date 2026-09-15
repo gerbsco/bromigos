@@ -468,5 +468,61 @@ const WEEK = {
   });
 }
 
+
+/* ---------- a card stored with a broken archive heals ----------
+   Week 1's packs arrived with every roster figure at zero, because the payload
+   came back without entries. A card reading 0.0 for four of its six numbers is
+   wrong rather than early, so when the archive later carries real ones the
+   stored card takes them. The art, the tier and the pull date never move. */
+{
+  const broken = { manager:"Scotty", myScore:115.8, oppScore:102.6, opponent:"Cody",
+    rank:5, bench:0, high:0, projected:0, record:"1-0", crest:"img/x.png", awards:[] };
+  const fixed = { ...broken, bench:22.4, high:27.2, projected:118.9 };
+  const h = boot({ search:"?pack=1", now:AFTER_PACKS, storage:true });
+  h.setVar("ME", '"Scotty"');
+  h.setVar("WEEKLY", JSON.stringify({ week:1, packs:{ Scotty:broken },
+    history:{ "1":{ Scotty:broken } }, body:[], changed:[] }));
+  const H = h.sandbox;
+  H.localStorage.removeItem("bromigos.binder.v2.Scotty");
+  const box = H.readBinder();
+  box.length = 0;
+  H.buildWeekCards(broken, 1).forEach(c => box.push(c));
+  H.saveToBinder(box, 1, false);
+  const art = H.readBinder().find(x => x.type === "match").card.art;
+
+  ok("a card pulled from an empty archive stores the zeros", () => {
+    const st = H.readBinder().find(x => x.type === "match").card.stats
+      .filter(c => String(c[0]) === "0.0").length;
+    return [st >= 2, st + " dead cells"];
+  });
+
+  h.setVar("WEEKLY", JSON.stringify({ week:1, packs:{ Scotty:fixed },
+    history:{ "1":{ Scotty:fixed } }, body:[], changed:[] }));
+  ok("the next pull heals it", () => [H.healBinder() === 1, "one card"]);
+  ok("and the real numbers are in it", () => {
+    const st = H.readBinder().find(x => x.type === "match").card.stats
+      .map(c => c[0] + " " + c[1]).join(", ");
+    return [/22\.4 BEN/.test(st) && /118\.9 PRJ/.test(st), st];
+  });
+  ok("the art it was pulled with never moves", () =>
+    [H.readBinder().find(x => x.type === "match").card.art === art, art]);
+  /* the fixture's week earned no superlative, so the pack is one card */
+  ok("nothing is added or removed", () =>
+    [H.readBinder().length === 1, H.readBinder().length + " cards"]);
+  ok("and a second pass is a no-op", () => [H.healBinder() === 0, "idle"]);
+  ok("a healthy card is left alone", () => {
+    const g = boot({ search:"?pack=1", now:AFTER_PACKS, storage:true });
+    g.setVar("ME", '"Scotty"');
+    g.setVar("WEEKLY", JSON.stringify({ week:1, packs:{ Scotty:fixed },
+      history:{ "1":{ Scotty:fixed } }, body:[], changed:[] }));
+    const G = g.sandbox;
+    G.localStorage.removeItem("bromigos.binder.v2.Scotty");
+    const b2 = G.readBinder(); b2.length = 0;
+    G.buildWeekCards(fixed, 1).forEach(c => b2.push(c));
+    G.saveToBinder(b2, 1, false);
+    return [G.healBinder() === 0, "untouched"];
+  });
+}
+
 console.log(`\n  ${passes} passed, ${fails} failed\n`);
 process.exit(fails ? 1 : 0);

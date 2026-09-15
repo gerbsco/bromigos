@@ -454,9 +454,26 @@ export function autoProse(packs, week) {
    actually pulled, and a rule change later must not quietly rewrite somebody's
    week 3. Missing weeks are fetched and built, so the archive repairs itself
    if the file is ever truncated or a run fails partway. */
+/* A week whose every pack has a zero bench, a zero top scorer and a zero
+   projection did not happen that way. It is what an empty roster payload looks
+   like after the fact, and week 1 landed exactly like that. The archive is
+   meant to protect what people pulled from being rewritten by a later rule
+   change; it was never meant to preserve a week that arrived with no data in
+   it. This is the one thing that counts as absent rather than frozen. */
+export function weekIsEmpty(packs) {
+  const rows = Object.values(packs || {});
+  if (!rows.length) return true;
+  return rows.every(p => !p
+    || ((Number(p.bench) || 0) === 0
+     && (Number(p.high) || 0) === 0
+     && (Number(p.projected) || 0) === 0));
+}
+
 export function mergeHistory(existing, additions) {
   const out = {};
-  Object.keys(existing || {}).forEach(k => { out[k] = existing[k]; });
+  Object.keys(existing || {}).forEach(k => {
+    if (!weekIsEmpty(existing[k])) out[k] = existing[k];
+  });
   Object.keys(additions || {}).forEach(k => { if (!out[k]) out[k] = additions[k]; });
   return out;
 }
@@ -514,7 +531,10 @@ async function main() {
   const built = {};
   let fetched = 0;
   for (const w of weeks) {
-    if (oldHistory[String(w)]) continue;
+    /* Kept means kept, unless the week is empty, in which case it is rebuilt
+       once and then kept for good. */
+    if (oldHistory[String(w)] && !weekIsEmpty(oldHistory[String(w)])) continue;
+    if (oldHistory[String(w)]) console.log(`ok   week ${w} was archived empty, rebuilding it`);
     if (w === week) { built[String(w)] = packs; continue; }
     try {
       await pause(400);

@@ -510,6 +510,27 @@ const WEEK = {
   ok("nothing is added or removed", () =>
     [H.readBinder().length === 1, H.readBinder().length + " cards"]);
   ok("and a second pass is a no-op", () => [H.healBinder() === 0, "idle"]);
+  /* The archive is frozen on purpose, so it can still be carrying the bad copy
+     long after the live packs are correct. The heal takes whichever one
+     actually has numbers in it. */
+  ok("it heals from the live packs when the archive is still frozen", () => {
+    const f = boot({ search:"?pack=1", now:AFTER_PACKS, storage:true });
+    f.setVar("ME", '"Scotty"');
+    f.setVar("WEEKLY", JSON.stringify({ week:1, packs:{ Scotty:broken },
+      history:{ "1":{ Scotty:broken } }, body:[], changed:[] }));
+    const F = f.sandbox;
+    F.localStorage.removeItem("bromigos.binder.v2.Scotty");
+    const b3 = F.readBinder(); b3.length = 0;
+    F.buildWeekCards(broken, 1).forEach(c => b3.push(c));
+    F.saveToBinder(b3, 1, false);
+    f.setVar("WEEKLY", JSON.stringify({ week:1, packs:{ Scotty:fixed },
+      history:{ "1":{ Scotty:broken } }, body:[], changed:[] }));
+    const n = F.healBinder();
+    const st = F.readBinder().find(x => x.type === "match").card.stats
+      .map(c => c[0]).join(",");
+    return [n === 1 && /22\.4/.test(st) && /118\.9/.test(st), st];
+  });
+
   ok("a healthy card is left alone", () => {
     const g = boot({ search:"?pack=1", now:AFTER_PACKS, storage:true });
     g.setVar("ME", '"Scotty"');

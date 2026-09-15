@@ -6213,25 +6213,53 @@ function haveKickoffs(wk){
   return !!(t && Object.keys(t).length);
 }
 
+/* An NFL game runs about three and a quarter hours including stoppages. Close
+   enough to tell a game that is over from one still in the fourth. */
+const GAME_MS = 3.25 * 3600 * 1000;
+
+/* The lineup ESPN actually has set, which during a live week is the only
+   lineup that scores. Summing the best legal lineup instead was giving a total
+   twelve points above the real one, because it quietly swapped in whoever
+   projected higher off the bench. If ESPN has told us nothing about slots,
+   fall back to the best lineup rather than showing zero. */
+function livePlayers(team){
+  const set = (team.players || []).filter(p => !p.benched);
+  if(set.length) return set;
+  return bestLineup(team.players).filled.map(f => f.player).filter(Boolean);
+}
+
 function liveSide(team, wk){
   if(!team || !team.players) return null;
-  const best = bestLineupWith(team.players, p => weekProjOf(p, wk), wk);
   const known = haveKickoffs(wk);
-  const now_ = NOW();
-  let now = 0, left = 0, yet = 0, played = 0;
-  best.filled.forEach(f => {
-    const p = f.player;
-    if(!p) return;
+  const t = NOW();
+  let now = 0, left = 0, yet = 0, playing = 0, done = 0;
+
+  livePlayers(team).forEach(p => {
     const got = typeof p.live === "number" ? p.live : 0;
+    const proj = weekProjOf(p, wk);
     const kick = kickoffOf(p, wk);
-    /* Started is a fact about the clock. Only where there is no clock does a
-       score above zero stand in for one. */
-    const started = known && kick !== null ? now_ >= kick : got > 0;
-    if(started){ now += got; played++; }
-    else { left += weekProjOf(p, wk); yet++; }
+
+    if(!known || kick === null){
+      /* no clock: the old guess, points above zero means he has played */
+      if(got > 0){ now += got; done++; } else { left += proj; yet++; }
+      return;
+    }
+    if(t < kick){ left += proj; yet++; return; }          // not kicked off
+    if(t >= kick + GAME_MS){ now += got; done++; return; } // game over
+
+    /* mid game: what he has banked, plus the share of his projection that the
+       part of the game still to be played is worth. A kickoff is not a final
+       whistle, and treating it as one is why the card called a matchup final
+       with somebody still in the fourth quarter. */
+    const ran = Math.min(1, Math.max(0, (t - kick) / GAME_MS));
+    now += got;
+    left += Math.max(0, proj * (1 - ran));
+    playing++;
   });
+
   return { now: Math.round(now * 10) / 10, left: Math.round(left * 10) / 10,
-    yet, played, slots: best.filled.length, known,
+    yet, playing, done, known,
+    slots: livePlayers(team).length,
     finish: Math.round((now + left) * 10) / 10 };
 }
 
@@ -6247,7 +6275,14 @@ function normCdf(z){
 function liveOdds(a, b){
   if(!a || !b) return null;
   const gap = a.finish - b.finish;
-  const unknown = Math.sqrt((a.yet + b.yet)) * 9;
+  /* A player yet to kick off is a whole game of uncertainty; one in the fourth
+     quarter is a fraction of that. Counting them the same made a matchup with
+     one man left look as settled as one with nobody. */
+  /* Defaulted, because a caller that only knows about finished and unplayed
+     would otherwise put NaN through the whole calculation. */
+  const n = v => Number.isFinite(v) ? v : 0;
+  const open = n(a.yet) + n(b.yet) + (n(a.playing) + n(b.playing)) * 0.45;
+  const unknown = Math.sqrt(open) * 9;
   if(unknown < 0.5) return gap > 0 ? 1 : gap < 0 ? 0 : 0.5;
   return normCdf(gap / unknown);
 }
@@ -6273,7 +6308,10 @@ function renderLive(me, opp, wk){
   const odds = liveOdds(a, b);
   if(odds === null) return "";
   const pct = Math.round(odds * 100);
-  const done = a.yet === 0 && b.yet === 0;
+  /* Final means every game is over, not every game has started. */
+  const done = a.yet === 0 && b.yet === 0 && a.playing === 0 && b.playing === 0;
+  const left = (n, s) => n.yet + n.playing === 0 ? `${esc(s)} done`
+    : `${n.yet + n.playing} left for ${esc(s)}`;
 
   return `<div class="lvbox">
     <div class="lvtop">
@@ -6284,13 +6322,14 @@ function renderLive(me, opp, wk){
     <div class="lvbar"><i style="width:${Math.max(2, Math.min(98, pct))}%"></i></div>
     <div class="lvfoot">
       <span>${pct}% ${esc(me.manager)}</span>
-      <span>${done ? "All players done"
-        : `${a.yet} left, ${b.yet} for ${esc(opp.manager)}`}</span>
+      <span>${done ? "All games over"
+        : left(a, me.manager) + " \u00b7 " + left(b, opp.manager)}</span>
       <span class="r">${100 - pct}% ${esc(opp.manager)}</span>
     </div>
     <p class="note" style="margin:9px 0 0">Projected finish
-      ${a.finish.toFixed(1)} to ${b.finish.toFixed(1)}.${a.known
-        ? " Who is left is read off the kickoff times, so a player who genuinely scored nothing counts as done."
+      ${a.finish.toFixed(1)} to ${b.finish.toFixed(1)}. This is the lineup ESPN
+      has set, not the best one available.${a.known
+        ? " A game that has kicked off but not finished carries the share of the projection still to be played."
         : " Kickoff times have not loaded, so anybody on zero is being treated as still to come."}</p>
   </div>`;
 }

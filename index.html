@@ -1937,6 +1937,9 @@ function renderDraft(){
       : `<p class="note">Snake format, 90 seconds a pick. Sunday Sept 6, 5:00 PM ET.</p>`);
 }
 
+/* One clock, so a test can move it and the live card follows. */
+function NOW(){ return Date.now(); }
+
 /* The scoring period ESPN is currently on, which is the week whose actuals are
    in the roster payload. */
 function LIVE_WK(){
@@ -4675,6 +4678,7 @@ function normalizeLive(){
            anything honest about a game in progress: a starter on zero is
            either yet to kick off or having a shocker, and those are not the
            same thing. */
+        teamId: p.proTeamId != null ? p.proTeamId : null,
         live: (() => {
           const st = (p.stats || []).find(x =>
             x.statSourceId === 0 && Number(x.scoringPeriodId) === Number(LIVE_WK()));
@@ -6194,19 +6198,40 @@ function wireSheet(root){
    uncertainty in those unplayed players, taken as roughly nine points a head
    and added in quadrature, so a matchup with everyone done has no uncertainty
    left and the number goes to a certainty rather than hovering at 80 percent. */
+/* Has this player's NFL game started? The clock decides, not the scoreboard.
+   Counting anybody on zero as still to come treated a tight end who caught
+   nothing exactly like a tight end who kicks off at four, which flattered the
+   projection and the win chance for the whole afternoon. With no kickoff times
+   on file it falls back to the old guess, and says so on the card. */
+function kickoffOf(p, wk){
+  const t = (LIVE && LIVE.kickoffs) ? LIVE.kickoffs[String(wk)] : null;
+  const at = (t && p && p.teamId != null) ? Number(t[String(p.teamId)]) : NaN;
+  return Number.isFinite(at) && at > 0 ? at : null;
+}
+function haveKickoffs(wk){
+  const t = (LIVE && LIVE.kickoffs) ? LIVE.kickoffs[String(wk)] : null;
+  return !!(t && Object.keys(t).length);
+}
+
 function liveSide(team, wk){
   if(!team || !team.players) return null;
   const best = bestLineupWith(team.players, p => weekProjOf(p, wk), wk);
+  const known = haveKickoffs(wk);
+  const now_ = NOW();
   let now = 0, left = 0, yet = 0, played = 0;
   best.filled.forEach(f => {
     const p = f.player;
     if(!p) return;
-    const got = typeof p.live === "number" ? p.live : null;
-    if(got !== null && got > 0){ now += got; played++; }
+    const got = typeof p.live === "number" ? p.live : 0;
+    const kick = kickoffOf(p, wk);
+    /* Started is a fact about the clock. Only where there is no clock does a
+       score above zero stand in for one. */
+    const started = known && kick !== null ? now_ >= kick : got > 0;
+    if(started){ now += got; played++; }
     else { left += weekProjOf(p, wk); yet++; }
   });
   return { now: Math.round(now * 10) / 10, left: Math.round(left * 10) / 10,
-    yet, played, slots: best.filled.length,
+    yet, played, slots: best.filled.length, known,
     finish: Math.round((now + left) * 10) / 10 };
 }
 
@@ -6230,9 +6255,15 @@ function liveOdds(a, b){
 /* Is this week actually being played, as opposed to sitting in the future? */
 function weekInPlay(wk){
   if(Number(wk) !== LIVE_WK()) return false;
-  const t = (ROSTERS || []).some(x => (x.players || [])
-    .some(p => typeof p.live === "number" && p.live > 0));
-  return t;
+  /* Either somebody has scored, or a kickoff has passed. The second is what
+     makes the card appear at one past kickoff rather than at the first
+     touchdown. */
+  if((ROSTERS || []).some(x => (x.players || [])
+      .some(p => typeof p.live === "number" && p.live > 0))) return true;
+  const t = (LIVE && LIVE.kickoffs) ? LIVE.kickoffs[String(wk)] : null;
+  if(!t) return false;
+  const n = NOW();
+  return Object.keys(t).some(k => n >= Number(t[k]));
 }
 
 function renderLive(me, opp, wk){
@@ -6258,8 +6289,9 @@ function renderLive(me, opp, wk){
       <span class="r">${100 - pct}% ${esc(opp.manager)}</span>
     </div>
     <p class="note" style="margin:9px 0 0">Projected finish
-      ${a.finish.toFixed(1)} to ${b.finish.toFixed(1)}. A starter on zero who has
-      not kicked off counts as still to come, so an early number moves a lot.</p>
+      ${a.finish.toFixed(1)} to ${b.finish.toFixed(1)}.${a.known
+        ? " Who is left is read off the kickoff times, so a player who genuinely scored nothing counts as done."
+        : " Kickoff times have not loaded, so anybody on zero is being treated as still to come."}</p>
   </div>`;
 }
 

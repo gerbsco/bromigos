@@ -1,37 +1,513 @@
 {
-  "week": null,
-  "posted": "Preseason",
-  "headline": "Seven years of evidence, now searchable",
+  "week": 1,
+  "posted": "2026-09-15",
+  "auto": true,
+  "headline": "Week 1 results",
   "body": [
-    "Every game any of you has ever played is now on a website, sorted and permanently public. You can no longer claim you were robbed in 2021. The math is right there and it says you scored 96 points.",
-    "The big one: Cody, Ryan and Austin have each played seven seasons and each finished 51-45. Same record, same seven years, zero championships between them. Bo is 42-41 with two rings. Somewhere in there is a lesson about the value of trying hard and it is not a flattering one.",
-    "Pick your name from the dropdown to see your own file. Rule vote closes at the draft."
+    "Ryan led the week with 161.1, beating Bo's 111.1.",
+    "The closest game went to James over Anthony, 137.2 to 133.0.",
+    "Justin finished last in scoring with 72.9.",
+    "8 superlatives went out across 6 of 10 teams."
   ],
-  "changed": [
-    {
-      "team": "Scotty",
-      "dir": "up",
-      "note": "Two rings in three years. Insufferable and technically entitled to it."
+  "packs": {
+    "Austin": {
+      "manager": "Austin",
+      "myScore": 103.92,
+      "oppScore": 131.06,
+      "opponent": "Dawson",
+      "rank": 7,
+      "record": "0-1",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_11.svg"
     },
-    {
-      "team": "Austin",
-      "dir": "watch",
-      "note": "Best season in league history, 1,803 points in 2021. Finished fourth."
+    "Dawson": {
+      "manager": "Dawson",
+      "myScore": 131.06,
+      "oppScore": 103.92,
+      "opponent": "Austin",
+      "rank": 4,
+      "record": "1-0",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-09.svg"
     },
-    {
-      "team": "James",
-      "dir": "watch",
-      "note": "Leads all-time in points scored and points allowed. Not bad at this, just hunted."
+    "Ryan": {
+      "manager": "Ryan",
+      "myScore": 161.06,
+      "oppScore": 111.06,
+      "opponent": "Bo",
+      "rank": 1,
+      "record": "1-0",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": true,
+      "leagueLow": false,
+      "awards": [
+        {
+          "title": "Scoring Machine",
+          "stat": "161.1 points",
+          "reason": "Highest score in the league, 161.1",
+          "desc": "Put up a number nobody came close to touching.",
+          "art": "img:firepit",
+          "rare": true,
+          "good": true
+        },
+        {
+          "title": "Blowout King",
+          "stat": "Won by 50.0",
+          "reason": "Biggest winning margin, 50.0",
+          "desc": "Won so early the Sunday games were a formality.",
+          "art": "img:point",
+          "rare": true,
+          "good": true
+        }
+      ],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/HelmetAlphabet-ESPN/Helmet-R.svg"
     },
-    {
-      "team": "Anthony",
-      "dir": "down",
-      "note": "Champion to last place in one calendar year. A speedrun."
+    "Bo": {
+      "manager": "Bo",
+      "myScore": 111.06,
+      "oppScore": 161.06,
+      "opponent": "Ryan",
+      "rank": 6,
+      "record": "0-1",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [
+        {
+          "title": "Chair Recipient",
+          "stat": "Lost by 50.0",
+          "reason": "Biggest losing margin, 50.0",
+          "desc": "Beaten by a margin normally reserved for preseason.",
+          "art": "img:chair",
+          "rare": false,
+          "good": false
+        }
+      ],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_01.svg"
     },
-    {
-      "team": "Justin",
-      "dir": "down",
-      "note": "Runner-up in 2023, then 7-7, 6-8, 5-9. Trending like a stock nobody should buy."
+    "James": {
+      "manager": "James",
+      "myScore": 137.16,
+      "oppScore": 132.96,
+      "opponent": "Anthony",
+      "rank": 2,
+      "record": "1-0",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [
+        {
+          "title": "Sunday Scaries",
+          "stat": "Won by 4.2",
+          "reason": "Closest win of the week, 4.2",
+          "desc": "Won the closest game of the week and aged four years doing it.",
+          "art": "img:pout",
+          "rare": false,
+          "good": true
+        }
+      ],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/robinson-01.svg"
+    },
+    "Anthony": {
+      "manager": "Anthony",
+      "myScore": 132.96,
+      "oppScore": 137.16,
+      "opponent": "James",
+      "rank": 3,
+      "record": "0-1",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [
+        {
+          "title": "Heartbreaker",
+          "stat": "Lost by 4.2",
+          "reason": "Closest loss of the week, 4.2",
+          "desc": "Closest loss of the week. Every lineup decision haunts this one.",
+          "art": "img:sob",
+          "rare": false,
+          "good": true
+        },
+        {
+          "title": "Schedule Victim",
+          "stat": "133.0 points",
+          "reason": "Lost while scoring 3rd of 10",
+          "desc": "A top-three score and a loss. That is the whole story.",
+          "art": "img:pout",
+          "rare": false,
+          "good": true
+        }
+      ],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/Bump_Run-13.svg"
+    },
+    "Andy": {
+      "manager": "Andy",
+      "myScore": 99.86,
+      "oppScore": 72.9,
+      "opponent": "Justin",
+      "rank": 9,
+      "record": "1-0",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [
+        {
+          "title": "Fraud Watch",
+          "stat": "99.9 points",
+          "reason": "Won while scoring 9th of 10",
+          "desc": "A win, technically. The tape is not flattering.",
+          "art": "img:copium",
+          "rare": false,
+          "good": true
+        }
+      ],
+      "crest": "https://pbs.twimg.com/media/DhDvJ7IV4AINubQ.jpg"
+    },
+    "Justin": {
+      "manager": "Justin",
+      "myScore": 72.9,
+      "oppScore": 99.86,
+      "opponent": "Andy",
+      "rank": 10,
+      "record": "0-1",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": true,
+      "awards": [
+        {
+          "title": "Walking Disaster",
+          "stat": "72.9 points",
+          "reason": "Lowest score in the league, 72.9",
+          "desc": "Ten teams played. This was the tenth.",
+          "art": "🪦",
+          "rare": false,
+          "good": false
+        }
+      ],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StadiumFoods-ESPN/stadium-foods_corn-dog.svg"
+    },
+    "Scotty": {
+      "manager": "Scotty",
+      "myScore": 115.8,
+      "oppScore": 102.62,
+      "opponent": "Cody",
+      "rank": 5,
+      "record": "1-0",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "crest": "https://i.imgur.com/nMxjXTU.jpg"
+    },
+    "Cody": {
+      "manager": "Cody",
+      "myScore": 102.62,
+      "oppScore": 115.8,
+      "opponent": "Scotty",
+      "rank": 8,
+      "record": "0-1",
+      "bench": 0,
+      "high": 0,
+      "projected": 0,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StarsAndFlames/stars_flames-3.svg"
     }
-  ]
+  },
+  "history": {
+    "1": {
+      "Austin": {
+        "manager": "Austin",
+        "myScore": 103.92,
+        "oppScore": 131.06,
+        "opponent": "Dawson",
+        "rank": 7,
+        "record": "0-1",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_11.svg"
+      },
+      "Dawson": {
+        "manager": "Dawson",
+        "myScore": 131.06,
+        "oppScore": 103.92,
+        "opponent": "Austin",
+        "rank": 4,
+        "record": "1-0",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-09.svg"
+      },
+      "Ryan": {
+        "manager": "Ryan",
+        "myScore": 161.06,
+        "oppScore": 111.06,
+        "opponent": "Bo",
+        "rank": 1,
+        "record": "1-0",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": true,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Scoring Machine",
+            "stat": "161.1 points",
+            "reason": "Highest score in the league, 161.1",
+            "desc": "Put up a number nobody came close to touching.",
+            "art": "img:firepit",
+            "rare": true,
+            "good": true
+          },
+          {
+            "title": "Blowout King",
+            "stat": "Won by 50.0",
+            "reason": "Biggest winning margin, 50.0",
+            "desc": "Won so early the Sunday games were a formality.",
+            "art": "img:point",
+            "rare": true,
+            "good": true
+          }
+        ],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/HelmetAlphabet-ESPN/Helmet-R.svg"
+      },
+      "Bo": {
+        "manager": "Bo",
+        "myScore": 111.06,
+        "oppScore": 161.06,
+        "opponent": "Ryan",
+        "rank": 6,
+        "record": "0-1",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Chair Recipient",
+            "stat": "Lost by 50.0",
+            "reason": "Biggest losing margin, 50.0",
+            "desc": "Beaten by a margin normally reserved for preseason.",
+            "art": "img:chair",
+            "rare": false,
+            "good": false
+          }
+        ],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_01.svg"
+      },
+      "James": {
+        "manager": "James",
+        "myScore": 137.16,
+        "oppScore": 132.96,
+        "opponent": "Anthony",
+        "rank": 2,
+        "record": "1-0",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Sunday Scaries",
+            "stat": "Won by 4.2",
+            "reason": "Closest win of the week, 4.2",
+            "desc": "Won the closest game of the week and aged four years doing it.",
+            "art": "img:pout",
+            "rare": false,
+            "good": true
+          }
+        ],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/robinson-01.svg"
+      },
+      "Anthony": {
+        "manager": "Anthony",
+        "myScore": 132.96,
+        "oppScore": 137.16,
+        "opponent": "James",
+        "rank": 3,
+        "record": "0-1",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Heartbreaker",
+            "stat": "Lost by 4.2",
+            "reason": "Closest loss of the week, 4.2",
+            "desc": "Closest loss of the week. Every lineup decision haunts this one.",
+            "art": "img:sob",
+            "rare": false,
+            "good": true
+          },
+          {
+            "title": "Schedule Victim",
+            "stat": "133.0 points",
+            "reason": "Lost while scoring 3rd of 10",
+            "desc": "A top-three score and a loss. That is the whole story.",
+            "art": "img:pout",
+            "rare": false,
+            "good": true
+          }
+        ],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/Bump_Run-13.svg"
+      },
+      "Andy": {
+        "manager": "Andy",
+        "myScore": 99.86,
+        "oppScore": 72.9,
+        "opponent": "Justin",
+        "rank": 9,
+        "record": "1-0",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Fraud Watch",
+            "stat": "99.9 points",
+            "reason": "Won while scoring 9th of 10",
+            "desc": "A win, technically. The tape is not flattering.",
+            "art": "img:copium",
+            "rare": false,
+            "good": true
+          }
+        ],
+        "crest": "https://pbs.twimg.com/media/DhDvJ7IV4AINubQ.jpg"
+      },
+      "Justin": {
+        "manager": "Justin",
+        "myScore": 72.9,
+        "oppScore": 99.86,
+        "opponent": "Andy",
+        "rank": 10,
+        "record": "0-1",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": true,
+        "awards": [
+          {
+            "title": "Walking Disaster",
+            "stat": "72.9 points",
+            "reason": "Lowest score in the league, 72.9",
+            "desc": "Ten teams played. This was the tenth.",
+            "art": "🪦",
+            "rare": false,
+            "good": false
+          }
+        ],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StadiumFoods-ESPN/stadium-foods_corn-dog.svg"
+      },
+      "Scotty": {
+        "manager": "Scotty",
+        "myScore": 115.8,
+        "oppScore": 102.62,
+        "opponent": "Cody",
+        "rank": 5,
+        "record": "1-0",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "crest": "https://i.imgur.com/nMxjXTU.jpg"
+      },
+      "Cody": {
+        "manager": "Cody",
+        "myScore": 102.62,
+        "oppScore": 115.8,
+        "opponent": "Scotty",
+        "rank": 8,
+        "record": "0-1",
+        "bench": 0,
+        "high": 0,
+        "projected": 0,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StarsAndFlames/stars_flames-3.svg"
+      }
+    }
+  },
+  "results": {
+    "1": [
+      {
+        "id": "1",
+        "home": "Austin",
+        "away": "Dawson",
+        "homePts": 103.92,
+        "awayPts": 131.06
+      },
+      {
+        "id": "2",
+        "home": "Ryan",
+        "away": "Bo",
+        "homePts": 161.06,
+        "awayPts": 111.06
+      },
+      {
+        "id": "3",
+        "home": "James",
+        "away": "Anthony",
+        "homePts": 137.16,
+        "awayPts": 132.96
+      },
+      {
+        "id": "4",
+        "home": "Andy",
+        "away": "Justin",
+        "homePts": 99.86,
+        "awayPts": 72.9
+      },
+      {
+        "id": "5",
+        "home": "Scotty",
+        "away": "Cody",
+        "homePts": 115.8,
+        "awayPts": 102.62
+      }
+    ]
+  }
 }

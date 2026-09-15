@@ -100,6 +100,31 @@ function byesFromProTeams(doc) {
   return out;
 }
 
+/* Kickoff time per pro team per week, out of the same payload the byes come
+   from. Without it the app has to guess whether a starter on zero has played
+   yet, and it guessed wrong: a tight end who caught nothing was counted as
+   still to come, which flatters the projection and the win chance all
+   afternoon. A clock cannot be argued with. */
+function kickoffsFromProTeams(doc) {
+  const teams = (doc && doc.settings && doc.settings.proTeams) || [];
+  const out = {};
+  teams.forEach(t => {
+    if (!t || t.id == null) return;
+    const byWeek = t.proGamesByScoringPeriod || {};
+    Object.keys(byWeek).forEach(wk => {
+      const games = byWeek[wk] || [];
+      games.forEach(g => {
+        const at = Number(g && g.date);
+        if (!Number.isFinite(at) || at <= 0) return;
+        out[wk] = out[wk] || {};
+        /* a team plays once a week; keep the earliest if ESPN ever lists two */
+        if (!out[wk][t.id] || at < out[wk][t.id]) out[wk][t.id] = at;
+      });
+    });
+  });
+  return out;
+}
+
 /* Sleeper keys byes to the team abbreviation, ESPN to a numeric id. */
 const ESPN_PRO_TEAM = { 1:"ATL", 2:"BUF", 3:"CHI", 4:"CIN", 5:"CLE", 6:"DAL",
   7:"DEN", 8:"DET", 9:"GB", 10:"TEN", 11:"IND", 12:"KC", 13:"LV", 14:"LAR",
@@ -297,7 +322,14 @@ async function main() {
     `${HOST}/seasons/${SEASON}?view=mProTeamSchedules_wl`
   ]) {
     try {
-      byes = byesFromProTeams(await getJSON(url));
+      const doc = await getJSON(url);
+      byes = byesFromProTeams(doc);
+      const kicks = kickoffsFromProTeams(doc);
+      if (Object.keys(kicks).length) {
+        snap.kickoffs = kicks;
+        const n = Object.keys(kicks).reduce((a, w) => a + Object.keys(kicks[w]).length, 0);
+        console.log(`ok   espn kickoffs (${n} games over ${Object.keys(kicks).length} weeks)`);
+      }
       if (Object.keys(byes).length) {
         console.log(`ok   espn byes (${Object.keys(byes).length} teams) <- ${url.split("?").pop()}`);
         break;
@@ -307,6 +339,17 @@ async function main() {
       console.log(`     byes miss ${url.split("?").pop()} (${err.message})`);
     }
     await pause(300);
+  }
+  if (!snap.kickoffs) {
+    /* Carry the last known times forward rather than losing them: without a
+       clock the live card falls back to guessing from points again. */
+    try {
+      const prev = JSON.parse(readFileSync("data/league.json", "utf8"));
+      if (prev && prev.kickoffs) {
+        snap.kickoffs = prev.kickoffs;
+        console.log("     kickoffs carried forward from the previous file");
+      }
+    } catch (e) { /* first run */ }
   }
 
   /* ---------- 3. ESPN free agents (needs the filter header) ---------- */

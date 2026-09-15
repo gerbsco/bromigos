@@ -7102,8 +7102,8 @@ function packHistory(){
    them. Only the figures: the art, the tier and the pull date are what the card
    is, and those never move. */
 function healBinder(){
-  const hist = (WEEKLY && WEEKLY.history) || null;
-  if(!hist || !ME) return 0;
+  if(!WEEKLY || !ME) return 0;
+  const hist = WEEKLY.history || {};
   let box;
   try { box = readBinder(); } catch(e){ return 0; }
   if(!box.length) return 0;
@@ -7111,8 +7111,15 @@ function healBinder(){
 
   box.forEach(entry => {
     if(!entry || entry.type !== "match" || !entry.card) return;
-    const packs = hist[String(entry.week)];
-    const p = packs && packs[ME];
+    /* The live packs are rebuilt on every run; the archive is frozen and can
+       therefore still be carrying the bad copy. Take whichever actually has
+       numbers in it. */
+    const fromHist = (hist[String(entry.week)] || {})[ME];
+    const fromLive = (WEEKLY.week === entry.week && WEEKLY.packs)
+      ? WEEKLY.packs[ME] : null;
+    const filled = x => x && ((Number(x.bench) || 0) + (Number(x.high) || 0)
+      + (Number(x.projected) || 0)) > 0;
+    const p = filled(fromLive) ? fromLive : filled(fromHist) ? fromHist : null;
     if(!p) return;
     const fresh = buildWeekCards(p, entry.week).find(c => c.type === "match");
     if(!fresh || !Array.isArray(fresh.stats)) return;

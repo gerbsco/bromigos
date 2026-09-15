@@ -2625,13 +2625,19 @@ function renderAwards(){
   if(blow.blowouts>0) push("Blowout King", blow.name,
     `${blow.blowouts} win${blow.blowouts>1?"s":""} by 30 or more.`, "hot");
 
+  /* Volatility needs a spread to measure. With one or two weeks on the board
+     the standard deviation of everybody's scores is either zero or an accident,
+     and it hands "nobody swings harder" to whoever happened to score near
+     their projection. Held until there is a shape to describe. */
   const boom = top(all,t=>sd(t.scores));
-  push("Boom or Bust", boom.name,
-    `High ${f1(Math.max(...boom.scores))}, low ${f1(Math.min(...boom.scores))}. Nobody swings harder.`, "");
+  if(boom.scores.length >= 4)
+    push("Boom or Bust", boom.name,
+      `High ${f1(Math.max(...boom.scores))}, low ${f1(Math.min(...boom.scores))}. Nobody swings harder.`, "");
 
   const victim = top(all,t=>avg(t.oppPts));
-  push("Schedule Victim", victim.name,
-    `Opponents average ${f1(avg(victim.oppPts))} against him.`, "cold");
+  if(victim.oppPts.length >= 3)
+    push("Schedule Victim", victim.name,
+      `Opponents average ${f1(avg(victim.oppPts))} against him.`, "cold");
 
   const dom = top(all,t=>t.w*100+t.pf);
   push("Most Dominant", dom.name,
@@ -7089,8 +7095,44 @@ function packHistory(){
     .map(wk => ({ wk, packs: h[String(wk)] || {} }));
 }
 
+/* A card is stored with the numbers that existed when it was pulled. Week 1's
+   arrived with every stat at zero, because the roster payload came back empty,
+   and a card that says 0.0 for four of its six figures is wrong rather than
+   early. When the archive later carries real numbers, the stored card takes
+   them. Only the figures: the art, the tier and the pull date are what the card
+   is, and those never move. */
+function healBinder(){
+  const hist = (WEEKLY && WEEKLY.history) || null;
+  if(!hist || !ME) return 0;
+  let box;
+  try { box = readBinder(); } catch(e){ return 0; }
+  if(!box.length) return 0;
+  let fixed = 0;
+
+  box.forEach(entry => {
+    if(!entry || entry.type !== "match" || !entry.card) return;
+    const packs = hist[String(entry.week)];
+    const p = packs && packs[ME];
+    if(!p) return;
+    const fresh = buildWeekCards(p, entry.week).find(c => c.type === "match");
+    if(!fresh || !Array.isArray(fresh.stats)) return;
+    const dead = (entry.card.stats || [])
+      .filter(c => String(c[0]) === "0.0" || String(c[0]) === "\u2014").length;
+    const live = fresh.stats
+      .filter(c => String(c[0]) !== "0.0" && String(c[0]) !== "\u2014").length;
+    if(dead >= 2 && live > (entry.card.stats || []).length - dead){
+      entry.card.stats = fresh.stats;
+      entry.card.theirs = fresh.theirs;
+      fixed++;
+    }
+  });
+  if(fixed){ try { writeBinder(box); } catch(e){ return 0; } }
+  return fixed;
+}
+
 function rebuildBinder(){
   if(!ME || !livePacks()) return 0;
+  try { healBinder(); } catch(e){ console.warn("[bromigos] heal:", e && e.message); }
   const before = readBinder().length;
   const add = (payload, wk) => {
     if(!payload || !wk) return;

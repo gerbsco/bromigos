@@ -15,19 +15,44 @@ permissions:
   pages: write
   id-token: write
 
+# cancel-in-progress must be false here.
+#
+# With it true, a deploy that was part way through uploading its artifact got
+# cancelled when the next one arrived. The cancelled run keeps the artifact it
+# had already started, and re-running that same run uploads a second one under
+# the same name, which is exactly what "Artifact count is 2" means. It is also
+# the reason re-running failed jobs made it worse rather than better.
+#
+# The data job now pushes up to six times on a Sunday, so deploys queue behind
+# each other constantly. Queuing is the correct behaviour: the last one to run
+# publishes the newest commit either way, and nothing gets killed mid-upload.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # A failed data run has nothing new worth publishing, and deploying off the
+    # back of one just burns a slot in the queue. Push and manual runs carry no
+    # conclusion to check, so they always pass this.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # v5, same reason as the data workflow: v4 runs on the Node 20 action
+      # runtime GitHub is retiring, which is where that deprecation warning at
+      # the top of every run comes from.
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        # workflow_run starts from the default branch by default, which on a
+        # data run is the commit *before* the one the job just pushed. Naming
+        # the branch takes whatever is newest at checkout time.
+        with:
+          ref: main
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

@@ -2128,6 +2128,83 @@ function draftRecap(){
     </div>`;
 }
 
+/* ---------- the weekly writeup ----------
+   weekly.mjs publishes a plain factual recap marked auto:true so the page is
+   never blank on a Tuesday. This replaces it with something worth reading,
+   composed from the same pack payloads. Everything in it is a number off the
+   archive; the jokes are about the league, never about the data. A hand
+   written recap, which is anything not marked auto, always wins. */
+function weekRecap(){
+  const w = WEEKLY;
+  if(!w || !w.week || !w.packs) return "";
+  const rows = Object.values(w.packs)
+    .filter(p => p && typeof p.myScore === "number");
+  if(rows.length < 4) return "";
+
+  const by = (f) => rows.slice().sort(f);
+  const high = by((a,b) => b.myScore - a.myScore)[0];
+  const low  = by((a,b) => a.myScore - b.myScore)[0];
+  const mgn  = p => p.myScore - p.oppScore;
+  const wins = rows.filter(p => mgn(p) > 0);
+  const blow = wins.length ? by((a,b) => mgn(b) - mgn(a)).find(p => mgn(p) > 0) : null;
+  const tight = wins.length
+    ? wins.slice().sort((a,b) => mgn(a) - mgn(b))[0] : null;
+  const benched = rows.filter(p => typeof p.bench === "number" && p.bench > 0);
+  const worstBench = benched.length
+    ? benched.slice().sort((a,b) => b.bench - a.bench)[0] : null;
+  const robbed = rows.filter(p => mgn(p) < 0)
+    .sort((a,b) => b.myScore - a.myScore)[0];
+  const avg = rows.reduce((n,p) => n + p.myScore, 0) / rows.length;
+
+  const body = [];
+  body.push(`${high.manager} put up ${f1(high.myScore)}, the most anybody
+    managed, and beat ${high.opponent} by ${f1(Math.abs(mgn(high)))} doing it.
+    The league averaged ${f1(avg)}, so that is not a good week, that is a
+    different sport.`);
+
+  if(blow && blow.manager !== high.manager)
+    body.push(`${blow.manager} took the widest win of the week over
+      ${blow.opponent}, ${f1(blow.myScore)} to ${f1(blow.oppScore)}. It was
+      over by the early window.`);
+
+  if(tight && Math.abs(mgn(tight)) < 12)
+    body.push(`${tight.manager} got the closest one, ${f1(mgn(tight))} over
+      ${tight.opponent}. Every start and sit call in that lineup was worth
+      exactly what it cost.`);
+
+  if(robbed && robbed.myScore > avg)
+    body.push(`${robbed.manager} scored ${f1(robbed.myScore)}, above the league
+      average, and lost. That is the schedule, not the roster, and it will be
+      mentioned again.`);
+
+  if(worstBench && worstBench.bench > 20)
+    body.push(`${worstBench.manager} left ${f1(worstBench.bench)} on the bench,
+      more than anyone. ${worstBench.bench > Math.abs(mgn(worstBench))
+        && mgn(worstBench) < 0
+        ? "It would have won him the game, which is the worst possible amount."
+        : "No harm done this time."}`);
+
+  body.push(`${low.manager} finished last on ${f1(low.myScore)}. Thirteen weeks
+    left, which is either a long time to fix it or a long time to think about
+    it.`);
+
+  const moves = by((a,b) => b.myScore - a.myScore).slice(0, 3).map((p, i) =>
+    `<div class="mv up"><span class="ar">${i + 1}</span>
+      <span><b>${esc(p.manager)}</b> &mdash; ${f1(p.myScore)}${
+        p.record ? ", now " + esc(p.record) : ""}</span></div>`).join("")
+    + (worstBench ? `<div class="mv watch"><span class="ar">\u26A0</span>
+        <span><b>${esc(worstBench.manager)}</b> &mdash; ${f1(worstBench.bench)}
+          left on the bench</span></div>` : "");
+
+  return `<h2>This Week</h2>
+    <div class="recap">
+      <div class="wk">Week ${w.week}${w.posted ? " \u00b7 " + esc(w.posted) : ""}</div>
+      <h3>${esc(high.manager)} set the bar</h3>
+      ${body.map(t => `<p>${esc(t.replace(/\s+/g, " ").trim())}</p>`).join("")}
+      <div class="moves">${moves}</div>
+    </div>`;
+}
+
 function renderRecap(){
   const el = document.getElementById("recap");
   /* weekly.json carries a week number once there is a week to write about.
@@ -2144,6 +2221,14 @@ function renderRecap(){
     try { if(draftDone()) pre = draftRecap(); }
     catch(e){ console.warn("[bromigos] draft recap:", e && e.message); }
     if(pre){ el.innerHTML = pre; return; }
+  }
+  /* An auto recap is a placeholder. Replace it with the generated writeup;
+     anything somebody actually wrote is left alone. */
+  if(WEEKLY && WEEKLY.week && WEEKLY.auto){
+    let made = "";
+    try { made = weekRecap(); }
+    catch(e){ console.warn("[bromigos] week recap:", e && e.message); }
+    if(made){ el.innerHTML = made; return; }
   }
   if(!WEEKLY){
     el.innerHTML = `<h2>This Week</h2>` + lock("Nothing to write about yet",
@@ -2206,6 +2291,9 @@ function renderBench(){
   if(!liveDraft()){ el.innerHTML = ""; return; }
   const rows = benchLedger();
   if(rows.length < 2){ el.innerHTML = ""; return; }
+  /* Ten rows of 0.0 means the archive arrived without roster entries, not that
+     nobody benched a point. Say nothing rather than publish that. */
+  if(!rows.some(r => r.total > 0)){ el.innerHTML = ""; return; }
   const worst = rows[0];
 
   el.innerHTML = fold(`Bench ledger \u00b7 ${esc(worst.manager)} leads`,
@@ -2356,6 +2444,12 @@ function raceLines(){
   if(teams.length < 4) return null;
   const left = weeksLeft().length;
   if(!left) return null;
+  /* A cut line drawn after one week is noise wearing a number. Everybody who
+     won is "in on current pace" and everybody who lost needs one more win,
+     which tells nobody anything. It waits until a third of the season has
+     been played and the table means something. */
+  const done = REG_WEEKS - left;
+  if(done < 5) return null;
 
   const rows = teams.map(t => {
     const r = recFor(t.manager);
@@ -2395,7 +2489,10 @@ function renderRace(){
     ? `Has to win out. All ${left}.`
     : `${r.need} of the last ${left} does it.`;
 
-  el.innerHTML = fold(`Playoff race${me ? " \u00b7 " + line(me).replace(/\.$/, "") : ""}`,
+  const short = r => !r ? "" : !r.alive ? "out of it"
+    : r.need === 0 ? "in on current pace"
+    : r.need >= left ? "has to win out" : `${r.need} more does it`;
+  el.innerHTML = fold(`Playoff race${me ? " \u00b7 " + short(me) : ""}`,
     `<p class="note" style="margin:0 0 10px">${PLAYOFF_SPOTS || 6} spots,
       ${left} week${left === 1 ? "" : "s"} left. Wins needed to reach the pace
       of the team currently on the cut line.</p>` +

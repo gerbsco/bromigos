@@ -154,9 +154,16 @@ export function crestMap(teamDoc, owners) {
 }
 
 /* actual and projected points for one side of a matchup */
-export function sideTotals(side, week) {
-  const entries = (side && ((side.rosterForCurrentScoringPeriod || {}).entries
+/* mRoster hangs rosters off teams[], not off the two sides of a matchup. Only
+   mBoxscore puts them where this function was looking, so every bench total,
+   every projection and every top scorer came back as zero and the ledger and
+   the receipts were a table of noughts. byTeam is the fallback: the same
+   rosters, found the other way. */
+export function sideTotals(side, week, byTeam) {
+  let entries = (side && ((side.rosterForCurrentScoringPeriod || {}).entries
     || (side.rosterForMatchupPeriod || {}).entries)) || [];
+  if (!entries.length && byTeam && side && side.teamId != null)
+    entries = byTeam[String(side.teamId)] || [];
   let bench = 0, projected = 0, high = 0, counted = 0;
 
   entries.forEach(e => {
@@ -197,14 +204,24 @@ export function latestCompleteWeek(schedule) {
 }
 
 /* one row per manager for the given week, before awards are assigned */
-export function weekRows(schedule, owners, week) {
+/* team id -> roster entries, for when the matchup sides carry none */
+export function rostersByTeam(doc) {
+  const out = {};
+  (((doc && doc.teams) || [])).forEach(t => {
+    const e = (t && t.roster && t.roster.entries) || [];
+    if (e.length) out[String(t.id)] = e;
+  });
+  return out;
+}
+
+export function weekRows(schedule, owners, week, byTeam) {
   const rows = [];
   (schedule || []).forEach(m => {
     if (m.matchupPeriodId !== week || !m.home || !m.away) return;
     const push = (me, them) => {
       const name = owners[me.teamId];
       if (!name) return;
-      const t = sideTotals(me, week);
+      const t = sideTotals(me, week, byTeam);
       rows.push({
         manager: name,
         myScore: Math.round((me.totalPoints || 0) * 100) / 100,
@@ -368,8 +385,8 @@ export function assignAwards(rows, week) {
   return rows;
 }
 
-export function buildPacks(schedule, owners, week, crests) {
-  const rows = weekRows(schedule, owners, week);
+export function buildPacks(schedule, owners, week, crests, byTeam) {
+  const rows = weekRows(schedule, owners, week, byTeam);
   if (!rows.length) return {};
   const rec = records(schedule, owners, week);
   const scores = rows.map(r => r.myScore);
@@ -472,14 +489,23 @@ async function main() {
     console.log(`ok   adopted week ${old.week} from the previous file`);
   }
 
+  /* mBoxscore is the view that puts each side's roster on the matchup itself.
+     mRoster is kept as well so the fallback has something to work with. */
   const detailFor = async w => {
-    const d = await getJSON(`${ESPN}?view=mMatchup&view=mRoster&scoringPeriodId=${w}`);
-    return d.schedule || schedule;
+    const d = await getJSON(
+      `${ESPN}?view=mMatchup&view=mBoxscore&view=mRoster&scoringPeriodId=${w}`);
+    return { sched: d.schedule || schedule, byTeam: rostersByTeam(d) };
   };
 
   /* rosters carry the bench and projection numbers, and only the per-week
      request includes them */
-  const packs = buildPacks(await detailFor(week), owners, week, crests);
+  const d0 = await detailFor(week);
+  const packs = buildPacks(d0.sched, owners, week, crests, d0.byTeam);
+  const benched = Object.values(packs).reduce((n, p) => n + (p.bench || 0), 0);
+  console.log(`ok   week ${week}: ${Object.keys(packs).length} packs,`
+    + ` ${benched.toFixed(1)} points benched across the league`);
+  if (!benched) console.log("     every bench total is zero, which means the"
+    + " roster payload arrived without entries");
 
   if (!Object.keys(packs).length) {
     throw new Error("Week resolved but no packs built - aborting so the last good file survives.");
@@ -492,7 +518,8 @@ async function main() {
     if (w === week) { built[String(w)] = packs; continue; }
     try {
       await pause(400);
-      const p = buildPacks(await detailFor(w), owners, w, crests);
+      const dw = await detailFor(w);
+      const p = buildPacks(dw.sched, owners, w, crests, dw.byTeam);
       if (Object.keys(p).length) { built[String(w)] = p; fetched++; }
       else console.log(`     week ${w} built nothing, left out of the archive`);
     } catch (err) {

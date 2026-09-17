@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "posted": "2026-09-16",
+  "posted": "2026-09-17",
   "auto": true,
   "headline": "Week 1 results",
   "body": [
@@ -489,5 +489,43 @@
       }
     }
   },
-  "results": {}
+  "results": {
+    "1": [
+      {
+        "id": "1",
+        "home": "Austin",
+        "away": "Dawson",
+        "homePts": 103.92,
+        "awayPts": 131.06
+      },
+      {
+        "id": "2",
+        "home": "Ryan",
+        "away": "Bo",
+        "homePts": 161.06,
+        "awayPts": 111.06
+      },
+      {
+        "id": "3",
+        "home": "James",
+        "away": "Anthony",
+        "homePts": 137.16,
+        "awayPts": 132.96
+      },
+      {
+        "id": "4",
+        "home": "Andy",
+        "away": "Justin",
+        "homePts": 99.86,
+        "awayPts": 72.9
+      },
+      {
+        "id": "5",
+        "home": "Scotty",
+        "away": "Cody",
+        "homePts": 115.8,
+        "awayPts": 102.62
+      }
+    ]
+  }
 }

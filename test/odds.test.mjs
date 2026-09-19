@@ -96,22 +96,38 @@ const TOCOME = [G(3,1,4), G(3,2,3), G(4,1,2), G(4,3,4)];
 
 /* ---------- the schedule actually has to matter ---------- */
 {
-  /* identical records and scoring, different opponents left. Team 1 draws the
-     two weakest, team 2 draws the two strongest. Team 1 must fare better. */
-  const played = [
-    G(1,1,2,120,110), G(1,3,4,120,110),
-    G(2,1,3,120,110), G(2,2,4,120,110)
-  ];
-  const easy = played.concat([G(3,1,4), G(3,2,3), G(4,1,4), G(4,2,3)]);
-  const hard = played.concat([G(3,1,3), G(3,2,4), G(4,1,3), G(4,2,4)]);
+  /* Identical records, different opponents left: team 1 draws the two weakest,
+     or the two strongest. Team 1 must fare better against the weak pair.
 
-  const a = scene(easy, { spots: 2 }).sandbox.playoffOdds(3000);
-  const b = scene(hard, { spots: 2 }).sandbox.playoffOdds(3000);
+     The old fixture gave all four teams the same scores, so "the two weakest"
+     were not weaker than anyone and the delta it measured was simulation
+     noise. It only ever passed by luck. Now team 3 and team 4 really are the
+     weak pair, and there are enough weeks on the board that each team's own
+     scoring outweighs the league prior. */
+  const strong = (wk, h, a) => G(wk, h, a, 140, 138);
+  const weak   = (wk, h, a) => G(wk, h, a, 88, 86);
+  const played = [
+    strong(1,1,2), weak(1,3,4),
+    strong(2,2,1), weak(2,4,3),
+    strong(3,1,2), weak(3,3,4),
+    strong(4,2,1), weak(4,4,3),
+    strong(5,1,2), weak(5,3,4)
+  ];
+  const easy = played.concat([G(6,1,3), G(6,2,4), G(7,1,4), G(7,2,3)]);
+  const hard = played.concat([G(6,1,2), G(6,3,4), G(7,1,2), G(7,3,4)]);
+
+  const a = scene(easy, { spots: 2 }).sandbox.playoffOdds(4000);
+  const b = scene(hard, { spots: 2 }).sandbox.playoffOdds(4000);
   const of = (list, id) => list.find(o => o.team.id === id).made;
 
   ok("who you have left changes your odds", () => {
     const d = Math.abs(of(a, 1) - of(b, 1));
-    return [d > 0.01, "identical odds on different schedules, delta " + d.toFixed(3)];
+    return [d > 0.02, "identical odds on different schedules, delta " + d.toFixed(3)];
+  });
+  /* and in the right direction: the weak pair is the easier draw */
+  ok("the easier draw is the better one", () => {
+    const d = of(a, 1) - of(b, 1);
+    return [d > 0, "easy " + of(a,1).toFixed(3) + " vs hard " + of(b,1).toFixed(3)];
   });
 }
 

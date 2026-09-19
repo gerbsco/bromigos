@@ -456,7 +456,10 @@ export function buildPacks(schedule, owners, week, crests, byTeam, counts) {
       projected: Math.round(r.projected * 10) / 10,
       leagueHigh: r.myScore === top,
       leagueLow: r.myScore === bot,
-      awards: r.awards
+      awards: r.awards,
+      /* which build made this pack. The archive is frozen, so without this a
+         fix to what a figure means never reaches a week already written. */
+      v: PACK_V
     };
     /* Stored rather than resolved by the app, so a card rebuilt in December
        carries the badge that team was flying in week 3 rather than whatever

@@ -1239,17 +1239,18 @@
   .sbGame:first-of-type{border-top:0;padding-top:2px}
   .sbGame.mine{background:color-mix(in srgb,var(--accent) 8%,transparent);
     border-radius:14px;padding-left:11px;padding-right:11px;margin:0 -11px}
-  .sbTop{display:grid;grid-template-columns:1fr auto auto auto 1fr;
-    align-items:baseline;gap:8px}
+  .sbTop{display:grid;grid-template-columns:1fr auto 1fr;
+    align-items:baseline;gap:10px}
+  .sbScores{margin-top:3px}
   .sbName{font:400 13.5px/1.2 var(--display);color:var(--faint);min-width:0;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .sbName.up{color:var(--chalk);font-weight:600}
-  .sbTop .sbName:last-child{text-align:right}
-  .sbPts{font:700 19px/1 var(--display);color:var(--faint);
+  .sbPts{font:700 22px/1 var(--display);color:var(--faint);
     font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .sbPts.up{color:var(--chalk)}
-  .sbState{font:600 9px/1 var(--display);color:var(--accent);
-    text-transform:uppercase;letter-spacing:.1em}
+  .sbTop .r{text-align:right}
+  .sbState{font:600 9px/1 var(--display);color:var(--faint);
+    text-transform:uppercase;letter-spacing:.1em;align-self:center}
   .sbBar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);
     overflow:hidden;margin:10px 0 7px}
   .sbBar i{display:block;height:100%;border-radius:3px;
@@ -4725,15 +4726,16 @@ function findTrades(mine, theirs, limit = 6){
      one idea, not six. Each player may headline at most twice, and each shape
      of trade appears at most twice, so what comes back is a set of different
      suggestions rather than one suggestion sorted six ways. */
-  const varied = list => {
+  const varied = (list, cap) => {
+    const max = cap || 2;
     const perPlayer = {}, perShape = {};
     const out = [];
     for(const i of list){
       const ids = i.give.concat(i.get).map(p => p.id);
       const shape = i.give.map(p => p.pos).sort().join("+") + ">"
         + i.get.map(p => p.pos).sort().join("+");
-      if(ids.some(id => (perPlayer[id] || 0) >= 2)) continue;
-      if((perShape[shape] || 0) >= 2) continue;
+      if(ids.some(id => (perPlayer[id] || 0) >= max)) continue;
+      if((perShape[shape] || 0) >= max) continue;
       ids.forEach(id => { perPlayer[id] = (perPlayer[id] || 0) + 1; });
       perShape[shape] = (perShape[shape] || 0) + 1;
       out.push(i);
@@ -4759,8 +4761,10 @@ function findTrades(mine, theirs, limit = 6){
      empty panel is not: it looks like the feature is broken. Show the closest
      deals instead, the ones that help you and cost them least, marked as what
      they are. A trade you have to sweeten is still somewhere to start. */
-  return rated.filter(i => i.a > floor)
-    .sort((x, y) => y.b - x.b)
+  /* The same diversity rule. It was only applied to the mutual list, so this
+     path still came back as three versions of one deal: Pitts for Nix, Pitts
+     and Reed for Nix, Pitts and Worthy for Nix. */
+  return varied(rated.filter(i => i.a > floor).sort((x, y) => y.b - x.b), 1)
     .slice(0, 3)
     .map(i => ({ ...i, oneSided: true }));
 }
@@ -6712,19 +6716,25 @@ function renderScoreboard(){
   const body = rows.map(r => {
     const { g, a, b, pct, over, mine } = r;
     const lead = a.now >= b.now;
+    /* The per row LIVE chip was on all five at once, which told you nothing the
+       header had not already said, and it squeezed the names into a five
+       column grid so they truncated. Names get their own row now and the chip
+       only appears when a game is actually finished. */
+    const left = (a.yet + a.playing) + " v " + (b.yet + b.playing) + " to play";
     return `<div class="sbGame${mine ? " mine" : ""}">
       <div class="sbTop">
         <span class="sbName${lead ? " up" : ""}">${esc(g.home)}</span>
+        ${over ? `<span class="sbState">Final</span>` : ""}
+        <span class="sbName r${lead ? "" : " up"}">${esc(g.away)}</span>
+      </div>
+      <div class="sbTop sbScores">
         <span class="sbPts${lead ? " up" : ""}">${a.now.toFixed(1)}</span>
-        <span class="sbState">${over ? "Final" : "Live"}</span>
-        <span class="sbPts${lead ? "" : " up"}">${b.now.toFixed(1)}</span>
-        <span class="sbName${lead ? "" : " up"}">${esc(g.away)}</span>
+        <span class="sbPts r${lead ? "" : " up"}">${b.now.toFixed(1)}</span>
       </div>
       <div class="sbBar"><i style="width:${Math.max(2, Math.min(98, pct))}%"></i></div>
       <div class="sbFoot">
         <span>${over ? "" : pct + "%"}</span>
-        <span>${over ? "Final \u00b7 " + Math.abs(a.now - b.now).toFixed(1) + " apart"
-          : (a.yet + a.playing) + " left \u00b7 " + (b.yet + b.playing) + " left"}</span>
+        <span>${over ? Math.abs(a.now - b.now).toFixed(1) + " apart" : left}</span>
         <span class="r">${over ? "" : (100 - pct) + "%"}</span>
       </div>
     </div>`;

@@ -257,26 +257,65 @@ const titleOf = (rows, who) => {
     latestCompleteWeek([{ matchupPeriodId:1, winner:"HOME", home:{teamId:1} }]) === 0);
 }
 
-/* ---------- roster totals ---------- */
+/* ---------- roster totals ----------
+   "Points left on the bench" used to be the sum of everything the reserves
+   scored. With seven of them that is fifty to ninety points every week for
+   everybody, which is a number without a meaning. It is now the gap between
+   the lineup that was set and the best legal one available: the points you
+   could actually have had. */
 {
-  const mkP = (slot, real, proj) => ({
+  const COUNTS = { 0:1, 2:2, 4:2, 23:1, 16:1, 17:1, 20:7, 21:2 };
+  const mkP = (pos, slot, real, proj) => ({
     lineupSlotId: slot,
-    playerPoolEntry: { player: { stats: [
+    playerPoolEntry: { player: { defaultPositionId: pos, stats: [
       { statSourceId:0, scoringPeriodId:5, appliedTotal: real },
       { statSourceId:1, scoringPeriodId:5, appliedTotal: proj }
     ]}}
   });
-  const t = sideTotals({ rosterForCurrentScoringPeriod: { entries: [
-    mkP(0, 25.0, 20.0),    // starter
-    mkP(2, 12.0, 14.0),    // starter
-    mkP(20, 30.0, 18.0),   // bench
-    mkP(21, 99.0, 99.0)    // IR, must not count as a starter
-  ]}}, 5);
-  ok("bench points sum only bench and IR", () => [t.bench === 129.0, t.bench]);
-  ok("projection sums only starters", () => [t.projected === 34.0, t.projected]);
+  /* a lineup where two bench players should have started */
+  const side = { rosterForCurrentScoringPeriod: { entries: [
+    mkP(1,  0, 25.0, 20.0),    // QB, started
+    mkP(2,  2, 12.0, 14.0),    // RB, started
+    mkP(2,  2,  4.0,  9.0),    // RB, started, and a bench RB beat him
+    mkP(3,  4, 18.0, 15.0),    // WR, started
+    mkP(3,  4,  6.0, 11.0),    // WR, started
+    mkP(2, 23,  8.0, 10.0),    // flex, started
+    mkP(16,16,  5.0,  6.0),    // D/ST, started
+    mkP(5, 17,  2.0,  8.0),    // K, started
+    mkP(2, 20, 21.0, 12.0),    // RB on the bench who outscored a starter
+    mkP(3, 20, 15.0, 10.0),    // WR on the bench who outscored a starter
+    mkP(4, 21, 99.0, 99.0)     // IR, never eligible, must not count
+  ]}};
+  const t = sideTotals(side, 5, null, COUNTS);
+
+  ok("starters are summed as they were actually set", () => [t.started === 80.0, t.started]);
+  ok("the bench figure is the points a better lineup would have scored", () => {
+    /* best legal lineup swaps the 21 RB in for the 4.0 RB and the 15 WR in
+       for the 6.0 WR: 80 + 17 + 9 = 106, so 26.0 was left on the table */
+    return [t.bench === 26.0, t.bench];
+  });
+  ok("it is not the sum of the reserves", () => [t.bench !== 36.0 && t.bench !== 135.0, t.bench]);
+  ok("an IR player is never counted as available", () => {
+    const withoutIR = { rosterForCurrentScoringPeriod: {
+      entries: side.rosterForCurrentScoringPeriod.entries.slice(0, 10) }};
+    return [sideTotals(withoutIR, 5, null, COUNTS).bench === t.bench, "IR leaked in"];
+  });
+  ok("a perfect lineup leaves nothing behind", () => {
+    const best = { rosterForCurrentScoringPeriod: { entries: [
+      mkP(1,  0, 25.0, 20.0), mkP(2,  2, 21.0, 12.0), mkP(2,  2, 12.0, 14.0),
+      mkP(3,  4, 18.0, 15.0), mkP(3,  4, 15.0, 10.0), mkP(2, 23,  8.0, 10.0),
+      mkP(16,16,  5.0,  6.0), mkP(5, 17,  2.0,  8.0),
+      mkP(2, 20,  4.0,  9.0), mkP(3, 20,  6.0, 11.0)
+    ]}};
+    return [sideTotals(best, 5, null, COUNTS).bench === 0, sideTotals(best, 5, null, COUNTS).bench];
+  });
+  ok("with no slot counts it reports nothing rather than guessing", () =>
+    [sideTotals(side, 5).bench === 0, sideTotals(side, 5).bench]);
+
+  ok("projection sums only starters", () => [t.projected === 93.0, t.projected]);
   ok("top starter is the highest starter, not the bench", () => [t.high === 25.0, t.high]);
-  ok("starter count excludes bench and IR", () => [t.starters === 2, t.starters]);
-  ok("an empty roster does not throw", () => sideTotals({}, 5).bench === 0);
+  ok("starter count excludes bench and IR", () => [t.starters === 8, t.starters]);
+  ok("an empty roster does not throw", () => sideTotals({}, 5, null, COUNTS).bench === 0);
 }
 
 /* ---------- end to end ---------- */
@@ -308,6 +347,11 @@ const titleOf = (rows, who) => {
     Object.values(packs).every(p => Array.isArray(p.awards)
       && !p.awards.some(a => a.title === "No Awards")));
   ok("no manager is missing a rank", () => Object.values(packs).every(p => p.rank >= 1));
+  /* Twice now the archive has frozen a bug because a rebuilt week looked
+     identical to the old one. Packs carry the build that made them. */
+  ok("every pack is stamped with the build that made it", () =>
+    [Object.values(packs).every(p => Number(p.v) >= 2),
+     Object.values(packs).map(p => p.v).join(",")]);
 }
 
 console.log(`\n  ${passes} passed, ${fails} failed\n`);

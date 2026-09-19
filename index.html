@@ -1239,18 +1239,16 @@
   .sbGame:first-of-type{border-top:0;padding-top:2px}
   .sbGame.mine{background:color-mix(in srgb,var(--accent) 8%,transparent);
     border-radius:14px;padding-left:11px;padding-right:11px;margin:0 -11px}
-  .sbTop{display:grid;grid-template-columns:1fr auto 1fr;
-    align-items:baseline;gap:10px}
-  .sbScores{margin-top:3px}
-  .sbName{font:400 13.5px/1.2 var(--display);color:var(--faint);min-width:0;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sbName.up{color:var(--chalk);font-weight:600}
-  .sbPts{font:700 22px/1 var(--display);color:var(--faint);
-    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-  .sbPts.up{color:var(--chalk)}
-  .sbTop .r{text-align:right}
-  .sbState{font:600 9px/1 var(--display);color:var(--faint);
-    text-transform:uppercase;letter-spacing:.1em;align-self:center}
+  .sbTop{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .sbSide{display:flex;align-items:baseline;gap:9px;min-width:0;flex:1}
+  .sbSide.r{justify-content:flex-end}
+  .sbSide b{font:400 13.5px/1.2 var(--display);color:var(--faint);
+    font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .sbSide.up b{color:var(--chalk);font-weight:600}
+  .sbSide em{font-style:normal;font:700 20px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em;flex:none}
+  .sbSide.up em{color:var(--chalk)}
   .sbBar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);
     overflow:hidden;margin:10px 0 7px}
   .sbBar i{display:block;height:100%;border-radius:3px;
@@ -6720,20 +6718,22 @@ function renderScoreboard(){
        header had not already said, and it squeezed the names into a five
        column grid so they truncated. Names get their own row now and the chip
        only appears when a game is actually finished. */
+    /* One line per game. Splitting the name and the score onto two rows made
+       every game twice as tall for no gain, and the middle grid column
+       collapsed when there was no chip in it, so the away side sat at the
+       halfway mark instead of the right edge. Each side is its own flex group
+       now: name and score together, pinned to their own end. */
     const left = (a.yet + a.playing) + " v " + (b.yet + b.playing) + " to play";
     return `<div class="sbGame${mine ? " mine" : ""}">
       <div class="sbTop">
-        <span class="sbName${lead ? " up" : ""}">${esc(g.home)}</span>
-        ${over ? `<span class="sbState">Final</span>` : ""}
-        <span class="sbName r${lead ? "" : " up"}">${esc(g.away)}</span>
-      </div>
-      <div class="sbTop sbScores">
-        <span class="sbPts${lead ? " up" : ""}">${a.now.toFixed(1)}</span>
-        <span class="sbPts r${lead ? "" : " up"}">${b.now.toFixed(1)}</span>
+        <span class="sbSide${lead ? " up" : ""}">
+          <b>${esc(g.home)}</b><em>${a.now.toFixed(1)}</em></span>
+        <span class="sbSide r${lead ? "" : " up"}">
+          <em>${b.now.toFixed(1)}</em><b>${esc(g.away)}</b></span>
       </div>
       <div class="sbBar"><i style="width:${Math.max(2, Math.min(98, pct))}%"></i></div>
       <div class="sbFoot">
-        <span>${over ? "" : pct + "%"}</span>
+        <span>${over ? "Final" : pct + "%"}</span>
         <span>${over ? Math.abs(a.now - b.now).toFixed(1) + " apart" : left}</span>
         <span class="r">${over ? "" : (100 - pct) + "%"}</span>
       </div>

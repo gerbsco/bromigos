@@ -275,7 +275,9 @@ export function weekRows(schedule, owners, week, byTeam, counts) {
         myScore: Math.round((me.totalPoints || 0) * 100) / 100,
         oppScore: Math.round((them.totalPoints || 0) * 100) / 100,
         opponent: owners[them.teamId] || "Opponent",
-        bench: t.bench, projected: t.projected, high: t.high
+        bench: t.bench, projected: t.projected, high: t.high,
+        /* which build made this row, so a later fix can rebuild it */
+        v: PACK_V
       });
     };
     push(m.home, m.away);
@@ -502,25 +504,28 @@ export function autoProse(packs, week) {
    actually pulled, and a rule change later must not quietly rewrite somebody's
    week 3. Missing weeks are fetched and built, so the archive repairs itself
    if the file is ever truncated or a run fails partway. */
-/* A week whose every pack has a zero bench, a zero top scorer and a zero
-   projection did not happen that way. It is what an empty roster payload looks
-   like after the fact, and week 1 landed exactly like that. The archive is
-   meant to protect what people pulled from being rewritten by a later rule
-   change; it was never meant to preserve a week that arrived with no data in
-   it. This is the one thing that counts as absent rather than frozen. */
-export function weekIsEmpty(packs) {
+/* The archive is frozen so a rule change in November cannot rewrite October.
+   Twice now that has also frozen a bug: week 1 first with every figure at
+   zero, then with a bench total that was the sum of the reserves rather than
+   the points a better lineup would have scored. Both times the fix landed and
+   the wrong numbers stayed.
+
+   So packs carry the version of the builder that made them. A week built by an
+   older version is rebuilt once and then frozen for good, which fixes this
+   whole class of problem rather than the two instances of it. Bump this
+   whenever the meaning of a figure changes, not when the wording does. */
+export const PACK_V = 2;
+
+export function weekIsStale(packs) {
   const rows = Object.values(packs || {});
   if (!rows.length) return true;
-  return rows.every(p => !p
-    || ((Number(p.bench) || 0) === 0
-     && (Number(p.high) || 0) === 0
-     && (Number(p.projected) || 0) === 0));
+  return rows.some(p => !p || (Number(p.v) || 0) < PACK_V);
 }
 
 export function mergeHistory(existing, additions) {
   const out = {};
   Object.keys(existing || {}).forEach(k => {
-    if (!weekIsEmpty(existing[k])) out[k] = existing[k];
+    if (!weekIsStale(existing[k])) out[k] = existing[k];
   });
   Object.keys(additions || {}).forEach(k => { if (!out[k]) out[k] = additions[k]; });
   return out;
@@ -595,8 +600,9 @@ async function main() {
   for (const w of weeks) {
     /* Kept means kept, unless the week is empty, in which case it is rebuilt
        once and then kept for good. */
-    if (oldHistory[String(w)] && !weekIsEmpty(oldHistory[String(w)])) continue;
-    if (oldHistory[String(w)]) console.log(`ok   week ${w} was archived empty, rebuilding it`);
+    if (oldHistory[String(w)] && !weekIsStale(oldHistory[String(w)])) continue;
+    if (oldHistory[String(w)]) console.log(
+      `ok   week ${w} was archived by an older build, rebuilding it`);
     if (w === week) { built[String(w)] = packs; continue; }
     try {
       await pause(400);

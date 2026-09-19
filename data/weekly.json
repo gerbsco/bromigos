@@ -257,7 +257,7 @@
         "opponent": "Dawson",
         "rank": 7,
         "record": "0-1",
-        "bench": 55.1,
+        "bench": 20.7,
         "high": 32.1,
         "projected": 105.2,
         "leagueHigh": false,
@@ -272,7 +272,7 @@
         "opponent": "Austin",
         "rank": 4,
         "record": "1-0",
-        "bench": 27.4,
+        "bench": 2.6,
         "high": 23.2,
         "projected": 112.8,
         "leagueHigh": false,
@@ -287,7 +287,7 @@
         "opponent": "Bo",
         "rank": 1,
         "record": "1-0",
-        "bench": 73.2,
+        "bench": 37.5,
         "high": 37.3,
         "projected": 109.3,
         "leagueHigh": true,
@@ -321,7 +321,7 @@
         "opponent": "Ryan",
         "rank": 6,
         "record": "0-1",
-        "bench": 64.9,
+        "bench": 32.6,
         "high": 30.7,
         "projected": 115.4,
         "leagueHigh": false,
@@ -346,7 +346,7 @@
         "opponent": "Anthony",
         "rank": 2,
         "record": "1-0",
-        "bench": 60.1,
+        "bench": 23.6,
         "high": 32.9,
         "projected": 109.1,
         "leagueHigh": false,
@@ -380,7 +380,7 @@
         "opponent": "James",
         "rank": 3,
         "record": "0-1",
-        "bench": 62.6,
+        "bench": 11.9,
         "high": 36.7,
         "projected": 115.9,
         "leagueHigh": false,
@@ -414,7 +414,7 @@
         "opponent": "Justin",
         "rank": 9,
         "record": "1-0",
-        "bench": 86.6,
+        "bench": 34.4,
         "high": 20,
         "projected": 112.6,
         "leagueHigh": false,
@@ -439,7 +439,7 @@
         "opponent": "Andy",
         "rank": 10,
         "record": "0-1",
-        "bench": 47.2,
+        "bench": 20.7,
         "high": 23.6,
         "projected": 111.2,
         "leagueHigh": false,
@@ -464,7 +464,7 @@
         "opponent": "Cody",
         "rank": 5,
         "record": "1-0",
-        "bench": 51.1,
+        "bench": 21.4,
         "high": 27.2,
         "projected": 113.6,
         "leagueHigh": false,
@@ -479,7 +479,7 @@
         "opponent": "Scotty",
         "rank": 8,
         "record": "0-1",
-        "bench": 37.2,
+        "bench": 16.9,
         "high": 24.7,
         "projected": 114.6,
         "leagueHigh": false,
@@ -489,43 +489,5 @@
       }
     }
   },
-  "results": {
-    "1": [
-      {
-        "id": "1",
-        "home": "Austin",
-        "away": "Dawson",
-        "homePts": 103.92,
-        "awayPts": 131.06
-      },
-      {
-        "id": "2",
-        "home": "Ryan",
-        "away": "Bo",
-        "homePts": 161.06,
-        "awayPts": 111.06
-      },
-      {
-        "id": "3",
-        "home": "James",
-        "away": "Anthony",
-        "homePts": 137.16,
-        "awayPts": 132.96
-      },
-      {
-        "id": "4",
-        "home": "Andy",
-        "away": "Justin",
-        "homePts": 99.86,
-        "awayPts": 72.9
-      },
-      {
-        "id": "5",
-        "home": "Scotty",
-        "away": "Cody",
-        "homePts": 115.8,
-        "awayPts": 102.62
-      }
-    ]
-  }
+  "results": {}
 }

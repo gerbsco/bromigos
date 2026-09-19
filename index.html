@@ -59,6 +59,20 @@
        island. In a browser tab the inset is 0 and nothing moves. */
     padding:env(safe-area-inset-top,0px) 0 calc(92px + env(safe-area-inset-bottom,0px))}
 
+  /* Reserving the inset stops the wordmark starting under the island, but it
+     does nothing once the page scrolls: every heading ran up behind the clock
+     on its way off screen. This is a frosted bar over the inset that the
+     content passes under instead of through. Translucent rather than a solid
+     colour, because each tab tints the page differently and a fixed dark bar
+     would read as a seam on the purple and teal ones. */
+  body::before{content:"";position:fixed;top:0;left:0;right:0;z-index:60;
+    height:env(safe-area-inset-top,0px);pointer-events:none;
+    background:color-mix(in srgb, var(--ink) 66%, transparent);
+    backdrop-filter:saturate(1.3) blur(14px);
+    -webkit-backdrop-filter:saturate(1.3) blur(14px)}
+  /* Nothing to cover in a browser tab, where the inset is zero. */
+  @supports not (height: env(safe-area-inset-top)){ body::before{display:none} }
+
   /* Five gradients stacked and cross faded, because a gradient itself
      cannot be transitioned. Only the top of the page carries the hue;
      everything is the same near black by the time you have scrolled. */
@@ -1210,6 +1224,40 @@
   .pkDot.won{background:rgba(74,222,128,.55)}
   .pkDot.me{background:var(--accent)}
 
+  /* ---------- scoring rank by week ---------- */
+  .rh{display:block;width:100%;height:auto;margin:4px 0 0;overflow:visible}
+  .rhLine{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1.5;
+    stroke-linejoin:round;stroke-linecap:round}
+  .rhLine.me{stroke:var(--accent);stroke-width:2.5}
+  .rhDot{fill:var(--accent)}
+  .rhGrid{stroke:var(--line);stroke-width:1}
+  .rhAx{fill:var(--faint);font:400 9px/1 var(--display)}
+  .rhAx.mid{text-anchor:middle}
+
+  /* ---------- the whole league, live ---------- */
+  .sbGame{padding:12px 0 13px;border-top:1px solid var(--line)}
+  .sbGame:first-of-type{border-top:0;padding-top:2px}
+  .sbGame.mine{background:color-mix(in srgb,var(--accent) 8%,transparent);
+    border-radius:14px;padding-left:11px;padding-right:11px;margin:0 -11px}
+  .sbTop{display:grid;grid-template-columns:1fr auto auto auto 1fr;
+    align-items:baseline;gap:8px}
+  .sbName{font:400 13.5px/1.2 var(--display);color:var(--faint);min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sbName.up{color:var(--chalk);font-weight:600}
+  .sbTop .sbName:last-child{text-align:right}
+  .sbPts{font:700 19px/1 var(--display);color:var(--faint);
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .sbPts.up{color:var(--chalk)}
+  .sbState{font:600 9px/1 var(--display);color:var(--accent);
+    text-transform:uppercase;letter-spacing:.1em}
+  .sbBar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);
+    overflow:hidden;margin:10px 0 7px}
+  .sbBar i{display:block;height:100%;border-radius:3px;
+    background:color-mix(in srgb,var(--accent) 70%,transparent)}
+  .sbFoot{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;
+    font:400 11px/1.3 var(--display);color:var(--faint)}
+  .sbFoot .r{text-align:right}
+
   /* ---------- a game in progress ---------- */
   .lvbox{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;
     padding:14px 14px 12px;margin:0 0 14px}
@@ -1369,6 +1417,8 @@
   <section class="panel on" id="hq">
     <div id="installHint"></div>
     <div id="picksPrompt"></div>
+    <div id="scoreboard"></div>
+    <div id="rankHistory"></div>
     <div id="nextup"></div>
     <div id="recap"></div>
     <div id="powerMini"></div>
@@ -3986,6 +4036,8 @@ function renderAll(){
     catch(e){ console.warn("[bromigos] " + what + ":", e && e.message); } };
   safe("ledger", renderLedger); safe("dossiers", renderDossiers);
   safe("recap", renderRecap); safe("draft", renderDraft);
+  safe("scoreboard", renderScoreboard);
+  safe("rankHistory", renderRankHistory);
   safe("awards", renderAwards); safe("snapshot", renderSnapshot);
   safe("league", renderLeague); safe("trade", renderTrade); safe("wire", renderWire);
   try{ paintHistoryNav(); renderH2H(); }catch(e){ console.warn("[bromigos] h2h:", e && e.message); }
@@ -5909,10 +5961,33 @@ function playoffOdds(runs){
   /* Nothing left on the schedule means the regular season is over and the
      table is the answer. Simulating anything here would invent a result. */
 
+  /* One week of results is not a scoring average, and treating it as one is
+     how a team that won once ends up at a hundred percent to make the playoffs
+     while the team it beat sits at zero. Both are wrong, and confidently.
+
+     Each team's mean is pulled toward the league mean with the weight of four
+     games. After one week a team is three quarters league average and one
+     quarter itself, so a 161 point opener moves the needle without deciding
+     the season. By week five its own scoring dominates, which is right,
+     because by then it has earned the claim.
+
+     The swing gets the same treatment from the other end: with one or two
+     games there is no measurable volatility, so the floor starts wide and
+     tightens as real variance appears. A narrow swing early is what turns a
+     small lead into a certainty. */
+  const PRIOR = 4;
+  const pool = ids.flatMap(i => rec[i].scores);
+  const leagueMu = pool.length ? mean(pool) : 110;
+
   const prof = {};
   ids.forEach(i => {
     const s = rec[i].scores;
-    prof[i] = { mu: mean(s), sd: Math.max(stdev(s), 12) };
+    const n = s.length;
+    const own = n ? mean(s) : leagueMu;
+    const mu = (own * n + leagueMu * PRIOR) / (n + PRIOR);
+    /* 26 at one game, 21 at two, 18 at four, settling near the real spread */
+    const floor = 12 + 14 / Math.sqrt(Math.max(1, n));
+    prof[i] = { mu, sd: Math.max(stdev(s), floor) };
   });
 
   const remaining = remainingFixtures().map(pairs =>
@@ -6523,6 +6598,147 @@ function renderLive(me, opp, wk){
   </div>`;
 }
 
+/* ---------- how the table has moved ----------
+   Every completed week is archived with each manager's scoring rank in it, so
+   the shape of the season is already on file and nothing here recomputes it.
+   Drawn as inline SVG: ten lines, no library, no canvas. */
+function rankHistory(){
+  const hist = (WEEKLY && WEEKLY.history) || null;
+  if(!hist) return null;
+  const wks = Object.keys(hist).map(Number).filter(w => w > 0).sort((a,b) => a-b);
+  if(wks.length < 2) return null;
+
+  const who = {};
+  wks.forEach(w => Object.keys(hist[w] || {}).forEach(m => { who[m] = true; }));
+  const managers = Object.keys(who);
+  if(managers.length < 3) return null;
+
+  const series = managers.map(m => ({
+    manager: m,
+    points: wks.map(w => {
+      const p = (hist[w] || {})[m];
+      const r = p && Number(p.rank);
+      return (r > 0) ? { wk: w, rank: r } : null;
+    }).filter(Boolean)
+  })).filter(s => s.points.length >= 2);
+  if(series.length < 3) return null;
+
+  const n = Math.max(...series.map(s => Math.max(...s.points.map(p => p.rank))));
+  return { wks, series, teams: Math.max(n, series.length) };
+}
+
+function renderRankHistory(){
+  const el = document.getElementById("rankHistory");
+  if(!el) return;
+  const h = rankHistory();
+  if(!h){ el.innerHTML = ""; return; }
+
+  const W = 320, H = 168, L = 26, R = 10, T = 12, B = 20;
+  const spanW = W - L - R, spanH = H - T - B;
+  const x = w => L + (h.wks.length < 2 ? spanW / 2
+    : spanW * (h.wks.indexOf(w) / (h.wks.length - 1)));
+  const y = r => T + spanH * ((r - 1) / Math.max(1, h.teams - 1));
+
+  const mine = h.series.find(s => s.manager === ME);
+  const lines = h.series.map(s => {
+    const me = s.manager === ME;
+    const d = s.points.map((p, i) =>
+      (i ? "L" : "M") + x(p.wk).toFixed(1) + " " + y(p.rank).toFixed(1)).join(" ");
+    return `<path d="${d}" class="rhLine${me ? " me" : ""}"/>`;
+  }).join("") + (mine ? mine.points.map(p =>
+    `<circle cx="${x(p.wk).toFixed(1)}" cy="${y(p.rank).toFixed(1)}" r="3"
+      class="rhDot"/>`).join("") : "");
+
+  const gridY = [1, Math.ceil(h.teams / 2), h.teams].map(r =>
+    `<line x1="${L}" x2="${W - R}" y1="${y(r).toFixed(1)}" y2="${y(r).toFixed(1)}"
+       class="rhGrid"/>
+     <text x="${L - 6}" y="${(y(r) + 3.5).toFixed(1)}" class="rhAx">${r}</text>`).join("");
+  const gridX = h.wks.map(w =>
+    `<text x="${x(w).toFixed(1)}" y="${H - 6}" class="rhAx mid">${w}</text>`).join("");
+
+  let note = "";
+  if(mine && mine.points.length >= 2){
+    const first = mine.points[0], last = mine.points[mine.points.length - 1];
+    const move = first.rank - last.rank;
+    note = move === 0
+      ? `You have been ${ordinal(last.rank)} in scoring since week ${first.wk}.`
+      : `You have gone from ${ordinal(first.rank)} in week ${first.wk} to `
+        + `${ordinal(last.rank)}, ${Math.abs(move)} place${
+          Math.abs(move) > 1 ? "s" : ""} ${move > 0 ? "up" : "down"}.`;
+  }
+
+  el.innerHTML = fold("Scoring rank by week",
+    `<svg viewBox="0 0 ${W} ${H}" class="rh" role="img"
+        aria-label="Scoring rank by week">${gridY}${lines}${gridX}</svg>
+     ${note ? `<p class="note" style="margin:8px 2px 0">${esc(note)}</p>` : ""}
+     ${howItWorks(`Where each manager finished on points that week, first at the
+       top. Your own line is picked out. It is scoring only, so it ignores who
+       you happened to play.`)}`, false);
+}
+
+/* ---------- the whole league, live ----------
+   On a Sunday the app could only show you your own game. Everyone else's was
+   on ESPN, which is where people went instead. Same arithmetic as the matchup
+   card, run across all five. */
+function renderScoreboard(){
+  const el = document.getElementById("scoreboard");
+  if(!el) return;
+  const wk = LIVE_WK();
+  if(!wk || !weekInPlay(wk)){ el.innerHTML = ""; return; }
+  const games = weekGames(wk);
+  if(!games.length){ el.innerHTML = ""; return; }
+
+  const byName = {};
+  (ROSTERS || []).forEach(t => { byName[t.manager] = t; });
+
+  const rows = games.map(g => {
+    const A = byName[g.home], B = byName[g.away];
+    const a = A ? liveSide(A, wk) : null, b = B ? liveSide(B, wk) : null;
+    if(!a || !b) return null;
+    const odds = liveOdds(a, b);
+    const pct = Math.round((odds === null ? 0.5 : odds) * 100);
+    const over = a.yet + a.playing + b.yet + b.playing === 0;
+    const mine = g.home === ME || g.away === ME;
+    return { g, a, b, pct, over, mine,
+      close: Math.abs(a.finish - b.finish) };
+  }).filter(Boolean);
+  if(!rows.length){ el.innerHTML = ""; return; }
+
+  /* Yours first, then the closest games, because a one point game with two
+     players left is the one worth watching. */
+  rows.sort((x, y) => (y.mine - x.mine) || (x.over - y.over) || (x.close - y.close));
+
+  const live = rows.filter(r => !r.over).length;
+  const body = rows.map(r => {
+    const { g, a, b, pct, over, mine } = r;
+    const lead = a.now >= b.now;
+    return `<div class="sbGame${mine ? " mine" : ""}">
+      <div class="sbTop">
+        <span class="sbName${lead ? " up" : ""}">${esc(g.home)}</span>
+        <span class="sbPts${lead ? " up" : ""}">${a.now.toFixed(1)}</span>
+        <span class="sbState">${over ? "Final" : "Live"}</span>
+        <span class="sbPts${lead ? "" : " up"}">${b.now.toFixed(1)}</span>
+        <span class="sbName${lead ? "" : " up"}">${esc(g.away)}</span>
+      </div>
+      <div class="sbBar"><i style="width:${Math.max(2, Math.min(98, pct))}%"></i></div>
+      <div class="sbFoot">
+        <span>${over ? "" : pct + "%"}</span>
+        <span>${over ? "Final \u00b7 " + Math.abs(a.now - b.now).toFixed(1) + " apart"
+          : (a.yet + a.playing) + " left \u00b7 " + (b.yet + b.playing) + " left"}</span>
+        <span class="r">${over ? "" : (100 - pct) + "%"}</span>
+      </div>
+    </div>`;
+  }).join("");
+
+  el.innerHTML = panelHead(`Scoreboard \u00b7 Week ${wk}`,
+      live ? `${live} game${live > 1 ? "s" : ""} still going.` : "All games final.") +
+    body +
+    howItWorks(`Points on the board now, and the chance of winning from here.
+      A player whose game has not kicked off carries his whole projection; one
+      in the fourth quarter carries the part still to be played. Your own game
+      is first, then whichever is closest.`);
+}
+
 /* ---------- your lineup against the best one ----------
    The site has always shown the optimal lineup and never what you have
    actually set, so it could tell you the answer without telling you that you
@@ -6715,16 +6931,27 @@ function renderMatchup(me){
   const weeks = wks.map(w => `<button type="button" class="mxw"
       aria-pressed="${w === matchWeek}" data-mw="${w}">Wk ${w}</button>`).join("");
 
-  return `<div class="mxweeks">${weeks}</div>${toggle}
-    <div class="vs">
+  /* Once the games are on, the projection card and the live card sat on top of
+     each other showing different numbers for the same matchup, 120.9 to 107.9
+     above 137.1 to 97.0. Both are right and together they read as a bug. The
+     live one is what matters while it is live, so the projection collapses to
+     a line under it and says what it was. */
+  const onNow = weekInPlay(matchWeek);
+  const bigVs = `<div class="vs">
       <div class="vsSide"><span class="vsName">${esc(me.manager)}</span>
         <span class="vsScore">${mineTot.toFixed(1)}</span></div>
       <div class="vsMid"><span>Week ${matchWeek}</span>
         <b class="${diff>0?"up":diff<0?"down":""}">${diff>0?"+":""}${diff.toFixed(1)}</b></div>
       <div class="vsSide"><span class="vsName">${esc(opp.manager)}</span>
         <span class="vsScore">${themTot.toFixed(1)}</span></div>
-    </div>
+    </div>`;
+  const smallVs = `<p class="note" style="margin:10px 2px 0">Before kickoff this
+    was projected ${mineTot.toFixed(1)} to ${themTot.toFixed(1)}.</p>`;
+
+  return `<div class="mxweeks">${weeks}</div>${toggle}
+    ${onNow ? "" : bigVs}
     ${renderLive(me, opp, matchWeek)}
+    ${onNow ? smallVs : ""}
     ${renderStartSitGaps(me, matchWeek)}
     ${rivalryLine(me.manager, opp.manager)}
     ${sourceNote(gaps, true)}

@@ -33,6 +33,43 @@ const UA = { "User-Agent": "Mozilla/5.0 (compatible; BromigosBot/1.0)", "Accept"
 
 const BENCH_SLOTS = new Set([20, 21]);   // 20 bench, 21 IR
 
+/* Which ESPN lineup slots each position may fill. Needed because "points left
+   on the bench" is not the sum of what your bench scored: with seven reserves
+   that is fifty to ninety points every single week and it means nothing. What
+   it means is the points you would have had by starting your best legal
+   lineup instead of the one you set, which is usually single figures and is
+   occasionally the game. */
+const POS_OF = { 1:"QB", 2:"RB", 3:"WR", 4:"TE", 5:"K", 16:"DST" };
+const SLOT_TAKES = {
+  0:["QB"], 2:["RB"], 4:["WR"], 6:["TE"], 16:["DST"], 17:["K"],
+  23:["RB","WR","TE"],           // flex
+  7:["QB","RB","WR","TE"],       // op / superflex
+  3:["RB","WR"], 5:["WR","TE"]
+};
+
+/* Greedy assignment, scarcest slot first, which matches how the app scores a
+   lineup. Exact enough: with ten or so slots the greedy answer and the optimal
+   one differ only in contrived cases. */
+function bestOf(players, counts) {
+  const slots = [];
+  Object.keys(counts || {}).forEach(id => {
+    const n = Number(counts[id]) || 0;
+    const takes = SLOT_TAKES[Number(id)];
+    if (!takes || BENCH_SLOTS.has(Number(id))) return;
+    for (let i = 0; i < n; i++) slots.push(takes);
+  });
+  if (!slots.length) return null;
+  slots.sort((a, b) => a.length - b.length);
+  const pool = players.slice().sort((a, b) => b.pts - a.pts);
+  const used = new Set();
+  let total = 0;
+  slots.forEach(takes => {
+    const pick = pool.find(p => !used.has(p) && takes.indexOf(p.pos) >= 0);
+    if (pick) { used.add(pick); total += pick.pts; }
+  });
+  return Math.round(total * 10) / 10;
+}
+
 /* ---------- flavour pools, rotated by week so week 8 never reads like week 2 ---------- */
 const FLAVOUR = {
   "Scoring Machine": [
@@ -159,12 +196,13 @@ export function crestMap(teamDoc, owners) {
    every projection and every top scorer came back as zero and the ledger and
    the receipts were a table of noughts. byTeam is the fallback: the same
    rosters, found the other way. */
-export function sideTotals(side, week, byTeam) {
+export function sideTotals(side, week, byTeam, counts) {
   let entries = (side && ((side.rosterForCurrentScoringPeriod || {}).entries
     || (side.rosterForMatchupPeriod || {}).entries)) || [];
   if (!entries.length && byTeam && side && side.teamId != null)
     entries = byTeam[String(side.teamId)] || [];
-  let bench = 0, projected = 0, high = 0, counted = 0;
+  let started = 0, projected = 0, high = 0, counted = 0;
+  const all = [];
 
   entries.forEach(e => {
     const p = (e.playerPoolEntry || {}).player || {};
@@ -172,12 +210,22 @@ export function sideTotals(side, week, byTeam) {
     const at = s => (s && typeof s.appliedTotal === "number") ? s.appliedTotal : 0;
     const real = at(stats.find(s => s.statSourceId === 0 && s.scoringPeriodId === week));
     const proj = at(stats.find(s => s.statSourceId === 1 && s.scoringPeriodId === week));
+    const pos = POS_OF[p.defaultPositionId];
+    if (pos && e.lineupSlotId !== 21) all.push({ pos, pts: real });
 
-    if (BENCH_SLOTS.has(e.lineupSlotId)) { bench += real; }
-    else { projected += proj; counted++; if (real > high) high = real; }
+    if (BENCH_SLOTS.has(e.lineupSlotId)) { /* not a starter */ }
+    else { started += real; projected += proj; counted++; if (real > high) high = real; }
   });
 
-  return { bench, projected, high, starters: counted };
+  /* The gap between the lineup that was set and the best one available. With
+     no slot counts to work from there is nothing honest to report, so it
+     reports nothing rather than the old sum-of-the-bench. */
+  const best = counts ? bestOf(all, counts) : null;
+  const bench = (best === null) ? 0
+    : Math.max(0, Math.round((best - started) * 10) / 10);
+
+  return { bench, projected, high, starters: counted, started:
+    Math.round(started * 10) / 10 };
 }
 
 /* every matchup period where every game has a winner, oldest first */
@@ -214,14 +262,14 @@ export function rostersByTeam(doc) {
   return out;
 }
 
-export function weekRows(schedule, owners, week, byTeam) {
+export function weekRows(schedule, owners, week, byTeam, counts) {
   const rows = [];
   (schedule || []).forEach(m => {
     if (m.matchupPeriodId !== week || !m.home || !m.away) return;
     const push = (me, them) => {
       const name = owners[me.teamId];
       if (!name) return;
-      const t = sideTotals(me, week, byTeam);
+      const t = sideTotals(me, week, byTeam, counts);
       rows.push({
         manager: name,
         myScore: Math.round((me.totalPoints || 0) * 100) / 100,
@@ -385,8 +433,8 @@ export function assignAwards(rows, week) {
   return rows;
 }
 
-export function buildPacks(schedule, owners, week, crests, byTeam) {
-  const rows = weekRows(schedule, owners, week, byTeam);
+export function buildPacks(schedule, owners, week, crests, byTeam, counts) {
+  const rows = weekRows(schedule, owners, week, byTeam, counts);
   if (!rows.length) return {};
   const rec = records(schedule, owners, week);
   const scores = rows.map(r => r.myScore);
@@ -508,16 +556,30 @@ async function main() {
 
   /* mBoxscore is the view that puts each side's roster on the matchup itself.
      mRoster is kept as well so the fallback has something to work with. */
+  /* The lineup slot counts, so "left on the bench" can mean the points a
+     better lineup would have scored rather than the sum of the reserves. */
+  let slotCounts = null;
+  try {
+    const cfg = await getJSON(`${ESPN}?view=mSettings`);
+    slotCounts = ((((cfg || {}).settings || {}).rosterSettings) || {}).lineupSlotCounts || null;
+    if (slotCounts) console.log(`ok   lineup slots: `
+      + Object.keys(slotCounts).filter(k => Number(slotCounts[k]) > 0).join(", "));
+  } catch (err) {
+    console.log(`     settings miss (${err.message}); bench totals will be skipped`);
+  }
+
   const detailFor = async w => {
     const d = await getJSON(
       `${ESPN}?view=mMatchup&view=mBoxscore&view=mRoster&scoringPeriodId=${w}`);
+    if (!slotCounts) slotCounts =
+      ((((d || {}).settings || {}).rosterSettings) || {}).lineupSlotCounts || null;
     return { sched: d.schedule || schedule, byTeam: rostersByTeam(d) };
   };
 
   /* rosters carry the bench and projection numbers, and only the per-week
      request includes them */
   const d0 = await detailFor(week);
-  const packs = buildPacks(d0.sched, owners, week, crests, d0.byTeam);
+  const packs = buildPacks(d0.sched, owners, week, crests, d0.byTeam, slotCounts);
   const benched = Object.values(packs).reduce((n, p) => n + (p.bench || 0), 0);
   console.log(`ok   week ${week}: ${Object.keys(packs).length} packs,`
     + ` ${benched.toFixed(1)} points benched across the league`);
@@ -539,7 +601,7 @@ async function main() {
     try {
       await pause(400);
       const dw = await detailFor(w);
-      const p = buildPacks(dw.sched, owners, w, crests, dw.byTeam);
+      const p = buildPacks(dw.sched, owners, w, crests, dw.byTeam, slotCounts);
       if (Object.keys(p).length) { built[String(w)] = p; fetched++; }
       else console.log(`     week ${w} built nothing, left out of the archive`);
     } catch (err) {

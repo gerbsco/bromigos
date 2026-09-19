@@ -3630,12 +3630,14 @@ function renderPicks(){
      picks come out and the entry form goes away. The leaderboard and the
      explainer fold either way, because they were sitting above the picks and
      pushing them off the screen. */
+  /* panelHead already prints the status as its subtitle. The note underneath
+     only exists to carry the retry link, so it appears when there is something
+     to retry and not otherwise; printing both said the same sentence twice. */
+  const stuck = picksState === "error" || picksState === "stale";
   el.innerHTML = panelHead(`Pick'em \u00b7 Week ${wk}`,
       locked ? "Locked. Everyone's picks are open now." : status) +
-    (!locked ? `<p class="note" style="margin:0 0 12px">${esc(status)}${
-      (picksState === "error" || picksState === "stale")
-        ? ` <button type="button" class="lnkbtn" id="pkRetry">Try again</button>` : ""}</p>`
-      : "") +
+    (!locked && stuck ? `<p class="note" style="margin:0 0 12px">
+      <button type="button" class="lnkbtn" id="pkRetry">Try again</button></p>` : "") +
     (locked ? lockedPicks(wk) : rows) +
     ((!locked && n && ME) ? `<button type="button" class="cbtn pksave" id="pkSave"
         ${ready ? "" : "disabled"}>${
@@ -4595,10 +4597,16 @@ function tradeIdeas(mine, theirs){
 function findTrades(mine, theirs, limit = 6){
   const baseA = weekValue(mine.players), baseB = weekValue(theirs.players);
   const ideas = [];
+  /* This first pass is a sieve, not a judgement. It runs on one week because
+     one week is cheap, and one week is exactly when a bye or a single bad
+     matchup makes a good rest-of-season trade look worthless. Demanding a gain
+     here threw away deals before the stage that actually scores them ever saw
+     them. It now only discards the clear losers and lets the season pass
+     decide, which is the number that gets shown. */
   const push = (give, get) => {
     const a = weekValue(applyTrade(mine.players, give, get)) - baseA;
     const b = weekValue(applyTrade(theirs.players, get, give)) - baseB;
-    if(a > 0.15 && b > 0.15) ideas.push({ give, get, a, b, score: Math.min(a,b) });
+    if(a > -2 && b > -2) ideas.push({ give, get, a, b, score: Math.min(a,b) });
   };
   // Value is always computed against the FULL roster. Only the pool of players
   // considered for a swap is narrowed, since nobody trades kickers or defenses.
@@ -4616,12 +4624,36 @@ function findTrades(mine, theirs, limit = 6){
     if(r1.id >= r2.id) return;
     A.forEach(g => { if(g.proj > r1.proj) push([g],[r1,r2]); });
   }));
+
+  /* Two for two, which is where a genuine surplus swap actually lives: you send
+     a spare back and a spare receiver, he sends back the ones he is deep at.
+     Without this shape the finder could only ever balance a deal by attaching a
+     quarterback to it, which is why every suggestion looked the same.
+
+     Capped at the ten best on each side. The full cross product of fifteen
+     against fifteen is a hundred thousand lineup rebuilds per pair of teams and
+     the page would visibly stall; the eleventh best player on a roster is not
+     the one that unlocks a trade anyway. */
+  const byProj = xs => xs.slice().sort((x, y) => y.proj - x.proj).slice(0, 10);
+  const A2 = byProj(A), B2 = byProj(B);
+  const pairs = xs => { const out = [];
+    for(let i = 0; i < xs.length; i++)
+      for(let j = i + 1; j < xs.length; j++) out.push([xs[i], xs[j]]);
+    return out; };
+  const ap = pairs(A2), bp = pairs(B2);
+  ap.forEach(g => bp.forEach(r => {
+    /* two of the same two positions is a lateral move dressed up as a trade */
+    if(g[0].pos === r[0].pos && g[1].pos === r[1].pos) return;
+    if(g[0].pos === r[1].pos && g[1].pos === r[0].pos) return;
+    push(g, r);
+  }));
+
   const seen = new Set();
   const shortlist = ideas.sort((x,y) => y.score - x.score).filter(i => {
     const key = i.give.map(p=>p.id).sort()+"|"+i.get.map(p=>p.id).sort();
     if(seen.has(key)) return false;
     seen.add(key); return true;
-  }).slice(0, 24);
+  }).slice(0, 60);
 
   /* now the number that actually gets shown */
   const seasonA = seasonValue(mine.players), seasonB = seasonValue(theirs.players);
@@ -4634,8 +4666,40 @@ function findTrades(mine, theirs, limit = 6){
     return { ...i, a, b, score: Math.min(a, b) };
   });
 
-  const both = rated.filter(i => i.a > floor && i.b > floor)
-    .sort((x, y) => y.score - x.score).slice(0, limit);
+  /* Diversity, because a ranked list of the best deals is six versions of the
+     same deal. A spare quarterback is worth nothing in a one quarterback
+     league, so attaching him to anything is free value on paper and every top
+     idea ends up being "my backup QB plus somebody for your somebody". That is
+     one idea, not six. Each player may headline at most twice, and each shape
+     of trade appears at most twice, so what comes back is a set of different
+     suggestions rather than one suggestion sorted six ways. */
+  const varied = list => {
+    const perPlayer = {}, perShape = {};
+    const out = [];
+    for(const i of list){
+      const ids = i.give.concat(i.get).map(p => p.id);
+      const shape = i.give.map(p => p.pos).sort().join("+") + ">"
+        + i.get.map(p => p.pos).sort().join("+");
+      if(ids.some(id => (perPlayer[id] || 0) >= 2)) continue;
+      if((perShape[shape] || 0) >= 2) continue;
+      ids.forEach(id => { perPlayer[id] = (perPlayer[id] || 0) + 1; });
+      perShape[shape] = (perShape[shape] || 0) + 1;
+      out.push(i);
+      if(out.length >= limit) break;
+    }
+    /* A short diverse list beats a long repetitive one, so the backfill only
+       runs when being fussy left almost nothing. Filling all the way up to the
+       limit put the same player back in four times and undid the whole point. */
+    if(out.length < 3)
+      for(const i of list){
+        if(out.indexOf(i) < 0) out.push(i);
+        if(out.length >= 3) break;
+      }
+    return out.slice(0, limit);
+  };
+
+  const both = varied(rated.filter(i => i.a > floor && i.b > floor)
+    .sort((x, y) => y.score - x.score));
   if(both.length) return both;
 
   /* Nothing helps both sides. That is a real answer in a league that has just
@@ -5341,13 +5405,31 @@ function renderWirePro(){
      and "projected" on its own was the only thing saying which. */
   const wk = weeksLeft()[0] || pickWeek();
 
+  /* Snap share only exists for players the projection feed carries usage for,
+     which on a waiver board is often nobody. Offering a sort that cannot order
+     anything is worse than not offering it: it looks broken, and it silently
+     leaves the list in whatever order it was already in. */
+  /* One row out of a hundred and sixty seven carrying a number is not a sort,
+     it is three players pinned to the top and no explanation of why. The chip
+     now needs the field on a real share of the board before it is offered, and
+     when it is offered the number is on every row it exists for. */
+  const covered = f => {
+    const n = rows.filter(p => p[f] != null).length;
+    /* A share rather than a count, so a short board and a hundred and sixty
+       seven row one are judged the same way. Three players out of that many is
+       not a sort, it is three names pinned to the top with no explanation. */
+    return n >= 3 && n >= rows.length / 4;
+  };
+  const usable = SORTS.filter(([k]) => k !== "snaps" || covered("snapPct"));
+  if(!usable.some(([k]) => k === wireSort)) wireSort = usable[0][0];
+
   el.innerHTML = demoBanner() + needPills(g) +
     `<div class="ctrls">
       <div><div class="cglabel">Position</div>
         <div class="cgroup">${POSES.map(([k,l]) =>
           `<button class="cbtn" aria-pressed="${wireFilter===k}" data-pos="${k}">${l}</button>`).join("")}</div></div>
       <div><div class="cglabel">Sort by</div>
-        <div class="cgroup">${SORTS.map(([k,l]) =>
+        <div class="cgroup">${usable.map(([k,l]) =>
           `<button class="cbtn" aria-pressed="${wireSort===k}" data-sort="${k}">${l}</button>`).join("")}</div></div>
     </div>
     <p class="note" style="margin:0 0 12px">${rows.length} available${
@@ -5359,14 +5441,18 @@ function renderWirePro(){
         ${stat(p.proj.toFixed(1), wk ? "week " + wk : "projected")}${
           wireSort === "ros" ? stat(f1(ppgOf(p)), "a week") : ""}${
           stat(p.own!=null?p.own+"%":null,"rostered")}
-        ${stat(p.snapPct!=null?p.snapPct+"%":null,"snaps")}${stat(p.tgtShare!=null?p.tgtShare+"%":null,"targets")}
+        ${stat(p.snapPct!=null ? p.snapPct+"%"
+          : wireSort === "snaps" ? "\u2014" : null,"snaps")}${
+          stat(p.tgtShare!=null?p.tgtShare+"%":null,"targets")}
       </span></span>
       ${p.trend ? `<span class="hot">+${p.trend>999?(p.trend/1000).toFixed(1)+"k":p.trend}</span>` : ""}
     </div>`).join("") : `<p class="note">Nobody available there. Try another position.</p>`) +
     `<p class="note">Numbers are this week's projection, blended the same way as
       everywhere else. Anyone not currently on an NFL team is left out, because
       he cannot score. Trending counts how many Sleeper leagues added a player
-      in the last 48 hours.</p>`;
+      in the last 48 hours.${covered("snapPct")
+        ? " Snap share is the share of his team's offensive plays he was on the field for."
+        : " Snap share is not in this week's feed, so that sort is hidden."}</p>`;
 
   el.querySelectorAll("[data-pos]").forEach(b => b.onclick = () => { wireFilter=b.dataset.pos; renderWirePro(); });
   el.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { wireSort=b.dataset.sort; renderWirePro(); });

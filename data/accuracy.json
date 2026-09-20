@@ -1193,8 +1193,8 @@
       },
       "4241985": {
         "pos": "RB",
-        "espn": 11.3,
-        "sleeper": 8.8,
+        "espn": 12.1,
+        "sleeper": 11.5,
         "actual": null
       },
       "4242335": {
@@ -1319,7 +1319,7 @@
       },
       "4372016": {
         "pos": "WR",
-        "espn": 10,
+        "espn": 10.1,
         "sleeper": 10.4,
         "actual": null
       },
@@ -1541,8 +1541,8 @@
       },
       "4568490": {
         "pos": "RB",
-        "espn": 8.5,
-        "sleeper": 8,
+        "espn": null,
+        "sleeper": 2.2,
         "actual": null
       },
       "4569173": {
@@ -1836,7 +1836,7 @@
       "-16027": {
         "pos": "DST",
         "espn": 8.2,
-        "sleeper": 9.7,
+        "sleeper": 9.8,
         "actual": null
       },
       "-16014": {

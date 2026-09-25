@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "posted": "2026-09-24",
+  "posted": "2026-09-25",
   "auto": true,
   "headline": "Week 2 results",
   "body": [
@@ -721,41 +721,41 @@
     }
   },
   "results": {
-    "1": [
+    "2": [
       {
-        "id": "1",
-        "home": "Austin",
-        "away": "Dawson",
-        "homePts": 103.92,
-        "awayPts": 131.06
-      },
-      {
-        "id": "2",
-        "home": "Ryan",
+        "id": "6",
+        "home": "Dawson",
         "away": "Bo",
-        "homePts": 161.06,
-        "awayPts": 111.06
+        "homePts": 115.28,
+        "awayPts": 96.04
       },
       {
-        "id": "3",
-        "home": "James",
-        "away": "Anthony",
-        "homePts": 137.16,
-        "awayPts": 132.96
+        "id": "7",
+        "home": "Anthony",
+        "away": "Austin",
+        "homePts": 96.72,
+        "awayPts": 118.68
       },
       {
-        "id": "4",
-        "home": "Andy",
-        "away": "Justin",
-        "homePts": 99.86,
-        "awayPts": 72.9
+        "id": "8",
+        "home": "Justin",
+        "away": "Ryan",
+        "homePts": 158.38,
+        "awayPts": 99.62
       },
       {
-        "id": "5",
+        "id": "9",
+        "home": "Cody",
+        "away": "James",
+        "homePts": 114.66,
+        "awayPts": 79.5
+      },
+      {
+        "id": "10",
         "home": "Scotty",
-        "away": "Cody",
-        "homePts": 115.8,
-        "awayPts": 102.62
+        "away": "Andy",
+        "homePts": 111.86,
+        "awayPts": 92.58
       }
     ]
   }

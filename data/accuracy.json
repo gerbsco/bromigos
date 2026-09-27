@@ -1866,7 +1866,7 @@
       "12483": {
         "pos": "QB",
         "espn": 16,
-        "sleeper": 15.9,
+        "sleeper": 16,
         "actual": null
       },
       "15847": {
@@ -1884,7 +1884,7 @@
       "16800": {
         "pos": "WR",
         "espn": 13.3,
-        "sleeper": 11.7,
+        "sleeper": 11.8,
         "actual": null
       },
       "17372": {
@@ -1902,7 +1902,7 @@
       "2577417": {
         "pos": "QB",
         "espn": 17.4,
-        "sleeper": 19.4,
+        "sleeper": 19,
         "actual": null
       },
       "2971573": {
@@ -1986,7 +1986,7 @@
       "3128429": {
         "pos": "WR",
         "espn": 9.1,
-        "sleeper": 8.4,
+        "sleeper": 8.5,
         "actual": null
       },
       "3139477": {
@@ -2112,7 +2112,7 @@
       "4241389": {
         "pos": "WR",
         "espn": 14.3,
-        "sleeper": 14.5,
+        "sleeper": 14.4,
         "actual": null
       },
       "4241416": {
@@ -2220,7 +2220,7 @@
       "4361579": {
         "pos": "RB",
         "espn": 14,
-        "sleeper": 14.3,
+        "sleeper": 14.1,
         "actual": null
       },
       "4361741": {
@@ -2250,7 +2250,7 @@
       "4372016": {
         "pos": "WR",
         "espn": 10.8,
-        "sleeper": 10.9,
+        "sleeper": 11,
         "actual": null
       },
       "4373626": {
@@ -2286,13 +2286,13 @@
       "4426338": {
         "pos": "QB",
         "espn": 16.8,
-        "sleeper": 17,
+        "sleeper": 17.2,
         "actual": null
       },
       "4426354": {
         "pos": "WR",
         "espn": 11.6,
-        "sleeper": 12.5,
+        "sleeper": 12.4,
         "actual": null
       },
       "4426388": {
@@ -2466,7 +2466,7 @@
       "4568490": {
         "pos": "RB",
         "espn": 7.7,
-        "sleeper": 9.2,
+        "sleeper": 9.3,
         "actual": null
       },
       "4569173": {
@@ -2730,7 +2730,7 @@
       "-16007": {
         "pos": "DST",
         "espn": 3.8,
-        "sleeper": 6.4,
+        "sleeper": 6.5,
         "actual": null
       },
       "-16012": {

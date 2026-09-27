@@ -1896,13 +1896,13 @@
       "2473037": {
         "pos": "K",
         "espn": 9.9,
-        "sleeper": 8.4,
+        "sleeper": 7.9,
         "actual": null
       },
       "2577417": {
         "pos": "QB",
         "espn": 17.4,
-        "sleeper": 19.1,
+        "sleeper": 19.4,
         "actual": null
       },
       "2971573": {
@@ -1914,7 +1914,7 @@
       "2976212": {
         "pos": "WR",
         "espn": 8.4,
-        "sleeper": 7.7,
+        "sleeper": 7.4,
         "actual": null
       },
       "3040151": {
@@ -1932,13 +1932,13 @@
       "3043078": {
         "pos": "RB",
         "espn": 17.4,
-        "sleeper": 18.1,
+        "sleeper": 18.2,
         "actual": null
       },
       "3046779": {
         "pos": "QB",
         "espn": 16.9,
-        "sleeper": 19,
+        "sleeper": 19.5,
         "actual": null
       },
       "3054850": {
@@ -1956,7 +1956,7 @@
       "3116165": {
         "pos": "WR",
         "espn": 7.1,
-        "sleeper": 7.6,
+        "sleeper": 7.7,
         "actual": null
       },
       "3117251": {
@@ -1974,7 +1974,7 @@
       "3121422": {
         "pos": "WR",
         "espn": 9.9,
-        "sleeper": 8.4,
+        "sleeper": 8,
         "actual": null
       },
       "3126486": {
@@ -2010,13 +2010,13 @@
       "3916148": {
         "pos": "RB",
         "espn": 9.8,
-        "sleeper": 12,
+        "sleeper": 11.5,
         "actual": null
       },
       "3916387": {
         "pos": "QB",
         "espn": 21.4,
-        "sleeper": 24.4,
+        "sleeper": 24.5,
         "actual": null
       },
       "3916433": {
@@ -2046,7 +2046,7 @@
       "3953687": {
         "pos": "K",
         "espn": 10.2,
-        "sleeper": 8.8,
+        "sleeper": 8.7,
         "actual": null
       },
       "4032473": {
@@ -2088,12 +2088,12 @@
       "4040715": {
         "pos": "QB",
         "espn": 20.1,
-        "sleeper": 19,
+        "sleeper": 18.8,
         "actual": null
       },
       "4047650": {
         "pos": "WR",
-        "espn": 9.7,
+        "espn": 9.6,
         "sleeper": 9.4,
         "actual": null
       },
@@ -2112,19 +2112,19 @@
       "4241389": {
         "pos": "WR",
         "espn": 14.3,
-        "sleeper": 14.4,
+        "sleeper": 14.5,
         "actual": null
       },
       "4241416": {
         "pos": "RB",
-        "espn": 13.3,
-        "sleeper": 13.4,
+        "espn": 13.4,
+        "sleeper": 13.5,
         "actual": null
       },
       "4241478": {
         "pos": "WR",
         "espn": 13,
-        "sleeper": 13,
+        "sleeper": 12.9,
         "actual": null
       },
       "4241985": {
@@ -2136,7 +2136,7 @@
       "4242335": {
         "pos": "RB",
         "espn": 19.5,
-        "sleeper": 18.3,
+        "sleeper": 18.4,
         "actual": null
       },
       "4248528": {
@@ -2172,7 +2172,7 @@
       "4360310": {
         "pos": "QB",
         "espn": 17.7,
-        "sleeper": 19.2,
+        "sleeper": 19.3,
         "actual": null
       },
       "4360689": {
@@ -2189,8 +2189,8 @@
       },
       "4360939": {
         "pos": "WR",
-        "espn": 6.4,
-        "sleeper": 9.1,
+        "espn": 7.4,
+        "sleeper": 9.2,
         "actual": null
       },
       "4361050": {
@@ -2219,8 +2219,8 @@
       },
       "4361579": {
         "pos": "RB",
-        "espn": 13.9,
-        "sleeper": 14.1,
+        "espn": 14,
+        "sleeper": 14.3,
         "actual": null
       },
       "4361741": {
@@ -2261,14 +2261,14 @@
       },
       "4373678": {
         "pos": "WR",
-        "espn": 8.4,
+        "espn": 8.5,
         "sleeper": 8,
         "actual": null
       },
       "4374302": {
         "pos": "WR",
         "espn": 16.6,
-        "sleeper": 16.2,
+        "sleeper": 16.4,
         "actual": null
       },
       "4379399": {
@@ -2292,13 +2292,13 @@
       "4426354": {
         "pos": "WR",
         "espn": 11.6,
-        "sleeper": 12.4,
+        "sleeper": 12.5,
         "actual": null
       },
       "4426388": {
         "pos": "WR",
         "espn": 9.4,
-        "sleeper": 10.7,
+        "sleeper": 10.9,
         "actual": null
       },
       "4426502": {
@@ -2310,7 +2310,7 @@
       "4427366": {
         "pos": "RB",
         "espn": 14.8,
-        "sleeper": 14.2,
+        "sleeper": 14.1,
         "actual": null
       },
       "4428331": {
@@ -2328,7 +2328,7 @@
       "4428850": {
         "pos": "WR",
         "espn": 8.3,
-        "sleeper": 7.7,
+        "sleeper": 7.6,
         "actual": null
       },
       "4429025": {
@@ -2340,7 +2340,7 @@
       "4429059": {
         "pos": "RB",
         "espn": 7.8,
-        "sleeper": 7,
+        "sleeper": 7.1,
         "actual": null
       },
       "4429096": {
@@ -2363,20 +2363,20 @@
       },
       "4429615": {
         "pos": "WR",
-        "espn": 13.3,
+        "espn": 11.8,
         "sleeper": 12,
         "actual": null
       },
       "4429795": {
         "pos": "RB",
         "espn": 24,
-        "sleeper": 21.1,
+        "sleeper": 21.4,
         "actual": null
       },
       "4430027": {
         "pos": "TE",
         "espn": 9.1,
-        "sleeper": 9.7,
+        "sleeper": 10.1,
         "actual": null
       },
       "4430737": {
@@ -2400,19 +2400,19 @@
       "4430878": {
         "pos": "WR",
         "espn": 17.6,
-        "sleeper": 18.7,
+        "sleeper": 18.6,
         "actual": null
       },
       "4431299": {
         "pos": "WR",
         "espn": 8.5,
-        "sleeper": 6.8,
+        "sleeper": 6.7,
         "actual": null
       },
       "4431452": {
         "pos": "QB",
         "espn": 19,
-        "sleeper": 18.4,
+        "sleeper": 18.6,
         "actual": null
       },
       "4431459": {
@@ -2424,7 +2424,7 @@
       "4432620": {
         "pos": "WR",
         "espn": 12.6,
-        "sleeper": 12.7,
+        "sleeper": 12.8,
         "actual": null
       },
       "4432665": {
@@ -2442,7 +2442,7 @@
       "4432710": {
         "pos": "RB",
         "espn": 9.7,
-        "sleeper": 11.5,
+        "sleeper": 11.6,
         "actual": null
       },
       "4432773": {
@@ -2472,7 +2472,7 @@
       "4569173": {
         "pos": "RB",
         "espn": 10.7,
-        "sleeper": 9.4,
+        "sleeper": 9.5,
         "actual": null
       },
       "4569559": {
@@ -2489,13 +2489,13 @@
       },
       "4569618": {
         "pos": "WR",
-        "espn": 12.1,
-        "sleeper": 12.5,
+        "espn": 13.4,
+        "sleeper": 13.2,
         "actual": null
       },
       "4569987": {
         "pos": "RB",
-        "espn": 13.7,
+        "espn": 14.4,
         "sleeper": 14.4,
         "actual": null
       },
@@ -2514,7 +2514,7 @@
       "4575131": {
         "pos": "RB",
         "espn": 8.4,
-        "sleeper": 9.1,
+        "sleeper": 9,
         "actual": null
       },
       "4595348": {
@@ -2526,19 +2526,13 @@
       "4596448": {
         "pos": "RB",
         "espn": 14.5,
-        "sleeper": 13,
-        "actual": null
-      },
-      "4597500": {
-        "pos": "WR",
-        "espn": 9.1,
-        "sleeper": 8,
+        "sleeper": 13.1,
         "actual": null
       },
       "4608686": {
         "pos": "RB",
         "espn": 7.7,
-        "sleeper": 6.6,
+        "sleeper": 7.6,
         "actual": null
       },
       "4612826": {
@@ -2556,7 +2550,7 @@
       "4685278": {
         "pos": "WR",
         "espn": 9,
-        "sleeper": 7.8,
+        "sleeper": 7.7,
         "actual": null
       },
       "4685382": {
@@ -2586,13 +2580,13 @@
       "4685720": {
         "pos": "QB",
         "espn": 17,
-        "sleeper": 16.3,
+        "sleeper": 16.2,
         "actual": null
       },
       "4686361": {
         "pos": "K",
         "espn": 9.1,
-        "sleeper": 8.3,
+        "sleeper": 8.4,
         "actual": null
       },
       "4686658": {
@@ -2610,7 +2604,7 @@
       "4689936": {
         "pos": "K",
         "espn": 9.2,
-        "sleeper": 8.7,
+        "sleeper": 8.8,
         "actual": null
       },
       "4695883": {
@@ -2627,20 +2621,20 @@
       },
       "4696981": {
         "pos": "RB",
-        "espn": 13.3,
-        "sleeper": 13,
+        "espn": 13.4,
+        "sleeper": 14.1,
         "actual": null
       },
       "4697745": {
         "pos": "K",
         "espn": 9.1,
-        "sleeper": 8.3,
+        "sleeper": 8.4,
         "actual": null
       },
       "4697815": {
         "pos": "RB",
         "espn": 7.8,
-        "sleeper": 5.8,
+        "sleeper": 5.6,
         "actual": null
       },
       "4701936": {
@@ -2724,13 +2718,13 @@
       "-16025": {
         "pos": "DST",
         "espn": 7.2,
-        "sleeper": 8.4,
+        "sleeper": 8.2,
         "actual": null
       },
       "-16026": {
         "pos": "DST",
         "espn": 7.3,
-        "sleeper": 9.4,
+        "sleeper": 9.3,
         "actual": null
       },
       "-16007": {
@@ -2760,7 +2754,7 @@
       "-16029": {
         "pos": "DST",
         "espn": 7.2,
-        "sleeper": 8.3,
+        "sleeper": 8.6,
         "actual": null
       },
       "-16027": {
@@ -2771,7 +2765,7 @@
       },
       "-16014": {
         "pos": "DST",
-        "espn": 5.3,
+        "espn": 5.4,
         "sleeper": 6.5,
         "actual": null
       },
@@ -2784,7 +2778,7 @@
       "-16021": {
         "pos": "DST",
         "espn": 8,
-        "sleeper": 9.2,
+        "sleeper": 8.7,
         "actual": null
       },
       "-16017": {

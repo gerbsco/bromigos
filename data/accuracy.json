@@ -3780,7 +3780,7 @@
       "3043078": {
         "pos": "RB",
         "espn": 16.3,
-        "sleeper": 17.3,
+        "sleeper": 17.4,
         "actual": null
       },
       "3046779": {
@@ -3811,12 +3811,6 @@
         "pos": "TE",
         "espn": 6.2,
         "sleeper": 6.7,
-        "actual": null
-      },
-      "3121023": {
-        "pos": "TE",
-        "espn": null,
-        "sleeper": 7.1,
         "actual": null
       },
       "3121422": {
@@ -3876,7 +3870,7 @@
       "3929630": {
         "pos": "RB",
         "espn": null,
-        "sleeper": 7.9,
+        "sleeper": 8,
         "actual": null
       },
       "3929645": {
@@ -3906,7 +3900,7 @@
       "4035687": {
         "pos": "WR",
         "espn": 6.7,
-        "sleeper": 6.6,
+        "sleeper": 6.3,
         "actual": null
       },
       "4036378": {
@@ -3924,13 +3918,13 @@
       "4038941": {
         "pos": "QB",
         "espn": 14.1,
-        "sleeper": 14.6,
+        "sleeper": 14.5,
         "actual": null
       },
       "4040715": {
         "pos": "QB",
         "espn": 16.3,
-        "sleeper": 15.5,
+        "sleeper": 15.9,
         "actual": null
       },
       "4047650": {
@@ -3960,7 +3954,7 @@
       "4241478": {
         "pos": "WR",
         "espn": null,
-        "sleeper": 10,
+        "sleeper": 10.1,
         "actual": null
       },
       "4241985": {
@@ -4080,7 +4074,7 @@
       "4372016": {
         "pos": "WR",
         "espn": 9.3,
-        "sleeper": 10.1,
+        "sleeper": 10,
         "actual": null
       },
       "4373626": {
@@ -4110,7 +4104,7 @@
       "4426338": {
         "pos": "QB",
         "espn": 16.4,
-        "sleeper": 17.6,
+        "sleeper": 17.5,
         "actual": null
       },
       "4426348": {
@@ -4302,7 +4296,7 @@
       "4569987": {
         "pos": "RB",
         "espn": 13.1,
-        "sleeper": 13.5,
+        "sleeper": 13.6,
         "actual": null
       },
       "4571557": {
@@ -4338,7 +4332,7 @@
       "4596334": {
         "pos": "RB",
         "espn": 7,
-        "sleeper": 8.6,
+        "sleeper": 8.5,
         "actual": null
       },
       "4596448": {
@@ -4362,7 +4356,7 @@
       "4612826": {
         "pos": "WR",
         "espn": 8.6,
-        "sleeper": 6.6,
+        "sleeper": 6.5,
         "actual": null
       },
       "4682745": {

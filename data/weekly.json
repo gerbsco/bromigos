@@ -1,243 +1,243 @@
 {
-  "week": 7,
-  "posted": "2026-11-02",
+  "week": 8,
+  "posted": "2026-11-03",
   "auto": true,
-  "headline": "Week 7 results",
+  "headline": "Week 8 results",
   "body": [
-    "Scotty led the week with 133.8, beating James's 112.9.",
-    "Justin took the widest win of the week over Austin, 122.9 to 68.6.",
-    "The closest game went to Anthony over Bo, 117.8 to 117.7.",
-    "Austin finished last in scoring with 68.6.",
-    "7 superlatives went out across 5 of 10 teams."
+    "Dawson led the week with 160.2, beating James's 91.6.",
+    "The closest game went to Austin over Scotty, 111.3 to 108.7.",
+    "Andy finished last in scoring with 73.6.",
+    "7 superlatives went out across 6 of 10 teams."
   ],
   "packs": {
-    "Andy": {
-      "manager": "Andy",
-      "myScore": 94.62,
-      "oppScore": 119.48,
-      "opponent": "Dawson",
-      "rank": 8,
-      "record": "2-5",
-      "bench": 39.3,
-      "high": 22.5,
-      "projected": 112.8,
-      "leagueHigh": false,
-      "leagueLow": false,
-      "awards": [],
-      "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_07.svg"
-    },
     "Dawson": {
       "manager": "Dawson",
-      "myScore": 119.48,
-      "oppScore": 94.62,
-      "opponent": "Andy",
-      "rank": 3,
-      "record": "6-1",
-      "bench": 18.3,
-      "high": 28.9,
-      "projected": 117.8,
-      "leagueHigh": false,
-      "leagueLow": false,
-      "awards": [],
-      "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-09.svg"
-    },
-    "Scotty": {
-      "manager": "Scotty",
-      "myScore": 133.78,
-      "oppScore": 112.92,
+      "myScore": 160.18,
+      "oppScore": 91.6,
       "opponent": "James",
       "rank": 1,
-      "record": "5-2",
-      "bench": 10,
-      "high": 23.3,
-      "projected": 123.4,
+      "record": "7-1",
+      "bench": 18.5,
+      "high": 41.5,
+      "projected": 127,
       "leagueHigh": true,
       "leagueLow": false,
       "awards": [
         {
           "title": "Scoring Machine",
-          "stat": "133.8 points",
-          "reason": "Highest score in the league, 133.8",
-          "desc": "Scored like the waiver wire owed them money.",
+          "stat": "160.2 points",
+          "reason": "Highest score in the league, 160.2",
+          "desc": "Most points in the league. Everyone else played for second.",
           "art": "img:firepit",
           "rare": true,
           "good": true
-        }
-      ],
-      "v": 2,
-      "crest": "https://i.imgur.com/nMxjXTU.jpg"
-    },
-    "James": {
-      "manager": "James",
-      "myScore": 112.92,
-      "oppScore": 133.78,
-      "opponent": "Scotty",
-      "rank": 6,
-      "record": "4-3",
-      "bench": 10.6,
-      "high": 19,
-      "projected": 118.7,
-      "leagueHigh": false,
-      "leagueLow": false,
-      "awards": [],
-      "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/robinson-01.svg"
-    },
-    "Cody": {
-      "manager": "Cody",
-      "myScore": 82.56,
-      "oppScore": 106.82,
-      "opponent": "Ryan",
-      "rank": 9,
-      "record": "2-5",
-      "bench": 19.8,
-      "high": 19,
-      "projected": 111.7,
-      "leagueHigh": false,
-      "leagueLow": false,
-      "awards": [],
-      "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StarsAndFlames/stars_flames-3.svg"
-    },
-    "Ryan": {
-      "manager": "Ryan",
-      "myScore": 106.82,
-      "oppScore": 82.56,
-      "opponent": "Cody",
-      "rank": 7,
-      "record": "6-1",
-      "bench": 8.8,
-      "high": 24.7,
-      "projected": 114.6,
-      "leagueHigh": false,
-      "leagueLow": false,
-      "awards": [],
-      "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/HelmetAlphabet-ESPN/Helmet-R.svg"
-    },
-    "Justin": {
-      "manager": "Justin",
-      "myScore": 122.9,
-      "oppScore": 68.62,
-      "opponent": "Austin",
-      "rank": 2,
-      "record": "4-3",
-      "bench": 12.8,
-      "high": 21,
-      "projected": 97,
-      "leagueHigh": false,
-      "leagueLow": false,
-      "awards": [
+        },
         {
           "title": "Blowout King",
-          "stat": "Won by 54.3",
-          "reason": "Biggest winning margin, 54.3",
-          "desc": "Their opponent was mathematically finished before the late window.",
+          "stat": "Won by 68.6",
+          "reason": "Biggest winning margin, 68.6",
+          "desc": "Biggest margin of the week. Over by noon.",
           "art": "img:point",
           "rare": true,
           "good": true
         }
       ],
       "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StadiumFoods-ESPN/stadium-foods_corn-dog.svg"
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-09.svg"
     },
-    "Austin": {
-      "manager": "Austin",
-      "myScore": 68.62,
-      "oppScore": 122.9,
-      "opponent": "Justin",
-      "rank": 10,
-      "record": "2-5",
-      "bench": 29.9,
-      "high": 15.8,
-      "projected": 116,
+    "James": {
+      "manager": "James",
+      "myScore": 91.6,
+      "oppScore": 160.18,
+      "opponent": "Dawson",
+      "rank": 8,
+      "record": "4-4",
+      "bench": 29.1,
+      "high": 26.9,
+      "projected": 124.6,
       "leagueHigh": false,
-      "leagueLow": true,
+      "leagueLow": false,
       "awards": [
         {
-          "title": "Walking Disaster",
-          "stat": "68.6 points",
-          "reason": "Lowest score in the league, 68.6",
-          "desc": "Somewhere in there, a kicker outscored a first rounder.",
-          "art": "🪦",
-          "rare": false,
-          "good": false
-        },
-        {
           "title": "Chair Recipient",
-          "stat": "Lost by 54.3",
-          "reason": "Biggest losing margin, 54.3",
-          "desc": "The scoreboard stopped being a competition and became a receipt.",
+          "stat": "Lost by 68.6",
+          "reason": "Biggest losing margin, 68.6",
+          "desc": "Lost by more than anyone else. It was not competitive.",
           "art": "img:chair",
           "rare": false,
           "good": false
         }
       ],
       "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_11.svg"
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/robinson-01.svg"
     },
-    "Anthony": {
-      "manager": "Anthony",
-      "myScore": 117.8,
-      "oppScore": 117.7,
-      "opponent": "Bo",
-      "rank": 4,
-      "record": "3-4",
-      "bench": 0,
+    "Ryan": {
+      "manager": "Ryan",
+      "myScore": 130.58,
+      "oppScore": 73.56,
+      "opponent": "Andy",
+      "rank": 3,
+      "record": "7-1",
+      "bench": 42,
+      "high": 29.9,
+      "projected": 123.2,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "v": 2,
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/HelmetAlphabet-ESPN/Helmet-R.svg"
+    },
+    "Andy": {
+      "manager": "Andy",
+      "myScore": 73.56,
+      "oppScore": 130.58,
+      "opponent": "Ryan",
+      "rank": 10,
+      "record": "2-6",
+      "bench": 6.7,
+      "high": 21,
+      "projected": 120.7,
+      "leagueHigh": false,
+      "leagueLow": true,
+      "awards": [
+        {
+          "title": "Walking Disaster",
+          "stat": "73.6 points",
+          "reason": "Lowest score in the league, 73.6",
+          "desc": "Lowest score in the league. Not close either.",
+          "art": "🪦",
+          "rare": false,
+          "good": false
+        }
+      ],
+      "v": 2,
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_07.svg"
+    },
+    "Austin": {
+      "manager": "Austin",
+      "myScore": 111.3,
+      "oppScore": 108.7,
+      "opponent": "Scotty",
+      "rank": 5,
+      "record": "3-5",
+      "bench": 19.4,
       "high": 24.8,
-      "projected": 115.8,
+      "projected": 105.8,
       "leagueHigh": false,
       "leagueLow": false,
       "awards": [
         {
-          "title": "Paper Champion",
-          "stat": "+2.0 over",
-          "reason": "Beat projection by 2.0",
-          "desc": "Overachieved by a margin that will not repeat.",
-          "art": "img:copium",
-          "rare": false,
-          "good": true
-        },
-        {
           "title": "Sunday Scaries",
-          "stat": "Won by 0.1",
-          "reason": "Closest win of the week, 0.1",
-          "desc": "Survived. Nobody would call it comfortable.",
+          "stat": "Won by 2.6",
+          "reason": "Closest win of the week, 2.6",
+          "desc": "Thin enough to ruin your evening anyway.",
           "art": "img:pout",
           "rare": false,
           "good": true
         }
       ],
       "v": 2,
-      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/Bump_Run-13.svg"
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_11.svg"
     },
-    "Bo": {
-      "manager": "Bo",
-      "myScore": 117.7,
-      "oppScore": 117.8,
-      "opponent": "Anthony",
-      "rank": 5,
-      "record": "1-6",
-      "bench": 1.7,
-      "high": 36,
-      "projected": 124.3,
+    "Scotty": {
+      "manager": "Scotty",
+      "myScore": 108.7,
+      "oppScore": 111.3,
+      "opponent": "Austin",
+      "rank": 6,
+      "record": "5-3",
+      "bench": 2.5,
+      "high": 21.8,
+      "projected": 122.2,
       "leagueHigh": false,
       "leagueLow": false,
       "awards": [
         {
           "title": "Heartbreaker",
-          "stat": "Lost by 0.1",
-          "reason": "Closest loss of the week, 0.1",
-          "desc": "One flag, one snap, one anything, and this is a win.",
+          "stat": "Lost by 2.6",
+          "reason": "Closest loss of the week, 2.6",
+          "desc": "Beaten by less than a garbage time score.",
           "art": "img:sob",
           "rare": false,
           "good": true
         }
       ],
       "v": 2,
+      "crest": "https://i.imgur.com/nMxjXTU.jpg"
+    },
+    "Bo": {
+      "manager": "Bo",
+      "myScore": 143.48,
+      "oppScore": 104.56,
+      "opponent": "Cody",
+      "rank": 2,
+      "record": "2-6",
+      "bench": 13.2,
+      "high": 28.2,
+      "projected": 125.2,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [
+        {
+          "title": "Paper Champion",
+          "stat": "+18.3 over",
+          "reason": "Beat projection by 18.3",
+          "desc": "Beat the projection by more than anyone. The model owes an apology.",
+          "art": "img:copium",
+          "rare": false,
+          "good": true
+        }
+      ],
+      "v": 2,
       "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_01.svg"
+    },
+    "Cody": {
+      "manager": "Cody",
+      "myScore": 104.56,
+      "oppScore": 143.48,
+      "opponent": "Bo",
+      "rank": 7,
+      "record": "2-6",
+      "bench": 11.4,
+      "high": 23.8,
+      "projected": 97,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "v": 2,
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StarsAndFlames/stars_flames-3.svg"
+    },
+    "Anthony": {
+      "manager": "Anthony",
+      "myScore": 119.86,
+      "oppScore": 76.68,
+      "opponent": "Justin",
+      "rank": 4,
+      "record": "4-4",
+      "bench": 1.7,
+      "high": 33.5,
+      "projected": 121.1,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "v": 2,
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/Bump_Run-13.svg"
+    },
+    "Justin": {
+      "manager": "Justin",
+      "myScore": 76.68,
+      "oppScore": 119.86,
+      "opponent": "Anthony",
+      "rank": 9,
+      "record": "4-4",
+      "bench": 26.4,
+      "high": 23.3,
+      "projected": 104.8,
+      "leagueHigh": false,
+      "leagueLow": false,
+      "awards": [],
+      "v": 2,
+      "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StadiumFoods-ESPN/stadium-foods_corn-dog.svg"
     }
   },
   "history": {
@@ -1883,155 +1883,386 @@
         "v": 2,
         "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_01.svg"
       }
+    },
+    "8": {
+      "Dawson": {
+        "manager": "Dawson",
+        "myScore": 160.18,
+        "oppScore": 91.6,
+        "opponent": "James",
+        "rank": 1,
+        "record": "7-1",
+        "bench": 18.5,
+        "high": 41.5,
+        "projected": 127,
+        "leagueHigh": true,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Scoring Machine",
+            "stat": "160.2 points",
+            "reason": "Highest score in the league, 160.2",
+            "desc": "Most points in the league. Everyone else played for second.",
+            "art": "img:firepit",
+            "rare": true,
+            "good": true
+          },
+          {
+            "title": "Blowout King",
+            "stat": "Won by 68.6",
+            "reason": "Biggest winning margin, 68.6",
+            "desc": "Biggest margin of the week. Over by noon.",
+            "art": "img:point",
+            "rare": true,
+            "good": true
+          }
+        ],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/Blockparty-RobbHars/blockplayers-09.svg"
+      },
+      "James": {
+        "manager": "James",
+        "myScore": 91.6,
+        "oppScore": 160.18,
+        "opponent": "Dawson",
+        "rank": 8,
+        "record": "4-4",
+        "bench": 29.1,
+        "high": 26.9,
+        "projected": 124.6,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Chair Recipient",
+            "stat": "Lost by 68.6",
+            "reason": "Biggest losing margin, 68.6",
+            "desc": "Lost by more than anyone else. It was not competitive.",
+            "art": "img:chair",
+            "rare": false,
+            "good": false
+          }
+        ],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/robinson-01.svg"
+      },
+      "Ryan": {
+        "manager": "Ryan",
+        "myScore": 130.58,
+        "oppScore": 73.56,
+        "opponent": "Andy",
+        "rank": 3,
+        "record": "7-1",
+        "bench": 42,
+        "high": 29.9,
+        "projected": 123.2,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/HelmetAlphabet-ESPN/Helmet-R.svg"
+      },
+      "Andy": {
+        "manager": "Andy",
+        "myScore": 73.56,
+        "oppScore": 130.58,
+        "opponent": "Ryan",
+        "rank": 10,
+        "record": "2-6",
+        "bench": 6.7,
+        "high": 21,
+        "projected": 120.7,
+        "leagueHigh": false,
+        "leagueLow": true,
+        "awards": [
+          {
+            "title": "Walking Disaster",
+            "stat": "73.6 points",
+            "reason": "Lowest score in the league, 73.6",
+            "desc": "Lowest score in the league. Not close either.",
+            "art": "🪦",
+            "rare": false,
+            "good": false
+          }
+        ],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_07.svg"
+      },
+      "Austin": {
+        "manager": "Austin",
+        "myScore": 111.3,
+        "oppScore": 108.7,
+        "opponent": "Scotty",
+        "rank": 5,
+        "record": "3-5",
+        "bench": 19.4,
+        "high": 24.8,
+        "projected": 105.8,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Sunday Scaries",
+            "stat": "Won by 2.6",
+            "reason": "Closest win of the week, 2.6",
+            "desc": "Thin enough to ruin your evening anyway.",
+            "art": "img:pout",
+            "rare": false,
+            "good": true
+          }
+        ],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_11.svg"
+      },
+      "Scotty": {
+        "manager": "Scotty",
+        "myScore": 108.7,
+        "oppScore": 111.3,
+        "opponent": "Austin",
+        "rank": 6,
+        "record": "5-3",
+        "bench": 2.5,
+        "high": 21.8,
+        "projected": 122.2,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Heartbreaker",
+            "stat": "Lost by 2.6",
+            "reason": "Closest loss of the week, 2.6",
+            "desc": "Beaten by less than a garbage time score.",
+            "art": "img:sob",
+            "rare": false,
+            "good": true
+          }
+        ],
+        "v": 2,
+        "crest": "https://i.imgur.com/nMxjXTU.jpg"
+      },
+      "Bo": {
+        "manager": "Bo",
+        "myScore": 143.48,
+        "oppScore": 104.56,
+        "opponent": "Cody",
+        "rank": 2,
+        "record": "2-6",
+        "bench": 13.2,
+        "high": 28.2,
+        "projected": 125.2,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [
+          {
+            "title": "Paper Champion",
+            "stat": "+18.3 over",
+            "reason": "Beat projection by 18.3",
+            "desc": "Beat the projection by more than anyone. The model owes an apology.",
+            "art": "img:copium",
+            "rare": false,
+            "good": true
+          }
+        ],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/AtTheStadium-RobbHarskamp/At_The_Stadium_01.svg"
+      },
+      "Cody": {
+        "manager": "Cody",
+        "myScore": 104.56,
+        "oppScore": 143.48,
+        "opponent": "Bo",
+        "rank": 7,
+        "record": "2-6",
+        "bench": 11.4,
+        "high": 23.8,
+        "projected": 97,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StarsAndFlames/stars_flames-3.svg"
+      },
+      "Anthony": {
+        "manager": "Anthony",
+        "myScore": 119.86,
+        "oppScore": 76.68,
+        "opponent": "Justin",
+        "rank": 4,
+        "record": "4-4",
+        "bench": 1.7,
+        "high": 33.5,
+        "projected": 121.1,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/Bump_Run-13.svg"
+      },
+      "Justin": {
+        "manager": "Justin",
+        "myScore": 76.68,
+        "oppScore": 119.86,
+        "opponent": "Anthony",
+        "rank": 9,
+        "record": "4-4",
+        "bench": 26.4,
+        "high": 23.3,
+        "projected": 104.8,
+        "leagueHigh": false,
+        "leagueLow": false,
+        "awards": [],
+        "v": 2,
+        "crest": "https://g.espncdn.com/lm-static/logo-packs/core/StadiumFoods-ESPN/stadium-foods_corn-dog.svg"
+      }
     }
   },
   "results": {
-    "2": [
+    "1": [
       {
-        "id": "6",
-        "home": "Dawson",
-        "away": "Bo",
-        "homePts": 115.28,
-        "awayPts": 96.04
-      },
-      {
-        "id": "7",
-        "home": "Anthony",
-        "away": "Austin",
-        "homePts": 96.72,
-        "awayPts": 118.68
-      },
-      {
-        "id": "8",
-        "home": "Justin",
-        "away": "Ryan",
-        "homePts": 158.38,
-        "awayPts": 99.62
-      },
-      {
-        "id": "9",
-        "home": "Cody",
-        "away": "James",
-        "homePts": 114.66,
-        "awayPts": 79.5
-      },
-      {
-        "id": "10",
-        "home": "Scotty",
-        "away": "Andy",
-        "homePts": 111.86,
-        "awayPts": 92.58
-      }
-    ],
-    "4": [
-      {
-        "id": "16",
-        "home": "Dawson",
-        "away": "Justin",
-        "homePts": 94.82,
-        "awayPts": 101.28
-      },
-      {
-        "id": "17",
-        "home": "Cody",
-        "away": "Anthony",
-        "homePts": 114.78,
-        "awayPts": 116.82
-      },
-      {
-        "id": "18",
-        "home": "Scotty",
-        "away": "Bo",
-        "homePts": 130.44,
-        "awayPts": 125.4
-      },
-      {
-        "id": "19",
-        "home": "Andy",
-        "away": "Austin",
-        "homePts": 141.16,
-        "awayPts": 129.02
-      },
-      {
-        "id": "20",
-        "home": "James",
-        "away": "Ryan",
-        "homePts": 91.58,
-        "awayPts": 130.66
-      }
-    ],
-    "6": [
-      {
-        "id": "26",
-        "home": "Dawson",
-        "away": "Scotty",
-        "homePts": 91.32,
-        "awayPts": 81.12
-      },
-      {
-        "id": "27",
-        "home": "Andy",
-        "away": "Cody",
-        "homePts": 78.44,
-        "awayPts": 106.34
-      },
-      {
-        "id": "28",
-        "home": "James",
-        "away": "Justin",
-        "homePts": 116.92,
-        "awayPts": 101.48
-      },
-      {
-        "id": "29",
-        "home": "Ryan",
-        "away": "Anthony",
-        "homePts": 132.72,
-        "awayPts": 101.2
-      },
-      {
-        "id": "30",
+        "id": "1",
         "home": "Austin",
+        "away": "Dawson",
+        "homePts": 103.92,
+        "awayPts": 131.06
+      },
+      {
+        "id": "2",
+        "home": "Ryan",
         "away": "Bo",
-        "homePts": 57.76,
-        "awayPts": 119.08
+        "homePts": 161.06,
+        "awayPts": 111.06
+      },
+      {
+        "id": "3",
+        "home": "James",
+        "away": "Anthony",
+        "homePts": 137.16,
+        "awayPts": 132.96
+      },
+      {
+        "id": "4",
+        "home": "Andy",
+        "away": "Justin",
+        "homePts": 99.86,
+        "awayPts": 72.9
+      },
+      {
+        "id": "5",
+        "home": "Scotty",
+        "away": "Cody",
+        "homePts": 115.8,
+        "awayPts": 102.62
       }
     ],
-    "7": [
+    "3": [
       {
-        "id": "31",
-        "home": "Andy",
-        "away": "Dawson",
-        "homePts": 94.62,
-        "awayPts": 119.48
-      },
-      {
-        "id": "32",
-        "home": "Scotty",
-        "away": "James",
-        "homePts": 133.78,
-        "awayPts": 112.92
-      },
-      {
-        "id": "33",
-        "home": "Cody",
-        "away": "Ryan",
-        "homePts": 82.56,
-        "awayPts": 106.82
-      },
-      {
-        "id": "34",
-        "home": "Justin",
-        "away": "Austin",
-        "homePts": 122.9,
-        "awayPts": 68.62
-      },
-      {
-        "id": "35",
+        "id": "11",
         "home": "Anthony",
-        "away": "Bo",
-        "homePts": 117.8,
-        "awayPts": 117.7
+        "away": "Dawson",
+        "homePts": 102.46,
+        "awayPts": 137.14
+      },
+      {
+        "id": "12",
+        "home": "Bo",
+        "away": "Justin",
+        "homePts": 90.34,
+        "awayPts": 108.4
+      },
+      {
+        "id": "13",
+        "home": "Austin",
+        "away": "Cody",
+        "homePts": 126.98,
+        "awayPts": 93.42
+      },
+      {
+        "id": "14",
+        "home": "Ryan",
+        "away": "Scotty",
+        "homePts": 119.24,
+        "awayPts": 92.74
+      },
+      {
+        "id": "15",
+        "home": "James",
+        "away": "Andy",
+        "homePts": 136.84,
+        "awayPts": 80.14
+      }
+    ],
+    "5": [
+      {
+        "id": "21",
+        "home": "Cody",
+        "away": "Dawson",
+        "homePts": 109.34,
+        "awayPts": 138.3
+      },
+      {
+        "id": "22",
+        "home": "Justin",
+        "away": "Scotty",
+        "homePts": 128.92,
+        "awayPts": 145.34
+      },
+      {
+        "id": "23",
+        "home": "Anthony",
+        "away": "Andy",
+        "homePts": 141.5,
+        "awayPts": 113.64
+      },
+      {
+        "id": "24",
+        "home": "Bo",
+        "away": "James",
+        "homePts": 100.06,
+        "awayPts": 158.44
+      },
+      {
+        "id": "25",
+        "home": "Austin",
+        "away": "Ryan",
+        "homePts": 76.06,
+        "awayPts": 152.28
+      }
+    ],
+    "8": [
+      {
+        "id": "36",
+        "home": "Dawson",
+        "away": "James",
+        "homePts": 160.18,
+        "awayPts": 91.6
+      },
+      {
+        "id": "37",
+        "home": "Ryan",
+        "away": "Andy",
+        "homePts": 130.58,
+        "awayPts": 73.56
+      },
+      {
+        "id": "38",
+        "home": "Austin",
+        "away": "Scotty",
+        "homePts": 111.3,
+        "awayPts": 108.7
+      },
+      {
+        "id": "39",
+        "home": "Bo",
+        "away": "Cody",
+        "homePts": 143.48,
+        "awayPts": 104.56
+      },
+      {
+        "id": "40",
+        "home": "Anthony",
+        "away": "Justin",
+        "homePts": 119.86,
+        "awayPts": 76.68
       }
     ]
   }
